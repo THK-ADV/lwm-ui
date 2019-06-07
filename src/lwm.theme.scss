@@ -1,0 +1,79 @@
+@import 'lwm.theme.config';
+@import '../node_modules/@angular/material/theming';
+
+// Define a custom typography config that overrides the font-family as well as the
+// `headlines` and `body-1` levels.
+$custom-typography: mat-typography-config(
+  $font-family: $lwm_font_family,
+  $headline: mat-typography-level(32px, 48px, 700),
+  $body-1: mat-typography-level(16px, 24px, 500)
+);
+
+@include mat-base-typography($custom-typography);
+
+// Override typography for a specific Angular Material components.
+@include mat-checkbox-typography($custom-typography);
+
+// Override typography for all Angular Material, including mat-base-typography and all components.
+@include angular-material-typography($custom-typography);
+
+// Override the typography in the core CSS.
+@include mat-core($custom-typography);
+
+@function getPaletteFrom($color) {
+  @return (
+    50:  lighten($color, 50%),
+    100: lighten($color, 40%),
+    200: lighten($color, 30%),
+    300: lighten($color, 20%),
+    400: lighten($color, 10%),
+    500: $color,
+    600:  darken($color, 10%),
+    700:  darken($color, 20%),
+    800:  darken($color, 30%),
+    900:  darken($color, 40%),
+    A100: darken($color, 50%),
+    A200: darken($color, 60%),
+    A400: darken($color, 70%),
+    A700: darken($color, 80%),
+    contrast: (
+      50: $black-87-opacity,
+      100: $black-87-opacity,
+      200: $black-87-opacity,
+      300: $black-87-opacity,
+      400: $black-87-opacity,
+      500: white,
+      600: white,
+      700: white,
+      800: $white-87-opacity,
+      900: $white-87-opacity,
+      A100: $black-87-opacity,
+      A200: white,
+      A400: white,
+      A700: white,
+    )
+  );
+}
+
+$lwm_primary_color_palette_values: getPaletteFrom($lwm_primary_color);
+$lwm_accent_color_palette_values: getPaletteFrom($lwm_accent_color);
+$lwm_warn_color_palette_values: getPaletteFrom($lwm_warn_color);
+
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darkes
+// hue.
+$lwm_primary_palette: mat-palette($lwm_primary_color_palette_values, 900);
+$lwm_accent_palette: mat-palette($lwm_accent_color_palette_values, 900);
+$lwm_warn_palette: mat-palette($lwm_warn_color_palette_values, A700);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme: mat-light-theme(
+    $lwm_primary_palette,
+    $lwm_accent_palette
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($theme);
