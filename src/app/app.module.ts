@@ -7,11 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { MatButtonModule, MatFormFieldModule, MatInputModule } from '@angular/material';
-import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatListModule } from '@angular/material/list';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
@@ -28,6 +23,8 @@ import { StudentStatusGuard } from './guards/student-status.guard';
 import { EmployeeStatusGuard } from './guards/employee-status.guard';
 
 import { SessionService } from './services/session.service';
+import { NavComponent } from './nav/nav.component';
+import { LWMMaterialModule } from './app.material.module';
 
 
 @NgModule({
@@ -35,7 +32,8 @@ import { SessionService } from './services/session.service';
     AppComponent,
     StudentDashboardComponent,
     EmployeeDashboardComponent,
-    EntryPageComponent
+    EntryPageComponent,
+    NavComponent
   ],
   imports: [
     BrowserModule,
@@ -44,14 +42,8 @@ import { SessionService } from './services/session.service';
     AppRoutingModule,
     NgbModule,
     BrowserAnimationsModule,
-    MatFormFieldModule,
     ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatToolbarModule,
-    MatSidenavModule,
-    MatListModule,
+    LWMMaterialModule,
     KeycloakAngularModule
   ],
   providers: [
