@@ -8,6 +8,10 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { MatButtonModule, MatFormFieldModule, MatInputModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
@@ -44,6 +48,10 @@ import { SessionService } from './services/session.service';
     ReactiveFormsModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatSidenavModule,
+    MatListModule,
     KeycloakAngularModule
   ],
   providers: [
