@@ -14,7 +14,8 @@
                 <span>Module</span>
             </p>
             <mat-nav-list>
-                <a mat-list-item routerLink="." *ngFor="let auth of moduleAuthorities">{{auth.course.abbreviation}}</a>
+                <a mat-list-item routerLink="/courses/{{auth.id}}"
+                   *ngFor="let auth of moduleAuthorities">{{auth.course.abbreviation}}</a>
             </mat-nav-list>
 
             <div *ngIf="isAdmin()">
@@ -23,9 +24,15 @@
                     <span>Konfiguration</span>
                 </p>
                 <mat-nav-list>
-                    <a mat-list-item routerLink="." *ngFor="let auth of moduleAuthorities">{{auth.course.abbreviation}}</a>
+                    <a mat-list-item routerLink="/{{config.path}}"
+                       *ngFor="let config of configs">{{config.label}}</a>
                 </mat-nav-list>
             </div>
+
+            <p>
+                <mat-icon class="red-icon">account_balance</mat-icon>
+                <span (click)="logout()">Ausloggen</span>
+            </p>
         </mat-sidenav>
         <mat-sidenav-content>
             <router-outlet></router-outlet>

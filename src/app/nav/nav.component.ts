@@ -4,6 +4,7 @@ import {Subscription} from 'rxjs'
 import {AuthorityAtom} from '../models/authorityAtom.model'
 import {AuthorityService} from '../services/authority.service'
 import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
+import {Config} from '../models/config.model'
 
 @Component({
     selector: 'app-nav',
@@ -15,7 +16,7 @@ export class NavComponent implements OnInit, OnDestroy {
     private authoritySub: Subscription
     private moduleAuthorities: AuthorityAtom[]
     private roleAuthorities: AuthorityAtom[]
-    private configData: []
+    private configs: Config[]
 
     constructor(
         changeDetectorRef: ChangeDetectorRef,
@@ -25,7 +26,7 @@ export class NavComponent implements OnInit, OnDestroy {
     ) {
         this.moduleAuthorities = []
         this.roleAuthorities = []
-        this.configData = []
+        this.configs = Config.All()
 
         this.mobileQuery = media.matchMedia('(max-width: 600px)')
         this._mobileQueryListener = () => changeDetectorRef.detectChanges()
@@ -35,7 +36,7 @@ export class NavComponent implements OnInit, OnDestroy {
     mobileQuery: MediaQueryList
     private _mobileQueryListener: () => void
 
-    private buildSidebar(authorities: AuthorityAtom[]) {
+    private unzipAuthorities(authorities: AuthorityAtom[]) {
         authorities.forEach(auth => {
             if (auth.course === undefined) {
                 this.roleAuthorities.push(auth)
@@ -56,11 +57,14 @@ export class NavComponent implements OnInit, OnDestroy {
         const systemId = this.tokenService.get(KeycloakTokenKey.SYSTEMID)
 
         this.authoritySub = this.authorityService.getAuthorities(systemId)
-            .subscribe(this.buildSidebar.bind(this))
+            .subscribe(this.unzipAuthorities.bind(this))
     }
 
     ngOnDestroy(): void {
         this.mobileQuery.removeListener(this._mobileQueryListener)
     }
 
+    logout(): void {
+        alert('logging out') // TODO
+    }
 }
