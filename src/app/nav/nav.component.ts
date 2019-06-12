@@ -5,6 +5,7 @@ import {AuthorityAtom} from '../models/authorityAtom.model'
 import {AuthorityService} from '../services/authority.service'
 import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
 import {Config} from '../models/config.model'
+import {User} from '../models/user.model'
 
 @Component({
     selector: 'app-nav',
@@ -17,6 +18,7 @@ export class NavComponent implements OnInit, OnDestroy {
     private moduleAuthorities: AuthorityAtom[]
     private roleAuthorities: AuthorityAtom[]
     private configs: Config[]
+    private user: User
 
     constructor(
         changeDetectorRef: ChangeDetectorRef,
@@ -44,6 +46,11 @@ export class NavComponent implements OnInit, OnDestroy {
                 this.moduleAuthorities.push(auth)
             }
         })
+
+        const first = authorities[0]
+        if (first) {
+            this.user = first.user
+        }
 
         this.moduleAuthorities = this.moduleAuthorities
             .sort((a, b) => a.course.abbreviation < b.course.abbreviation ? -1 : 1)
