@@ -4,13 +4,13 @@
 
 export const environment = {
   production: false,
-  backendUrl: '',
-  backendPort: 0,
+  backendUrl: 'http://localhost', // 'http://lwivs18.gm.fh-koeln.de',
+  backendPort: 9000,
   keycloak: {
-    authUrl: '',
-    realm: '',
-    clientID: '',
-    clientSecret: ''
+    authUrl: 'https://auth.gm.fh-koeln.de/auth',
+    realm: 'LWM',
+    clientID: 'web_frontend_dev',
+    clientSecret: 'f4592dea-9020-433d-8f65-b778139db4e4'
   }
 };
 
