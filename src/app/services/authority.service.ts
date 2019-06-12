@@ -14,4 +14,8 @@ export class AuthorityService {
     getAuthorities(systemId: string): Observable<AuthorityAtom[]> {
         return this.http.get<AuthorityAtom[]>(`authorities?systemId=${systemId}`)
     }
+
+    isAdmin(authorities: AuthorityAtom[]): boolean {
+        return authorities.some(auth => auth.role.label === 'Administrator')
+    }
 }

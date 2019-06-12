@@ -1,26 +1,39 @@
 <div class="example-container" [class.example-is-mobile]="mobileQuery.matches">
-  <mat-toolbar color="primary" class="example-toolbar">
-    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-    <h1 class="example-app-name">Responsive App</h1>
-  </mat-toolbar>
+    <mat-toolbar color="primary" class="example-toolbar">
+        <button mat-icon-button (click)="snav.toggle()">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <h1 class="example-app-name">Responsive App</h1>
+    </mat-toolbar>
 
-  <mat-sidenav-container class="example-sidenav-container"
-  [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
-    <mat-sidenav #snav mode ='side'>
-      <p><mat-icon class="red-icon">account_balance</mat-icon></p>
-      <mat-nav-list>
-        <a mat-list-item routerLink="." *ngFor="let auth of authorities">{{auth.role.label}}</a>
-      </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-        <router-outlet></router-outlet>
-      </mat-sidenav-content>
+    <mat-sidenav-container class="example-sidenav-container"
+                           [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
+        <mat-sidenav #snav mode='side'>
+            <p>
+                <mat-icon class="red-icon">account_balance</mat-icon>
+                <span>Module</span>
+            </p>
+            <mat-nav-list>
+                <a mat-list-item routerLink="." *ngFor="let auth of moduleAuthorities">{{auth.course.abbreviation}}</a>
+            </mat-nav-list>
 
-  </mat-sidenav-container>
-  
+            <div *ngIf="isAdmin()">
+                <p>
+                    <mat-icon class="purple-icon">account_balance</mat-icon>
+                    <span>Konfiguration</span>
+                </p>
+                <mat-nav-list>
+                    <a mat-list-item routerLink="." *ngFor="let auth of moduleAuthorities">{{auth.course.abbreviation}}</a>
+                </mat-nav-list>
+            </div>
+        </mat-sidenav>
+        <mat-sidenav-content>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+
+    </mat-sidenav-container>
+
 </div>
-
-
 
 
 <!-- <mat-sidenav-container class="example-sidenav-container"
