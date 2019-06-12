@@ -15,9 +15,7 @@
 **/src/systemjs.config.js
 **/src/tsconfig.json
 **/src/favicon.ico
-**/src/polyfills.ts
 **/src/test.ts
-**/src/tsconfig.app.json
 **/src/tsconfig.spec.json
 **/src/typings.d.ts
 **/e2e/src/app.po.ts
@@ -31,7 +29,6 @@
 **/bs-config.json
 **/package.json
 **/tsconfig.json
-**/tsconfig.app.json
 **/tsconfig.spec.json
 **/tslint.json
 **/karma-test-shim.js
