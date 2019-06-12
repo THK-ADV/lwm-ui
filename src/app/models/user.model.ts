@@ -1,7 +1,23 @@
-export class User {
+import { Degree } from './degree.model';
 
-  static urlResource = 'users';
+export interface User {
+  systemId: string;
+  lastname: string;
+  firstname: string; 
+  email: string; 
+  id: string;
+}
 
-  constructor(public systemId: string, public lastname: string, public firstname: string, public email: string, public status: string, public id?: string) { }
+export interface Employee extends User {}
 
+export interface Lecturer extends User {}
+
+export interface StudentAtom extends User {
+  registrationId: String;
+  enrollment: Degree;
+}
+
+export interface Student extends User {
+  registrationId: String;
+  enrollment: String;
 }

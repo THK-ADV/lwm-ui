@@ -22,7 +22,6 @@ import { DashboardGuard } from './guards/dashboard.guard';
 import { StudentStatusGuard } from './guards/student-status.guard';
 import { EmployeeStatusGuard } from './guards/employee-status.guard';
 
-import { SessionService } from './services/session.service';
 import { NavComponent } from './nav/nav.component';
 import { LWMMaterialModule } from './app.material.module';
 
@@ -57,8 +56,8 @@ import { LWMMaterialModule } from './app.material.module';
       multi: true,
       deps: [KeycloakService]
     },
-    { provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true },
-    SessionService],
+    { provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
