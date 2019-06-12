@@ -6,6 +6,7 @@ import {AuthorityService} from '../services/authority.service'
 import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
 import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
+import {CourseAtom} from '../models/courseAtom.model'
 
 @Component({
     selector: 'app-nav',
@@ -53,7 +54,7 @@ export class NavComponent implements OnInit, OnDestroy {
         }
 
         this.moduleAuthorities = this.moduleAuthorities
-            .sort((a, b) => a.course.abbreviation < b.course.abbreviation ? -1 : 1)
+            .sort((a, b) => (a.course as CourseAtom).abbreviation < (b.course as CourseAtom).abbreviation ? -1 : 1)
     }
 
     isAdmin(): boolean {
@@ -63,8 +64,10 @@ export class NavComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         const systemId = this.tokenService.get(KeycloakTokenKey.SYSTEMID)
 
-        this.authoritySub = this.authorityService.getAuthorities(systemId)
-            .subscribe(this.unzipAuthorities.bind(this))
+        if (systemId) {
+            this.authoritySub = this.authorityService.getAuthorities(systemId)
+                .subscribe(this.unzipAuthorities.bind(this))
+        }
     }
 
     ngOnDestroy(): void {

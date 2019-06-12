@@ -1,6 +1,6 @@
 export class Config {
 
-    constructor(public label: string, public path: string) {
+    constructor(public readonly label: string, public readonly path: string) {
     }
 
     static All(): Config[] {

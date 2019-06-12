@@ -1,25 +1,41 @@
-import { Injectable, OnInit } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
-import { KeycloakTokenParsed } from 'keycloak-js';
+import {Injectable} from '@angular/core'
+import {KeycloakService} from 'keycloak-angular'
 
 export enum KeycloakTokenKey {
-  SYSTEMID = "systemId"
+    SYSTEMID = 'systemId',
+    STATUS = 'status'
+}
+
+export enum KeycloakUserStatus {
+    EMPLOYEE = 'employee',
+    STUDENT = 'student'
 }
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class KeycloakTokenService {
-  
-  private token: KeycloakTokenParsed
 
-  constructor(private keycloak: KeycloakService) { 
-    this.token = this.keycloak.getKeycloakInstance().tokenParsed
-  }
+    constructor(private keycloak: KeycloakService) {
+    }
 
-  get(key: KeycloakTokenKey): string {
-    const value = this.token[key]
+    get(key: KeycloakTokenKey): string | undefined {
+        const token = this.keycloak.getKeycloakInstance().tokenParsed
 
-    return (value === undefined) ? "" : value;
-  }
+        if (token) {
+            return token[key]
+        } else {
+            return undefined
+        }
+    }
+
+    hasUserStatus(status: KeycloakUserStatus): boolean {
+        return this.get(KeycloakTokenKey.STATUS) === status
+    }
+
+    getUserStatus(): KeycloakUserStatus {
+        return this.hasUserStatus(KeycloakUserStatus.STUDENT)
+            ? KeycloakUserStatus.STUDENT
+            : KeycloakUserStatus.EMPLOYEE // TODO is this sufficient enough?
+    }
 }

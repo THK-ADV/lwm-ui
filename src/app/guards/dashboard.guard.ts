@@ -1,29 +1,29 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router, UrlTree } from '@angular/router';
-import { KeycloakService } from 'keycloak-angular';
+import {Injectable} from '@angular/core'
+import {CanActivate, Router, UrlTree} from '@angular/router'
+import {KeycloakTokenService, KeycloakUserStatus} from '../services/keycloak-token.service'
 
 @Injectable()
 export class DashboardGuard implements CanActivate {
 
-  constructor(private keycloak: KeycloakService, private router: Router) {
-  }
+    constructor(private tokenService: KeycloakTokenService, private router: Router) {
+    }
 
-  canActivate(): Promise<any> {
+    canActivate(): Promise<UrlTree> {
+        return new Promise<UrlTree>(resolve => {
+            const status = this.tokenService.getUserStatus()
 
-    return new Promise<any>(async resolve => {
-
-      const status = await this.keycloak.getKeycloakInstance().tokenParsed['status'];
-
-      // insert UPDATE user with systemID to refresh data in keycloak
-      switch (status) {
-        case 'student': resolve(this.router.parseUrl('/s')); break;
-        case 'employee': resolve(this.router.parseUrl('/e')); break;
-        default: resolve(false);
-      }
-
-    });
-
-  }
-
-
+            // insert UPDATE user with systemID to refresh data in keycloak
+            switch (status) {
+                case KeycloakUserStatus.STUDENT:
+                    resolve(this.router.parseUrl('/s'))
+                    break
+                case KeycloakUserStatus.EMPLOYEE:
+                    resolve(this.router.parseUrl('/e'))
+                    break
+                default:
+                    resolve(this.router.parseUrl('/'))
+                    break
+            }
+        })
+    }
 }
