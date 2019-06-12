@@ -24,6 +24,7 @@ import { EmployeeStatusGuard } from './guards/employee-status.guard';
 
 import { NavComponent } from './nav/nav.component';
 import { LWMMaterialModule } from './app.material.module';
+import { CoursesComponent } from './courses/courses.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { LWMMaterialModule } from './app.material.module';
     StudentDashboardComponent,
     EmployeeDashboardComponent,
     EntryPageComponent,
-    NavComponent
+    NavComponent,
+    CoursesComponent
   ],
   imports: [
     BrowserModule,
