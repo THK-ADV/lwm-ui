@@ -1,3 +1,5 @@
+@import '../../lwm.theme.config.scss';
+
 .example-container {
     display: flex;
     flex-direction: column;
@@ -38,3 +40,32 @@
     flex: 1 0 auto;
   }
 
+mat-sidenav {
+  background-color: #262429;
+
+  #sidebar-meta {
+    text-align: center;
+
+    #sidebar-user {
+      margin: 0 0 20px 0 !important;
+      color: $lightest;
+    }
+     
+    #sidebar-nickname {
+      color: lighten($darkest, 20);
+      font-style: italic;
+      font-size: 11px;
+    }
+     
+    #sidebar-bubble h4 {
+      margin: 20px 0 5px 0 !important;
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+      background-color: lighten($darkest, 20);
+      color: $darkest;
+      border-radius: 30px;
+      line-height: 60px !important;
+    }
+  }
+}

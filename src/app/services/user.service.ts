@@ -11,4 +11,10 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
+  getInitials (user: User): string{
+    var initials = user.firstname.substring(0, 1).toUpperCase() + user.lastname.substring(0, 1).toUpperCase()
+    return initials
+  }
+
 }
+

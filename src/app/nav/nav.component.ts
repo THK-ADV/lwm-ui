@@ -1,12 +1,14 @@
-import {MediaMatcher} from '@angular/cdk/layout'
-import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core'
-import {Subscription} from 'rxjs'
-import {AuthorityAtom} from '../models/authorityAtom.model'
-import {AuthorityService} from '../services/authority.service'
-import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
-import {Config} from '../models/config.model'
-import {User} from '../models/user.model'
-import {CourseAtom} from '../models/courseAtom.model'
+import { MediaMatcher } from '@angular/cdk/layout'
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core'
+import { Subscription } from 'rxjs'
+import { AuthorityAtom } from '../models/authorityAtom.model'
+import { AuthorityService } from '../services/authority.service'
+import { KeycloakTokenKey, KeycloakTokenService } from '../services/keycloak-token.service'
+import { Config } from '../models/config.model'
+import { User } from '../models/user.model'
+import { CourseAtom } from '../models/courseAtom.model'
+import { UserService } from '../services/user.service';
+import { escapeRegExp } from '@angular/compiler/src/util';
 
 @Component({
     selector: 'app-nav',
@@ -25,7 +27,8 @@ export class NavComponent implements OnInit, OnDestroy {
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
         private authorityService: AuthorityService,
-        private tokenService: KeycloakTokenService
+        private tokenService: KeycloakTokenService,
+        private userService: UserService
     ) {
         this.moduleAuthorities = []
         this.roleAuthorities = []
@@ -59,6 +62,13 @@ export class NavComponent implements OnInit, OnDestroy {
 
     isAdmin(): boolean {
         return this.authorityService.isAdmin(this.roleAuthorities)
+    }
+
+    getInitials(): string {
+        if (this.user)
+            return this.userService.getInitials(this.user)
+        else
+            return 'na'
     }
 
     ngOnInit(): void {
