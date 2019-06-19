@@ -9,8 +9,7 @@ export class Config {
             new Config('Module', 'courses'),
             new Config('Räume', 'rooms'),
             new Config('Studiengänge', 'degrees'),
-            new Config('Semester', 'semesters'),
-            new Config('Mitarbeiter-Dashboard', 'e')
+            new Config('Semester', 'semesters')
         ]
     }
 }
