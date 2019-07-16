@@ -5,11 +5,11 @@ export class Config {
 
     static All(): Config[] {
         return [
-            new Config('Berechtigungen', 'authorities'),
-            new Config('Module', 'courses'),
-            new Config('Räume', 'rooms'),
-            new Config('Studiengänge', 'degrees'),
-            new Config('Semester', 'semesters')
+            new Config('Berechtigungen', 'e/authorities'),
+            new Config('Module', 'e/modules'),
+            new Config('Räume', 'e/rooms'),
+            new Config('Studiengänge', 'e/degrees'),
+            new Config('Semester', 'e/semesters')
         ]
     }
 }

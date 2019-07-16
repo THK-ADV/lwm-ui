@@ -19,7 +19,28 @@ const routes: Routes = [
         path: 'e',
         component: EmployeeDashboardComponent,
         canActivate: [EmployeeStatusGuard],
-        children: []
+        children: [
+            {
+                path: 'authorities',
+                component: EntryPageComponent
+            },
+            {
+                path: 'modules',
+                component: EntryPageComponent
+            },
+            {
+                path: 'rooms',
+                component: EntryPageComponent
+            },
+            {
+                path: 'degrees',
+                component: EntryPageComponent
+            },
+            {
+                path: 'semesters',
+                component: EntryPageComponent
+            },
+        ]
     },
     {
         path: '',
