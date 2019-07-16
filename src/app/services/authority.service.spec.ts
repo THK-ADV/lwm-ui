@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { SessionService } from './session.service';
+import { AuthorityService } from './authority.service';
 
-describe('SessionService', () => {
+describe('AuthorityService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: SessionService = TestBed.get(SessionService);
+    const service: AuthorityService = TestBed.get(AuthorityService);
     expect(service).toBeTruthy();
   });
 });

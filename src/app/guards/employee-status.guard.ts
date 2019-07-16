@@ -1,30 +1,22 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
-import { KeycloakService } from 'keycloak-angular';
+import {Injectable} from '@angular/core'
+import {CanActivate, Router} from '@angular/router'
+import {KeycloakTokenService, KeycloakUserStatus} from '../services/keycloak-token.service'
 
 @Injectable()
 export class EmployeeStatusGuard implements CanActivate {
 
-  constructor(private keycloak: KeycloakService, private router: Router) {
-  }
+    constructor(private tokenService: KeycloakTokenService, private router: Router) {
+    }
 
-  canActivate(): Promise<boolean> {
+    canActivate(): Promise<boolean> {
+        return new Promise<boolean>(resolve => {
+            const isEmployee = this.tokenService.hasUserStatus(KeycloakUserStatus.EMPLOYEE)
 
-    return new Promise<boolean>(async resolve => {
+            if (!isEmployee) {
+                this.router.navigate(['/'])
+            }
 
-
-      const status = await this.keycloak.getKeycloakInstance().tokenParsed['status'];
-
-      if (status === 'employee') {
-        resolve(true);
-      } else {
-        this.router.navigate(['/']);
-        resolve(false);
-      }
-
-    });
-
-  }
-
-
+            resolve(isEmployee)
+        })
+    }
 }

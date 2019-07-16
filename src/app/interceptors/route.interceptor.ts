@@ -14,6 +14,8 @@ export class RouteInterceptor implements HttpInterceptor {
       });
     }
 
+    console.log(req.url)
+
     return next.handle(req);
   }
 }

@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { MatButtonModule, MatFormFieldModule, MatInputModule } from '@angular/material';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
@@ -23,7 +22,9 @@ import { DashboardGuard } from './guards/dashboard.guard';
 import { StudentStatusGuard } from './guards/student-status.guard';
 import { EmployeeStatusGuard } from './guards/employee-status.guard';
 
-import { SessionService } from './services/session.service';
+import { NavComponent } from './nav/nav.component';
+import { LWMMaterialModule } from './app.material.module';
+import { CoursesComponent } from './courses/courses.component';
 
 
 @NgModule({
@@ -31,7 +32,9 @@ import { SessionService } from './services/session.service';
     AppComponent,
     StudentDashboardComponent,
     EmployeeDashboardComponent,
-    EntryPageComponent
+    EntryPageComponent,
+    NavComponent,
+    CoursesComponent
   ],
   imports: [
     BrowserModule,
@@ -40,10 +43,8 @@ import { SessionService } from './services/session.service';
     AppRoutingModule,
     NgbModule,
     BrowserAnimationsModule,
-    MatFormFieldModule,
     ReactiveFormsModule,
-    MatInputModule,
-    MatButtonModule,
+    LWMMaterialModule,
     KeycloakAngularModule
   ],
   providers: [
@@ -57,8 +58,8 @@ import { SessionService } from './services/session.service';
       multi: true,
       deps: [KeycloakService]
     },
-    { provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true },
-    SessionService],
+    { provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,15 +1,12 @@
-import {User} from './user.model';
-import {Student} from './student.model';
-import {Employee} from './employee.model';
+import {User, StudentAtom, Employee} from './user.model';
 
 export interface Dashboard {
-  user?: User;
   status: string;
   semester: string; // Semester;
 }
 
 export interface StudentDashboard extends Dashboard {
-  user?: Student;
+  user?: StudentAtom;
   labworks?: string; // Traversable[LabworkLike],
   applications?: string; // Traversable[LabworkApplicationLike],
   groups?: string; // Traversable[GroupLike],
