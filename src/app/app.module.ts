@@ -25,6 +25,7 @@ import { EmployeeStatusGuard } from './guards/employee-status.guard';
 import { NavComponent } from './nav/nav.component';
 import { LWMMaterialModule } from './app.material.module';
 import { CoursesComponent } from './courses/courses.component';
+import { RoomComponent } from './rooms/room.component';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { CoursesComponent } from './courses/courses.component';
     EmployeeDashboardComponent,
     EntryPageComponent,
     NavComponent,
-    CoursesComponent
+    CoursesComponent,
+    RoomComponent
   ],
   imports: [
     BrowserModule,
