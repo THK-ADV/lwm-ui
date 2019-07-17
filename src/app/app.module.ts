@@ -7,7 +7,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { keycloakInitializer } from './security/keycloak.initializer';
@@ -26,6 +27,7 @@ import { NavComponent } from './nav/nav.component';
 import { LWMMaterialModule } from './app.material.module';
 import { CoursesComponent } from './courses/courses.component';
 import { RoomComponent } from './rooms/room.component';
+import { NgbdSortableHeader } from './directives/ngbd-sortable-header.directive';
 
 
 @NgModule({
@@ -36,7 +38,8 @@ import { RoomComponent } from './rooms/room.component';
     EntryPageComponent,
     NavComponent,
     CoursesComponent,
-    RoomComponent
+    RoomComponent,
+    NgbdSortableHeader
   ],
   imports: [
     BrowserModule,

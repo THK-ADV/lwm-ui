@@ -3,16 +3,18 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th scope="col" sortable="label">Bezeichnung</th>
-      <th scope="col" sortable="description">Beschreibung</th>
+      <th scope="col" sortable="label" (sort)="onSort($event)">Bezeichnung</th>
+      <th scope="col" sortable="description" (sort)="onSort($event)">Beschreibung</th>
+      <th scope="col" sortable="capacity" (sort)="onSort($event)">Kapazität</th>
       <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let room of rooms">
+    <tr *ngFor="let room of roomsSorted">
       <td>{{room.label}}</td>
       <td>{{room.description}}</td>
-      <td></td>
+      <td>{{room.capacity | number}}</td>
+      <td><button mat-flat-button color="primary">Primary</button><button mat-flat-button color="secondary">Secondary</button></td>
     </tr>
   </tbody>
 </table>

@@ -82,9 +82,9 @@ $custom-typography: mat-typography-config(
   );
 }
 
-$lwm_primary_color_palette_values: getPaletteFrom($lwm_primary_color);
-$lwm_accent_color_palette_values: getPaletteFrom($lwm_accent_color);
-$lwm_warn_color_palette_values: getPaletteFrom($lwm_warn_color);
+$lwm_primary_color_palette_values: getPaletteFrom($lwm_ui_primary);
+$lwm_accent_color_palette_values: getPaletteFrom($lwm_ui_accent);
+$lwm_warn_color_palette_values: getPaletteFrom($lwm_ui_warn);
 
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
