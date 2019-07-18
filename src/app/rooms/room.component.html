@@ -1,20 +1,34 @@
 <h1>Räume</h1>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col" sortable="label" (sort)="onSort($event)">Bezeichnung</th>
-      <th scope="col" sortable="description" (sort)="onSort($event)">Beschreibung</th>
-      <th scope="col" sortable="capacity" (sort)="onSort($event)">Kapazität</th>
-      <th scope="col"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let room of roomsSorted">
-      <td>{{room.label}}</td>
-      <td>{{room.description}}</td>
-      <td>{{room.capacity | number}}</td>
-      <td><button mat-flat-button color="primary">Primary</button><button mat-flat-button color="secondary">Secondary</button></td>
-    </tr>
-  </tbody>
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+    <ng-container matColumnDef="label">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Bezeichnung</th>
+        <td mat-cell *matCellDef="let element "> {{element.label}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Beschreibung</th>
+        <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="capacity">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Kapazität</th>
+        <td mat-cell *matCellDef="let element"> {{element.capacity}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> </th>
+        <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+            <button mat-flat-button color="primary" (click)="edit(element)">
+                <mat-icon>build</mat-icon>
+            </button>
+            <button mat-flat-button (click)="delete(element)">
+                <mat-icon>build</mat-icon>
+            </button>
+        </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="select(row)"></tr>
 </table>

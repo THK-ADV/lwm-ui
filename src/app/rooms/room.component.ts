@@ -1,56 +1,55 @@
-import { Component, OnInit, ViewChildren, QueryList } from '@angular/core';
-import { RoomService } from '../services/room.service';
-import { Room } from '../models/room.model';
-import { NgbdSortableHeader, SortEvent, compare } from '../directives/ngbd-sortable-header.directive';
-import { Subscription } from 'rxjs';
-
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
+import {RoomService} from '../services/room.service'
+import {MatSort, Sort, SortDirection} from '@angular/material/sort'
+import {MatTableDataSource} from '@angular/material/table'
+import {Subscription} from 'rxjs'
 
 @Component({
-  selector: 'app-room',
-  templateUrl: './room.component.html',
-  styleUrls: ['./room.component.scss']
+    selector: 'app-room',
+    templateUrl: './room.component.html',
+    styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit, OnDestroy {
 
-  @ViewChildren(NgbdSortableHeader) headers: QueryList<NgbdSortableHeader>;
+    private roomSub: Subscription
 
-  private roomSub: Subscription
-  private rooms: Room[]
-  private roomsSorted: Room[]
+    private displayedColumns: string[] = ['label', 'description', 'capacity', 'action']
+    private dataSource = new MatTableDataSource()
 
-  constructor(private roomService: RoomService) { }
+    @ViewChild(MatSort, {static: true}) sort: MatSort
 
-  ngOnInit() {
-    this.roomSub = this.roomService.getRooms().subscribe(rooms => {
-      this.rooms = rooms
-      this.roomsSorted = rooms
-      this.onSort({ column: 'label', direction: 'asc' })
-    })
-  }
-
-  ngOnDestroy(): void {
-    this.roomSub.unsubscribe()
-  }
-
-  onSort({ column, direction }: SortEvent) {
-    console.log(column, direction)
-
-    // resetting other headers
-    this.headers.forEach(header => {
-      if (header.sortable !== column) {
-        header.direction = '';
-      }
-    });
-
-    //sorting countries
-    if (direction === '') {
-      this.roomsSorted = this.rooms;
-    } else {
-      this.roomsSorted = [...this.rooms].sort((a, b) => {
-        const res = compare(a[column], b[column]);
-        return direction === 'asc' ? res : -res;
-      });
+    constructor(private roomService: RoomService) {
     }
 
-  }
+    ngOnInit() {
+        this.dataSource.sort = this.sort
+
+        this.roomSub = this.roomService.getRooms().subscribe(rooms => {
+            this.dataSource.data = rooms
+            this.sortBy('description')
+        })
+    }
+
+    select(room) {
+        console.log('select' + room)
+    }
+
+    edit(room) {
+        console.log('edit' + room)
+    }
+
+    delete(room) {
+        console.log('delete' + room)
+    }
+
+    private sortBy(label: string, ordering: SortDirection = 'asc') {
+        const sortState: Sort = {active: label, direction: ordering}
+        this.sort.active = sortState.active
+        this.sort.direction = sortState.direction
+        this.sort.sortChange.emit(sortState)
+    }
+
+    ngOnDestroy(): void {
+        this.roomSub.unsubscribe()
+    }
 }
