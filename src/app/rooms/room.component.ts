@@ -3,6 +3,8 @@ import {RoomService} from '../services/room.service'
 import {MatSort, Sort, SortDirection} from '@angular/material/sort'
 import {MatTableDataSource} from '@angular/material/table'
 import {Subscription} from 'rxjs'
+import {MatDialog} from '@angular/material'
+import {DeleteComponent} from '../shared_modals/delete/delete.component'
 
 @Component({
     selector: 'app-room',
@@ -18,7 +20,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
     @ViewChild(MatSort, {static: true}) sort: MatSort
 
-    constructor(private roomService: RoomService) {
+    constructor(private roomService: RoomService, private dialog: MatDialog) {
     }
 
     ngOnInit() {
@@ -39,7 +41,11 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
 
     delete(room) {
-        console.log('delete' + room)
+        const dialogRef = DeleteComponent.instance(this.dialog, {label: room.label, id: room.id})
+
+        dialogRef.afterClosed().subscribe(id => {
+            console.log('The dialog was closed ' + id)
+        })
     }
 
     private sortBy(label: string, ordering: SortDirection = 'asc') {

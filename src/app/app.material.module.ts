@@ -12,6 +12,8 @@ import {
     MatToolbarModule
 } from '@angular/material'
 
+import {MatDialogModule} from '@angular/material/dialog'
+
 @NgModule({
     exports: [
         MatButtonModule,
@@ -23,7 +25,8 @@ import {
         MatListModule,
         MatExpansionModule,
         MatTableModule,
-        MatSortModule
+        MatSortModule,
+        MatDialogModule
     ]
 })
 export class LWMMaterialModule {

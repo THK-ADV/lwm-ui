@@ -7,7 +7,7 @@ import {AppRoutingModule} from './app-routing.module'
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http'
 
 import {AppComponent} from './app.component'
-import {ReactiveFormsModule} from '@angular/forms'
+import {FormsModule, ReactiveFormsModule} from '@angular/forms'
 
 import {KeycloakAngularModule, KeycloakService} from 'keycloak-angular'
 import {keycloakInitializer} from './security/keycloak.initializer'
@@ -26,6 +26,7 @@ import {NavComponent} from './nav/nav.component'
 import {LWMMaterialModule} from './app.material.module'
 import {CoursesComponent} from './courses/courses.component'
 import {RoomComponent} from './rooms/room.component'
+import {DeleteComponent} from './shared_modals/delete/delete.component'
 
 @NgModule({
     declarations: [
@@ -35,7 +36,8 @@ import {RoomComponent} from './rooms/room.component'
         EntryPageComponent,
         NavComponent,
         CoursesComponent,
-        RoomComponent
+        RoomComponent,
+        DeleteComponent
     ],
     imports: [
         BrowserModule,
@@ -45,6 +47,7 @@ import {RoomComponent} from './rooms/room.component'
         NgbModule,
         BrowserAnimationsModule,
         ReactiveFormsModule,
+        FormsModule,
         LWMMaterialModule,
         KeycloakAngularModule
     ],
@@ -61,7 +64,8 @@ import {RoomComponent} from './rooms/room.component'
         },
         {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [DeleteComponent]
 })
 export class AppModule {
 }
