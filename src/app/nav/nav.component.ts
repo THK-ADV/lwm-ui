@@ -1,14 +1,12 @@
-import { MediaMatcher } from '@angular/cdk/layout'
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core'
-import { Subscription } from 'rxjs'
-import { AuthorityAtom } from '../models/authorityAtom.model'
-import { AuthorityService } from '../services/authority.service'
-import { KeycloakTokenKey, KeycloakTokenService } from '../services/keycloak-token.service'
-import { Config } from '../models/config.model'
-import { User } from '../models/user.model'
-import { CourseAtom } from '../models/courseAtom.model'
-import { UserService } from '../services/user.service';
-import { escapeRegExp } from '@angular/compiler/src/util';
+import {MediaMatcher} from '@angular/cdk/layout'
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core'
+import {Subscription} from 'rxjs'
+import {AuthorityAtom} from '../models/authorityAtom.model'
+import {AuthorityService} from '../services/authority.service'
+import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
+import {Config} from '../models/config.model'
+import {User} from '../models/user.model'
+import {CourseAtom} from '../models/courseAtom.model'
 
 @Component({
     selector: 'app-nav',
@@ -28,7 +26,6 @@ export class NavComponent implements OnInit, OnDestroy {
         media: MediaMatcher,
         private authorityService: AuthorityService,
         private tokenService: KeycloakTokenService,
-        private userService: UserService
     ) {
         this.moduleAuthorities = []
         this.roleAuthorities = []
@@ -65,10 +62,11 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     getInitials(): string {
-        if (this.user)
-            return this.userService.getInitials(this.user)
-        else
-            return 'na'
+        if (this.user) {
+            return this.user.firstname.substring(0, 1).toUpperCase() + this.user.lastname.substring(0, 1).toUpperCase()
+        } else {
+            return 'n.a'
+        }
     }
 
     ngOnInit(): void {
