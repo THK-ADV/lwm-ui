@@ -13,6 +13,7 @@ import {
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
+import {MatSnackBarModule} from '@angular/material/snack-bar'
 
 @NgModule({
     exports: [
@@ -26,7 +27,8 @@ import {MatDialogModule} from '@angular/material/dialog'
         MatExpansionModule,
         MatTableModule,
         MatSortModule,
-        MatDialogModule
+        MatDialogModule,
+        MatSnackBarModule
     ]
 })
 export class LWMMaterialModule {
