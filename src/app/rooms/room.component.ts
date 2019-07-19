@@ -6,6 +6,7 @@ import {Subscription} from 'rxjs'
 import {MatDialog, MatSnackBar} from '@angular/material'
 import {DeleteComponent} from '../shared_modals/delete/delete.component'
 import {Room} from '../models/room.model'
+import {LWMError} from '../services/http.service'
 
 @Component({
     selector: 'app-room',
@@ -34,43 +35,38 @@ export class RoomComponent implements OnInit, OnDestroy {
         })
     }
 
-    select(room) {
+    onSelect(room) {
         console.log('select' + room)
     }
 
-    edit(room) {
+    onEdit(room) {
         console.log('edit' + room)
     }
 
-    delete(room) {
+    onDelete(room) {
         const dialogRef = DeleteComponent.instance(this.dialog, {label: room.label, id: room.id})
 
         dialogRef.afterClosed().subscribe(id => {
             if (id) {
-                // this.delete0('7f3488ef-9f94-4712-a788-3d035e6d3868') // for testing
-                this.delete0(id)
+                this.roomDeleteSub = this.roomService.delete(id)
+                    .subscribe({next: this.delete.bind(this), error: this.showError.bind(this)})
             }
         })
     }
 
-    private delete0(id: string) {
-        this.roomDeleteSub = this.roomService.delete(id).subscribe(resp => {
-            this.remove(id)
-            this.showMessage('deleted ' + (resp.body as Room).label, false) // TODO better type checking
-        }, error => {
-            console.log(error)
-            this.showMessage(error.error.message, true)
-        })
-    }
-
-    private remove(id: string) {
-        this.dataSource.data = this.dataSource.data.filter(r => r.id !== id) // TODO remove by index
+    private delete(room: Room) {
+        this.dataSource.data = this.dataSource.data.filter(r => r.id !== room.id)
+        this.showMessage('deleted: ' + room.label, false)
     }
 
     private showMessage(message: string, isError: boolean) {
         this._snackBar.open(message, undefined, {
             duration: isError ? 5000 : 2000,
         })
+    }
+
+    private showError(error: LWMError) {
+        this.showMessage(error.message(), true)
     }
 
     private sortBy(label: string, ordering: SortDirection = 'asc') {

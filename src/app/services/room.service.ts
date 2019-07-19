@@ -1,23 +1,23 @@
 import {Injectable} from '@angular/core'
-import {HttpClient, HttpResponse} from '@angular/common/http'
 import {Observable} from 'rxjs'
 import {Room} from '../models/room.model'
+import {HttpService} from './http.service'
 
 @Injectable({
     providedIn: 'root'
 })
 export class RoomService {
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpService) {
     }
 
     private path = 'rooms'
 
     getRooms(): Observable<Room[]> {
-        return this.http.get<Room[]>(this.path)
+        return this.http.get(this.path)
     }
 
-    delete(id: string): Observable<HttpResponse<Room>> {
-        return this.http.delete<Room>(this.path + '/' + id, {observe: 'response'})
+    delete(id: string): Observable<Room> {
+        return this.http.delete(this.path, id)
     }
 }
