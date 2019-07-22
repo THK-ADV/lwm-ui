@@ -5,7 +5,7 @@
         </button>
         <a class="lwm-app-name" routerLink="/"><h1>LWM</h1></a>
         <span class="example-spacer"></span>
-        
+
     </mat-toolbar>
 
     <mat-sidenav-container class="lwm-sidenav-container" [style.marginTop.px]="mobileQuery.matches ? 56 : 0">
@@ -25,7 +25,7 @@
                 </h3>
 
                 <a mat-list-item routerLink="/courses/{{auth.id}}" *ngFor="let auth of moduleAuthorities"
-                    routerLinkActive="list-item-active">{{auth.course.abbreviation}}</a>
+                   routerLinkActive="list-item-active" (click)="linkClicked()">{{auth.course.abbreviation}}</a>
 
                 <div *ngIf="isAdmin()">
                     <h3 mat-subheader class="sidebarHeader configHeader">
@@ -33,7 +33,7 @@
                         <span>Konfiguration</span>
                     </h3>
                     <a mat-list-item routerLink="/{{config.path}}" *ngFor="let config of configs" routerLinkActive
-                        routerLinkActive="list-item-active">{{config.label}}</a>
+                       routerLinkActive="list-item-active" (click)="linkClicked()">{{config.label}}</a>
                 </div>
 
                 <h3 mat-subheader class="sidebarHeader logoutHeader">
@@ -42,15 +42,9 @@
                 </h3>
             </mat-nav-list>
         </mat-sidenav>
+
         <mat-sidenav-content>
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-12">
-                        <router-outlet></router-outlet>             
-                    </div>
-                </div>
-            </div>
-            
+            <ng-content></ng-content>
         </mat-sidenav-content>
 
     </mat-sidenav-container>

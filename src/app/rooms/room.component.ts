@@ -2,18 +2,13 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {RoomService} from '../services/room.service'
 import {MatSort, Sort, SortDirection} from '@angular/material/sort'
 import {MatTableDataSource} from '@angular/material/table'
-import {Subscription} from 'rxjs'
-import {MatDialog, MatSnackBar} from '@angular/material'
+import {Observable, Subscription} from 'rxjs'
+import {MatDialog} from '@angular/material'
 import {DeleteComponent} from '../shared_modals/delete/delete.component'
 import {Room} from '../models/room.model'
-import {LWMError} from '../services/http.service'
 import {RoomAddComponent} from './room-add/room-add.component'
-
-export interface RoomProtocol {
-    label: string
-    description: string
-    capacity: number
-}
+import {ListTemplateEvent} from '../list-template/list-template.component'
+import {AlertService} from '../services/alert.service'
 
 @Component({
     selector: 'app-room',
@@ -25,11 +20,12 @@ export class RoomComponent implements OnInit, OnDestroy {
     private subs: Subscription[]
 
     private displayedColumns: string[] = ['label', 'description', 'capacity', 'action']
+
     private dataSource = new MatTableDataSource<Room>()
 
     @ViewChild(MatSort, {static: true}) sort: MatSort
 
-    constructor(private roomService: RoomService, private dialog: MatDialog, private _snackBar: MatSnackBar) {
+    constructor(private roomService: RoomService, private dialog: MatDialog, private alertService: AlertService) {
         this.subs = []
     }
 
@@ -46,18 +42,23 @@ export class RoomComponent implements OnInit, OnDestroy {
         console.log('onSelect' + room)
     }
 
-    onCreate() {
-        console.log('onCreate')
+    eventEmitted(event: ListTemplateEvent) {
+        switch (event) {
+            case ListTemplateEvent.createButtonClicked:
+                this.onCreate()
+        }
+    }
 
+    private onCreate() {
         const dialogRef = RoomAddComponent.instance(this.dialog, {label: '', description: '', capacity: 0})
 
-        this.subs.push(dialogRef.afterClosed().subscribe(roomProtocol => {
-            if (roomProtocol) { // TODO capacity can be null. proper error handling
-                this.subs.push(this.roomService.create(roomProtocol)
-                    .subscribe({next: this.create.bind(this), error: this.showError.bind(this)})
-                )
-            }
-        }))
+        this.subscribe(
+            dialogRef.afterClosed(),
+            p => this.subscribe(
+                this.roomService.create(p),
+                this.create.bind(this)
+            )
+        )
     }
 
     onEdit(room) {
@@ -67,33 +68,31 @@ export class RoomComponent implements OnInit, OnDestroy {
     onDelete(room) {
         const dialogRef = DeleteComponent.instance(this.dialog, {label: room.label, id: room.id})
 
-        this.subs.push(dialogRef.afterClosed().subscribe(id => {
-            if (id) {
-                this.subs.push(this.roomService.delete(id)
-                    .subscribe({next: this.delete.bind(this), error: this.showError.bind(this)})
-                )
+        this.subscribe(
+            dialogRef.afterClosed(),
+            id => this.subscribe(
+                this.roomService.delete(id),
+                this.delete.bind(this)
+            )
+        )
+    }
+
+    private subscribe<T>(observable: Observable<T>, next: (T) => void) {
+        this.subs.push(observable.subscribe(e => {
+            if (e) {
+                next(e)
             }
         }))
     }
 
     private create(room: Room[]) {
         this.dataSource.data = this.dataSource.data.concat(room)
-        this.showMessage('created: ' + room.map(r => r.label).join(', '), false)
+        this.alertService.addAlert('success', 'created: ' + room.map(r => r.label).join(', '))
     }
 
     private delete(room: Room) {
         this.dataSource.data = this.dataSource.data.filter(r => r.id !== room.id)
-        this.showMessage('deleted: ' + room.label, false)
-    }
-
-    private showMessage(message: string, isError: boolean) {
-        this._snackBar.open(message, undefined, {
-            duration: isError ? 5000 : 2000,
-        })
-    }
-
-    private showError(error: LWMError) {
-        this.showMessage(error.message(), true)
+        this.alertService.addAlert('success', 'deleted: ' + room.label)
     }
 
     private sortBy(label: string, ordering: SortDirection = 'asc') {

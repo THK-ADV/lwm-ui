@@ -8,6 +8,7 @@ import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
 import {CourseAtom} from '../models/courseAtom.model'
 import {KeycloakService} from 'keycloak-angular'
+import {AlertService} from '../services/alert.service'
 
 @Component({
     selector: 'app-nav',
@@ -27,7 +28,8 @@ export class NavComponent implements OnInit, OnDestroy {
         media: MediaMatcher,
         private authorityService: AuthorityService,
         private tokenService: KeycloakTokenService,
-        private keycloakService: KeycloakService
+        private keycloakService: KeycloakService,
+        private alertService: AlertService
     ) {
         this.moduleAuthorities = []
         this.roleAuthorities = []
@@ -86,5 +88,9 @@ export class NavComponent implements OnInit, OnDestroy {
 
     logout(): void {
         this.keycloakService.logout().then() // TODO move to service
+    }
+
+    linkClicked() {
+        this.alertService.reset()
     }
 }

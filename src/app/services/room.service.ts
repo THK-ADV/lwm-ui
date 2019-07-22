@@ -2,7 +2,13 @@ import {Injectable} from '@angular/core'
 import {Observable} from 'rxjs'
 import {Room} from '../models/room.model'
 import {HttpService} from './http.service'
-import {RoomProtocol} from '../rooms/room.component'
+
+export interface RoomProtocol {
+    label: string
+    description: string
+    capacity: number
+}
+
 
 @Injectable({
     providedIn: 'root'

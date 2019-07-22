@@ -2,12 +2,11 @@ import {Injectable} from '@angular/core'
 import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
 import {catchError, map, tap} from 'rxjs/operators'
+import {AlertService} from './alert.service'
 
 export interface LWMError {
     status: number
-    msg: string
-
-    message(): string
+    message: string
 }
 
 export interface CreationResponse<T> {
@@ -23,12 +22,12 @@ export interface CreationResponse<T> {
 
 export class HttpService {
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient, private alertService: AlertService) {
     }
 
     private handleError = (error: HttpErrorResponse): Observable<never> => throwError(this.makeErrorMessage(error))
 
-    private makeErrorMessage = (error: HttpErrorResponse): LWMError => {
+    private makeErrorMessage = (error: HttpErrorResponse): LWMError => { // TODO move to error service
         if (error.error instanceof ErrorEvent) {
             // A client-side or network error occurred. Handle it accordingly.
             console.error('An error occurred:', error.error.message)
@@ -41,7 +40,11 @@ export class HttpService {
 
         const status = error.status
         const msg = error.error.message
-        return {status: status, msg: msg, message: () => msg + ' (Status Code: ' + status + ')'}
+        const lwmError = {status: status, message: msg}
+
+        this.alertService.reportError(lwmError)
+
+        return lwmError
     }
 
     get<T>(url: string): Observable<T> {

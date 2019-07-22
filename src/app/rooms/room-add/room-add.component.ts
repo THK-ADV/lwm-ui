@@ -1,6 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {RoomProtocol} from '../room.component'
+import {RoomProtocol} from '../../services/room.service'
 
 @Component({
     selector: 'app-room-add',
@@ -10,6 +10,7 @@ import {RoomProtocol} from '../room.component'
 export class RoomAddComponent implements OnInit {
 
     constructor(public dialogRef: MatDialogRef<RoomAddComponent>, @Inject(MAT_DIALOG_DATA) public room: RoomProtocol) {
+
     }
 
     static instance(dialog: MatDialog, room: RoomProtocol): MatDialogRef<RoomAddComponent, any> {

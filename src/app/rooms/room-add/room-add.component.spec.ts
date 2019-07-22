@@ -19,7 +19,7 @@ describe('RoomAddComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should emitter', () => {
     expect(component).toBeTruthy();
   });
 });

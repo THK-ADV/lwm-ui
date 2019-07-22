@@ -28,6 +28,8 @@ import {CoursesComponent} from './courses/courses.component'
 import {RoomComponent} from './rooms/room.component'
 import {DeleteComponent} from './shared_modals/delete/delete.component'
 import {RoomAddComponent} from './rooms/room-add/room-add.component'
+import {ListTemplateComponent} from './list-template/list-template.component'
+import {ErrorComponent} from './error/error.component'
 
 @NgModule({
     declarations: [
@@ -39,7 +41,9 @@ import {RoomAddComponent} from './rooms/room-add/room-add.component'
         CoursesComponent,
         RoomComponent,
         DeleteComponent,
-        RoomAddComponent
+        RoomAddComponent,
+        ListTemplateComponent,
+        ErrorComponent
     ],
     imports: [
         BrowserModule,
