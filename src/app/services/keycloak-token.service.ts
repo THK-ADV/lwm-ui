@@ -21,7 +21,7 @@ export class KeycloakTokenService {
 
     get(key: KeycloakTokenKey): string | undefined {
         const token = this.keycloak.getKeycloakInstance().tokenParsed
-
+        
         if (token) {
             return token[key]
         } else {

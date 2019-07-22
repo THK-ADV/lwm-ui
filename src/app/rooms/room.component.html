@@ -1,5 +1,11 @@
 <h1>Räume</h1>
 
+<p>
+    <button mat-flat-button (click)="onCreate()">
+        <mat-icon>build</mat-icon>
+    </button>
+</p>
+
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
     <ng-container matColumnDef="label">

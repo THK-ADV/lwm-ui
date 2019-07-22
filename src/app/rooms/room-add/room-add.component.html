@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Raumerstellung</h1>
+<div mat-dialog-content>
+    <p>Bezeichnung</p>
+    <mat-form-field>
+        <input matInput [(ngModel)]="room.label">
+    </mat-form-field>
+
+    <p>Beschreibung</p>
+    <mat-form-field>
+        <input matInput [(ngModel)]="room.description">
+    </mat-form-field>
+
+    <p>Kapazität</p>
+    <mat-form-field>
+        <input matInput type="number" [(ngModel)]="room.capacity">
+    </mat-form-field>
+</div>
+<div mat-dialog-actions>
+    <button mat-button (click)="onNoClick()">Abbrechen</button>
+    <button mat-button [mat-dialog-close]="room" cdkFocusInitial>Erstellen</button>
+</div>

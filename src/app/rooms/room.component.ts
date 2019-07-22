@@ -7,6 +7,13 @@ import {MatDialog, MatSnackBar} from '@angular/material'
 import {DeleteComponent} from '../shared_modals/delete/delete.component'
 import {Room} from '../models/room.model'
 import {LWMError} from '../services/http.service'
+import {RoomAddComponent} from './room-add/room-add.component'
+
+export interface RoomProtocol {
+    label: string
+    description: string
+    capacity: number
+}
 
 @Component({
     selector: 'app-room',
@@ -15,8 +22,7 @@ import {LWMError} from '../services/http.service'
 })
 export class RoomComponent implements OnInit, OnDestroy {
 
-    private roomGetSub: Subscription
-    private roomDeleteSub: Subscription
+    private subs: Subscription[]
 
     private displayedColumns: string[] = ['label', 'description', 'capacity', 'action']
     private dataSource = new MatTableDataSource<Room>()
@@ -24,34 +30,55 @@ export class RoomComponent implements OnInit, OnDestroy {
     @ViewChild(MatSort, {static: true}) sort: MatSort
 
     constructor(private roomService: RoomService, private dialog: MatDialog, private _snackBar: MatSnackBar) {
+        this.subs = []
     }
 
     ngOnInit() {
         this.dataSource.sort = this.sort
 
-        this.roomGetSub = this.roomService.getRooms().subscribe(rooms => {
+        this.subs.push(this.roomService.getRooms().subscribe(rooms => {
             this.dataSource.data = rooms
             this.sortBy('description')
-        })
+        }))
     }
 
     onSelect(room) {
-        console.log('select' + room)
+        console.log('onSelect' + room)
+    }
+
+    onCreate() {
+        console.log('onCreate')
+
+        const dialogRef = RoomAddComponent.instance(this.dialog, {label: '', description: '', capacity: 0})
+
+        this.subs.push(dialogRef.afterClosed().subscribe(roomProtocol => {
+            if (roomProtocol) { // TODO capacity can be null. proper error handling
+                this.subs.push(this.roomService.create(roomProtocol)
+                    .subscribe({next: this.create.bind(this), error: this.showError.bind(this)})
+                )
+            }
+        }))
     }
 
     onEdit(room) {
-        console.log('edit' + room)
+        console.log('onEdit' + room)
     }
 
     onDelete(room) {
         const dialogRef = DeleteComponent.instance(this.dialog, {label: room.label, id: room.id})
 
-        dialogRef.afterClosed().subscribe(id => {
+        this.subs.push(dialogRef.afterClosed().subscribe(id => {
             if (id) {
-                this.roomDeleteSub = this.roomService.delete(id)
+                this.subs.push(this.roomService.delete(id)
                     .subscribe({next: this.delete.bind(this), error: this.showError.bind(this)})
+                )
             }
-        })
+        }))
+    }
+
+    private create(room: Room[]) {
+        this.dataSource.data = this.dataSource.data.concat(room)
+        this.showMessage('created: ' + room.map(r => r.label).join(', '), false)
     }
 
     private delete(room: Room) {
@@ -77,7 +104,6 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.roomGetSub.unsubscribe()
-        this.roomDeleteSub.unsubscribe()
+        this.subs.forEach(s => s.unsubscribe())
     }
 }

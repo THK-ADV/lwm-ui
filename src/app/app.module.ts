@@ -27,6 +27,7 @@ import {LWMMaterialModule} from './app.material.module'
 import {CoursesComponent} from './courses/courses.component'
 import {RoomComponent} from './rooms/room.component'
 import {DeleteComponent} from './shared_modals/delete/delete.component'
+import {RoomAddComponent} from './rooms/room-add/room-add.component'
 
 @NgModule({
     declarations: [
@@ -37,7 +38,8 @@ import {DeleteComponent} from './shared_modals/delete/delete.component'
         NavComponent,
         CoursesComponent,
         RoomComponent,
-        DeleteComponent
+        DeleteComponent,
+        RoomAddComponent
     ],
     imports: [
         BrowserModule,
@@ -65,7 +67,7 @@ import {DeleteComponent} from './shared_modals/delete/delete.component'
         {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
     ],
     bootstrap: [AppComponent],
-    entryComponents: [DeleteComponent]
+    entryComponents: [DeleteComponent, RoomAddComponent]
 })
 export class AppModule {
 }
