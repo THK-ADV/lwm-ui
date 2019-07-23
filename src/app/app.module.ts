@@ -26,10 +26,10 @@ import {NavComponent} from './nav/nav.component'
 import {LWMMaterialModule} from './app.material.module'
 import {CoursesComponent} from './courses/courses.component'
 import {RoomComponent} from './rooms/room.component'
-import {DeleteComponent} from './shared_modals/delete/delete.component'
-import {RoomAddComponent} from './rooms/room-add/room-add.component'
+import {DeleteComponent} from './shared-dialogs/delete/delete.component'
+import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
 import {ListTemplateComponent} from './list-template/list-template.component'
-import {ErrorComponent} from './error/error.component'
+import {AlertComponent} from './alert/alert.component'
 
 @NgModule({
     declarations: [
@@ -41,9 +41,9 @@ import {ErrorComponent} from './error/error.component'
         CoursesComponent,
         RoomComponent,
         DeleteComponent,
-        RoomAddComponent,
+        CreateUpdateDialogComponent,
         ListTemplateComponent,
-        ErrorComponent
+        AlertComponent
     ],
     imports: [
         BrowserModule,
@@ -71,7 +71,7 @@ import {ErrorComponent} from './error/error.component'
         {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
     ],
     bootstrap: [AppComponent],
-    entryComponents: [DeleteComponent, RoomAddComponent]
+    entryComponents: [DeleteComponent, CreateUpdateDialogComponent]
 })
 export class AppModule {
 }

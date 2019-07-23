@@ -11,7 +11,7 @@ export interface Alert {
 @Injectable({
     providedIn: 'root'
 })
-export class AlertService {
+export class AlertService { // TODO dismiss after a few seconds
 
     private alerts: Alert[]
 
@@ -19,12 +19,12 @@ export class AlertService {
         this.reset()
     }
 
-    addAlert(type: AlertType, message: string) {
+    reportAlert(type: AlertType, message: string) {
         this.alerts.push({type: type, message: message})
     }
 
     reportError(error: LWMError) {
-        this.addAlert('danger', `${error.message} (status: ${error.status})`)
+        this.reportAlert('danger', `${error.message} (status: ${error.status})`)
     }
 
     getAlerts(): Alert[] {

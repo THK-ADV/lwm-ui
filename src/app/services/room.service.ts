@@ -32,7 +32,7 @@ export class RoomService {
         return this.http.create(this.path, room)
     }
 
-    update(room: RoomProtocol, id: string) { // TODO update fails with 'model already exists error' when label is attempted to be updated
-
+    update(room: RoomProtocol, id: string): Observable<Room> {
+        return this.http.put(this.path, id, room)
     }
 }

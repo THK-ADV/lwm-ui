@@ -15,7 +15,6 @@ export class ListTemplateComponent {
     @Output() emitter: EventEmitter<ListTemplateEvent> = new EventEmitter()
 
     onCreate() {
-        console.log('onCreate')
         this.emitter.emit(ListTemplateEvent.createButtonClicked)
     }
 }

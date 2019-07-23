@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http'
+import {HttpClient, HttpErrorResponse} from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
 import {catchError, map, tap} from 'rxjs/operators'
 import {AlertService} from './alert.service'
@@ -27,10 +27,10 @@ export class HttpService {
 
     private handleError = (error: HttpErrorResponse): Observable<never> => throwError(this.makeErrorMessage(error))
 
-    private makeErrorMessage = (error: HttpErrorResponse): LWMError => { // TODO move to error service
+    private makeErrorMessage = (error: HttpErrorResponse): LWMError => { // TODO move to alert service
         if (error.error instanceof ErrorEvent) {
-            // A client-side or network error occurred. Handle it accordingly.
-            console.error('An error occurred:', error.error.message)
+            // A client-side or network alert occurred. Handle it accordingly.
+            console.error('An alert occurred:', error.error.message)
         } else {
             // The backend returned an unsuccessful response code.
             // The response body may contain clues as to what went wrong,
@@ -57,16 +57,25 @@ export class HttpService {
             .pipe(catchError(this.handleError))
     }
 
-    create<I, O>(url: string, ...element: I[]): Observable<O[]> {
+    create<I, O>(url: string, ...element: I[]): Observable<O[]> { // TODO change to single creation
         return this.http.post<CreationResponse<O>>(url, element)
             .pipe(
                 catchError(this.handleError),
                 tap(r => {
+                    console.log('status: ', r.status)
                     console.log('attempted: ', r.attempted)
                     console.log('created: ', r.created)
                     console.log('failed: ', r.failed)
                 }),
                 map(r => r.created as O[])
+            )
+    }
+
+    put<I, O>(url: string, id: string, element: I): Observable<O> {
+        return this.http.put<O>(`${url}/${id}`, element)
+            .pipe(
+                catchError(this.handleError),
+                tap(r => console.log('put resp: ', r))
             )
     }
 }

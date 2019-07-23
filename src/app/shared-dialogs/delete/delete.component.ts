@@ -1,5 +1,6 @@
 import {Component, Inject, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {DIALOG_WIDTH} from '../dialog-constants'
 
 interface DialogData {
     label: string
@@ -17,7 +18,7 @@ export class DeleteComponent implements OnInit {
 
     static instance(dialog: MatDialog, data: DialogData): MatDialogRef<DeleteComponent, any> {
         return dialog.open(DeleteComponent, {
-            width: '250px',
+            width: DIALOG_WIDTH,
             data: data
         })
     }

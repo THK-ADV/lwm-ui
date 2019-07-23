@@ -1,14 +1,24 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {RoomService} from '../services/room.service'
+import {RoomProtocol, RoomService} from '../services/room.service'
 import {MatSort, Sort, SortDirection} from '@angular/material/sort'
 import {MatTableDataSource} from '@angular/material/table'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
-import {DeleteComponent} from '../shared_modals/delete/delete.component'
+import {DeleteComponent} from '../shared-dialogs/delete/delete.component'
 import {Room} from '../models/room.model'
-import {RoomAddComponent} from './room-add/room-add.component'
+import {
+    CreateUpdateDialogComponent,
+    FormInputData,
+    FormOutputData,
+    FormPayload
+} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {ListTemplateEvent} from '../list-template/list-template.component'
 import {AlertService} from '../services/alert.service'
+import {Validators} from '@angular/forms'
+
+enum DialogMode {
+    edit, create
+}
 
 @Component({
     selector: 'app-room',
@@ -32,14 +42,14 @@ export class RoomComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.dataSource.sort = this.sort
 
-        this.subs.push(this.roomService.getRooms().subscribe(rooms => {
+        this.subscribe(this.roomService.getRooms(), rooms => {
             this.dataSource.data = rooms
             this.sortBy('description')
-        }))
+        })
     }
 
-    onSelect(room) {
-        console.log('onSelect' + room)
+    ngOnDestroy(): void {
+        this.subs.forEach(s => s.unsubscribe())
     }
 
     eventEmitted(event: ListTemplateEvent) {
@@ -49,20 +59,16 @@ export class RoomComponent implements OnInit, OnDestroy {
         }
     }
 
-    private onCreate() {
-        const dialogRef = RoomAddComponent.instance(this.dialog, {label: '', description: '', capacity: 0})
-
-        this.subscribe(
-            dialogRef.afterClosed(),
-            p => this.subscribe(
-                this.roomService.create(p),
-                this.create.bind(this)
-            )
-        )
+    onSelect(room) {
+        this.onEdit(room)
     }
 
     onEdit(room) {
-        console.log('onEdit' + room)
+        this.openDialog(
+            DialogMode.edit,
+            room,
+            updatedRoom => this.subscribe(this.roomService.update(updatedRoom, room.id), this.afterUpdate.bind(this))
+        )
     }
 
     onDelete(room) {
@@ -72,9 +78,77 @@ export class RoomComponent implements OnInit, OnDestroy {
             dialogRef.afterClosed(),
             id => this.subscribe(
                 this.roomService.delete(id),
-                this.delete.bind(this)
+                this.afterDelete.bind(this)
             )
         )
+    }
+
+    private onCreate() {
+        this.openDialog(
+            DialogMode.create,
+            {label: '', description: '', capacity: 0},
+            room => this.subscribe(this.roomService.create(room), this.afterCreate.bind(this))
+        )
+    }
+
+    private dialogTitle(mode: DialogMode): string {
+        switch (mode) {
+            case DialogMode.create:
+                return 'Raum erstellen'
+            case DialogMode.edit:
+                return 'Raum bearbeiten'
+        }
+    }
+
+    private dialogSubmitTitle(mode: DialogMode): string {
+        switch (mode) {
+            case DialogMode.create:
+                return 'Erstellen'
+            case DialogMode.edit:
+                return 'Aktualisieren'
+        }
+    }
+
+    private openDialog<T>(mode: DialogMode, room: Room | RoomProtocol, next: (T) => void) {
+        const isRoom = 'id' in room
+
+        const inputData: FormInputData[] = [
+            {
+                formControlName: 'label',
+                placeholder: 'Bezeichnung',
+                type: 'text',
+                isDisabled: isRoom,
+                validator: Validators.required,
+                value: room.label
+            },
+            {
+                formControlName: 'description',
+                placeholder: 'Beschreibung',
+                type: 'text',
+                isDisabled: false,
+                validator: Validators.required,
+                value: room.description
+            },
+            {
+                formControlName: 'capacity',
+                placeholder: 'Kapazität',
+                type: 'number',
+                isDisabled: false,
+                validator: [Validators.required, Validators.min(0)],
+                value: room.capacity
+            }
+        ]
+
+        const payload: FormPayload = {
+            headerTitle: this.dialogTitle(mode),
+            submitTitle: this.dialogSubmitTitle(mode),
+            data: inputData,
+            builder: outputData => isRoom ? this.updateRoom(room as Room, outputData) : this.createRoom(room, outputData)
+        }
+
+        const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
+
+        this.subscribe(dialogRef.afterClosed(), next)
     }
 
     private subscribe<T>(observable: Observable<T>, next: (T) => void) {
@@ -85,14 +159,27 @@ export class RoomComponent implements OnInit, OnDestroy {
         }))
     }
 
-    private create(room: Room[]) {
-        this.dataSource.data = this.dataSource.data.concat(room)
-        this.alertService.addAlert('success', 'created: ' + room.map(r => r.label).join(', '))
+    private createRoom(room: RoomProtocol, data: FormOutputData[]): RoomProtocol {
+        data.forEach(d => room[d.formControlName] = d.value)
+        return room
     }
 
-    private delete(room: Room) {
+    private updateRoom(room: Room, data: FormOutputData[]): Room {
+        return this.createRoom(room, data) as Room
+    }
+
+    private afterUpdate(room: Room) {
+        this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(room))
+    }
+
+    private afterCreate(room: Room[]) {
+        this.dataSource.data = this.dataSource.data.concat(room)
+        this.alertService.reportAlert('success', 'created: ' + room.map(JSON.stringify.bind(this)).join(', '))
+    }
+
+    private afterDelete(room: Room) {
         this.dataSource.data = this.dataSource.data.filter(r => r.id !== room.id)
-        this.alertService.addAlert('success', 'deleted: ' + room.label)
+        this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(room))
     }
 
     private sortBy(label: string, ordering: SortDirection = 'asc') {
@@ -100,9 +187,5 @@ export class RoomComponent implements OnInit, OnDestroy {
         this.sort.active = sortState.active
         this.sort.direction = sortState.direction
         this.sort.sortChange.emit(sortState)
-    }
-
-    ngOnDestroy(): void {
-        this.subs.forEach(s => s.unsubscribe())
     }
 }
