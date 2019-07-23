@@ -1,15 +1,16 @@
 import {Component, OnInit} from '@angular/core'
 
 @Component({
-  selector: 'app-degree',
-  templateUrl: './degree.component.html',
-  styleUrls: ['./degree.component.scss']
+    selector: 'app-degree',
+    templateUrl: '../abstract-crud/abstract-crud.component.html',
+    styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
 export class DegreeComponent implements OnInit {
 
-  constructor() { }
+    constructor() {
+    }
 
-  ngOnInit() {
-  }
+    ngOnInit() {
+    }
 
 }
