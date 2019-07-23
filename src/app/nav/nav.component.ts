@@ -1,14 +1,14 @@
-import { MediaMatcher } from '@angular/cdk/layout'
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core'
-import { Subscription } from 'rxjs'
-import { AuthorityAtom } from '../models/authorityAtom.model'
-import { AuthorityService } from '../services/authority.service'
-import { KeycloakTokenKey, KeycloakTokenService } from '../services/keycloak-token.service'
-import { Config } from '../models/config.model'
-import { User } from '../models/user.model'
-import { CourseAtom } from '../models/courseAtom.model'
-import { UserService } from '../services/user.service';
-import { escapeRegExp } from '@angular/compiler/src/util';
+import {MediaMatcher} from '@angular/cdk/layout'
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core'
+import {Subscription} from 'rxjs'
+import {AuthorityAtom} from '../models/authorityAtom.model'
+import {AuthorityService} from '../services/authority.service'
+import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
+import {Config} from '../models/config.model'
+import {User} from '../models/user.model'
+import {CourseAtom} from '../models/courseAtom.model'
+import {KeycloakService} from 'keycloak-angular'
+import {AlertService} from '../services/alert.service'
 
 @Component({
     selector: 'app-nav',
@@ -28,7 +28,8 @@ export class NavComponent implements OnInit, OnDestroy {
         media: MediaMatcher,
         private authorityService: AuthorityService,
         private tokenService: KeycloakTokenService,
-        private userService: UserService
+        private keycloakService: KeycloakService,
+        private alertService: AlertService
     ) {
         this.moduleAuthorities = []
         this.roleAuthorities = []
@@ -65,10 +66,11 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     getInitials(): string {
-        if (this.user)
-            return this.userService.getInitials(this.user)
-        else
-            return 'na'
+        if (this.user) {
+            return this.user.firstname.substring(0, 1).toUpperCase() + this.user.lastname.substring(0, 1).toUpperCase()
+        } else {
+            return 'n.a'
+        }
     }
 
     ngOnInit(): void {
@@ -85,6 +87,10 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     logout(): void {
-        alert('logging out') // TODO
+        this.keycloakService.logout().then() // TODO move to service
+    }
+
+    linkClicked() {
+        this.alertService.reset()
     }
 }
