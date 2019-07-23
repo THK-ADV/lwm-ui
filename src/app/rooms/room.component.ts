@@ -4,7 +4,7 @@ import {MatSort, Sort, SortDirection} from '@angular/material/sort'
 import {MatTableDataSource} from '@angular/material/table'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
-import {DeleteComponent} from '../shared-dialogs/delete/delete.component'
+import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {Room} from '../models/room.model'
 import {
     CreateUpdateDialogComponent,
@@ -72,7 +72,7 @@ export class RoomComponent implements OnInit, OnDestroy {
     }
 
     onDelete(room) {
-        const dialogRef = DeleteComponent.instance(this.dialog, {label: room.label, id: room.id})
+        const dialogRef = DeleteDialogComponent.instance(this.dialog, {label: room.label, id: room.id})
 
         this.subscribe(
             dialogRef.afterClosed(),

@@ -26,7 +26,7 @@ import {NavComponent} from './nav/nav.component'
 import {LWMMaterialModule} from './app.material.module'
 import {CoursesComponent} from './courses/courses.component'
 import {RoomComponent} from './rooms/room.component'
-import {DeleteComponent} from './shared-dialogs/delete/delete.component'
+import {DeleteDialogComponent} from './shared-dialogs/delete/delete-dialog.component'
 import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
 import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
@@ -40,7 +40,7 @@ import {AlertComponent} from './alert/alert.component'
         NavComponent,
         CoursesComponent,
         RoomComponent,
-        DeleteComponent,
+        DeleteDialogComponent,
         CreateUpdateDialogComponent,
         ListTemplateComponent,
         AlertComponent
@@ -71,7 +71,7 @@ import {AlertComponent} from './alert/alert.component'
         {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
     ],
     bootstrap: [AppComponent],
-    entryComponents: [DeleteComponent, CreateUpdateDialogComponent]
+    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent]
 })
 export class AppModule {
 }
