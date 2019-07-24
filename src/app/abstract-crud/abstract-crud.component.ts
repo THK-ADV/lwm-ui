@@ -2,7 +2,6 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
 import {AlertService} from '../services/alert.service'
-import {AbstractCRUDService} from '../services/room.service'
 import {
     CreateUpdateDialogComponent,
     FormInputData,
@@ -10,6 +9,8 @@ import {
     FormPayload
 } from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
+import {AbstractCRUDService} from './abstract-crud.service'
+import {exists} from '../utils/functions'
 
 enum DialogMode {
     edit, create
@@ -23,6 +24,8 @@ export interface TableHeaderColumn {
     attr: string
     title: string
 }
+
+export type Action = 'create' | 'update' | 'delete'
 
 @Component({
     selector: 'app-abstract-crud',
@@ -44,13 +47,14 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly dialog: MatDialog,
         protected readonly alertService: AlertService,
         protected readonly columns: TableHeaderColumn[],
-        protected readonly sortDescriptor: string,
+        protected readonly actions: Action[],
+        protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
         protected readonly modelName: string,
         protected readonly headerTitle: string,
         protected readonly inputData: (data: Protocol | Model, isModel: boolean) => FormInputData[],
         protected readonly titleForDeleteDialog: (model: Model) => string
     ) {
-        this.displayedColumns = columns.map(c => c.attr).concat('action')
+        this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
     }
 
     ngOnInit() {
@@ -64,6 +68,18 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
+    }
+
+    private canCreate(): boolean {
+        return exists(this.actions, a => a === 'create')
+    }
+
+    private canEdit(): boolean {
+        return exists(this.actions, a => a === 'update')
+    }
+
+    private canDelete(): boolean {
+        return exists(this.actions, a => a === 'delete')
     }
 
     private onSelect(model) {

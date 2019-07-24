@@ -1,11 +1,11 @@
 import {Component} from '@angular/core'
-import {RoomProtocol, RoomService} from '../services/room.service'
 import {MatDialog} from '@angular/material'
-import {Room} from '../models/room.model'
+import {Room, RoomProtocol} from '../models/room.model'
 import {AlertService} from '../services/alert.service'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {Validators} from '@angular/forms'
 import {FormInputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {RoomService} from '../services/room.service'
 
 @Component({
     selector: 'app-room',
@@ -56,7 +56,8 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             dialog,
             alertService,
             RoomComponent.columns(),
-            'description',
+            ['create', 'update', 'delete'],
+            'label',
             'Raum',
             'Räume',
             RoomComponent.inputData,
