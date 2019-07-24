@@ -12,7 +12,7 @@ import {DegreeService} from '../services/degree.service'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> { // TODO add is now allowed
+export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> {
 
     static columns(): TableHeaderColumn[] { // TODO unify columns, formControls and empty somehow
         return [
