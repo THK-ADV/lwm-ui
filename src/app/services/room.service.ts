@@ -1,26 +1,20 @@
 import {Injectable} from '@angular/core'
 import {Observable} from 'rxjs'
-import {Room} from '../models/room.model'
+import {Room, RoomProtocol} from '../models/room.model'
 import {HttpService} from './http.service'
-
-export interface RoomProtocol {
-    label: string
-    description: string
-    capacity: number
-}
-
+import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 
 @Injectable({
     providedIn: 'root'
 })
-export class RoomService {
+export class RoomService implements AbstractCRUDService<RoomProtocol, Room> {
 
     constructor(private http: HttpService) {
     }
 
     private path = 'rooms'
 
-    getRooms(): Observable<Room[]> {
+    get(): Observable<Room[]> {
         return this.http.get(this.path)
     }
 

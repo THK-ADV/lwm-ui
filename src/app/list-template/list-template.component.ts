@@ -9,7 +9,7 @@ export enum ListTemplateEvent {
     templateUrl: './list-template.component.html',
     styleUrls: ['./list-template.component.scss']
 })
-export class ListTemplateComponent {
+export class ListTemplateComponent { // FIXME currently unused
 
     @Input() headerTitle: string
     @Output() emitter: EventEmitter<ListTemplateEvent> = new EventEmitter()

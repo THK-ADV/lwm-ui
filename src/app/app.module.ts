@@ -30,6 +30,8 @@ import {DeleteDialogComponent} from './shared-dialogs/delete/delete-dialog.compo
 import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
 import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
+import {DegreeComponent} from './degrees/degree.component'
+import {AbstractCRUDComponent} from './abstract-crud/abstract-crud.component'
 
 @NgModule({
     declarations: [
@@ -43,7 +45,9 @@ import {AlertComponent} from './alert/alert.component'
         DeleteDialogComponent,
         CreateUpdateDialogComponent,
         ListTemplateComponent,
-        AlertComponent
+        AlertComponent,
+        DegreeComponent,
+        AbstractCRUDComponent
     ],
     imports: [
         BrowserModule,
