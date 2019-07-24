@@ -32,6 +32,7 @@ import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
 import {DegreeComponent} from './degrees/degree.component'
 import {AbstractCRUDComponent} from './abstract-crud/abstract-crud.component'
+import {SemestersComponent} from './semesters/semesters.component'
 
 @NgModule({
     declarations: [
@@ -47,7 +48,8 @@ import {AbstractCRUDComponent} from './abstract-crud/abstract-crud.component'
         ListTemplateComponent,
         AlertComponent,
         DegreeComponent,
-        AbstractCRUDComponent
+        AbstractCRUDComponent,
+        SemestersComponent
     ],
     imports: [
         BrowserModule,
