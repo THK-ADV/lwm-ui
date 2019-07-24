@@ -6,6 +6,7 @@ import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {Degree, DegreeProtocol} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
+import {zip} from 'rxjs'
 
 @Component({
     selector: 'app-degree',
@@ -15,6 +16,7 @@ import {DegreeService} from '../services/degree.service'
 export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> {
 
     static columns(): TableHeaderColumn[] { // TODO unify columns, formControls and empty somehow
+        zip()
         return [
             {attr: 'label', title: 'Bezeichnung'},
             {attr: 'abbreviation', title: 'Abkürzung'}
@@ -52,7 +54,8 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
             'Studiengang',
             'Studiengänge',
             DegreeComponent.inputData,
-            model => model.label
+            model => model.label,
+            (model, attr) => model[attr]
         )
 
         this.service = degreeService // super.init does not allow types which are generic

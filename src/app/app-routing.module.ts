@@ -9,6 +9,7 @@ import { DashboardGuard } from './guards/dashboard.guard'
 import { CoursesComponent } from './courses/courses.component'
 import { RoomComponent } from './rooms/room.component';
 import {DegreeComponent} from './degrees/degree.component'
+import {SemestersComponent} from './semesters/semesters.component'
 
 const routes: Routes = [
     {
@@ -39,7 +40,7 @@ const routes: Routes = [
             },
             {
                 path: 'semesters',
-                component: EntryPageComponent
+                component: SemestersComponent
             },
             {
                 path: '',

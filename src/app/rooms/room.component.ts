@@ -61,7 +61,8 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             'Raum',
             'Räume',
             RoomComponent.inputData,
-            model => model.label
+            model => model.label,
+            (model, attr) => model[attr]
         )
 
         this.service = roomService // super.init does not allow types which are generic

@@ -52,7 +52,8 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly modelName: string,
         protected readonly headerTitle: string,
         protected readonly inputData: (data: Protocol | Model, isModel: boolean) => FormInputData[],
-        protected readonly titleForDeleteDialog: (model: Model) => string
+        protected readonly titleForDeleteDialog: (model: Model) => string,
+        protected readonly prepareTableContent: (model: Model, attr: string) => string
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
     }

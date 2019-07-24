@@ -3,7 +3,7 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
 import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
 
-type FormDataType = string | number // TODO extend
+type FormDataType = string | number | Date // TODO extend
 
 export interface FormInputData {
     formControlName: string

@@ -15,3 +15,13 @@ export const compose = <R>(fn1: (a: R) => R, ...fns: Array<(a: R) => R>) =>
 export function exists<T>(array: T[], p: (T) => boolean): boolean {
     return array.find(p) !== undefined
 }
+
+export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
+    if (first.length !== second.length) {
+        return []
+    }
+
+    return first.map((e, i) => {
+        return Object.assign(e, second[i])
+    })
+}
