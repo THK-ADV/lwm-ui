@@ -1,4 +1,87 @@
 /* You can add global styles to this file, and also import other style files */
+@import "./lwm.theme.config.scss";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+$btn-border-radius: 5px;
+$btn-border-width: 1px;
+$btn-spacing: 5px;
+
+
+/* global styles, not working in component's css */
+// magenta button 
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary,
+.mat-fab.mat-primary,
+.mat-mini-fab.mat-primary {
+  background-color: $th-magenta !important;
+  color: $ivory !important;
+}
+
+.mat-button.mat-primary {
+  color: $th-magenta !important;
+}
+
+.mat-stroked-button.mat-primary {
+  color: $th-magenta !important;
+  border: $btn-border-width solid $th-magenta !important;
+  border-radius: $btn-border-radius;
+  margin: $btn-spacing;
+}
+
+// orange button 
+.mat-flat-button.mat-secondary,
+.mat-raised-button.mat-secondary,
+.mat-fab.mat-secondary,
+.mat-mini-fab.mat-secondary,
+.mat-flat-button.mat-accent,
+.mat-raised-button.mat-accent,
+.mat-fab.mat-accent,
+.mat-mini-fab.mat-accent {
+  background-color: $th-orange !important;
+  color: $ivory !important;
+  margin: $btn-spacing;
+}
+
+.mat-button.mat-secondary,
+.mat-button.mat-accent {
+  color: $th-orange !important;
+  margin: $btn-spacing;
+}
+
+.mat-stroked-button.mat-secondary,
+.mat-stroked-button.mat-accent {
+  color: $th-orange !important;
+  border: $btn-border-width solid $th-orange !important;
+  border-radius: $btn-border-radius;
+  margin: $btn-spacing;
+}
+
+// red button 
+.mat-flat-button.mat-warn,
+.mat-raised-button.mat-warn,
+.mat-fab.mat-warn,
+.mat-mini-fab.mat-warn {
+  background-color: $th-red !important;
+  color: $ivory !important;
+  margin: $btn-spacing;
+}
+
+.mat-button.mat-warn {
+  color: $th-red !important;
+  margin: $btn-spacing;
+}
+
+.mat-stroked-button.mat-warn {
+  color: $th-red !important;
+  border: $btn-border-width solid $th-red !important;
+  border-radius: $btn-border-radius;
+  margin: $btn-spacing;
+}

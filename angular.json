@@ -28,8 +28,8 @@
             ],
             "styles": [
               "node_modules/bootstrap/scss/bootstrap.scss",
-              "src/lwm.theme.scss",
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/lwm.theme.scss"
             ],
             "scripts": []
           },
