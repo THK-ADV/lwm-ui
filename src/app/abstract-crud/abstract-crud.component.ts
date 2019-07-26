@@ -11,6 +11,7 @@ import {
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AbstractCRUDService} from './abstract-crud.service'
 import {exists} from '../utils/functions'
+import {ValidatorFn} from '@angular/forms'
 
 enum DialogMode {
     edit, create
@@ -53,7 +54,8 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInputData[],
         protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
         protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
-        protected readonly empty: () => Readonly<Protocol>
+        protected readonly empty: () => Readonly<Protocol>,
+        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
     }
@@ -114,11 +116,14 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     }
 
     private openDialog<T>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
+        const inputData = this.inputData(data, this.isModel(data))
+
         const payload: FormPayload = {
             headerTitle: this.dialogTitle(mode),
             submitTitle: this.dialogSubmitTitle(mode),
-            data: this.inputData(data, this.isModel(data)),
-            builder: outputData => this.isModel(data) ? this.update(data, outputData) : this.create(data, outputData)
+            data: inputData,
+            builder: outputData => this.isModel(data) ? this.update(data, outputData) : this.create(data, outputData),
+            composedFromGroupValidator: this.composedFromGroupValidator(inputData)
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
