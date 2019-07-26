@@ -13,12 +13,9 @@ import {SemesterService} from '../services/semester.service'
 })
 export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> {
 
-    static empty(): SemesterProtocol {
-        return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
-        // return this.columns().reduce<{}>(((initial, acc) => {
-        //     initial[acc.attr] = ''
-        //     return initial
-        // }), {}) as SemesterProtocol
+    static empty(): Readonly<SemesterProtocol> {
+        // return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
+        return {abbreviation: 'a', end: '', examStart: '', label: 'b', start: ''} // TODO for testing
     }
 
     static columns(): TableHeaderColumn[] { // TODO unify columns, formControls and empty somehow
@@ -27,7 +24,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
         })
     }
 
-    static inputData(model: SemesterProtocol | Semester, isModel: boolean): FormInputData[] {
+    static inputData(model: Readonly<SemesterProtocol | Semester>, isModel: boolean): FormInputData[] {
         return [
             {
                 formControlName: 'label',
@@ -48,7 +45,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             {
                 formControlName: 'start',
                 placeholder: 'Semesterstart',
-                type: 'text',
+                type: 'date',
                 isDisabled: isModel,
                 validator: Validators.required,
                 value: model.start
@@ -56,7 +53,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             {
                 formControlName: 'end',
                 placeholder: 'Semesterende',
-                type: 'text',
+                type: 'date',
                 isDisabled: isModel,
                 validator: Validators.required,
                 value: model.end
@@ -64,7 +61,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             {
                 formControlName: 'examStart',
                 placeholder: 'Beginn 1. Prüfungsphase',
-                type: 'text',
+                type: 'date',
                 isDisabled: isModel,
                 validator: Validators.required,
                 value: model.examStart
@@ -72,7 +69,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
         ]
     }
 
-    static prepareTableContent(semester: Semester, attr: string): string {
+    static prepareTableContent(semester: Readonly<Semester>, attr: string): string {
         const value = semester[attr]
 
         if (value instanceof Date) {
@@ -93,11 +90,11 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             'Semester',
             SemestersComponent.inputData,
             model => model.label,
-            SemestersComponent.prepareTableContent
+            SemestersComponent.prepareTableContent,
+            SemestersComponent.empty
         )
 
         this.service = semesterService // super.init does not allow types which are generic
-        this.empty = SemestersComponent.empty()
     }
 
 }

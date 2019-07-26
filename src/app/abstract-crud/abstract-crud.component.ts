@@ -37,7 +37,6 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     protected dataSource = new MatTableDataSource<Model>()
 
     protected service: AbstractCRUDService<Protocol, Model>
-    protected empty: Protocol
 
     private readonly displayedColumns: string[]
 
@@ -51,9 +50,10 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
         protected readonly modelName: string,
         protected readonly headerTitle: string,
-        protected readonly inputData: (data: Protocol | Model, isModel: boolean) => FormInputData[],
-        protected readonly titleForDeleteDialog: (model: Model) => string,
-        protected readonly prepareTableContent: (model: Model, attr: string) => string
+        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInputData[],
+        protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
+        protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
+        protected readonly empty: () => Readonly<Protocol>
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
     }
@@ -108,24 +108,26 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     private onCreate() {
         this.openDialog(
             DialogMode.create,
-            this.empty,
+            this.empty(),
             model => this.subscribe(this.service.create(model), this.afterCreate.bind(this))
         )
     }
 
     private openDialog<T>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
-        const isModel = 'id' in data
-
         const payload: FormPayload = {
             headerTitle: this.dialogTitle(mode),
             submitTitle: this.dialogSubmitTitle(mode),
-            data: this.inputData(data, isModel),
-            builder: outputData => isModel ? this.update(data as Model, outputData) : this.create(data as Protocol, outputData)
+            data: this.inputData(data, this.isModel(data)),
+            builder: outputData => this.isModel(data) ? this.update(data, outputData) : this.create(data, outputData)
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
 
         this.subscribe(dialogRef.afterClosed(), next)
+    }
+
+    private isModel(data: Model | Protocol): data is Model {
+        return (data as Model).id !== undefined
     }
 
     protected subscribe<T>(observable: Observable<T>, next: (T) => void) {

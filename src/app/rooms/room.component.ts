@@ -22,7 +22,7 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
         ]
     }
 
-    static inputData(model: RoomProtocol | Room, isRoom: boolean): FormInputData[] {
+    static inputData(model: Readonly<RoomProtocol | Room>, isRoom: boolean): FormInputData[] {
         return [
             {
                 formControlName: 'label',
@@ -62,10 +62,10 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             'Räume',
             RoomComponent.inputData,
             model => model.label,
-            (model, attr) => model[attr]
+            (model, attr) => model[attr],
+            () => ({label: '', description: '', capacity: 0})
         )
 
         this.service = roomService // super.init does not allow types which are generic
-        this.empty = {label: '', description: '', capacity: 0}
     }
 }

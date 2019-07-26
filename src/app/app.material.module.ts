@@ -9,7 +9,9 @@ import {
     MatSidenavModule,
     MatSortModule,
     MatTableModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatDatepickerModule,
+    MatNativeDateModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -28,7 +30,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatTableModule,
         MatSortModule,
         MatDialogModule,
-        MatSnackBarModule
+        MatSnackBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule
     ]
 })
 export class LWMMaterialModule {

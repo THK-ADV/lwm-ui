@@ -1,14 +1,16 @@
 import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
+import {FormBuilder, FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
+import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 
 type FormDataType = string | number | Date // TODO extend
+type FormDataStringType = 'text' | 'number' | 'date'
 
 export interface FormInputData {
     formControlName: string
     placeholder: string
-    type: 'text' | 'number'
+    type: FormDataStringType
     validator: ValidatorFn | ValidatorFn[]
     isDisabled: boolean
     value: FormDataType
@@ -29,11 +31,20 @@ export interface FormPayload {
 @Component({
     selector: 'app-create-update-dialog',
     templateUrl: './create-update-dialog.component.html',
-    styleUrls: ['./create-update-dialog.component.scss']
+    styleUrls: ['./create-update-dialog.component.scss'],
+    providers: LWMDateAdapter.defaultProviders()
 })
+
 export class CreateUpdateDialogComponent {
 
     private formGroup: FormGroup
+
+    static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
+        return dialog.open(CreateUpdateDialogComponent, {
+            width: DIALOG_WIDTH,
+            data: payload
+        })
+    }
 
     constructor(
         private dialogRef: MatDialogRef<CreateUpdateDialogComponent>,
@@ -50,13 +61,23 @@ export class CreateUpdateDialogComponent {
 
             this.formGroup.addControl(d.formControlName, fc)
         })
+
+        this.formGroup.validator = this.dateLessThan('start', 'end')
     }
 
-    static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
-        return dialog.open(CreateUpdateDialogComponent, {
-            width: DIALOG_WIDTH,
-            data: payload
-        })
+    private dateLessThan(start: string, end: string) {
+        return (group: FormGroup) => {
+            const startControl = group.controls[start]
+            const endControl = group.controls[end]
+
+            if (startControl.value >= endControl.value) { // TODO message is lost. update UI
+                endControl.setErrors({mustMatch: 'Date start should be less than Date end'})
+                return {mustMatch: 'Date start should be less than Date end'}
+            } else {
+                endControl.setErrors(null)
+                return {}
+            }
+        }
     }
 
     onCancel(): void {
@@ -65,19 +86,36 @@ export class CreateUpdateDialogComponent {
 
     onSubmit() {
         if (this.formGroup.valid) {
-            const values: FormOutputData[] = this.payload.data.map(d => {
-                const value = this.formGroup.controls[d.formControlName].value
-
-                switch (d.type) {
-                    case 'number':
-                        return {formControlName: d.formControlName, value: +value}
-                    case 'text':
-                        return {formControlName: d.formControlName, value: '' + value}
-                }
-            })
+            const values: FormOutputData[] = this.payload.data.map(d => ({
+                formControlName: d.formControlName,
+                value: this.convertToType(d.type, this.formGroup.controls[d.formControlName].value)
+            }))
 
             this.closeModal(this.payload.builder(values))
         }
+    }
+
+   /* private formcontrol(name: String): FormControl {
+        return this.formGroup.controls[name]
+    }*/
+
+    private convertToType(type: FormDataStringType, value: any): FormDataType {
+        switch (type) {
+            case 'number':
+                return +value
+            case 'text':
+                return '' + value
+            case 'date':
+                return new Date(this.convertToType('text', value))
+        }
+    }
+
+    private isStandardInput(data: FormInputData): boolean {
+        return data.type === 'number' || data.type === 'text'
+    }
+
+    private isDateInput(data: FormInputData): boolean {
+        return data.type === 'date'
     }
 
     private closeModal(result: any | undefined) {
