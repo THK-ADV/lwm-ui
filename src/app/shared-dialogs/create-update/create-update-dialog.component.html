@@ -1,15 +1,14 @@
 <h1 mat-dialog-title>{{payload.headerTitle}}</h1>
 
-<form [formGroup]="formGroup">
+<div class="modalContainer"> 
+<mat-dialog-content [formGroup]="formGroup">
+    <mat-form-field *ngFor="let d of payload.data" color="primary">
+        <input matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName">
+    </mat-form-field>
+</mat-dialog-content>
 
-    <div mat-dialog-content>
-        <mat-form-field *ngFor="let d of payload.data" color="primary" style="width: 100%">
-            <input matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName">
-        </mat-form-field>
-    </div>
-
-    <div mat-dialog-actions> <!-- style -->
-        <button mat-button (click)="onCancel()">Abbrechen</button>
-        <button mat-button (click)="onSubmit()" cdkFocusInitial>{{payload.submitTitle}}</button>
-    </div>
-</form>
+<mat-dialog-actions> 
+    <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+    <button mat-flat-button color="primary" (click)="onSubmit()" cdkFocusInitial>{{payload.submitTitle}}</button>
+</mat-dialog-actions>
+</div>

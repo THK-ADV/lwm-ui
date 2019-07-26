@@ -14,9 +14,8 @@ $btn-border-radius: 5px;
 $btn-border-width: 1px;
 $btn-spacing: 5px;
 
-
 /* global styles, not working in component's css */
-// magenta button 
+// magenta button
 .mat-flat-button.mat-primary,
 .mat-raised-button.mat-primary,
 .mat-fab.mat-primary,
@@ -36,7 +35,7 @@ $btn-spacing: 5px;
   margin: $btn-spacing;
 }
 
-// orange button 
+// orange button
 .mat-flat-button.mat-secondary,
 .mat-raised-button.mat-secondary,
 .mat-fab.mat-secondary,
@@ -59,12 +58,12 @@ $btn-spacing: 5px;
 .mat-stroked-button.mat-secondary,
 .mat-stroked-button.mat-accent {
   color: $th-orange !important;
-  border: $btn-border-width solid $th-orange !important;
+  border: 2px solid $th-orange !important;
   border-radius: $btn-border-radius;
   margin: $btn-spacing;
 }
 
-// red button 
+// red button
 .mat-flat-button.mat-warn,
 .mat-raised-button.mat-warn,
 .mat-fab.mat-warn,
@@ -84,4 +83,9 @@ $btn-spacing: 5px;
   border: $btn-border-width solid $th-red !important;
   border-radius: $btn-border-radius;
   margin: $btn-spacing;
+}
+
+.lwmCreateUpdateDialog .mat-dialog-container,
+.lwmDeleteDialog .mat-dialog-container {
+  overflow: hidden;
 }
