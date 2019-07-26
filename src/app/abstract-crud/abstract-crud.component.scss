@@ -1,3 +1,13 @@
+.abstractTableMainTitle {
+  h1 {
+    display: inline;
+  }
+  span button{
+    float: right;
+  }
+  margin: 20px 0 40px 0; 
+}
+
 table {
   width: 100%;
 }

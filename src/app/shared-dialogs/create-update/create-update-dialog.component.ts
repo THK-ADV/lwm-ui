@@ -1,8 +1,8 @@
-import {Component, Inject} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {FormBuilder, FormControl, FormGroup, ValidatorFn} from '@angular/forms'
-import {DIALOG_WIDTH} from '../dialog-constants'
-import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
+import { Component, Inject } from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material'
+import { FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
+import { DIALOG_WIDTH } from '../dialog-constants'
+import { LWMDateAdapter } from '../../utils/lwmdate-adapter'
 
 type FormDataType = string | number | Date // TODO extend
 type FormDataStringType = 'text' | 'number' | 'date'
@@ -42,7 +42,8 @@ export class CreateUpdateDialogComponent {
     static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
         return dialog.open(CreateUpdateDialogComponent, {
             width: DIALOG_WIDTH,
-            data: payload
+            data: payload,
+            panelClass: 'lwmCreateUpdateDialog'
         })
     }
 
@@ -71,8 +72,8 @@ export class CreateUpdateDialogComponent {
             const endControl = group.controls[end]
 
             if (startControl.value >= endControl.value) { // TODO message is lost. update UI
-                endControl.setErrors({mustMatch: 'Date start should be less than Date end'})
-                return {mustMatch: 'Date start should be less than Date end'}
+                endControl.setErrors({ mustMatch: 'Date start should be less than Date end' })
+                return { mustMatch: 'Date start should be less than Date end' }
             } else {
                 endControl.setErrors(null)
                 return {}
@@ -95,9 +96,9 @@ export class CreateUpdateDialogComponent {
         }
     }
 
-   /* private formcontrol(name: String): FormControl {
-        return this.formGroup.controls[name]
-    }*/
+    /* private formcontrol(name: String): FormControl {
+         return this.formGroup.controls[name]
+     }*/
 
     private convertToType(type: FormDataStringType, value: any): FormDataType {
         switch (type) {

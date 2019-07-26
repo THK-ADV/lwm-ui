@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {DIALOG_WIDTH} from '../dialog-constants'
-import {UniqueEntity} from '../../abstract-crud/abstract-crud.component'
+import { Component, Inject, OnInit } from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material'
+import { DIALOG_WIDTH } from '../dialog-constants'
+import { UniqueEntity } from '../../abstract-crud/abstract-crud.component'
 
 interface DialogData extends UniqueEntity {
     label: string
@@ -19,7 +19,8 @@ export class DeleteDialogComponent implements OnInit {
     static instance(dialog: MatDialog, data: DialogData): MatDialogRef<DeleteDialogComponent, any> {
         return dialog.open(DeleteDialogComponent, {
             width: DIALOG_WIDTH,
-            data: data
+            data: data,
+            panelClass: 'lwmDeleteDialog'
         })
     }
 

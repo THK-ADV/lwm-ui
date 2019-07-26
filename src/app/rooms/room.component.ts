@@ -1,11 +1,11 @@
-import {Component} from '@angular/core'
-import {MatDialog} from '@angular/material'
-import {Room, RoomProtocol} from '../models/room.model'
-import {AlertService} from '../services/alert.service'
-import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {Validators} from '@angular/forms'
-import {FormInputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {RoomService} from '../services/room.service'
+import { Component } from '@angular/core'
+import { MatDialog } from '@angular/material'
+import { Room, RoomProtocol } from '../models/room.model'
+import { AlertService } from '../services/alert.service'
+import { AbstractCRUDComponent, TableHeaderColumn } from '../abstract-crud/abstract-crud.component'
+import { Validators } from '@angular/forms'
+import { FormInputData } from '../shared-dialogs/create-update/create-update-dialog.component'
+import { RoomService } from '../services/room.service'
 
 @Component({
     selector: 'app-room',
@@ -16,9 +16,9 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
 
     static columns(): TableHeaderColumn[] {
         return [
-            {attr: 'label', title: 'Bezeichnung'},
-            {attr: 'description', title: 'Beschreibung'},
-            {attr: 'capacity', title: 'Kapazität'}
+            { attr: 'label', title: 'Bezeichnung' },
+            { attr: 'description', title: 'Beschreibung' },
+            { attr: 'capacity', title: 'Kapazität' }
         ]
     }
 
@@ -63,7 +63,7 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             RoomComponent.inputData,
             model => model.label,
             (model, attr) => model[attr],
-            () => ({label: '', description: '', capacity: 0})
+            () => ({ label: '', description: '', capacity: 0 })
         )
 
         this.service = roomService // super.init does not allow types which are generic

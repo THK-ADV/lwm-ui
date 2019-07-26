@@ -1,25 +1,23 @@
 <h1 mat-dialog-title>{{payload.headerTitle}}</h1>
 
-<form [formGroup]="formGroup">
-
-    <div mat-dialog-content>
-        <mat-form-field *ngFor="let d of payload.data" color="primary" style="width: 100%">
+<div class="modalContainer">
+    <mat-dialog-content [formGroup]="formGroup">
+        <mat-form-field *ngFor="let d of payload.data" color="primary">
 
             <input matInput *ngIf="isStandardInput(d)" [placeholder]="d.placeholder" [type]="d.type"
-                   [formControlName]="d.formControlName">
+                [formControlName]="d.formControlName">
 
             <div *ngIf="isDateInput(d)">
-                <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder"
-                       [formControlName]="d.formControlName" (click)="dp.open()">
+                <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder" [formControlName]="d.formControlName"
+                    (click)="dp.open()">
                 <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
                 <mat-datepicker #dp></mat-datepicker>
             </div>
-
         </mat-form-field>
-    </div>
+    </mat-dialog-content>
 
-    <div mat-dialog-actions> <!-- style -->
-        <button mat-button (click)="onCancel()">Abbrechen</button>
-        <button mat-button (click)="onSubmit()" cdkFocusInitial>{{payload.submitTitle}}</button>
-    </div>
-</form>
+    <mat-dialog-actions>
+        <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+        <button mat-flat-button color="primary" (click)="onSubmit()" cdkFocusInitial>{{payload.submitTitle}}</button>
+    </mat-dialog-actions>
+</div>
