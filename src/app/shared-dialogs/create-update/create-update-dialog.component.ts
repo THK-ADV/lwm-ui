@@ -43,7 +43,8 @@ export class CreateUpdateDialogComponent {
     static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
         return dialog.open(CreateUpdateDialogComponent, {
             width: DIALOG_WIDTH,
-            data: payload
+            data: payload,
+            panelClass: 'lwmCreateUpdateDialog'
         })
     }
 

@@ -1,10 +1,12 @@
-<h1>{{headerTitle}}</h1>
-
-<p *ngIf="canCreate()">
-    <button mat-flat-button (click)="onCreate()">
-        <mat-icon>add</mat-icon>
-    </button>
-</p>
+<div class="abstractTableMainTitle">
+    <h1>{{headerTitle}}</h1>
+    <span *ngIf="canCreate()">
+        <button mat-flat-button color="accent" (click)="onCreate()" matTooltip="Hinzufügen"
+                matTooltipPosition="left">
+            <mat-icon>add</mat-icon>
+        </button>
+    </span>
+</div>
 
 <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
@@ -16,10 +18,12 @@
     <ng-container matColumnDef="action">
         <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
         <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-            <button mat-flat-button color="primary" (click)="onEdit(element)" *ngIf="canEdit()">
+            <button mat-stroked-button color="primary" (click)="onEdit(element)" *ngIf="canEdit()"
+                    matTooltip="Bearbeiten" matTooltipPosition="left">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button mat-flat-button (click)="onDelete(element)" *ngIf="canDelete()">
+            <button mat-stroked-button color="warn" (click)="onDelete(element)" *ngIf="canDelete()" matTooltip="Löschen"
+                    matTooltipPosition="right">
                 <mat-icon>delete</mat-icon>
             </button>
         </td>
