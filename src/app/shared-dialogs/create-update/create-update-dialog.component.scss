@@ -9,6 +9,14 @@ mat-dialog-content {
   ::ng-deep.mat-form-field-ripple {
     background-color: $th-magenta !important;
   }
+
+  .mat-datepicker-toggle { 
+    float: right;
+  }
+
+  mat-datepicker-toggle.mat-datepicker-toggle-active {
+    color: $th-magenta;
+  }
 }
 
 mat-dialog-actions {

@@ -7,9 +7,8 @@
             <input matInput *ngIf="isStandardInput(d)" [placeholder]="d.placeholder" [type]="d.type"
                 [formControlName]="d.formControlName">
 
-            <div *ngIf="isDateInput(d)">
-                <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder" [formControlName]="d.formControlName"
-                    (click)="dp.open()">
+            <div *ngIf="isDateInput(d)" (click)="dp.open()">
+                <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder" [formControlName]="d.formControlName">
                 <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
                 <mat-datepicker #dp></mat-datepicker>
             </div>
