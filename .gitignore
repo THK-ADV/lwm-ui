@@ -40,7 +40,7 @@
 *.map
 _test-output
 **/*.js
-dist/
+dist/*
 
 
 # special
