@@ -10,12 +10,20 @@ mat-dialog-content {
     background-color: $th-magenta !important;
   }
 
-  .mat-datepicker-toggle { 
+  .mat-datepicker-toggle {
     float: right;
   }
 
   mat-datepicker-toggle.mat-datepicker-toggle-active {
     color: $th-magenta;
+  }
+
+  .mat-calendar-body-selected {
+    background-color: $th-magenta !important;
+    color: $lwm-font-color;
+  }
+  .mat-datepicker-toggle-active {
+    color: $th-magenta !important;
   }
 }
 
