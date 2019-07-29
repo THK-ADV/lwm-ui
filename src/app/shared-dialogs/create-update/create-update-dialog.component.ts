@@ -1,8 +1,8 @@
-import {Component, Inject} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
-import {DIALOG_WIDTH} from '../dialog-constants'
-import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
+import { Component, Inject } from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material'
+import { FormControl, FormGroup, ValidatorFn } from '@angular/forms'
+import { DIALOG_WIDTH } from '../dialog-constants'
+import { LWMDateAdapter } from '../../utils/lwmdate-adapter'
 
 type FormDataType = string | number | Date // TODO extend
 type FormDataStringType = 'text' | 'number' | 'date'
