@@ -54,7 +54,8 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
             DegreeComponent.inputData,
             model => model.label,
             (model, attr) => model[attr],
-            () => ({label: '', abbreviation: ''})
+            () => ({label: '', abbreviation: ''}),
+            () => undefined
         )
 
         this.service = degreeService // super.init does not allow types which are generic

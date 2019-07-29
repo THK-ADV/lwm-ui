@@ -1,8 +1,8 @@
-import { Component, Inject } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material'
-import { FormBuilder, FormControl, FormGroup, ValidatorFn } from '@angular/forms'
-import { DIALOG_WIDTH } from '../dialog-constants'
-import { LWMDateAdapter } from '../../utils/lwmdate-adapter'
+import {Component, Inject} from '@angular/core'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
+import {DIALOG_WIDTH} from '../dialog-constants'
+import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 
 type FormDataType = string | number | Date // TODO extend
 type FormDataStringType = 'text' | 'number' | 'date'
@@ -25,7 +25,8 @@ export interface FormPayload {
     headerTitle: string,
     submitTitle: string,
     data: FormInputData[],
-    builder: (formOutputData: FormOutputData[]) => any
+    builder: (formOutputData: FormOutputData[]) => Object
+    composedFromGroupValidator: ValidatorFn | undefined
 }
 
 @Component({
@@ -63,21 +64,10 @@ export class CreateUpdateDialogComponent {
             this.formGroup.addControl(d.formControlName, fc)
         })
 
-        this.formGroup.validator = this.dateLessThan('start', 'end')
-    }
+        const customValidator = payload.composedFromGroupValidator
 
-    private dateLessThan(start: string, end: string) {
-        return (group: FormGroup) => {
-            const startControl = group.controls[start]
-            const endControl = group.controls[end]
-
-            if (startControl.value >= endControl.value) { // TODO message is lost. update UI
-                endControl.setErrors({ mustMatch: 'Date start should be less than Date end' })
-                return { mustMatch: 'Date start should be less than Date end' }
-            } else {
-                endControl.setErrors(null)
-                return {}
-            }
+        if (customValidator) {
+            this.formGroup.setValidators(customValidator)
         }
     }
 
@@ -96,9 +86,14 @@ export class CreateUpdateDialogComponent {
         }
     }
 
-    /* private formcontrol(name: String): FormControl {
-         return this.formGroup.controls[name]
-     }*/
+    private hasFormGroupError(name: string): boolean {
+        return this.payload.composedFromGroupValidator !== undefined &&
+            this.formGroup.hasError(name)
+    }
+
+    private formGroupErrorMessage(name: string): string {
+        return this.formGroup.getError(name)
+    }
 
     private convertToType(type: FormDataStringType, value: any): FormDataType {
         switch (type) {

@@ -11,6 +11,7 @@
                 <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder" [formControlName]="d.formControlName">
                 <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
                 <mat-datepicker #dp></mat-datepicker>
+                <mat-error *ngIf="hasFormGroupError(d.formControlName)">{{formGroupErrorMessage(d.formControlName)}}</mat-error>
             </div>
         </mat-form-field>
     </mat-dialog-content>

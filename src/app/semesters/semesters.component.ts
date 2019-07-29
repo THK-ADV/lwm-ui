@@ -1,10 +1,11 @@
 import {Component} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {FormInputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {Validators} from '@angular/forms'
+import {FormGroup, ValidatorFn, Validators} from '@angular/forms'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {SemesterService} from '../services/semester.service'
+import {LWMDateAdapter} from '../utils/lwmdate-adapter'
 
 @Component({
     selector: 'app-semesters',
@@ -14,8 +15,7 @@ import {SemesterService} from '../services/semester.service'
 export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> {
 
     static empty(): Readonly<SemesterProtocol> {
-        // return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
-        return {abbreviation: 'a', end: '', examStart: '', label: 'b', start: ''} // TODO for testing
+        return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
     }
 
     static columns(): TableHeaderColumn[] { // TODO unify columns, formControls and empty somehow
@@ -69,11 +69,38 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
         ]
     }
 
+    static startEndValidator(data: FormInputData[]): ValidatorFn | undefined {
+        const start = data.find(d => d.formControlName === 'start')
+        const end = data.find(d => d.formControlName === 'end')
+
+        if (!(start && end)) {
+            return undefined
+        }
+
+        return (group: FormGroup) => {
+            const startControl = group.controls[start.formControlName]
+            const endControl = group.controls[end.formControlName]
+
+            if (startControl.value === '' || endControl.value === '') {
+                return {}
+            }
+
+            if (startControl.value < endControl.value) {
+                return {}
+            }
+
+            const error = {}
+            error[start.formControlName] = `${start.placeholder} muss vor dem ${end.placeholder} liegen`
+            startControl.setErrors(error)
+            return error
+        }
+    }
+
     static prepareTableContent(semester: Readonly<Semester>, attr: string): string {
         const value = semester[attr]
 
         if (value instanceof Date) {
-            return value.toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: '2-digit'})
+            return LWMDateAdapter.format(value, 'localDate')
         } else {
             return value
         }
@@ -91,7 +118,8 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             SemestersComponent.inputData,
             model => model.label,
             SemestersComponent.prepareTableContent,
-            SemestersComponent.empty
+            SemestersComponent.empty,
+            SemestersComponent.startEndValidator
         )
 
         this.service = semesterService // super.init does not allow types which are generic
