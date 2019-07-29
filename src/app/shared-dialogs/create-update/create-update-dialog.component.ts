@@ -2,13 +2,15 @@ import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
 import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
+import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 
-type FormDataType = string | number // TODO extend
+type FormDataType = string | number | Date // TODO extend
+type FormDataStringType = 'text' | 'number' | 'date'
 
 export interface FormInputData {
     formControlName: string
     placeholder: string
-    type: 'text' | 'number'
+    type: FormDataStringType
     validator: ValidatorFn | ValidatorFn[]
     isDisabled: boolean
     value: FormDataType
@@ -23,17 +25,28 @@ export interface FormPayload {
     headerTitle: string,
     submitTitle: string,
     data: FormInputData[],
-    builder: (formOutputData: FormOutputData[]) => any
+    builder: (formOutputData: FormOutputData[]) => Object
+    composedFromGroupValidator: ValidatorFn | undefined
 }
 
 @Component({
     selector: 'app-create-update-dialog',
     templateUrl: './create-update-dialog.component.html',
-    styleUrls: ['./create-update-dialog.component.scss']
+    styleUrls: ['./create-update-dialog.component.scss'],
+    providers: LWMDateAdapter.defaultProviders()
 })
+
 export class CreateUpdateDialogComponent {
 
     private formGroup: FormGroup
+
+    static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
+        return dialog.open(CreateUpdateDialogComponent, {
+            width: DIALOG_WIDTH,
+            data: payload,
+            panelClass: 'lwmCreateUpdateDialog'
+        })
+    }
 
     constructor(
         private dialogRef: MatDialogRef<CreateUpdateDialogComponent>,
@@ -50,14 +63,12 @@ export class CreateUpdateDialogComponent {
 
             this.formGroup.addControl(d.formControlName, fc)
         })
-    }
 
-    static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
-        return dialog.open(CreateUpdateDialogComponent, {
-            width: DIALOG_WIDTH,
-            data: payload,
-            panelClass: 'lwmCreateUpdateDialog'
-        })
+        const customValidator = payload.composedFromGroupValidator
+
+        if (customValidator) {
+            this.formGroup.setValidators(customValidator)
+        }
     }
 
     onCancel(): void {
@@ -66,19 +77,41 @@ export class CreateUpdateDialogComponent {
 
     onSubmit() {
         if (this.formGroup.valid) {
-            const values: FormOutputData[] = this.payload.data.map(d => {
-                const value = this.formGroup.controls[d.formControlName].value
-
-                switch (d.type) {
-                    case 'number':
-                        return {formControlName: d.formControlName, value: +value}
-                    case 'text':
-                        return {formControlName: d.formControlName, value: '' + value}
-                }
-            })
+            const values: FormOutputData[] = this.payload.data.map(d => ({
+                formControlName: d.formControlName,
+                value: this.convertToType(d.type, this.formGroup.controls[d.formControlName].value)
+            }))
 
             this.closeModal(this.payload.builder(values))
         }
+    }
+
+    private hasFormGroupError(name: string): boolean {
+        return this.payload.composedFromGroupValidator !== undefined &&
+            this.formGroup.hasError(name)
+    }
+
+    private formGroupErrorMessage(name: string): string {
+        return this.formGroup.getError(name)
+    }
+
+    private convertToType(type: FormDataStringType, value: any): FormDataType {
+        switch (type) {
+            case 'number':
+                return +value
+            case 'text':
+                return '' + value
+            case 'date':
+                return new Date(this.convertToType('text', value))
+        }
+    }
+
+    private isStandardInput(data: FormInputData): boolean {
+        return data.type === 'number' || data.type === 'text'
+    }
+
+    private isDateInput(data: FormInputData): boolean {
+        return data.type === 'date'
     }
 
     private closeModal(result: any | undefined) {

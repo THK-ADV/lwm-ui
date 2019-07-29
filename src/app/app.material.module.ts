@@ -10,6 +10,8 @@ import {
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatTooltipModule
 } from '@angular/material'
 
@@ -30,6 +32,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatSortModule,
         MatDialogModule,
         MatSnackBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
         MatTooltipModule
     ]
 })

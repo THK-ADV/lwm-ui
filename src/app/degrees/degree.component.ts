@@ -21,7 +21,7 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
         ]
     }
 
-    static inputData(model: DegreeProtocol | Degree, isModel: boolean): FormInputData[] {
+    static inputData(model: Readonly<DegreeProtocol | Degree>, isModel: boolean): FormInputData[] {
         return [
             {
                 formControlName: 'label',
@@ -52,10 +52,12 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
             'Studiengang',
             'Studiengänge',
             DegreeComponent.inputData,
-            model => model.label
+            model => model.label,
+            (model, attr) => model[attr],
+            () => ({label: '', abbreviation: ''}),
+            () => undefined
         )
 
         this.service = degreeService // super.init does not allow types which are generic
-        this.empty = {label: '', abbreviation: ''}
     }
 }

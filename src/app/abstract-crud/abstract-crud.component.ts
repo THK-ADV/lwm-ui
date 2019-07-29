@@ -11,6 +11,7 @@ import {
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AbstractCRUDService} from './abstract-crud.service'
 import {exists} from '../utils/functions'
+import {ValidatorFn} from '@angular/forms'
 
 enum DialogMode {
     edit, create
@@ -37,7 +38,6 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     protected dataSource = new MatTableDataSource<Model>()
 
     protected service: AbstractCRUDService<Protocol, Model>
-    protected empty: Protocol
 
     private readonly displayedColumns: string[]
 
@@ -51,8 +51,11 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
         protected readonly modelName: string,
         protected readonly headerTitle: string,
-        protected readonly inputData: (data: Protocol | Model, isModel: boolean) => FormInputData[],
-        protected readonly titleForDeleteDialog: (model: Model) => string
+        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInputData[],
+        protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
+        protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
+        protected readonly empty: () => Readonly<Protocol>,
+        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
     }
@@ -107,24 +110,29 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     private onCreate() {
         this.openDialog(
             DialogMode.create,
-            this.empty,
+            this.empty(),
             model => this.subscribe(this.service.create(model), this.afterCreate.bind(this))
         )
     }
 
     private openDialog<T>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
-        const isModel = 'id' in data
+        const inputData = this.inputData(data, this.isModel(data))
 
         const payload: FormPayload = {
             headerTitle: this.dialogTitle(mode),
             submitTitle: this.dialogSubmitTitle(mode),
-            data: this.inputData(data, isModel),
-            builder: outputData => isModel ? this.update(data as Model, outputData) : this.create(data as Protocol, outputData)
+            data: inputData,
+            builder: outputData => this.isModel(data) ? this.update(data, outputData) : this.create(data, outputData),
+            composedFromGroupValidator: this.composedFromGroupValidator(inputData)
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
 
         this.subscribe(dialogRef.afterClosed(), next)
+    }
+
+    private isModel(data: Model | Protocol): data is Model {
+        return (data as Model).id !== undefined
     }
 
     protected subscribe<T>(observable: Observable<T>, next: (T) => void) {
