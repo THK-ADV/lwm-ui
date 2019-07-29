@@ -10,6 +10,7 @@ import { CoursesComponent } from './courses/courses.component'
 import { RoomComponent } from './rooms/room.component';
 import {DegreeComponent} from './degrees/degree.component'
 import {SemestersComponent} from './semesters/semesters.component'
+import { UsersComponent } from './users/users.component';
 
 const routes: Routes = [
     {
@@ -24,7 +25,7 @@ const routes: Routes = [
         children: [
             {
                 path: 'authorities',
-                component: EntryPageComponent
+                component: UsersComponent
             },
             {
                 path: 'modules',

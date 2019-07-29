@@ -2,7 +2,7 @@
 
 <div class="modalContainer">
     <mat-dialog-content [formGroup]="formGroup">
-        <mat-form-field *ngFor="let d of payload.data" color="primary">
+        <mat-form-field class="mat-form-field-modal" *ngFor="let d of payload.data" color="primary">
 
             <input matInput *ngIf="isStandardInput(d)" [placeholder]="d.placeholder" [type]="d.type"
                 [formControlName]="d.formControlName">
