@@ -1,105 +1,301 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@import '~@angular/material/theming';
-// Plus imports for other components in your app.
+@import "~@angular/material/theming";
+@import "lwm.theme.config";
 
-// Include the common styles for Angular Material. We include this here so that you only
-// have to load a single css file for Angular Material in your app.
-// Be sure that you only ever include this mixin once!
 @include mat-core();
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darker
-// hue. Available color palettes: https://material.io/design/color/
-// $lwm-ui-primary: mat-palette($mat-purple);
-// $lwm-ui-accent: mat-palette($mat-orange, A200, A100, A400);
+@mixin lwm-core-theme($theme) {
+  @include mat-core-theme(map-get($theme, main));
+}
 
-// // The warn palette is optional (defaults to red).
-// $lwm-ui-warn: mat-palette($mat-red);
+@mixin lwm-autocomplete-theme($theme) {
+  @include mat-autocomplete-theme(map-get($theme, main));
+}
 
-// // Create the theme object (a Sass map containing all of the palettes).
-// $lwm-ui-theme: mat-light-theme($lwm-ui-primary, $lwm-ui-accent, $lwm-ui-warn);
+@mixin lwm-badge-theme($theme) {
+  @include mat-badge-theme(map-get($theme, main));
+}
 
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-//@include angular-material-theme($lwm-ui-theme);
+@mixin lwm-bottom-sheet-theme($theme) {
+  @include mat-bottom-sheet-theme(map-get($theme, main));
+}
 
-@import 'lwm.theme.config';
+@mixin lwm-button-theme($theme) {
+  @include mat-button-theme(map-get($theme, main));
+  
+  button.mat-stroked-button.mat-primary {
+    border: 2px lighten($th-magenta, 40) solid;
+  }
 
-// Define a custom typography config that overrides the font-family as well as the
-// `headlines` and `body-1` levels.
-$custom-typography: mat-typography-config(
-  $font-family: $lwm-font-family,
-  $headline: mat-typography-level(32px, 48px, 700),
-  $body-1: mat-typography-level(16px, 24px, 500)
-);
+  button.mat-stroked-button.mat-accent {
+    border: 2px lighten($th-orange, 40) solid;
+  }
 
-@include mat-base-typography($custom-typography);
+  button.mat-stroked-button.mat-warn {
+    border: 2px lighten($th-red, 40) solid;
+  }
+}
 
-// Override typography for a specific Angular Material components.
-@include mat-checkbox-typography($custom-typography);
+@mixin lwm-button-toggle-theme($theme) {
+  @include mat-button-toggle-theme(map-get($theme, main));
+}
 
-// Override typography for all Angular Material, including mat-base-typography and all components.
-@include angular-material-typography($custom-typography);
+@mixin lwm-checkbox-theme($theme) {
+  @include mat-checkbox-theme(map-get($theme, main));
+}
 
-// Override the typography in the core CSS.
-@include mat-core($custom-typography);
+@mixin lwm-table-theme($theme) {
+  @include mat-table-theme(map-get($theme, main));
+}
 
-@function getPaletteFrom($color) {
+@mixin lwm-datepicker-theme($theme) {
+  @include mat-datepicker-theme(map-get($theme, main));
+}
+
+@mixin lwm-dialog-theme($theme) {
+  @include mat-dialog-theme(map-get($theme, main));
+  .mat-form-field {
+    width: 100%;
+  }
+
+  mat-dialog-container {
+    
+    .mat-form-field-ripple {
+      background-color: $th-magenta !important;
+    }
+
+    app-create-update-dialog .mat-dialog-actions {
+      background-color: $ivory;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      margin: 0 -25px;
+      margin-bottom: -25px;
+      padding-right: 25px; 
+
+      button {
+        margin: 25px 0 25px 10px;
+      }
+    }
+  }
+
+  
+}
+
+@mixin lwm-expansion-panel-theme($theme) {
+  @include mat-expansion-panel-theme(map-get($theme, main));
+}
+
+@mixin lwm-form-field-theme($theme) {
+  @include mat-form-field-theme(map-get($theme, main));
+}
+@mixin lwm-grid-list-theme($theme) {
+  @include mat-grid-list-theme(map-get($theme, main));
+}
+
+@mixin lwm-icon-theme($theme) {
+  @include mat-icon-theme(map-get($theme, main));
+  .material-icons.mat-14 {
+    font-size: 14px;
+  }
+
+  .material-icons.mat-18 {
+    font-size: 18px;
+  }
+
+  .material-icons.mat-24 {
+    font-size: 24px;
+  }
+
+  .material-icons.mat-36 {
+    font-size: 36px;
+  }
+
+  .material-icons.mat-48 {
+    font-size: 48px;
+  }
+}
+
+@mixin lwm-input-theme($theme) {
+  @include mat-input-theme(map-get($theme, main));
+}
+
+@mixin lwm-list-theme($theme) {
+  @include mat-list-theme(map-get($theme, main));
+}
+
+@mixin lwm-menu-theme($theme) {
+  @include mat-menu-theme(map-get($theme, main));
+}
+
+@mixin lwm-paginator-theme($theme) {
+  @include mat-paginator-theme(map-get($theme, main));
+}
+
+@mixin lwm-progress-bar-theme($theme) {
+  @include mat-progress-bar-theme(map-get($theme, main));
+}
+
+@mixin lwm-progress-spinner-theme($theme) {
+  @include mat-progress-spinner-theme(map-get($theme, main));
+}
+
+@mixin lwm-radio-theme($theme) {
+  @include mat-radio-theme(map-get($theme, main));
+}
+
+@mixin lwm-select-theme($theme) {
+  @include mat-select-theme(map-get($theme, main));
+}
+
+@mixin lwm-sidenav-theme($theme) {
+  @include mat-sidenav-theme(map-get($theme, main));
+  .mat-drawer-container {
+    background-color: transparent !important;
+  }
+  .mat-drawer {
+    background-color: mat-color(map-get(map-get($theme, overlay), background), dialog);
+    color: mat-color(map-get(map-get($theme, overlay), foreground), text);
+    @include angular-material-theme(map-get($theme, overlay));
+  }
+}
+
+@mixin lwm-slide-toggle-theme($theme) {
+  @include mat-slide-toggle-theme(map-get($theme, main));
+}
+
+@mixin lwm-slider-theme($theme) {
+  @include mat-slider-theme(map-get($theme, main));
+}
+
+@mixin lwm-stepper-theme($theme) {
+  @include mat-stepper-theme(map-get($theme, main));
+}
+
+@mixin lwm-sort-theme($theme) {
+  @include mat-sort-theme(map-get($theme, main));
+}
+
+@mixin lwm-tabs-theme($theme) {
+  @include mat-tabs-theme(map-get($theme, main));
+}
+
+@mixin lwm-toolbar-theme($theme) {
+  @include mat-toolbar-theme(map-get($theme, main));
+}
+
+@mixin lwm-tooltip-theme($theme) {
+  @include mat-tooltip-theme(map-get($theme, main));
+}
+
+@mixin lwm-tree-theme($theme) {
+  @include mat-tree-theme(map-get($theme, main));
+}
+
+@mixin lwm-snack-bar-theme($theme) {
+  @include mat-snack-bar-theme(map-get($theme, main));
+}
+
+@function lwm-light-theme($primary, $accent, $warn, $foreground: (), $background: ()) {
   @return (
-    50:  lighten($color, 50%),
-    100: lighten($color, 40%),
-    200: lighten($color, 30%),
-    300: lighten($color, 20%),
-    400: lighten($color, 10%),
-    500: $color,
-    600:  darken($color, 10%),
-    700:  darken($color, 20%),
-    800:  darken($color, 30%),
-    900:  darken($color, 40%),
-    A100: darken($color, 50%),
-    A200: darken($color, 60%),
-    A400: darken($color, 70%),
-    A700: darken($color, 80%),
-    contrast: (
-      50: $black-87-opacity,
-      100: $black-87-opacity,
-      200: $black-87-opacity,
-      300: $black-87-opacity,
-      400: $black-87-opacity,
-      500: white,
-      600: white,
-      700: white,
-      800: $white-87-opacity,
-      900: $white-87-opacity,
-      A100: $black-87-opacity,
-      A200: white,
-      A400: white,
-      A700: white,
-    )
+    primary: mat-palette(palette-from($primary)),
+    accent: mat-palette(palette-from($accent)),
+    warn: mat-palette(palette-from($warn)),
+    is-dark: false,
+    foreground: map-merge($mat-light-theme-foreground, $foreground),
+    background: map-merge($mat-light-theme-background, $background)
   );
 }
 
-$lwm-primary-color-palette-values: getPaletteFrom($lwm-ui-primary);
-$lwm-accent-color-palette-values: getPaletteFrom($lwm-ui-accent);
-$lwm-warn-color-palette-values: getPaletteFrom($lwm-ui-warn);
+@function lwm-typography-config(
+  $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
+  $display-4: mat-typography-level(112px, 112px, 300),
+  $display-3: mat-typography-level(56px, 56px, 400),
+  $display-2: mat-typography-level(45px, 48px, 400),
+  $display-1: mat-typography-level(34px, 40px, 400),
+  $headline: mat-typography-level(24px, 32px, 400),
+  $title: mat-typography-level(20px, 32px, 500),
+  $subheading-2: mat-typography-level(16px, 28px, 400),
+  $subheading-1: mat-typography-level(15px, 24px, 400),
+  $body-2: mat-typography-level(14px, 24px, 500),
+  $body-1: mat-typography-level(14px, 20px, 400),
+  $caption: mat-typography-level(12px, 20px, 400),
+  $button: mat-typography-level(14px, 14px, 500),
+  $input: mat-typography-level(inherit, 1.125, 400)
+) {
+  @return mat-typography-config(
+    $font-family,
+    $display-4,
+    $display-3,
+    $display-2,
+    $display-1,
+    $headline,
+    $title,
+    $subheading-2,
+    $subheading-1,
+    $body-2,
+    $body-1,
+    $caption,
+    $button,
+    $input
+  );
+}
 
+@mixin lwm-theme(
+  $main-theme,
+  $overlay-theme,
+  $app-bg-1: #303030,
+  $app-bg-2: #303030,
+  $typography: lwm-typography-config()
+) {
+  $theme: (
+    main: $main-theme,
+    overlay: $overlay-theme,
+    app-bg-1: $app-bg-1,
+    app-bg-2: $app-bg-2
+  );
+  @include mat-core($typography);
 
-// Define the palettes for your theme using the Material Design palettes available in palette.scss
-// (imported above). For each palette, you can optionally specify a default, lighter, and darkes
-// hue.
-$lwm-primary-palette: mat-palette($lwm-primary-color-palette-values, 900);
-$lwm-accent-palette: mat-palette($lwm-accent-color-palette-values, 900);
-$lwm-warn-palette: mat-palette($lwm-warn-color-palette-values, A700);
+  @include lwm-core-theme($theme);
+  @include lwm-autocomplete-theme($theme);
+  @include lwm-badge-theme($theme);
+  @include lwm-bottom-sheet-theme($theme);
+  @include lwm-button-theme($theme);
+  @include lwm-button-toggle-theme($theme);
+  @include lwm-checkbox-theme($theme);
+  @include lwm-table-theme($theme);
+  @include lwm-datepicker-theme($theme);
+  @include lwm-dialog-theme($theme);
+  @include lwm-expansion-panel-theme($theme);
+  @include lwm-form-field-theme($theme);
+  @include lwm-grid-list-theme($theme);
+  @include lwm-icon-theme($theme);
+  @include lwm-input-theme($theme);
+  @include lwm-list-theme($theme);
+  @include lwm-menu-theme($theme);
+  @include lwm-paginator-theme($theme);
+  @include lwm-progress-bar-theme($theme);
+  @include lwm-progress-spinner-theme($theme);
+  @include lwm-radio-theme($theme);
+  @include lwm-select-theme($theme);
+  @include lwm-sidenav-theme($theme);
+  @include lwm-slide-toggle-theme($theme);
+  @include lwm-slider-theme($theme);
+  @include lwm-stepper-theme($theme);
+  @include lwm-sort-theme($theme);
+  @include lwm-tabs-theme($theme);
+  @include lwm-toolbar-theme($theme);
+  @include lwm-tooltip-theme($theme);
+  @include lwm-tree-theme($theme);
+  @include lwm-snack-bar-theme($theme);
+}
 
-// Create the theme object (a Sass map containing all of the palettes).
-$theme: mat-light-theme(
-    $lwm-primary-palette,
-    $lwm-accent-palette
+//.lwm-base-theme {
+@include lwm-theme(
+  lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
+  lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
+  $ivory,
+  $ivory,
+  lwm-typography-config()
 );
-
-// Include theme styles for core and each component used in your app.
-// Alternatively, you can import and @include the theme mixins for each component
-// that you are using.
-@include angular-material-theme($theme);
