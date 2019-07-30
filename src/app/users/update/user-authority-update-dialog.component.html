@@ -1,0 +1,48 @@
+<h1 mat-dialog-title>{{headerTitle()}}</h1>
+
+<div>
+    <mat-chip-list aria-label="Standard Roles">
+        <mat-chip *ngFor="let r of standardRoles" [color]="r.color" selected>{{r.label}}</mat-chip>
+    </mat-chip-list>
+</div>
+
+<div class="modalContainer">
+    <!--    <mat-dialog-content [formGroup]="stateForm">-->
+    <!--        <mat-form-field color="primary">-->
+    <!--            <input type="text" matInput placeholder="States Group" formControlName="stateGroup" required [matAutocomplete]="autoGroup">-->
+    <!--            <mat-autocomplete #autoGroup="matAutocomplete">-->
+    <!--                <mat-optgroup *ngFor="let group of stateGroupOptions | async" [label]="group.letter">-->
+    <!--                    <mat-option *ngFor="let name of group.names" [value]="name">-->
+    <!--                        {{name}}-->
+    <!--                    </mat-option>-->
+    <!--                </mat-optgroup>-->
+    <!--            </mat-autocomplete>-->
+    <!--        </mat-form-field>-->
+    <!--    </mat-dialog-content>-->
+
+    <ng-container *ngIf="!emptyData()">
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+            <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column.title}}</th>
+                <td mat-cell *matCellDef="let element ">{{prepareTableContent(element, column.attr)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+                    <button mat-stroked-button color="warn" (click)="onDelete(element)" matTooltip="Löschen"
+                            matTooltipPosition="right">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </ng-container>
+
+    <mat-dialog-actions>
+        <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+    </mat-dialog-actions>
+</div>

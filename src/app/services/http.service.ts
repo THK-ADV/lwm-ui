@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http'
+import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
 import {catchError, map, tap} from 'rxjs/operators'
 import {AlertService} from './alert.service'
@@ -47,8 +47,8 @@ export class HttpService {
         return lwmError
     }
 
-    get<T>(url: string): Observable<T> {
-        return this.http.get<T>(url)
+    get<T>(url: string, params?: HttpParams): Observable<T> {
+        return this.http.get<T>(url, {params})
             .pipe(catchError(this.handleError))
     }
 
