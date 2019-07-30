@@ -89,7 +89,7 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         this.onEdit(model)
     }
 
-    private onEdit(model) {
+    protected onEdit(model) {
         this.openDialog(DialogMode.edit, model, updatedRoom => {
             this.subscribe(this.service.update(updatedRoom, model.id), this.afterUpdate.bind(this))
         })

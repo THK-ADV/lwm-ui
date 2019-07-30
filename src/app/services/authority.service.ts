@@ -4,6 +4,8 @@ import {AuthorityAtom} from '../models/authorityAtom.model'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
 
+export type UserStatus = 'Administrator' | 'Student' | 'Mitarbeiter'
+
 @Injectable({
     providedIn: 'root'
 })
@@ -17,7 +19,11 @@ export class AuthorityService {
         return this.http.get<AuthorityAtom[]>('authorities', params)
     }
 
+    hasStatus(status: UserStatus, authorities: AuthorityAtom[]): boolean {
+        return authorities.some(auth => auth.role.label === status)
+    }
+
     isAdmin(authorities: AuthorityAtom[]): boolean {
-        return authorities.some(auth => auth.role.label === 'Administrator')
+        return this.hasStatus('Administrator', authorities)
     }
 }

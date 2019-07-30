@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core'
 import {HttpParams} from '@angular/common/http'
 import {Observable} from 'rxjs'
-import {User} from '../models/user.model'
+import {Employee, Student, User} from '../models/user.model'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {HttpService} from './http.service'
 import {map, tap} from 'rxjs/operators'
@@ -22,7 +22,7 @@ export class UserService implements AbstractCRUDService<User, User> {
 
       return this.http.get<User[]>(this.path, params)
             .pipe(
-                map(users => users.slice(0, 10))
+                map(users => users.filter(u => (u as Student).registrationId === undefined)) // TODO remove
             )
     }
 

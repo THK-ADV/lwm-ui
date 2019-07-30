@@ -12,7 +12,9 @@ import {
     MatToolbarModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatAutocompleteModule,
+    MatChipsModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -34,7 +36,9 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatSnackBarModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatAutocompleteModule,
+        MatChipsModule
     ]
 })
 export class LWMMaterialModule {
