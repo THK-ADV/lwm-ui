@@ -22,18 +22,20 @@ import { DashboardGuard } from './guards/dashboard.guard'
 import { StudentStatusGuard } from './guards/student-status.guard'
 import { EmployeeStatusGuard } from './guards/employee-status.guard'
 
-import { NavComponent } from './nav/nav.component'
-import { LWMMaterialModule } from './app.material.module'
-import { CoursesComponent } from './courses/courses.component'
-import { RoomComponent } from './rooms/room.component'
-import { DeleteDialogComponent } from './shared-dialogs/delete/delete-dialog.component'
-import { CreateUpdateDialogComponent } from './shared-dialogs/create-update/create-update-dialog.component'
-import { ListTemplateComponent } from './list-template/list-template.component'
-import { AlertComponent } from './alert/alert.component'
-import { DegreeComponent } from './degrees/degree.component'
-import { AbstractCRUDComponent } from './abstract-crud/abstract-crud.component'
-import { SemestersComponent } from './semesters/semesters.component'
-import { UsersComponent } from './users/users.component';
+
+import {NavComponent} from './nav/nav.component'
+import {LWMMaterialModule} from './app.material.module'
+import {CoursesComponent} from './courses/courses.component'
+import {RoomComponent} from './rooms/room.component'
+import {DeleteDialogComponent} from './shared-dialogs/delete/delete-dialog.component'
+import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
+import {ListTemplateComponent} from './list-template/list-template.component'
+import {AlertComponent} from './alert/alert.component'
+import {DegreeComponent} from './degrees/degree.component'
+import {AbstractCRUDComponent} from './abstract-crud/abstract-crud.component'
+import {SemestersComponent} from './semesters/semesters.component'
+import {UsersComponent} from './users/users.component'
+import {UserAuthorityUpdateDialogComponent} from './users/update/user-authority-update-dialog.component'
 
 @NgModule({
     declarations: [
@@ -51,7 +53,8 @@ import { UsersComponent } from './users/users.component';
         DegreeComponent,
         AbstractCRUDComponent,
         SemestersComponent,
-        UsersComponent
+        UsersComponent,
+        UserAuthorityUpdateDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -79,7 +82,7 @@ import { UsersComponent } from './users/users.component';
         { provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true }
     ],
     bootstrap: [AppComponent],
-    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent]
+    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent, UserAuthorityUpdateDialogComponent]
 })
 export class AppModule {
 }
