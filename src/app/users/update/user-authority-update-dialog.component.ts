@@ -19,13 +19,14 @@ export interface StandardRole {
 })
 export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
-    standardRoles: StandardRole[]
-    protected dataSource = new MatTableDataSource<AuthorityAtom>()
-    private readonly displayedColumns: string[]
-    columns: TableHeaderColumn[]
-    @ViewChild(MatSort, {static: true}) sort: MatSort
+    protected readonly standardRoles: StandardRole[]
+    protected readonly displayedColumns: string[]
+    protected readonly columns: TableHeaderColumn[]
 
-    sub: Subscription
+    private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
+    private authSub: Subscription
+
+    @ViewChild(MatSort, {static: true}) sort: MatSort
 
     static instance(dialog: MatDialog, user: User): MatDialogRef<UserAuthorityUpdateDialogComponent> {
         return dialog.open(UserAuthorityUpdateDialogComponent, {
@@ -48,8 +49,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.dataSource.sortingDataAccessor = (auth, attr) => {
             return this.fold(
-                attr,
-                auth,
+                attr, auth,
                 course => course.abbreviation,
                 role => role.label
             )
@@ -57,20 +57,24 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
         this.dataSource.sort = this.sort
 
-        this.sub = this.authorityService.getAuthorities(this.user.systemId).subscribe(auths => {
-            if (this.authorityService.isAdmin(auths)) {
-                this.standardRoles.push({label: 'Administrator', color: 'accent'})
-            }
+        this.authSub = this.authorityService.getAuthorities(this.user.systemId).subscribe(auths => {
+            auths.forEach(auth => {
+                if (this.authorityService.is('Administrator', auth)) {
+                    this.standardRoles.push({label: 'Administrator', color: 'accent'})
+                }
 
-            if (this.authorityService.hasStatus('Mitarbeiter', auths)) {
-                this.standardRoles.push({label: 'Mitarbeiter', color: 'primary'})
-            }
+                if (this.authorityService.is('Mitarbeiter', auth)) {
+                    this.standardRoles.push({label: 'Mitarbeiter', color: 'primary'})
+                }
 
-            if (this.authorityService.hasStatus('Student', auths)) {
-                this.standardRoles.push({label: 'Student', color: 'primary'})
-            }
+                if (this.authorityService.is('Student', auth)) {
+                    this.standardRoles.push({label: 'Student', color: 'primary'})
+                }
 
-            this.dataSource.data = auths.filter(auth => auth.course !== undefined)
+                if (auth.course !== undefined) {
+                    this.dataSource.data.push(auth)
+                }
+            })
 
             if (this.dataSource.data.length !== 0) {
                 this.sortBy('course')
@@ -79,7 +83,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.sub.unsubscribe()
+        this.authSub.unsubscribe()
     }
 
     protected sortBy(label: string, ordering: SortDirection = 'asc') { // copy pasted

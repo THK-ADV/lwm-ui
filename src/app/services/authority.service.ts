@@ -23,6 +23,10 @@ export class AuthorityService {
         return authorities.some(auth => auth.role.label === status)
     }
 
+    is(status: UserStatus, auth: AuthorityAtom): boolean {
+        return auth.role.label === status
+    }
+
     isAdmin(authorities: AuthorityAtom[]): boolean {
         return this.hasStatus('Administrator', authorities)
     }

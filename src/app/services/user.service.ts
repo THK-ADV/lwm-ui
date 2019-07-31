@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core'
 import {HttpParams} from '@angular/common/http'
 import {Observable} from 'rxjs'
-import {Employee, Student, User} from '../models/user.model'
+import {Student, User} from '../models/user.model'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {HttpService} from './http.service'
-import {map, tap} from 'rxjs/operators'
+import {map} from 'rxjs/operators'
 
 @Injectable({
     providedIn: 'root'
