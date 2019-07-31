@@ -1,1 +1,1 @@
-export const DIALOG_WIDTH = '300 px'
+export const DIALOG_WIDTH = '300px'
