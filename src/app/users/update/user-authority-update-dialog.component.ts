@@ -29,7 +29,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
     static instance(dialog: MatDialog, user: User): MatDialogRef<UserAuthorityUpdateDialogComponent> {
         return dialog.open(UserAuthorityUpdateDialogComponent, {
-            width: DIALOG_WIDTH,
             data: user,
             panelClass: 'lwmUserAuthorityUpdateDialog'
         })
