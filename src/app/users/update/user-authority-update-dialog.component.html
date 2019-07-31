@@ -1,10 +1,10 @@
 <h1 mat-dialog-title>{{headerTitle()}}</h1>
 
-<div>
-    <mat-chip-list aria-label="Standard Roles">
-        <mat-chip *ngFor="let r of standardRoles" [color]="r.color" selected>{{r.label}}</mat-chip>
-    </mat-chip-list>
-</div>
+<mat-chip-list aria-label="Standard Roles">
+    <mat-chip *ngFor="let r of standardRoles" [color]="r.color" selected>{{r.label}}</mat-chip>
+</mat-chip-list>
+
+<hr>
 
 <div class="modalContainer">
     <!--    <mat-dialog-content [formGroup]="stateForm">-->
@@ -20,7 +20,10 @@
     <!--        </mat-form-field>-->
     <!--    </mat-dialog-content>-->
 
+
+
     <ng-container *ngIf="!emptyData()">
+        <h2>Zugewiesene Rollen</h2>
         <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
             <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column.title}}</th>
@@ -31,7 +34,7 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                 <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
                     <button mat-stroked-button color="warn" (click)="onDelete(element)" matTooltip="Löschen"
-                            matTooltipPosition="right">
+                        matTooltipPosition="right">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </td>

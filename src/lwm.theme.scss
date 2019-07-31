@@ -45,6 +45,10 @@
   @include mat-checkbox-theme(map-get($theme, main));
 }
 
+@mixin lwm-chips-theme($theme) {
+  @include mat-chips-theme(map-get($theme, main));
+}
+
 @mixin lwm-table-theme($theme) {
   @include mat-table-theme(map-get($theme, main));
 }
@@ -64,12 +68,14 @@
       background-color: $th-magenta !important;
     }
 
+    app-user-edit-dialog .mat-dialog-actions,
+    app-delete-dialog .mat-dialog-actions,
     app-create-update-dialog .mat-dialog-actions {
       background-color: $ivory;
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
-      margin: 0 -25px;
+      margin: 25px -25px;
       margin-bottom: -25px;
       padding-right: 25px;
 
@@ -261,6 +267,7 @@
   @include lwm-button-theme($theme);
   @include lwm-button-toggle-theme($theme);
   @include lwm-checkbox-theme($theme);
+  @include lwm-chips-theme($theme);
   @include lwm-table-theme($theme);
   @include lwm-datepicker-theme($theme);
   @include lwm-dialog-theme($theme);
