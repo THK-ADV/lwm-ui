@@ -23,7 +23,7 @@
 
 
     <ng-container *ngIf="!emptyData()">
-        <h2>Zugewiesene Rollen</h2>
+        <h2 mat-dialog-title>Zugewiesene Rollen</h2>
         <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
             <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column.title}}</th>

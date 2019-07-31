@@ -59,6 +59,15 @@
 
 @mixin lwm-dialog-theme($theme) {
   @include mat-dialog-theme(map-get($theme, main));
+
+  h1.mat-dialog-title {
+    font-size: 2em;
+  }
+
+  h2.mat-dialog-title {
+    font-size: 1.5em;
+  }
+
   .mat-form-field {
     width: 100%;
   }
