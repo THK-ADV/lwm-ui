@@ -47,6 +47,29 @@
 
 @mixin lwm-chips-theme($theme) {
   @include mat-chips-theme(map-get($theme, main));
+    $height: 32px;
+    $fontSize: 14px;
+
+    mat-basic-chip {
+      display: inline-block;
+      padding: 0 12px;
+      border-radius: $height;
+      height: $height;
+      line-height: $height;
+      font-size: $fontSize;
+      margin: 0 5px;
+    }
+
+    mat-basic-chip.primary {
+      background-color: $th-magenta;
+      color: white;
+    }
+
+    mat-basic-chip.accent {
+      background-color: $th-orange;
+      color: white;
+    }
+  
 }
 
 @mixin lwm-table-theme($theme) {

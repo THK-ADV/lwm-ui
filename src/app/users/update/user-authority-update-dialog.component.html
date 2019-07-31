@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{headerTitle()}}</h1>
 
 <mat-chip-list aria-label="Standard Roles">
-    <mat-chip *ngFor="let r of standardRoles" [color]="r.color" selected>{{r.label}}</mat-chip>
+    <mat-basic-chip *ngFor="let r of standardRoles" [class]="r.color">{{r.label}}</mat-basic-chip>
 </mat-chip-list>
 
 <hr>
