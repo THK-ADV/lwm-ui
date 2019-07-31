@@ -23,7 +23,7 @@
 
 @mixin lwm-button-theme($theme) {
   @include mat-button-theme(map-get($theme, main));
-  
+
   button.mat-stroked-button.mat-primary {
     border: 2px lighten($th-magenta, 40) solid;
   }
@@ -60,7 +60,6 @@
   }
 
   mat-dialog-container {
-    
     .mat-form-field-ripple {
       background-color: $th-magenta !important;
     }
@@ -72,15 +71,13 @@
       justify-content: flex-end;
       margin: 0 -25px;
       margin-bottom: -25px;
-      padding-right: 25px; 
+      padding-right: 25px;
 
       button {
         margin: 25px 0 25px 10px;
       }
     }
   }
-
-  
 }
 
 @mixin lwm-expansion-panel-theme($theme) {

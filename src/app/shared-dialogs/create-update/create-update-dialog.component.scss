@@ -1,19 +1,6 @@
-@import "../../../lwm.theme.config.scss";
-
-mat-dialog-content {
-  
-  mat-form-field {
-    width: 100%;
-
-    input:not(.datepickerInput) {
-      background-color: red;
-    }
-  }
-
-  
-
-  /* .mat-form-field input.datepickerInput,
-  .mat-datepicker-toggle {
-    display: inline;
-  } */
+.lwmDatepicker {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
 }

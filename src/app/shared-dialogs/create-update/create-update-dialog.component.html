@@ -7,11 +7,11 @@
                 <input matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName">
             </ng-container>
             <ng-template #datepicker>
-                <span>
-                    <input class="datepickerInput" matInput [matDatepicker]="dp" [placeholder]="d.placeholder"
+                <div class="lwmDatepicker">                
+                    <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder"
                         [formControlName]="d.formControlName" (click)="dp.open()">
                     <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-                </span>
+                </div>
                 <mat-datepicker #dp color="primary"></mat-datepicker>
                 <mat-error *ngIf="hasFormGroupError(d.formControlName)">{{formGroupErrorMessage(d.formControlName)}}
                 </mat-error>
