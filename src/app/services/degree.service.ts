@@ -14,7 +14,7 @@ export class DegreeService implements AbstractCRUDService<DegreeProtocol, Degree
 
     private path = 'degrees'
 
-    get(): Observable<Degree[]> {
+    getAll(): Observable<Degree[]> {
         return this.http.get(this.path)
     }
 
@@ -23,7 +23,7 @@ export class DegreeService implements AbstractCRUDService<DegreeProtocol, Degree
     }
 
     create(degree: DegreeProtocol): Observable<Degree[]> {
-        return this.http.create(this.path, degree)
+        return this.http.create(this.path, [degree])
     }
 
     update(degree: DegreeProtocol, id: string): Observable<Degree> {

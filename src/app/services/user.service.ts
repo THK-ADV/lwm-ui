@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core'
-import {HttpParams} from '@angular/common/http'
 import {Observable} from 'rxjs'
 import {Student, User} from '../models/user.model'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
-import {HttpService} from './http.service'
+import {HttpService, nonAtomicParams} from './http.service'
 import {map} from 'rxjs/operators'
+import {NotImplementedError} from '../utils/functions'
 
 @Injectable({
     providedIn: 'root'
@@ -16,18 +16,15 @@ export class UserService implements AbstractCRUDService<User, User> {
 
     private path = 'users'
 
-    get(): Observable<User[]> {
-      const params = new HttpParams()
-          .set('atomic', 'false')
-
-      return this.http.get<User[]>(this.path, params)
+    getAll(): Observable<User[]> {
+        return this.http.get<User[]>(this.path, nonAtomicParams)
             .pipe(
                 map(users => users.filter(u => (u as Student).registrationId === undefined)) // TODO remove
             )
     }
 
     delete(id: string): Observable<User> {
-        throw new Error('Method not implemented.')
+        return NotImplementedError()
     }
 
     create(protocol: User): Observable<User[]> {
@@ -35,7 +32,7 @@ export class UserService implements AbstractCRUDService<User, User> {
     }
 
     update(protocol: User, id: string): Observable<User> {
-        throw new Error('Method not implemented.')
+        return NotImplementedError()
     }
 
 }

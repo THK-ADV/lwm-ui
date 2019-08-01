@@ -1,22 +1,25 @@
 import {Injectable} from '@angular/core'
 import {HttpParams} from '@angular/common/http'
-import {AuthorityAtom} from '../models/authorityAtom.model'
+import {AuthorityAtom, AuthorityProtocol} from '../models/authority.model'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
-
-export type UserStatus = 'Administrator' | 'Student' | 'Mitarbeiter'
+import {UserStatus} from '../models/userStatus.model'
+import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
+import {NotImplementedError} from '../utils/functions'
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthorityService {
+export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, AuthorityAtom> {
+
+    private readonly path = 'authorities'
 
     constructor(private http: HttpService) {
     }
 
     getAuthorities(systemId: string): Observable<AuthorityAtom[]> {
         const params = new HttpParams().set('systemId', systemId)
-        return this.http.get<AuthorityAtom[]>('authorities', params)
+        return this.http.get(this.path, params)
     }
 
     hasStatus(status: UserStatus, authorities: AuthorityAtom[]): boolean {
@@ -28,6 +31,23 @@ export class AuthorityService {
     }
 
     isAdmin(authorities: AuthorityAtom[]): boolean {
-        return this.hasStatus('Administrator', authorities)
+        return this.hasStatus(UserStatus.admin, authorities)
+    }
+
+    create(protocol: AuthorityProtocol): Observable<AuthorityAtom[]> {
+        const params = new HttpParams().set('atomic', 'true')
+        return this.http.create(this.path, [protocol], params)
+    }
+
+    delete(id: string): Observable<AuthorityAtom> {
+        return NotImplementedError()
+    }
+
+    getAll(): Observable<AuthorityAtom[]> {
+        return this.http.get(this.path)
+    }
+
+    update(protocol: AuthorityProtocol, id: string): Observable<AuthorityAtom> {
+        return NotImplementedError()
     }
 }
