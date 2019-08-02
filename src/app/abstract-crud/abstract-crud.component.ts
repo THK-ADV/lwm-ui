@@ -10,7 +10,7 @@ import {
 } from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AbstractCRUDService} from './abstract-crud.service'
-import {exists} from '../utils/functions'
+import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
 
 enum DialogMode {
@@ -63,7 +63,7 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     ngOnInit() {
         this.dataSource.sort = this.sort
 
-        this.subscribe(this.service.get(), data => {
+        this.subscribeAndPush(this.service.getAll(), data => {
             this.dataSource.data = data
             this.sortBy(this.sortDescriptor)
         })
@@ -91,16 +91,16 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
 
     protected onEdit(model) {
         this.openDialog(DialogMode.edit, model, updatedRoom => {
-            this.subscribe(this.service.update(updatedRoom, model.id), this.afterUpdate.bind(this))
+            this.subscribeAndPush(this.service.update(updatedRoom, model.id), this.afterUpdate.bind(this))
         })
     }
 
     private onDelete(model) {
         const dialogRef = DeleteDialogComponent.instance(this.dialog, {label: this.titleForDeleteDialog(model), id: model.id})
 
-        this.subscribe(
+        this.subscribeAndPush(
             dialogRef.afterClosed(),
-            id => this.subscribe(
+            id => this.subscribeAndPush(
                 this.service.delete(id),
                 this.afterDelete.bind(this)
             )
@@ -111,7 +111,7 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         this.openDialog(
             DialogMode.create,
             this.empty(),
-            model => this.subscribe(this.service.create(model), this.afterCreate.bind(this))
+            model => this.subscribeAndPush(this.service.create(model), this.afterCreate.bind(this))
         )
     }
 
@@ -128,19 +128,11 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
 
-        this.subscribe(dialogRef.afterClosed(), next)
+        this.subscribeAndPush(dialogRef.afterClosed(), next)
     }
 
     private isModel(data: Model | Protocol): data is Model {
         return (data as Model).id !== undefined
-    }
-
-    protected subscribe<T>(observable: Observable<T>, next: (T) => void) {
-        this.subs.push(observable.subscribe(e => {
-            if (e) {
-                next(e)
-            }
-        }))
     }
 
     protected sortBy(label: string, ordering: SortDirection = 'asc') {
@@ -166,6 +158,10 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
             case DialogMode.edit:
                 return 'Aktualisieren'
         }
+    }
+
+    protected subscribeAndPush<T>(observable: Observable<T>, next: (T) => void) {
+        this.subs.push(subscribe(observable, next))
     }
 
     protected create(protocol: Protocol, data: FormOutputData[]): Protocol {

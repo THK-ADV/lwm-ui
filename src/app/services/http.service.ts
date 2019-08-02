@@ -16,6 +16,8 @@ export interface CreationResponse<T> {
     failed: T[]
 }
 
+export const nonAtomicParams = new HttpParams().set('atomic', 'false')
+
 @Injectable({
     providedIn: 'root'
 })
@@ -57,8 +59,8 @@ export class HttpService {
             .pipe(catchError(this.handleError))
     }
 
-    create<I, O>(url: string, ...element: I[]): Observable<O[]> { // TODO change to single creation
-        return this.http.post<CreationResponse<O>>(url, element)
+    create<I, O>(url: string, element: I[], params?: HttpParams): Observable<O[]> { // TODO change to single creation
+        return this.http.post<CreationResponse<O>>(url, element, {params})
             .pipe(
                 catchError(this.handleError),
                 tap(r => {
