@@ -1,18 +1,18 @@
-import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
-import {User} from '../../models/user.model'
-import {AuthorityService} from '../../services/authority.service'
-import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
-import {Observable, Subscription} from 'rxjs'
-import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms'
-import {CourseAtom} from '../../models/course'
-import {CourseService} from '../../services/course.service'
-import {subscribe} from '../../utils/functions'
-import {map, startWith} from 'rxjs/operators'
-import {RoleService} from '../../services/role.service'
-import {UserStatus} from '../../models/userStatus.model'
-import {Role} from '../../models/role.model'
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSort, MatTableDataSource, Sort, SortDirection } from '@angular/material'
+import { User } from '../../models/user.model'
+import { AuthorityService } from '../../services/authority.service'
+import { AuthorityAtom, AuthorityProtocol } from '../../models/authority.model'
+import { Observable, Subscription } from 'rxjs'
+import { TableHeaderColumn } from '../../abstract-crud/abstract-crud.component'
+import { AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn } from '@angular/forms'
+import { CourseAtom } from '../../models/course'
+import { CourseService } from '../../services/course.service'
+import { subscribe } from '../../utils/functions'
+import { map, startWith } from 'rxjs/operators'
+import { RoleService } from '../../services/role.service'
+import { UserStatus } from '../../models/userStatus.model'
+import { Role } from '../../models/role.model'
 
 export interface StandardRole {
     label: UserStatus
@@ -37,7 +37,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     ) {
         this.standardRoles = []
         this.displayedColumns = ['course', 'role', 'action']
-        this.columns = [{attr: 'course', title: 'Modul'}, {attr: 'role', title: 'Rolle'}]
+        this.columns = [{ attr: 'course', title: 'Modul' }, { attr: 'role', title: 'Rolle' }]
         this.subs = []
 
         this.authGroup = new FormGroup({})
@@ -52,7 +52,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
     private readonly subs: Subscription[]
 
-    @ViewChild(MatSort, {static: true}) sort: MatSort
+    @ViewChild(MatSort, { static: true }) sort: MatSort
 
     protected readonly authGroup: FormGroup
     protected courseOptions: CourseAtom[]
@@ -64,7 +64,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
     static instance(dialog: MatDialog, user: User): MatDialogRef<UserAuthorityUpdateDialogComponent> {
         return dialog.open(UserAuthorityUpdateDialogComponent, {
-            // width: DIALOG_WIDTH,
             data: user,
             panelClass: 'lwmUserAuthorityUpdateDialog'
         })
@@ -74,7 +73,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         const objectValidator = (): ValidatorFn => {
             return (ctl: AbstractControl): ValidationErrors | null => {
                 if (!this.isJSON(ctl.value) || ctl.value === null || ctl.value === '') {
-                    return {[this.invalidChoiceKey]: 'Invalide Auswahl'}
+                    return { [this.invalidChoiceKey]: 'Invalide Auswahl' }
                 }
 
                 return null
@@ -124,15 +123,15 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             auths => {
                 auths.forEach(auth => {
                     if (this.authorityService.is(UserStatus.admin, auth)) {
-                        this.standardRoles.push({label: UserStatus.admin, color: 'accent'})
+                        this.standardRoles.push({ label: UserStatus.admin, color: 'accent' })
                     }
 
                     if (this.authorityService.is(UserStatus.employee, auth)) {
-                        this.standardRoles.push({label: UserStatus.employee, color: 'primary'})
+                        this.standardRoles.push({ label: UserStatus.employee, color: 'primary' })
                     }
 
                     if (this.authorityService.is(UserStatus.student, auth)) {
-                        this.standardRoles.push({label: UserStatus.student, color: 'primary'})
+                        this.standardRoles.push({ label: UserStatus.student, color: 'primary' })
                     }
 
                     if (auth.course !== undefined) {
@@ -179,7 +178,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
         controls.forEach(c => {
             const control = this.getControl(c)
-            control.setValue('', {emitEvent: true})
+            control.setValue('', { emitEvent: true })
             control.markAsUntouched()
         })
     }
@@ -228,7 +227,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
     protected sortBy(label: string, ordering: SortDirection = 'asc') { // copy pasted
         if (this.sort) {
-            const sortState: Sort = {active: label, direction: ordering}
+            const sortState: Sort = { active: label, direction: ordering }
             this.sort.active = sortState.active
             this.sort.direction = sortState.direction
             this.sort.sortChange.emit(sortState)
@@ -246,7 +245,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
         const role = this.getControl('roleControl').value as Role
         const courseAtom = this.getControl('courseControl').value as CourseAtom
-        this.createAuthority({user: this.user.id, role: role.id, course: courseAtom.id})
+        this.createAuthority({ user: this.user.id, role: role.id, course: courseAtom.id })
     }
 
     private createAuthority(auth: AuthorityProtocol) {

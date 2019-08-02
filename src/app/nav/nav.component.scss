@@ -2,6 +2,7 @@
 
 //VARS
 $menuBorderRadius: 5px;
+$sidebarColor: #262429;
 
 .lwm-container {
   display: flex;
@@ -14,7 +15,7 @@ $menuBorderRadius: 5px;
 
   mat-sidenav {
     width: 300px;
-    background-color: $darkest;
+    background-color: $sidebarColor;
     border: 0;
     margin-bottom: 0;
 
@@ -28,11 +29,11 @@ $menuBorderRadius: 5px;
 
       #sidebar-user {
         margin: 0 0 20px 0 !important;
-        color: $lightest;
+        color: #f8f8f8;
       }
       
       #sidebar-nickname {
-        color: lighten($darkest, 20);
+        color: lighten($sidebarColor, 20);
         font-style: italic;
         font-size: 11px;
       }
@@ -42,8 +43,8 @@ $menuBorderRadius: 5px;
         display: inline-block;
         width: 60px;
         height: 60px;
-        background-color: lighten($darkest, 20);
-        color: $darkest;
+        background-color: lighten($sidebarColor, 20);
+        color: $sidebarColor;
         border-radius: 30px;
         line-height: 60px !important;
       }
@@ -66,7 +67,7 @@ $menuBorderRadius: 5px;
         transition: max-height 0.5s;
 
       .sidebarHeader {
-        background: darken($darkest,1);
+        background: darken(#262429,1);
         padding: 10px;
         display: flex;
         width:100%;
@@ -74,7 +75,7 @@ $menuBorderRadius: 5px;
     
         justify-content: flex-start;
         align-items: center;
-        color: $header-font;
+        color: #ABABAB;
         font-weight: 700;
       }
       .moduleHeader {
@@ -98,7 +99,7 @@ $menuBorderRadius: 5px;
       .mat-list-item {
         width: 100%;
         cursor: pointer;
-        color: $header-font;
+        color: #ABABAB;
         border-left: 4px solid #333037;
         margin-left: 25px;
         height: 40px;
@@ -106,8 +107,8 @@ $menuBorderRadius: 5px;
         
       }
       a.list-item-active {
-        color: $ivory;
-        background: lighten($darkest, 20);
+        color: #F8F8F8;
+        background: lighten(#262429, 20);
       }
     
     }
@@ -139,8 +140,9 @@ h1.lwm-app-name {
 }
 
 .mat-toolbar {
+  background-color: darken($sidebarColor, 10);
   a.lwm-app-name, a.lwm-app-name:hover, a.lwm-app-name:active, a.lwm-app-name:visited, a.lwm-app-name:link {
-      color: $header-font;
+      color: #ABABAB;
       text-decoration: none;
   }
 }
