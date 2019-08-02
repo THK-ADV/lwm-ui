@@ -83,9 +83,9 @@ export class UsersComponent extends AbstractCRUDComponent<User, User> {
     protected onEdit(model) {
         const dialogRef = UserAuthorityUpdateDialogComponent.instance(this.dialog, model)
 
-        this.subscribe(
+        this.subscribeAndPush(
             dialogRef.afterClosed(),
-            id => console.log(id)
+            console.log
         )
     }
 

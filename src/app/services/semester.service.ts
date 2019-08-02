@@ -24,14 +24,14 @@ export class SemesterService implements AbstractCRUDService<SemesterProtocol, Se
     private path = 'semesters'
 
     create(protocol: SemesterProtocol): Observable<Semester[]> {
-        return this.http.create(this.path, protocol)
+        return this.http.create(this.path, [protocol])
     }
 
     delete(id: string): Observable<Semester> {
         return this.http.delete(this.path, id)
     }
 
-    get(): Observable<Semester[]> {
+    getAll(): Observable<Semester[]> {
         return this.http.get<SemesterJSON[]>(this.path)
             .pipe(map(this.convert))
     }

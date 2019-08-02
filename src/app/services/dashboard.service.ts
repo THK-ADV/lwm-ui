@@ -16,7 +16,7 @@ export class DashboardService {
   }
 
   // getDashboardForCurrentSession(): Promise<StudentDashboard | EmployeeDashboard> {
-  //   return this.http.get<Dashboard>('dashboard').pipe(
+  //   return this.http.getAll<Dashboard>('dashboard').pipe(
   //     map(dashboard => {
   //       switch (dashboard.status) {
   //         case 'student': return <StudentDashboard>dashboard;

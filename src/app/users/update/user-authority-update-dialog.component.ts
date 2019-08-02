@@ -1,16 +1,25 @@
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
-import {DIALOG_WIDTH} from '../../shared-dialogs/dialog-constants'
 import {User} from '../../models/user.model'
-import {AuthorityService, UserStatus} from '../../services/authority.service'
-import {AuthorityAtom} from '../../models/authorityAtom.model'
-import {Subscription} from 'rxjs'
+import {AuthorityService} from '../../services/authority.service'
+import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
+import {Observable, Subscription} from 'rxjs'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
+import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms'
+import {CourseAtom} from '../../models/course'
+import {CourseService} from '../../services/course.service'
+import {subscribe} from '../../utils/functions'
+import {map, startWith} from 'rxjs/operators'
+import {RoleService} from '../../services/role.service'
+import {UserStatus} from '../../models/userStatus.model'
+import {Role} from '../../models/role.model'
 
 export interface StandardRole {
     label: UserStatus
     color: 'primary' | 'accent'
 }
+
+type AuthCreationControl = 'courseControl' | 'roleControl'
 
 @Component({
     selector: 'app-user-edit-dialog',
@@ -19,67 +28,202 @@ export interface StandardRole {
 })
 export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
-    standardRoles: StandardRole[]
-    protected dataSource = new MatTableDataSource<AuthorityAtom>()
-    private readonly displayedColumns: string[]
-    columns: TableHeaderColumn[]
+    constructor(
+        private dialogRef: MatDialogRef<UserAuthorityUpdateDialogComponent>,
+        @Inject(MAT_DIALOG_DATA) private user: User,
+        private authorityService: AuthorityService,
+        private courseService: CourseService,
+        private roleService: RoleService
+    ) {
+        this.standardRoles = []
+        this.displayedColumns = ['course', 'role', 'action']
+        this.columns = [{attr: 'course', title: 'Modul'}, {attr: 'role', title: 'Rolle'}]
+        this.subs = []
+
+        this.authGroup = new FormGroup({})
+        this.courseOptions = []
+        this.roleOptions = []
+    }
+
+    protected readonly standardRoles: StandardRole[]
+    protected readonly displayedColumns: string[]
+    protected readonly columns: TableHeaderColumn[]
+
+    private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
+    private readonly subs: Subscription[]
+
     @ViewChild(MatSort, {static: true}) sort: MatSort
 
-    sub: Subscription
+    protected readonly authGroup: FormGroup
+    protected courseOptions: CourseAtom[]
+    protected roleOptions: Role[]
+    protected filteredCourseOptions: Observable<CourseAtom[]>
+    protected filteredRoleOptions: Observable<Role[]>
+
+    private readonly invalidChoiceKey = 'invalidObject' // TODO move out
 
     static instance(dialog: MatDialog, user: User): MatDialogRef<UserAuthorityUpdateDialogComponent> {
         return dialog.open(UserAuthorityUpdateDialogComponent, {
-            width: DIALOG_WIDTH,
+            // width: DIALOG_WIDTH,
             data: user,
             panelClass: 'lwmUserAuthorityUpdateDialog'
         })
     }
 
-    constructor(
-        private dialogRef: MatDialogRef<UserAuthorityUpdateDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) private user: User,
-        private authorityService: AuthorityService
-    ) {
-        this.standardRoles = []
-        this.displayedColumns = ['course', 'role', 'action']
-        this.columns = [{attr: 'course', title: 'Modul'}, {attr: 'role', title: 'Rolle'}]
+    private addControl(controlName: AuthCreationControl) { // TODO move out
+        const objectValidator = (): ValidatorFn => {
+            return (ctl: AbstractControl): ValidationErrors | null => {
+                if (!this.isJSON(ctl.value) || ctl.value === null || ctl.value === '') {
+                    return {[this.invalidChoiceKey]: 'Invalide Auswahl'}
+                }
+
+                return null
+            }
+        }
+
+        this.authGroup.addControl(controlName, new FormControl('', objectValidator()))
+    }
+
+    private getControl(control: AuthCreationControl): FormControl { // TODO move out
+        return this.authGroup.controls[control] as FormControl
     }
 
     ngOnInit() {
+        this.setupSorting()
+        this.setupAuthorities()
+        this.setupRoles()
+        this.setupCourses()
+        this.setupFormControls()
+    }
+
+    private hasFormGroupError(control: AuthCreationControl): boolean { // TODO move out
+        return this.getControl(control).hasError(this.invalidChoiceKey)
+    }
+
+    private formGroupErrorMessage(control: AuthCreationControl) { // TODO move out
+        return this.getControl(control).getError(this.invalidChoiceKey)
+    }
+
+    private setupCourses() {
+        this.subs.push(subscribe(
+            this.courseService.getAll(),
+            courses => this.courseOptions = courses
+        ))
+    }
+
+    private setupRoles() {
+        this.subs.push(subscribe(
+            this.roleService.getCourseRoles(),
+            roles => this.roleOptions = roles
+        ))
+    }
+
+    private setupAuthorities() {
+        this.subs.push(subscribe(
+            this.authorityService.getAuthorities(this.user.systemId),
+            auths => {
+                auths.forEach(auth => {
+                    if (this.authorityService.is(UserStatus.admin, auth)) {
+                        this.standardRoles.push({label: UserStatus.admin, color: 'accent'})
+                    }
+
+                    if (this.authorityService.is(UserStatus.employee, auth)) {
+                        this.standardRoles.push({label: UserStatus.employee, color: 'primary'})
+                    }
+
+                    if (this.authorityService.is(UserStatus.student, auth)) {
+                        this.standardRoles.push({label: UserStatus.student, color: 'primary'})
+                    }
+
+                    if (auth.course !== undefined) {
+                        this.dataSource.data.push(auth)
+                    }
+                })
+
+                if (this.dataSource.data.length !== 0) {
+                    this.sortBy('course')
+                }
+            }
+        ))
+    }
+
+    private isUserInput(value: any): boolean {
+        return typeof value === 'string'
+    }
+
+    private isJSON(value: any): boolean {
+        return !this.isUserInput(value)
+    }
+
+    private setupFormControls() {
+        this.addControl('courseControl')
+        this.addControl('roleControl')
+
+        this.filteredCourseOptions = this.getControl('courseControl').valueChanges
+            .pipe(
+                startWith(''),
+                map(value => this.isUserInput(value) ? value : value.abbreviation),
+                map(abbreviation => abbreviation ? this.filterCourse(abbreviation) : this.courseOptions.slice())
+            )
+
+        this.filteredRoleOptions = this.getControl('roleControl').valueChanges
+            .pipe(
+                startWith(''),
+                map(value => this.isUserInput(value) ? value : value.label),
+                map(label => label ? this.filterRole(label) : this.roleOptions.slice())
+            )
+    }
+
+    private resetControls() {
+        const controls: AuthCreationControl[] = ['roleControl', 'courseControl']
+
+        controls.forEach(c => {
+            const control = this.getControl(c)
+            control.setValue('', {emitEvent: true})
+            control.markAsUntouched()
+        })
+    }
+
+    private displayFn(object?: CourseAtom | Role): string | undefined {
+        const isCourse = (o: CourseAtom | Role): o is CourseAtom => {
+            return (object as CourseAtom).semesterIndex !== undefined
+        }
+
+        if (!object) {
+            return undefined
+        }
+
+        if (isCourse(object)) {
+            return `${object.abbreviation} (${object.lecturer.lastname})`
+        } else {
+            return object.label
+        }
+    }
+
+    private filterCourse(input: string): CourseAtom[] {
+        const filterValue = input.toLowerCase()
+        return this.courseOptions.filter(course => course.abbreviation.toLowerCase().indexOf(filterValue) === 0)
+    }
+
+    private filterRole(input: string): Role[] {
+        const filterValue = input.toLowerCase()
+        return this.roleOptions.filter(role => role.label.toLowerCase().indexOf(filterValue) === 0)
+    }
+
+    private setupSorting() {
         this.dataSource.sortingDataAccessor = (auth, attr) => {
             return this.fold(
-                attr,
-                auth,
+                attr, auth,
                 course => course.abbreviation,
                 role => role.label
             )
         }
 
         this.dataSource.sort = this.sort
-
-        this.sub = this.authorityService.getAuthorities(this.user.systemId).subscribe(auths => {
-            if (this.authorityService.isAdmin(auths)) {
-                this.standardRoles.push({label: 'Administrator', color: 'accent'})
-            }
-
-            if (this.authorityService.hasStatus('Mitarbeiter', auths)) {
-                this.standardRoles.push({label: 'Mitarbeiter', color: 'primary'})
-            }
-
-            if (this.authorityService.hasStatus('Student', auths)) {
-                this.standardRoles.push({label: 'Student', color: 'primary'})
-            }
-
-            this.dataSource.data = auths.filter(auth => auth.course !== undefined)
-
-            if (this.dataSource.data.length !== 0) {
-                this.sortBy('course')
-            }
-        })
     }
 
     ngOnDestroy(): void {
-        this.sub.unsubscribe()
+        this.subs.forEach(s => s.unsubscribe())
     }
 
     protected sortBy(label: string, ordering: SortDirection = 'asc') { // copy pasted
@@ -95,7 +239,31 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         this.closeModal(undefined)
     }
 
-    onDelete(auth: AuthorityAtom) {
+    addAuthority() {
+        if (!this.authGroup.valid) {
+            return
+        }
+
+        const role = this.getControl('roleControl').value as Role
+        const courseAtom = this.getControl('courseControl').value as CourseAtom
+        this.createAuthority({user: this.user.id, role: role.id, course: courseAtom.id})
+    }
+
+    private createAuthority(auth: AuthorityProtocol) {
+        this.subs.push(
+            subscribe(
+                this.authorityService.create(auth),
+                this.afterCreate.bind(this)
+            )
+        )
+    }
+
+    private afterCreate(auths: AuthorityAtom[]) {
+        this.dataSource.data = this.dataSource.data.concat(auths)
+        this.resetControls()
+    }
+
+    onDelete(auth: AuthorityAtom) { // TODO
         console.log('onDelete', auth)
     }
 
@@ -128,7 +296,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         })
     }
 
-    private closeModal(result: any | undefined) {
+    private closeModal(result: AuthorityProtocol | undefined) {
         this.dialogRef.close(result)
     }
 }
