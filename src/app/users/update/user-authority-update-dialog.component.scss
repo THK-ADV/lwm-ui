@@ -1,11 +1,46 @@
+$v-spacing: 16px;
+$h-spacing: 10px;
+
 h2 {
     margin-bottom: 25px;
 }
 
 table {
     width: 100%;
+    box-shadow: none;
 
     th, td {
         padding: 0 25px;
+    }
+}
+
+.mat-card {
+    margin-left: 0; 
+    padding: $v-spacing 0;
+    
+    
+    mat-card-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin: 0;
+        padding: 0;
+
+        mat-form-field:not(:first-child) {
+            margin: 0;
+            margin-left: $h-spacing;
+        }
+    }
+
+    .mat-card-actions {
+        margin: 0;
+        margin-bottom: $v-spacing;
+        padding: 0;
+
+        button {
+            width: 100%;
+        }
+
     }
 }

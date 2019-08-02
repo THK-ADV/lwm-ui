@@ -14,7 +14,8 @@ import {
     MatNativeDateModule,
     MatTooltipModule,
     MatAutocompleteModule,
-    MatChipsModule
+    MatChipsModule,
+    MatCardModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -38,7 +39,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatNativeDateModule,
         MatTooltipModule,
         MatAutocompleteModule,
-        MatChipsModule
+        MatChipsModule,
+        MatCardModule
     ]
 })
 export class LWMMaterialModule {

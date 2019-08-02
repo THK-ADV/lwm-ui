@@ -4,38 +4,41 @@
     <mat-basic-chip *ngFor="let r of standardRoles" [class]="r.color">{{r.label}}</mat-basic-chip>
 </mat-chip-list>
 
-<hr>
 
 <div class="modalContainer">
 
-    <mat-dialog-content [formGroup]="authGroup">
-        <mat-form-field color="primary">
-            <input type="text" placeholder="Modul" aria-label="Modul" matInput [formControl]="getControl('courseControl')" [matAutocomplete]="courseAuto">
-            <mat-autocomplete #courseAuto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let course of filteredCourseOptions | async" [value]="course">
-                    {{course.abbreviation}} ({{course.lecturer.lastname}})
-                </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="hasFormGroupError('courseControl')">{{formGroupErrorMessage('courseControl')}}</mat-error>
-        </mat-form-field>
+    <mat-card [formGroup]="authGroup">
+        <mat-card-content>
+            <mat-form-field color="primary">
+                <input type="text" placeholder="Modul" aria-label="Modul" matInput
+                    [formControl]="getControl('courseControl')" [matAutocomplete]="courseAuto">
+                <mat-autocomplete #courseAuto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let course of filteredCourseOptions | async" [value]="course">
+                        {{course.abbreviation}} ({{course.lecturer.lastname}})
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="hasFormGroupError('courseControl')">{{formGroupErrorMessage('courseControl')}}
+                </mat-error>
+            </mat-form-field>
 
-        <mat-form-field color="primary">
-            <input type="text" placeholder="Rolle" aria-label="Rolle" matInput [formControl]="getControl('roleControl')" [matAutocomplete]="roleAuto">
-            <mat-autocomplete #roleAuto="matAutocomplete" [displayWith]="displayFn">
-                <mat-option *ngFor="let role of filteredRoleOptions | async" [value]="role">
-                    {{role.label}}
-                </mat-option>
-            </mat-autocomplete>
-            <mat-error *ngIf="hasFormGroupError('roleControl')">{{formGroupErrorMessage('roleControl')}}</mat-error>
-        </mat-form-field>
-
-        <mat-dialog-actions>
-            <button mat-flat-button color="primary" [disabled]="!authGroup.valid" (click)="addAuthority()"> <!-- set disabled via css -->
-                <mat-icon>add</mat-icon>
+            <mat-form-field color="primary">
+                <input type="text" placeholder="Rolle" aria-label="Rolle" matInput
+                    [formControl]="getControl('roleControl')" [matAutocomplete]="roleAuto">
+                <mat-autocomplete #roleAuto="matAutocomplete" [displayWith]="displayFn">
+                    <mat-option *ngFor="let role of filteredRoleOptions | async" [value]="role">
+                        {{role.label}}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="hasFormGroupError('roleControl')">{{formGroupErrorMessage('roleControl')}}</mat-error>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-flat-button color="primary" [disabled]="!authGroup.valid" (click)="addAuthority()">
+                <!-- set disabled via css -->
+                Rolle zuweisen
             </button>
-        </mat-dialog-actions>
-    </mat-dialog-content>
-
+        </mat-card-actions>
+    </mat-card>
 
 
     <ng-container *ngIf="!emptyData()">
@@ -62,6 +65,6 @@
     </ng-container>
 
     <mat-dialog-actions>
-        <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+        <button mat-flat-button (click)="onCancel()">Schließen</button>
     </mat-dialog-actions>
 </div>
