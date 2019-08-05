@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort, SortDirection} from '@angular/material'
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {
     CreateUpdateDialogComponent,
@@ -137,6 +137,10 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
 
     private isModel(data: Model | Protocol): data is Model {
         return (data as Model).id !== undefined
+    }
+
+    protected applyFilter(filterValue: string) {
+        this.dataSource.filter = filterValue.trim().toLowerCase() // TODO override this.dataSource.filterPredicate if needed
     }
 
     protected sortBy(label: string, ordering: SortDirection = 'asc') {

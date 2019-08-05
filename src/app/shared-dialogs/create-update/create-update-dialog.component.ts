@@ -1,8 +1,8 @@
-import { Component, Inject } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material'
-import { FormControl, FormGroup, ValidatorFn } from '@angular/forms'
-import { DIALOG_WIDTH } from '../dialog-constants'
-import { LWMDateAdapter } from '../../utils/lwmdate-adapter'
+import {Component, Inject} from '@angular/core'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
+import {DIALOG_WIDTH} from '../dialog-constants'
+import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 
 type FormDataType = string | number | Date // TODO extend
 type FormDataStringType = 'text' | 'number' | 'date'
@@ -108,10 +108,6 @@ export class CreateUpdateDialogComponent {
 
     private isStandardInput(data: FormInputData): boolean {
         return data.type === 'number' || data.type === 'text'
-    }
-
-    private isDateInput(data: FormInputData): boolean {
-        return data.type === 'date'
     }
 
     private closeModal(result: any | undefined) {
