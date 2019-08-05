@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
-import {MatDialog, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource, PageEvent, Sort, SortDirection} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {
     CreateUpdateDialogComponent,
@@ -42,6 +42,7 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     private readonly displayedColumns: string[]
 
     @ViewChild(MatSort, {static: true}) sort: MatSort
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
 
     constructor(
         protected readonly dialog: MatDialog,
@@ -55,7 +56,8 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
         protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
         protected readonly empty: () => Readonly<Protocol>,
-        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined
+        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined,
+        protected readonly pageSizeOptions: number[] = [25, 50, 100]
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
     }
@@ -67,6 +69,8 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
             this.dataSource.data = data
             this.sortBy(this.sortDescriptor)
         })
+
+        this.dataSource.paginator = this.paginator
     }
 
     ngOnDestroy(): void {
