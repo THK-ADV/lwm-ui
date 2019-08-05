@@ -39,12 +39,12 @@ export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, 
         return this.http.create(this.path, [protocol], params)
     }
 
-    delete(id: string): Observable<AuthorityAtom> {
-        return NotImplementedError()
-    }
-
     getAll(): Observable<AuthorityAtom[]> {
         return this.http.get(this.path)
+    }
+
+    delete(id: string): Observable<AuthorityAtom> {
+        return this.http.delete(this.path, id)
     }
 
     update(protocol: AuthorityProtocol, id: string): Observable<AuthorityAtom> {

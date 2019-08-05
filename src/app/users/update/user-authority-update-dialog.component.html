@@ -11,7 +11,7 @@
         <mat-card-content>
             <mat-form-field color="primary">
                 <input type="text" placeholder="Modul" aria-label="Modul" matInput
-                    [formControl]="getControl('courseControl')" [matAutocomplete]="courseAuto">
+                    formControlName="courseControl" [matAutocomplete]="courseAuto">
                 <mat-autocomplete #courseAuto="matAutocomplete" [displayWith]="displayFn">
                     <mat-option *ngFor="let course of filteredCourseOptions | async" [value]="course">
                         {{course.abbreviation}} ({{course.lecturer.lastname}})
@@ -23,7 +23,7 @@
 
             <mat-form-field color="primary">
                 <input type="text" placeholder="Rolle" aria-label="Rolle" matInput
-                    [formControl]="getControl('roleControl')" [matAutocomplete]="roleAuto">
+                    formControlName="roleControl" [matAutocomplete]="roleAuto">
                 <mat-autocomplete #roleAuto="matAutocomplete" [displayWith]="displayFn">
                     <mat-option *ngFor="let role of filteredRoleOptions | async" [value]="role">
                         {{role.label}}
@@ -34,7 +34,6 @@
         </mat-card-content>
         <mat-card-actions>
             <button mat-flat-button color="primary" [disabled]="!authGroup.valid" (click)="addAuthority()">
-                <!-- set disabled via css -->
                 Rolle zuweisen
             </button>
         </mat-card-actions>
