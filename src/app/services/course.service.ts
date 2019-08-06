@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core'
-import {HttpService, nonAtomicParams} from './http.service'
+import {atomicParams, HttpService} from './http.service'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {CourseAtom} from '../models/course'
 import {Observable} from 'rxjs'
 import {NotImplementedError} from '../utils/functions'
+import {map} from 'rxjs/operators'
 
 export interface CourseProtocol {
     label: string
@@ -23,8 +24,9 @@ export class CourseService implements AbstractCRUDService<CourseProtocol, Course
 
     private path = 'courses'
 
-    create(protocol: CourseProtocol): Observable<CourseAtom[]> {
-        return NotImplementedError()
+    createMany(protocol: CourseProtocol): Observable<CourseAtom[]> {
+        return this.http.create<CourseProtocol, CourseAtom>(this.path, protocol, atomicParams)
+            .pipe(map(course => [course]))
     }
 
     delete(id: string): Observable<CourseAtom> {
@@ -36,6 +38,6 @@ export class CourseService implements AbstractCRUDService<CourseProtocol, Course
     }
 
     update(protocol: CourseProtocol, id: string): Observable<CourseAtom> {
-        return NotImplementedError()
+        return this.http.put(this.path, id, protocol, atomicParams)
     }
 }

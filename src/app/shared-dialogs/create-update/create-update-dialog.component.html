@@ -2,20 +2,37 @@
 
 <div class="modalContainer">
     <mat-dialog-content [formGroup]="formGroup">
-        <mat-form-field class="mat-form-field-modal" *ngFor="let d of payload.data" color="primary">
-            <ng-container *ngIf="isStandardInput(d); else datepicker">
-                <input matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName">
-            </ng-container>
-            <ng-template #datepicker>
-                <div class="lwmDatepicker">                
+        <mat-form-field class="mat-form-field-modal" *ngFor="let d of payload.data" color="primary" [ngSwitch]="d.type">
+            <ng-container *ngSwitchCase="'date'">
+                <div class="lwmDatepicker">
                     <input matInput [matDatepicker]="dp" [placeholder]="d.placeholder"
-                        [formControlName]="d.formControlName" (click)="dp.open()">
+                           [formControlName]="d.formControlName" (click)="dp.open()">
                     <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
                 </div>
                 <mat-datepicker #dp color="primary"></mat-datepicker>
-                <mat-error *ngIf="hasFormGroupError(d.formControlName)">{{formGroupErrorMessage(d.formControlName)}}
-                </mat-error>
-            </ng-template>
+            </ng-container>
+            <mat-error *ngIf="hasFormGroupError(d.formControlName)">{{formGroupErrorMessage(d.formControlName)}}
+            </mat-error>
+
+            <ng-container *ngSwitchCase="'options'">
+                <input type="text" [placeholder]="d.placeholder" matInput
+                       [formControlName]="d.formControlName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="payload.formInputOption.displayFn">
+                    <mat-option *ngFor="let option of payload.formInputOption.filteredOptions | async" [value]="option">
+                        {{payload.formInputOption.displayFn(option)}}
+                    </mat-option>
+                </mat-autocomplete>
+            </ng-container>
+            <mat-error *ngIf="payload.formInputOption?.hasError()">{{payload.formInputOption?.getErrorMessage()}}
+            </mat-error>
+
+            <ng-container *ngSwitchCase="'textArea'">
+                <textarea matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName"></textarea>
+            </ng-container>
+
+            <ng-container *ngSwitchDefault>
+                <input matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName">
+            </ng-container>
         </mat-form-field>
     </mat-dialog-content>
 

@@ -22,8 +22,8 @@ export class DegreeService implements AbstractCRUDService<DegreeProtocol, Degree
         return this.http.delete(this.path, id)
     }
 
-    create(degree: DegreeProtocol): Observable<Degree[]> {
-        return this.http.create(this.path, [degree])
+    createMany(degree: DegreeProtocol): Observable<Degree[]> {
+        return this.http.createMany(this.path, [degree])
     }
 
     update(degree: DegreeProtocol, id: string): Observable<Degree> {

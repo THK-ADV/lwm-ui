@@ -29,7 +29,7 @@ const routes: Routes = [
             },
             {
                 path: 'modules',
-                component: EntryPageComponent
+                component: CoursesComponent
             },
             {
                 path: 'rooms',

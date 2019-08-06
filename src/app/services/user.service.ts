@@ -15,6 +15,10 @@ export class UserService implements AbstractCRUDService<User, User> {
 
     private path = 'users'
 
+    getAllEmployees(): Observable<User[]> {
+        return this.http.get<User[]>(this.path, nonAtomicParams.append('status', 'employee'))
+    }
+
     getAll(): Observable<User[]> {
         return this.http.get<User[]>(this.path, nonAtomicParams)
     }
@@ -23,10 +27,9 @@ export class UserService implements AbstractCRUDService<User, User> {
         return NotImplementedError()
     }
 
-    create(protocol: User): Observable<User[]> {
+    createMany(protocol: User): Observable<User[]> {
         throw new Error('Method not implemented.')
     }
-
 
     update(protocol: User, id: string): Observable<User> {
         return NotImplementedError()

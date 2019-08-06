@@ -14,7 +14,7 @@ export class RouteInterceptor implements HttpInterceptor {
             })
         }
 
-        console.log(req.url, req.params)
+        console.log(req.url, req.params, req.body)
 
         return next.handle(req)
     }

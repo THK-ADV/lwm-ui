@@ -34,9 +34,9 @@ export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, 
         return this.hasStatus(UserStatus.admin, authorities)
     }
 
-    create(protocol: AuthorityProtocol): Observable<AuthorityAtom[]> {
+    createMany(protocol: AuthorityProtocol): Observable<AuthorityAtom[]> {
         const params = new HttpParams().set('atomic', 'true')
-        return this.http.create(this.path, [protocol], params)
+        return this.http.createMany(this.path, [protocol], params)
     }
 
     getAll(): Observable<AuthorityAtom[]> {

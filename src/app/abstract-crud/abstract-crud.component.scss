@@ -13,6 +13,9 @@ table {
   button {
     margin: 5px
   }
+  td, th {
+    padding: 8px 25px
+  }
 }
 
 th.mat-sort-header-sorted {

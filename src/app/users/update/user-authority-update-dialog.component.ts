@@ -5,7 +5,7 @@ import {AuthorityService} from '../../services/authority.service'
 import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
 import {Observable, Subscription} from 'rxjs'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
-import {AbstractControl, FormControl, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms'
+import {FormControl, FormGroup} from '@angular/forms'
 import {CourseAtom} from '../../models/course'
 import {CourseService} from '../../services/course.service'
 import {subscribe} from '../../utils/functions'
@@ -14,6 +14,7 @@ import {RoleService} from '../../services/role.service'
 import {UserStatus} from '../../models/userStatus.model'
 import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
+import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/options.validator'
 
 export interface StandardRole {
     label: UserStatus
@@ -62,8 +63,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     protected filteredCourseOptions: Observable<CourseAtom[]>
     protected filteredRoleOptions: Observable<Role[]>
 
-    private readonly invalidChoiceKey = 'invalidObject' // TODO move out
-
     static instance(dialog: MatDialog, user: User): MatDialogRef<UserAuthorityUpdateDialogComponent> {
         return dialog.open(UserAuthorityUpdateDialogComponent, {
             data: user,
@@ -72,17 +71,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private addControl(controlName: AuthCreationControl) { // TODO move out
-        const objectValidator = (): ValidatorFn => {
-            return (ctl: AbstractControl): ValidationErrors | null => {
-                if (!this.isJSON(ctl.value) || ctl.value === null || ctl.value === '') {
-                    return {[this.invalidChoiceKey]: 'Invalide Auswahl'}
-                }
-
-                return null
-            }
-        }
-
-        this.authGroup.addControl(controlName, new FormControl('', objectValidator()))
+        this.authGroup.addControl(controlName, new FormControl('', optionsValidator()))
     }
 
     private getControl(control: AuthCreationControl): FormControl { // TODO move out
@@ -98,11 +87,11 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private hasFormGroupError(control: AuthCreationControl): boolean { // TODO move out
-        return this.getControl(control).hasError(this.invalidChoiceKey)
+        return this.getControl(control).hasError(invalidChoiceKey)
     }
 
     private formGroupErrorMessage(control: AuthCreationControl) { // TODO move out
-        return this.getControl(control).getError(this.invalidChoiceKey)
+        return this.getControl(control).getError(invalidChoiceKey)
     }
 
     private setupCourses() {
@@ -148,14 +137,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         ))
     }
 
-    private isUserInput(value: any): boolean {
-        return typeof value === 'string'
-    }
-
-    private isJSON(value: any): boolean {
-        return !this.isUserInput(value)
-    }
-
     private setupFormControls() {
         this.addControl('courseControl')
         this.addControl('roleControl')
@@ -163,14 +144,14 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         this.filteredCourseOptions = this.getControl('courseControl').valueChanges
             .pipe(
                 startWith(''),
-                map(value => this.isUserInput(value) ? value : value.abbreviation),
+                map(value => isUserInput(value) ? value : value.abbreviation),
                 map(abbreviation => abbreviation ? this.filterCourse(abbreviation) : this.courseOptions.slice())
             )
 
         this.filteredRoleOptions = this.getControl('roleControl').valueChanges
             .pipe(
                 startWith(''),
-                map(value => this.isUserInput(value) ? value : value.label),
+                map(value => isUserInput(value) ? value : value.label),
                 map(label => label ? this.filterRole(label) : this.roleOptions.slice())
             )
     }
@@ -253,7 +234,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private createAuthority(auth: AuthorityProtocol) {
         this.subs.push(
             subscribe(
-                this.authorityService.create(auth),
+                this.authorityService.createMany(auth),
                 this.afterCreate.bind(this)
             )
         )

@@ -16,7 +16,12 @@ export interface CreationResponse<T> {
     failed: T[]
 }
 
+export interface UpdatedResponse<T> {
+    updated: T
+}
+
 export const nonAtomicParams = new HttpParams().set('atomic', 'false')
+export const atomicParams = new HttpParams().set('atomic', 'true')
 
 @Injectable({
     providedIn: 'root'
@@ -59,7 +64,7 @@ export class HttpService {
             .pipe(catchError(this.handleError))
     }
 
-    create<I, O>(url: string, element: I[], params?: HttpParams): Observable<O[]> { // TODO change to single creation
+    createMany<I, O>(url: string, element: I[], params?: HttpParams): Observable<O[]> { // TODO change to single creation
         return this.http.post<CreationResponse<O>>(url, element, {params})
             .pipe(
                 catchError(this.handleError),
@@ -73,10 +78,20 @@ export class HttpService {
             )
     }
 
-    put<I, O>(url: string, id: string, element: I): Observable<O> {
-        return this.http.put<O>(`${url}/${id}`, element)
+    create<I, O>(url: string, element: I, params?: HttpParams): Observable<O> { // TODO change to single creation
+        return this.http.post<O>(url, element, {params})
             .pipe(
                 catchError(this.handleError),
+                tap(r => console.log('created', r))
+            )
+    }
+
+
+    put<I, O>(url: string, id: string, element: I, params?: HttpParams): Observable<O> { // TODO response has nested updated object. remove it
+        return this.http.put<UpdatedResponse<O>>(`${url}/${id}`, element, {params})
+            .pipe(
+                catchError(this.handleError),
+                map(r => r.updated),
                 tap(r => console.log('put resp: ', r))
             )
     }

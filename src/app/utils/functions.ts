@@ -28,11 +28,11 @@ export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
     })
 }
 
-export function NotImplementedError(): never {
-    throw new Error('not implemented yet')
+export function NotImplementedError(data: string = ''): never {
+    throw new Error(`not implemented yet - ${data}`)
 }
 
-export function subscribe<T>(observable: Observable<T>, next: (T) => void): Subscription{
+export function subscribe<T>(observable: Observable<T>, next: (t: T) => void): Subscription {
     return observable.subscribe(e => {
         if (e) {
             next(e)

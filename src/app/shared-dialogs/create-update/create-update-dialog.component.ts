@@ -1,11 +1,13 @@
-import {Component, Inject} from '@angular/core'
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
+import {AbstractControl, FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
+import {Observable, Subscription} from 'rxjs'
+import {map, startWith} from 'rxjs/operators'
 
-type FormDataType = string | number | Date // TODO extend
-type FormDataStringType = 'text' | 'number' | 'date'
+type FormDataType = string | number | Date
+type FormDataStringType = 'text' | 'number' | 'date' | 'options' | 'textArea'
 
 export interface FormInputData {
     formControlName: string
@@ -21,12 +23,66 @@ export interface FormOutputData {
     value: FormDataType
 }
 
-export interface FormPayload {
+export interface FormPayload<Protocol> {
     headerTitle: string,
     submitTitle: string,
     data: FormInputData[],
-    builder: (formOutputData: FormOutputData[]) => Object
-    composedFromGroupValidator: ValidatorFn | undefined
+    makeProtocol: (formOutputData: FormOutputData[]) => Protocol
+    composedFromGroupValidator?: ValidatorFn,
+    formInputOption?: FormInputOption<Object>
+}
+
+export class FormInputOption<T> {
+    options: T[] = []
+    filteredOptions: Observable<T[]>
+
+    private sub: Subscription
+    private control: AbstractControl
+
+    constructor(
+        private readonly controlName: string,
+        private readonly errorKey: string,
+        private readonly display: (value: T) => string,
+        private readonly getOptions: (options: (value: T[]) => void) => Subscription
+    ) {
+    }
+
+    onInit(group: FormGroup) {
+        this.sub = this.getOptions(os => this.options = os)
+        this.control = group.controls[this.controlName]
+
+        this.filteredOptions = this.control.valueChanges
+            .pipe(
+                startWith(''),
+                map(value => typeof value === 'string' ? value : this.display(value)),
+                map(value => value ? this.filter(value) : this.options.slice())
+            )
+    }
+
+    onDestroy() {
+        this.sub.unsubscribe()
+    }
+
+    private filter(input: string): T[] {
+        const filterValue = input.toLowerCase()
+        return this.options.filter(t => this.display(t).toLowerCase().indexOf(filterValue) >= 0)
+    }
+
+    displayFn = (object?: T): string | undefined => {
+        if (!object) {
+            return undefined
+        }
+
+        return this.display(object)
+    }
+
+    hasError(): boolean {
+        return !this.control.untouched && this.control.hasError(this.errorKey)
+    }
+
+    getErrorMessage(): string {
+        return this.control.getError(this.errorKey)
+    }
 }
 
 @Component({
@@ -35,13 +91,15 @@ export interface FormPayload {
     styleUrls: ['./create-update-dialog.component.scss'],
     providers: LWMDateAdapter.defaultProviders()
 })
-
-export class CreateUpdateDialogComponent {
+export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnDestroy {
 
     private formGroup: FormGroup
 
-    static instance(dialog: MatDialog, payload: FormPayload): MatDialogRef<CreateUpdateDialogComponent> {
-        return dialog.open(CreateUpdateDialogComponent, {
+    static instance<Protocol, Model>(
+        dialog: MatDialog,
+        payload: FormPayload<Protocol>
+    ): MatDialogRef<CreateUpdateDialogComponent<Protocol, Model>, Protocol> {
+        return dialog.open<CreateUpdateDialogComponent<Protocol, Model>, any, Protocol>(CreateUpdateDialogComponent, {
             width: DIALOG_WIDTH,
             data: payload,
             panelClass: 'lwmCreateUpdateDialog'
@@ -49,8 +107,8 @@ export class CreateUpdateDialogComponent {
     }
 
     constructor(
-        private dialogRef: MatDialogRef<CreateUpdateDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) private payload: FormPayload
+        private dialogRef: MatDialogRef<CreateUpdateDialogComponent<Protocol, Model>, Protocol>,
+        @Inject(MAT_DIALOG_DATA) private payload: FormPayload<Protocol>
     ) {
         this.formGroup = new FormGroup({})
 
@@ -71,18 +129,36 @@ export class CreateUpdateDialogComponent {
         }
     }
 
+    ngOnInit(): void {
+        const option = this.payload.formInputOption
+
+        if (option) {
+            option.onInit(this.formGroup)
+        }
+    }
+
+    ngOnDestroy(): void {
+        const option = this.payload.formInputOption
+
+        if (option) {
+            option.onDestroy()
+        }
+    }
+
     onCancel(): void {
         this.closeModal(undefined)
     }
 
     onSubmit() {
         if (this.formGroup.valid) {
-            const values: FormOutputData[] = this.payload.data.map(d => ({
-                formControlName: d.formControlName,
-                value: this.convertToType(d.type, this.formGroup.controls[d.formControlName].value)
-            }))
+            const updatedValues: FormOutputData[] = this.payload.data
+                .filter(d => !d.isDisabled)
+                .map(d => ({
+                    formControlName: d.formControlName,
+                    value: this.convertToType(d.type, this.formGroup.controls[d.formControlName].value)
+                }))
 
-            this.closeModal(this.payload.builder(values))
+            this.closeModal(this.payload.makeProtocol(updatedValues))
         }
     }
 
@@ -99,6 +175,9 @@ export class CreateUpdateDialogComponent {
         switch (type) {
             case 'number':
                 return +value
+            case 'options':
+                return this.convertToType('text', value.id)
+            case 'textArea':
             case 'text':
                 return '' + value
             case 'date':
@@ -106,12 +185,7 @@ export class CreateUpdateDialogComponent {
         }
     }
 
-    private isStandardInput(data: FormInputData): boolean {
-        return data.type === 'number' || data.type === 'text'
-    }
-
-    private closeModal(result: any | undefined) {
+    private closeModal(result?: Protocol) {
         this.dialogRef.close(result)
     }
-
 }

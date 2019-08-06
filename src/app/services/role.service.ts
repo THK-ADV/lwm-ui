@@ -17,7 +17,7 @@ export class RoleService implements AbstractCRUDService<Role, Role> {
 
     private readonly path = 'roles'
 
-    create(protocol: Role): Observable<Role[]> {
+    createMany(protocol: Role): Observable<Role[]> {
         return NotImplementedError()
     }
 
