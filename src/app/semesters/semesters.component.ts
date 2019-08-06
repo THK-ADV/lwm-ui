@@ -1,11 +1,12 @@
 import {Component} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {FormInputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {FormGroup, ValidatorFn, Validators} from '@angular/forms'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {SemesterService} from '../services/semester.service'
-import {LWMDateAdapter} from '../utils/lwmdate-adapter'
+import {format} from '../utils/lwmdate-adapter'
+
 
 @Component({
     selector: 'app-semesters',
@@ -100,7 +101,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
         const value = semester[attr]
 
         if (value instanceof Date) {
-            return LWMDateAdapter.format(value, 'localDate')
+            return format(value, 'dd.MM.yy')
         } else {
             return value
         }
@@ -123,6 +124,26 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
         )
 
         this.service = semesterService // super.init does not allow types which are generic
+
     }
 
+    protected update(model: Semester, updatedValues: FormOutputData[]): SemesterProtocol | Semester {
+        const updated = super.update(model, updatedValues) as Semester
+        return this.unify(updated)
+    }
+
+    protected create(protocol: SemesterProtocol, updatedValues: FormOutputData[]): SemesterProtocol {
+        const created = super.create(protocol, updatedValues)
+        return this.unify(created)
+    }
+
+    private unify(semester: Semester | SemesterProtocol): SemesterProtocol {
+        return {
+            label: semester.label,
+            abbreviation: semester.abbreviation,
+            start: format(new Date(semester.start), 'yyyy-MM-dd'),
+            end: format(new Date(semester.end), 'yyyy-MM-dd'),
+            examStart: format(new Date(semester.examStart), 'yyyy-MM-dd')
+        }
+    }
 }

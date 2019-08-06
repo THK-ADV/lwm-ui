@@ -86,7 +86,6 @@ export class HttpService {
             )
     }
 
-
     put<I, O>(url: string, id: string, element: I, params?: HttpParams): Observable<O> { // TODO response has nested updated object. remove it
         return this.http.put<UpdatedResponse<O>>(`${url}/${id}`, element, {params})
             .pipe(
