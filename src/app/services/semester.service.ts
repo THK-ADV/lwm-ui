@@ -23,33 +23,35 @@ export class SemesterService implements AbstractCRUDService<SemesterProtocol, Se
 
     private path = 'semesters'
 
-    create(protocol: SemesterProtocol): Observable<Semester[]> {
-        return this.http.create(this.path, protocol)
+    createMany(protocol: SemesterProtocol): Observable<Semester[]> {
+        return this.http.createMany<SemesterProtocol, SemesterJSON>(this.path, [protocol])
+            .pipe(map(this.convertMany))
     }
 
     delete(id: string): Observable<Semester> {
         return this.http.delete(this.path, id)
     }
 
-    get(): Observable<Semester[]> {
+    getAll(): Observable<Semester[]> {
         return this.http.get<SemesterJSON[]>(this.path)
-            .pipe(map(this.convert))
+            .pipe(map(this.convertMany))
     }
 
     update(protocol: SemesterProtocol, id: string): Observable<Semester> {
-        return this.http.put(this.path, id, protocol)
+        return this.http.put<SemesterProtocol, SemesterJSON>(this.path, id, protocol)
+            .pipe(map(this.convert))
     }
 
-    private convert(semesters: SemesterJSON[]): Semester[] {
-        return semesters.map(s => {
-            return {
-                label: s.label,
-                abbreviation: s.abbreviation,
-                start: new Date(s.start),
-                end: new Date(s.end),
-                examStart: new Date(s.examStart),
-                id: s.id
-            }
-        })
-    }
+    convertMany = (semesters: SemesterJSON[]): Semester[] => semesters.map(this.convert)
+
+    convert = (s: SemesterJSON): Semester => (
+        {
+            label: s.label,
+            abbreviation: s.abbreviation,
+            start: new Date(s.start),
+            end: new Date(s.end),
+            examStart: new Date(s.examStart),
+            id: s.id
+        }
+    )
 }

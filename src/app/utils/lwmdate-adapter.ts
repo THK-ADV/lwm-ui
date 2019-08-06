@@ -1,6 +1,6 @@
 import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from '@angular/material'
-
-type DateFormat = 'localDate'
+import localDE from '@angular/common/locales/de'
+import {formatDate, registerLocaleData} from '@angular/common'
 
 export const LWM_DATE_FORMATS = {
     display: {
@@ -10,13 +10,6 @@ export const LWM_DATE_FORMATS = {
 }
 
 export class LWMDateAdapter extends NativeDateAdapter {
-
-    static format(date: Date, format: DateFormat): string {
-        switch (format) {
-            case 'localDate':
-                return date.toLocaleDateString('de-DE', {day: '2-digit', month: '2-digit', year: '2-digit'})
-        }
-    }
 
     static defaultProviders() {
         return [
@@ -28,11 +21,18 @@ export class LWMDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat: Object): string {
         switch (displayFormat) {
             case LWM_DATE_FORMATS.display.dateInput:
-                return LWMDateAdapter.format(date, 'localDate')
+                return format(date, 'dd.MM.yy')
             case LWM_DATE_FORMATS.display.monthYearLabel:
                 return date.toLocaleDateString('de-DE', {month: 'short', year: 'numeric'})
             default:
                 return super.format(date, displayFormat)
         }
     }
+}
+
+export type DatePattern = 'yyyy-MM-dd' | 'dd.MM.yy'
+
+export function format(date: Date, pattern: DatePattern): string {
+    registerLocaleData(localDE, 'de')
+    return formatDate(date, pattern, 'de')
 }

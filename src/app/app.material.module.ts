@@ -1,17 +1,21 @@
 import {NgModule} from '@angular/core'
 import {
+    MatAutocompleteModule,
     MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDatepickerModule,
     MatExpansionModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
     MatSidenavModule,
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
     MatTooltipModule
 } from '@angular/material'
 
@@ -34,7 +38,11 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatSnackBarModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        MatTooltipModule
+        MatTooltipModule,
+        MatAutocompleteModule,
+        MatChipsModule,
+        MatCardModule,
+        MatPaginatorModule
     ]
 })
 export class LWMMaterialModule {

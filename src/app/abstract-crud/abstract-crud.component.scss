@@ -10,6 +10,12 @@
 
 table {
   width: 100%;
+  button {
+    margin: 5px
+  }
+  td, th {
+    padding: 8px 25px
+  }
 }
 
 th.mat-sort-header-sorted {
@@ -20,3 +26,5 @@ th.mat-sort-header-sorted {
   background-color: #f5f5f5;
   cursor: pointer;
 }
+
+

@@ -1,21 +1,53 @@
 import {Injectable} from '@angular/core'
-import {HttpClient} from '@angular/common/http'
-import {AuthorityAtom} from '../models/authorityAtom.model'
+import {HttpParams} from '@angular/common/http'
+import {AuthorityAtom, AuthorityProtocol} from '../models/authority.model'
 import {Observable} from 'rxjs'
+import {HttpService} from './http.service'
+import {UserStatus} from '../models/userStatus.model'
+import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
+import {NotImplementedError} from '../utils/functions'
 
 @Injectable({
     providedIn: 'root'
 })
-export class AuthorityService {
+export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, AuthorityAtom> {
 
-    constructor(private http: HttpClient) {
+    private readonly path = 'authorities'
+
+    constructor(private http: HttpService) {
     }
 
     getAuthorities(systemId: string): Observable<AuthorityAtom[]> {
-        return this.http.get<AuthorityAtom[]>(`authorities?systemId=${systemId}`)
+        const params = new HttpParams().set('systemId', systemId)
+        return this.http.get(this.path, params)
+    }
+
+    hasStatus(status: UserStatus, authorities: AuthorityAtom[]): boolean {
+        return authorities.some(auth => auth.role.label === status)
+    }
+
+    is(status: UserStatus, auth: AuthorityAtom): boolean {
+        return auth.role.label === status
     }
 
     isAdmin(authorities: AuthorityAtom[]): boolean {
-        return authorities.some(auth => auth.role.label === 'Administrator')
+        return this.hasStatus(UserStatus.admin, authorities)
+    }
+
+    createMany(protocol: AuthorityProtocol): Observable<AuthorityAtom[]> {
+        const params = new HttpParams().set('atomic', 'true')
+        return this.http.createMany(this.path, [protocol], params)
+    }
+
+    getAll(): Observable<AuthorityAtom[]> {
+        return this.http.get(this.path)
+    }
+
+    delete(id: string): Observable<AuthorityAtom> {
+        return this.http.delete(this.path, id)
+    }
+
+    update(protocol: AuthorityProtocol, id: string): Observable<AuthorityAtom> {
+        return NotImplementedError()
     }
 }

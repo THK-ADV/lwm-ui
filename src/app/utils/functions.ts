@@ -1,3 +1,5 @@
+import {Observable, Subscription} from 'rxjs'
+
 export const pipe = <T extends any[], R>(
     fn1: (...args: T) => R,
     ...fns: Array<(a: R) => R>
@@ -23,5 +25,17 @@ export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
 
     return first.map((e, i) => {
         return Object.assign(e, second[i])
+    })
+}
+
+export function NotImplementedError(data: string = ''): never {
+    throw new Error(`not implemented yet - ${data}`)
+}
+
+export function subscribe<T>(observable: Observable<T>, next: (t: T) => void): Subscription {
+    return observable.subscribe(e => {
+        if (e) {
+            next(e)
+        }
     })
 }

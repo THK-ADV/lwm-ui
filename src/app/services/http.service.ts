@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {HttpClient, HttpErrorResponse, HttpResponse} from '@angular/common/http'
+import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
 import {catchError, map, tap} from 'rxjs/operators'
 import {AlertService} from './alert.service'
@@ -15,6 +15,13 @@ export interface CreationResponse<T> {
     created: T[]
     failed: T[]
 }
+
+export interface UpdatedResponse<T> {
+    updated: T
+}
+
+export const nonAtomicParams = new HttpParams().set('atomic', 'false')
+export const atomicParams = new HttpParams().set('atomic', 'true')
 
 @Injectable({
     providedIn: 'root'
@@ -47,8 +54,8 @@ export class HttpService {
         return lwmError
     }
 
-    get<T>(url: string): Observable<T> {
-        return this.http.get<T>(url)
+    get<T>(url: string, params?: HttpParams): Observable<T> {
+        return this.http.get<T>(url, {params})
             .pipe(catchError(this.handleError))
     }
 
@@ -57,8 +64,8 @@ export class HttpService {
             .pipe(catchError(this.handleError))
     }
 
-    create<I, O>(url: string, ...element: I[]): Observable<O[]> { // TODO change to single creation
-        return this.http.post<CreationResponse<O>>(url, element)
+    createMany<I, O>(url: string, element: I[], params?: HttpParams): Observable<O[]> { // TODO change to single creation
+        return this.http.post<CreationResponse<O>>(url, element, {params})
             .pipe(
                 catchError(this.handleError),
                 tap(r => {
@@ -71,10 +78,19 @@ export class HttpService {
             )
     }
 
-    put<I, O>(url: string, id: string, element: I): Observable<O> {
-        return this.http.put<O>(`${url}/${id}`, element)
+    create<I, O>(url: string, element: I, params?: HttpParams): Observable<O> { // TODO change to single creation
+        return this.http.post<O>(url, element, {params})
             .pipe(
                 catchError(this.handleError),
+                tap(r => console.log('created', r))
+            )
+    }
+
+    put<I, O>(url: string, id: string, element: I, params?: HttpParams): Observable<O> { // TODO response has nested updated object. remove it
+        return this.http.put<UpdatedResponse<O>>(`${url}/${id}`, element, {params})
+            .pipe(
+                catchError(this.handleError),
+                map(r => r.updated),
                 tap(r => console.log('put resp: ', r))
             )
     }

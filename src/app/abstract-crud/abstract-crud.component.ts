@@ -1,16 +1,16 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
-import {MatDialog, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
+import {MatDialog, MatPaginator, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {
     CreateUpdateDialogComponent,
     FormInputData,
-    FormOutputData,
-    FormPayload
+    FormInputOption,
+    FormOutputData
 } from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AbstractCRUDService} from './abstract-crud.service'
-import {exists} from '../utils/functions'
+import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
 
 enum DialogMode {
@@ -38,10 +38,12 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     protected dataSource = new MatTableDataSource<Model>()
 
     protected service: AbstractCRUDService<Protocol, Model>
+    protected inputOption?: FormInputOption<Object>
 
     private readonly displayedColumns: string[]
 
     @ViewChild(MatSort, {static: true}) sort: MatSort
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
 
     constructor(
         protected readonly dialog: MatDialog,
@@ -55,18 +57,22 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
         protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
         protected readonly empty: () => Readonly<Protocol>,
-        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined
+        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined,
+        protected readonly pageSizeOptions: number[] = [25, 50, 100]
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
+        this.inputOption = undefined
     }
 
     ngOnInit() {
         this.dataSource.sort = this.sort
 
-        this.subscribe(this.service.get(), data => {
+        this.subscribeAndPush(this.service.getAll(), data => {
             this.dataSource.data = data
             this.sortBy(this.sortDescriptor)
         })
+
+        this.dataSource.paginator = this.paginator
     }
 
     ngOnDestroy(): void {
@@ -85,62 +91,59 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         return exists(this.actions, a => a === 'delete')
     }
 
-    private onSelect(model) {
+    private onSelect(model: Model) {
         this.onEdit(model)
     }
 
-    private onEdit(model) {
-        this.openDialog(DialogMode.edit, model, updatedRoom => {
-            this.subscribe(this.service.update(updatedRoom, model.id), this.afterUpdate.bind(this))
+    protected onEdit(model: Model) {
+        model = {...model}
+        this.openDialog(DialogMode.edit, model, updatedModel => {
+            this.subscribeAndPush(this.service.update(updatedModel, model.id), this.afterUpdate.bind(this))
         })
     }
 
-    private onDelete(model) {
+    private onDelete(model: Model) {
         const dialogRef = DeleteDialogComponent.instance(this.dialog, {label: this.titleForDeleteDialog(model), id: model.id})
 
-        this.subscribe(
+        this.subscribeAndPush(
             dialogRef.afterClosed(),
-            id => this.subscribe(
+            id => this.subscribeAndPush(
                 this.service.delete(id),
                 this.afterDelete.bind(this)
             )
         )
     }
 
-    private onCreate() {
+    protected onCreate() {
         this.openDialog(
             DialogMode.create,
             this.empty(),
-            model => this.subscribe(this.service.create(model), this.afterCreate.bind(this))
+            model => this.subscribeAndPush(this.service.createMany(model), this.afterCreate.bind(this))
         )
     }
 
-    private openDialog<T>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
+    private openDialog<T extends Protocol>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
         const inputData = this.inputData(data, this.isModel(data))
 
-        const payload: FormPayload = {
+        const payload = {
             headerTitle: this.dialogTitle(mode),
             submitTitle: this.dialogSubmitTitle(mode),
             data: inputData,
-            builder: outputData => this.isModel(data) ? this.update(data, outputData) : this.create(data, outputData),
-            composedFromGroupValidator: this.composedFromGroupValidator(inputData)
+            makeProtocol: updatedValues => this.isModel(data) ? this.update(data, updatedValues) : this.create(data, updatedValues),
+            composedFromGroupValidator: this.composedFromGroupValidator(inputData),
+            formInputOption: this.inputOption
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-
-        this.subscribe(dialogRef.afterClosed(), next)
+        this.subscribeAndPush(dialogRef.afterClosed(), next)
     }
 
     private isModel(data: Model | Protocol): data is Model {
         return (data as Model).id !== undefined
     }
 
-    protected subscribe<T>(observable: Observable<T>, next: (T) => void) {
-        this.subs.push(observable.subscribe(e => {
-            if (e) {
-                next(e)
-            }
-        }))
+    protected applyFilter(filterValue: string) {
+        this.dataSource.filter = filterValue.trim().toLowerCase() // TODO override this.dataSource.filterPredicate if needed
     }
 
     protected sortBy(label: string, ordering: SortDirection = 'asc') {
@@ -168,17 +171,26 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         }
     }
 
-    protected create(protocol: Protocol, data: FormOutputData[]): Protocol {
-        data.forEach(d => protocol[d.formControlName] = d.value)
+    protected subscribeAndPush<T>(observable: Observable<T>, next: (T) => void) {
+        this.subs.push(subscribe(observable, next))
+    }
+
+    protected create(protocol: Protocol, updatedValues: FormOutputData[]): Protocol {
+        updatedValues.forEach(d => protocol[d.formControlName] = d.value)
         return protocol
     }
 
-    protected update(model: Model, data: FormOutputData[]): Model {
-        data.forEach(d => model[d.formControlName] = d.value)
+    // has to be overridden if Atoms occur, because Atoms can't be duck typed to Protocols
+    protected update(model: Model, updatedValues: FormOutputData[]): Protocol | Model {
+        updatedValues.forEach(d => model[d.formControlName] = d.value)
         return model
     }
 
     protected afterUpdate(model: Model) {
+        this.dataSource.data = this.dataSource.data.map(d => {
+            return d.id === model.id ? model : d
+        })
+
         this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(model))
     }
 
