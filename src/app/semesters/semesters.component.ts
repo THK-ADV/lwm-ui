@@ -1,11 +1,12 @@
-import {Component} from '@angular/core'
-import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {FormGroup, ValidatorFn, Validators} from '@angular/forms'
-import {MatDialog} from '@angular/material'
-import {AlertService} from '../services/alert.service'
-import {SemesterService} from '../services/semester.service'
-import {format} from '../utils/lwmdate-adapter'
+import { Component } from '@angular/core';
+import { FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { AbstractCRUDComponent, TableHeaderColumn } from '../abstract-crud/abstract-crud.component';
+import { Semester, SemesterProtocol } from '../models/semester.model';
+import { AlertService } from '../services/alert.service';
+import { SemesterService } from '../services/semester.service';
+import { FormInputData, FormOutputData } from '../shared-dialogs/create-update/create-update-dialog.component';
+import { format } from '../utils/lwmdate-adapter';
 
 
 @Component({

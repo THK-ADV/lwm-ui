@@ -1,4 +1,4 @@
-interface Semester {
+export interface Semester {
     label: string
     abbreviation: string
     start: Date
@@ -7,7 +7,7 @@ interface Semester {
     id: string
 }
 
-interface SemesterProtocol {
+export interface SemesterProtocol {
     label: string
     abbreviation: string
     start: string
