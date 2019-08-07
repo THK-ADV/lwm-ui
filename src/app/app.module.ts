@@ -36,6 +36,7 @@ import {AbstractCRUDComponent} from './abstract-crud/abstract-crud.component'
 import {SemestersComponent} from './semesters/semesters.component'
 import {UsersComponent} from './users/users.component'
 import {UserAuthorityUpdateDialogComponent} from './users/update/user-authority-update-dialog.component'
+import { BlacklistsComponent } from './blacklists/blacklists.component';
 
 @NgModule({
     declarations: [
@@ -53,6 +54,7 @@ import {UserAuthorityUpdateDialogComponent} from './users/update/user-authority-
         DegreeComponent,
         AbstractCRUDComponent,
         SemestersComponent,
+        BlacklistsComponent,
         UsersComponent,
         UserAuthorityUpdateDialogComponent
     ],
