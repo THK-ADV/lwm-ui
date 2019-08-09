@@ -1,5 +1,5 @@
 export interface Blacklist {
-    label: string 
+    label: string
     date: Date
     start: Date
     end: Date
