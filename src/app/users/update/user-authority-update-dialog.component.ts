@@ -14,7 +14,7 @@ import {RoleService} from '../../services/role.service'
 import {UserStatus} from '../../models/userStatus.model'
 import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
-import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/options.validator'
+import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/form.validator'
 
 export interface StandardRole {
     label: UserStatus

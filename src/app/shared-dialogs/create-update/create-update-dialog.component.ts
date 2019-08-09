@@ -5,9 +5,11 @@ import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {Observable, Subscription} from 'rxjs'
 import {map, startWith} from 'rxjs/operators'
+import {Time} from '../../models/time.model'
+import {invalidLocalTimeKey} from '../../utils/form.validator'
 
-type FormDataType = string | number | Date
-type FormDataStringType = 'text' | 'number' | 'date' | 'options' | 'textArea'
+type FormDataType = string | number | Date | Time | boolean
+type FormDataStringType = 'text' | 'number' | 'date' | 'time' | 'options' | 'textArea' | 'boolean'
 
 export interface FormInputData {
     formControlName: string
@@ -171,6 +173,15 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
         return this.formGroup.getError(name)
     }
 
+    hasLocalTimeError(controlName: string): boolean {
+        const control = this.formGroup.controls[controlName]
+        return !control.untouched && control.hasError(invalidLocalTimeKey)
+    }
+
+    getLocalTimeErrorMessage(controlName: string): string {
+        return this.formGroup.controls[controlName].getError(invalidLocalTimeKey)
+    }
+
     private convertToType(type: FormDataStringType, value: any): FormDataType {
         switch (type) {
             case 'number':
@@ -178,10 +189,17 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
             case 'options':
                 return this.convertToType('text', value.id)
             case 'textArea':
+                return this.convertToType('text', value)
             case 'text':
                 return '' + value
             case 'date':
-                return new Date(this.convertToType('text', value))
+                return new Date(this.convertToType('text', value) as string)
+            case 'time':
+                const string = this.convertToType('text', value) as string
+                const timeString = string.split(':').map(s => s.length === 1 ? s.padStart(2, '0') : s).join(':')
+                return Time.fromTimeString(timeString)
+            case 'boolean':
+                return !!value
         }
     }
 

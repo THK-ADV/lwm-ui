@@ -1,8 +1,10 @@
+import {Time} from './time.model'
+
 export interface Blacklist {
     label: string
     date: Date
-    start: Date
-    end: Date
+    start: Time
+    end: Time
     global: boolean
     id: string
 }
@@ -10,7 +12,7 @@ export interface Blacklist {
 export interface BlacklistProtocol {
     label: string
     date: string
-    start?: string
-    end?: string
+    start: string
+    end: string
     global: boolean
 }

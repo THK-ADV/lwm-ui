@@ -102,7 +102,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
         const value = semester[attr]
 
         if (value instanceof Date) {
-            return format(value, 'dd.MM.yy')
+            return format(value, 'dd.MM.yyyy')
         } else {
             return value
         }

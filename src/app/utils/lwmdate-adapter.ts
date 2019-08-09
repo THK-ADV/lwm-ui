@@ -21,7 +21,7 @@ export class LWMDateAdapter extends NativeDateAdapter {
     format(date: Date, displayFormat: Object): string {
         switch (displayFormat) {
             case LWM_DATE_FORMATS.display.dateInput:
-                return format(date, 'dd.MM.yy')
+                return format(date, 'dd.MM.yyyy')
             case LWM_DATE_FORMATS.display.monthYearLabel:
                 return date.toLocaleDateString('de-DE', {month: 'short', year: 'numeric'})
             default:
@@ -30,9 +30,9 @@ export class LWMDateAdapter extends NativeDateAdapter {
     }
 }
 
-export type DatePattern = 'yyyy-MM-dd' | 'dd.MM.yy'
+export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'HH:mm:ss'
 
-export function format(date: Date, pattern: DatePattern): string {
+export function format(date: Date, pattern: DateTimePattern): string {
     registerLocaleData(localDE, 'de')
     return formatDate(date, pattern, 'de')
 }
