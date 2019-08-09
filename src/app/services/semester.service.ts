@@ -3,6 +3,7 @@ import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
 import {map} from 'rxjs/operators'
+import {Semester, SemesterProtocol} from '../models/semester.model'
 
 interface SemesterJSON { // this intermediate type is needed to convert from string to Date
     label: string
