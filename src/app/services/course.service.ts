@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core'
 import {atomicParams, HttpService} from './http.service'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
-import {CourseAtom} from '../models/course'
+import {CourseAtom} from '../models/course.model'
 import {Observable} from 'rxjs'
 import {NotImplementedError} from '../utils/functions'
 import {map} from 'rxjs/operators'

@@ -1,7 +1,7 @@
 import {Component} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {CourseProtocol, CourseService} from '../services/course.service'
-import {CourseAtom} from '../models/course'
+import {CourseAtom} from '../models/course.model'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {FormInputData, FormInputOption, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
@@ -10,7 +10,8 @@ import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
 import {User} from '../models/user.model'
 import {UserService} from '../services/user.service'
 import {subscribe} from '../utils/functions'
-import {createProtocol, withCreateProtocol} from '../models/protocol'
+import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {isUniqueEntity} from '../models/unique.entity.model'
 
 @Component({
     selector: 'app-courses',
@@ -30,10 +31,6 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
     }
 
     static inputData(model: Readonly<CourseProtocol | CourseAtom>, isModel: boolean): FormInputData[] {
-        const isCourseAtom = (course: Readonly<CourseProtocol | CourseAtom>): course is CourseAtom => {
-            return (course as CourseAtom).lecturer.firstname !== undefined
-        }
-
         return [
             {
                 formControlName: 'label',
@@ -65,7 +62,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
                 type: isModel ? 'text' : 'options',
                 isDisabled: isModel,
                 validator: isModel ? Validators.required : optionsValidator(),
-                value: isCourseAtom(model) ? `${model.lecturer.lastname}, ${model.lecturer.firstname}` : ''
+                value: isUniqueEntity(model) ? `${model.lecturer.lastname}, ${model.lecturer.firstname}` : model.lecturer
             },
             {
                 formControlName: 'semesterIndex',

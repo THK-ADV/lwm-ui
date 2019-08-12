@@ -7,7 +7,7 @@ import {AlertService} from '../services/alert.service'
 import {Degree, DegreeProtocol} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
 import {NotImplementedError} from '../utils/functions'
-import {withCreateProtocol} from '../models/protocol'
+import {withCreateProtocol} from '../models/protocol.model'
 
 @Component({
     selector: 'app-degree',
@@ -33,7 +33,7 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
                 formControlName: 'label',
                 placeholder: 'Bezeichnung',
                 type: 'text',
-                isDisabled: isModel,
+                isDisabled: false,
                 validator: Validators.required,
                 value: model.label
             },

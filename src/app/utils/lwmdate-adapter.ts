@@ -1,6 +1,7 @@
 import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from '@angular/material'
 import localDE from '@angular/common/locales/de'
 import {formatDate, registerLocaleData} from '@angular/common'
+import {Time} from '../models/time.model'
 
 export const LWM_DATE_FORMATS = {
     display: {
@@ -35,4 +36,8 @@ export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'HH:mm:ss'
 export function format(date: Date, pattern: DateTimePattern): string {
     registerLocaleData(localDE, 'de')
     return formatDate(date, pattern, 'de')
+}
+
+export function formatTime(time: Time): string {
+    return format(time.date, 'HH:mm:ss')
 }

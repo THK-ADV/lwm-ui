@@ -12,13 +12,10 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {AbstractCRUDService} from './abstract-crud.service'
 import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
+import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 
 enum DialogMode {
     edit, create
-}
-
-export interface UniqueEntity {
-    id: string
 }
 
 export interface TableHeaderColumn {
@@ -122,23 +119,19 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     private openDialog<T extends Protocol>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
-        const inputData = this.inputData(data, this.isModel(data))
+        const inputData = this.inputData(data, isUniqueEntity(data))
 
         const payload = {
             headerTitle: this.dialogTitle(mode),
             submitTitle: this.dialogSubmitTitle(mode),
             data: inputData,
-            makeProtocol: updatedValues => this.isModel(data) ? this.update(data, updatedValues) : this.create(updatedValues),
+            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
             composedFromGroupValidator: this.composedFromGroupValidator(inputData),
             formInputOption: this.inputOption
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
         this.subscribeAndPush(dialogRef.afterClosed(), next)
-    }
-
-    private isModel(data: Model | Protocol): data is Model {
-        return (data as Model).id !== undefined
     }
 
     protected applyFilter(filterValue: string) {

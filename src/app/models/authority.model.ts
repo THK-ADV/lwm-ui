@@ -1,6 +1,6 @@
 import {User} from './user.model'
 import {Role} from './role.model'
-import {CourseAtom} from './course'
+import {CourseAtom} from './course.model'
 
 export interface AuthorityAtom {
     user: User

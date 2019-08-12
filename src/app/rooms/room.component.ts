@@ -6,7 +6,7 @@ import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstrac
 import {Validators} from '@angular/forms'
 import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {RoomService} from '../services/room.service'
-import {createProtocol, withCreateProtocol} from '../models/protocol'
+import {createProtocol, withCreateProtocol} from '../models/protocol.model'
 
 @Component({
     selector: 'app-room',

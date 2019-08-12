@@ -6,7 +6,7 @@ import {AuthorityService} from '../services/authority.service'
 import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
 import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
-import {CourseAtom} from '../models/course'
+import {CourseAtom} from '../models/course.model'
 import {KeycloakService} from 'keycloak-angular'
 import {AlertService} from '../services/alert.service'
 

@@ -7,7 +7,7 @@ import {AlertService} from '../services/alert.service'
 import {SemesterService} from '../services/semester.service'
 import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {format} from '../utils/lwmdate-adapter'
-import {createProtocol, withCreateProtocol} from '../models/protocol'
+import {createProtocol, withCreateProtocol} from '../models/protocol.model'
 
 
 @Component({

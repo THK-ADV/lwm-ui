@@ -6,11 +6,12 @@ import {Validators} from '@angular/forms'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {BlacklistService} from '../services/blacklist.service'
-import {format} from '../utils/lwmdate-adapter'
+import {format, formatTime} from '../utils/lwmdate-adapter'
 import {Time} from '../models/time.model'
 import {localTimeValidator} from '../utils/form.validator'
 import {NotImplementedError} from '../utils/functions'
-import {withCreateProtocol} from '../models/protocol'
+import {withCreateProtocol} from '../models/protocol.model'
+import {isUniqueEntity} from '../models/unique.entity.model'
 
 @Component({
     selector: 'app-blacklists',
@@ -50,18 +51,18 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
             {
                 formControlName: 'start',
                 placeholder: 'Start',
-                type: 'time',
+                type: isModel ? 'text' : 'time',
                 isDisabled: isModel,
-                validator: localTimeValidator(),
-                value: model.start
+                validator: isModel ? Validators.required : localTimeValidator(),
+                value: isUniqueEntity(model) ? formatTime(model.start) : model.start
             },
             {
                 formControlName: 'end',
                 placeholder: 'Ende',
-                type: 'time',
+                type: isModel ? 'text' : 'time',
                 isDisabled: isModel,
-                validator: localTimeValidator(),
-                value: model.end
+                validator: isModel ? Validators.required : localTimeValidator(),
+                value: isUniqueEntity(model) ? formatTime(model.end) : model.end
             },
             {
                 formControlName: 'global',
@@ -80,7 +81,7 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
         if (value instanceof Date) {
             return format(value, 'dd.MM.yyyy')
         } else if (value instanceof Time) {
-            return format(value.date, 'HH:mm:ss')
+            return formatTime(value)
         } else {
             return value
         }
@@ -112,8 +113,8 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
     create(output: FormOutputData[]): BlacklistProtocol {
         return withCreateProtocol(output, BlacklistsComponent.empty(), p => {
             p.date = format(new Date(p.date), 'yyyy-MM-dd')
-            p.start = format(Time.fromTimeString(p.start).date, 'HH:mm:ss')
-            p.end = format(Time.fromTimeString(p.end).date, 'HH:mm:ss')
+            p.start = formatTime(Time.fromTimeString(p.start))
+            p.end = formatTime(Time.fromTimeString(p.end))
         })
     }
 

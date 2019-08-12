@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core'
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material'
-import { DIALOG_WIDTH } from '../dialog-constants'
-import { UniqueEntity } from '../../abstract-crud/abstract-crud.component'
+import {Component, Inject, OnInit} from '@angular/core'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {DIALOG_WIDTH} from '../dialog-constants'
+import {UniqueEntity} from '../../models/unique.entity.model'
 
 interface DialogData extends UniqueEntity {
     label: string
