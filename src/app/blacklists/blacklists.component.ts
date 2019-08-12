@@ -9,6 +9,8 @@ import {BlacklistService} from '../services/blacklist.service'
 import {format} from '../utils/lwmdate-adapter'
 import {Time} from '../models/time.model'
 import {localTimeValidator} from '../utils/form.validator'
+import {NotImplementedError} from '../utils/functions'
+import {withCreateProtocol} from '../models/protocol'
 
 @Component({
     selector: 'app-blacklists',
@@ -107,27 +109,15 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
         this.service = blacklistService // super.init does not allow types which are generic
     }
 
-    // TODO maybe every instance should override this function without passing the protocol
-    protected create(protocol: BlacklistProtocol, updatedValues: FormOutputData[]): BlacklistProtocol {
-        return updatedValues.reduce(
-            (json, data) => {
-                switch (data.formControlName) {
-                    case 'date':
-                        json['date'] = format(data.value as Date, 'yyyy-MM-dd')
-                        break
-                    case 'start':
-                        json['start'] = format((data.value as Time).date, 'HH:mm:ss')
-                        break
-                    case 'end':
-                        json['end'] = format((data.value as Time).date, 'HH:mm:ss')
-                        break
-                    default:
-                        json[data.formControlName] = data.value
-                        break
-                }
+    create(output: FormOutputData[]): BlacklistProtocol {
+        return withCreateProtocol(output, BlacklistsComponent.empty(), p => {
+            p.date = format(new Date(p.date), 'yyyy-MM-dd')
+            p.start = format(Time.fromTimeString(p.start).date, 'HH:mm:ss')
+            p.end = format(Time.fromTimeString(p.end).date, 'HH:mm:ss')
+        })
+    }
 
-                return json
-            }, BlacklistsComponent.empty()
-        )
+    update(model: Blacklist, updatedOutput: FormOutputData[]): BlacklistProtocol {
+        return NotImplementedError()
     }
 }

@@ -10,6 +10,7 @@ import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
 import {User} from '../models/user.model'
 import {UserService} from '../services/user.service'
 import {subscribe} from '../utils/functions'
+import {createProtocol, withCreateProtocol} from '../models/protocol'
 
 @Component({
     selector: 'app-courses',
@@ -77,6 +78,10 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
         ]
     }
 
+    static empty(): CourseProtocol {
+        return {label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}
+    }
+
     static prepareTableContent(course: Readonly<CourseAtom>, attr: string): string {
         if (attr === 'lecturer') {
             return `${course.lecturer.lastname}, ${course.lecturer.firstname}`
@@ -97,7 +102,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
             CoursesComponent.inputData,
             _ => '',
             CoursesComponent.prepareTableContent,
-            () => ({label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}),
+            CoursesComponent.empty,
             () => undefined
         )
 
@@ -110,15 +115,13 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
         )
     }
 
-    protected update(model: CourseAtom, data: FormOutputData[]): CourseProtocol | CourseAtom {
-        const courseAtom = super.update(model, data) as CourseAtom
+    create(output: FormOutputData[]): CourseProtocol {
+        return createProtocol(output, CoursesComponent.empty())
+    }
 
-        return {
-            label: courseAtom.label,
-            description: courseAtom.description,
-            abbreviation: courseAtom.abbreviation,
-            lecturer: courseAtom.lecturer.id,
-            semesterIndex: courseAtom.semesterIndex
-        }
+    update(model: CourseAtom, updatedOutput: FormOutputData[]): CourseProtocol {
+        return withCreateProtocol(updatedOutput, CoursesComponent.empty(), p => {
+            p.lecturer = model.lecturer.id
+        })
     }
 }

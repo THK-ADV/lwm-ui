@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { FormGroup, ValidatorFn, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
-import { AbstractCRUDComponent, TableHeaderColumn } from '../abstract-crud/abstract-crud.component';
-import { Semester, SemesterProtocol } from '../models/semester.model';
-import { AlertService } from '../services/alert.service';
-import { SemesterService } from '../services/semester.service';
-import { FormInputData, FormOutputData } from '../shared-dialogs/create-update/create-update-dialog.component';
-import { format } from '../utils/lwmdate-adapter';
+import {Component} from '@angular/core'
+import {FormGroup, ValidatorFn, Validators} from '@angular/forms'
+import {MatDialog} from '@angular/material'
+import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {Semester, SemesterProtocol} from '../models/semester.model'
+import {AlertService} from '../services/alert.service'
+import {SemesterService} from '../services/semester.service'
+import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {format} from '../utils/lwmdate-adapter'
+import {createProtocol, withCreateProtocol} from '../models/protocol'
 
 
 @Component({
@@ -16,7 +17,7 @@ import { format } from '../utils/lwmdate-adapter';
 })
 export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> {
 
-    static empty(): Readonly<SemesterProtocol> {
+    static empty(): SemesterProtocol {
         return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
     }
 
@@ -128,23 +129,19 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
 
     }
 
-    protected update(model: Semester, updatedValues: FormOutputData[]): SemesterProtocol | Semester {
-        const updated = super.update(model, updatedValues) as Semester
-        return this.unify(updated)
+    create(output: FormOutputData[]): SemesterProtocol {
+        return withCreateProtocol(output, SemestersComponent.empty(), p => {
+            p.start = format(new Date(p.start), 'yyyy-MM-dd')
+            p.end = format(new Date(p.end), 'yyyy-MM-dd')
+            p.examStart = format(new Date(p.examStart), 'yyyy-MM-dd')
+        })
     }
 
-    protected create(protocol: SemesterProtocol, updatedValues: FormOutputData[]): SemesterProtocol {
-        const created = super.create(protocol, updatedValues)
-        return this.unify(created)
-    }
-
-    private unify(semester: Semester | SemesterProtocol): SemesterProtocol {
-        return {
-            label: semester.label,
-            abbreviation: semester.abbreviation,
-            start: format(new Date(semester.start), 'yyyy-MM-dd'),
-            end: format(new Date(semester.end), 'yyyy-MM-dd'),
-            examStart: format(new Date(semester.examStart), 'yyyy-MM-dd')
-        }
+    update(model: Semester, updatedOutput: FormOutputData[]): SemesterProtocol {
+        return withCreateProtocol(updatedOutput, SemestersComponent.empty(), p => {
+            p.start = format(model.start, 'yyyy-MM-dd')
+            p.end = format(model.end, 'yyyy-MM-dd')
+            p.examStart = format(model.examStart, 'yyyy-MM-dd')
+        })
     }
 }

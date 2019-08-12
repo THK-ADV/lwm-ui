@@ -196,8 +196,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
                 return new Date(this.convertToType('text', value) as string)
             case 'time':
                 const string = this.convertToType('text', value) as string
-                const timeString = string.split(':').map(s => s.length === 1 ? s.padStart(2, '0') : s).join(':')
-                return Time.fromTimeString(timeString)
+                return string.split(':').map(s => s.length === 1 ? s.padStart(2, '0') : s).join(':')
             case 'boolean':
                 return !!value
         }

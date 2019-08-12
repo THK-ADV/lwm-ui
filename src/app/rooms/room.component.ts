@@ -4,8 +4,9 @@ import {Room, RoomProtocol} from '../models/room.model'
 import {AlertService} from '../services/alert.service'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {Validators} from '@angular/forms'
-import {FormInputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {RoomService} from '../services/room.service'
+import {createProtocol, withCreateProtocol} from '../models/protocol'
 
 @Component({
     selector: 'app-room',
@@ -20,6 +21,10 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             {attr: 'description', title: 'Beschreibung'},
             {attr: 'capacity', title: 'Kapazität'}
         ]
+    }
+
+    static empty(): RoomProtocol {
+        return {label: '', description: '', capacity: 0}
     }
 
     static inputData(model: Readonly<RoomProtocol | Room>, isRoom: boolean): FormInputData[] {
@@ -63,10 +68,20 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             RoomComponent.inputData,
             model => model.label,
             (model, attr) => model[attr],
-            () => ({label: '', description: '', capacity: 0}),
+            RoomComponent.empty,
             () => undefined
         )
 
         this.service = roomService // super.init does not allow types which are generic
+    }
+
+    create(output: FormOutputData[]): RoomProtocol {
+        return createProtocol(output, RoomComponent.empty())
+    }
+
+    update(model: Room, updatedOutput: FormOutputData[]): RoomProtocol {
+        return withCreateProtocol(updatedOutput, RoomComponent.empty(), p => {
+            p.label = model.label
+        })
     }
 }

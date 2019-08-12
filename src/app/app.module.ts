@@ -51,7 +51,6 @@ import {BlacklistsComponent} from './blacklists/blacklists.component'
         ListTemplateComponent,
         AlertComponent,
         DegreeComponent,
-        AbstractCRUDComponent,
         SemestersComponent,
         BlacklistsComponent,
         UsersComponent,
