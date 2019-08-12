@@ -14,6 +14,12 @@
             <mat-error *ngIf="hasFormGroupError(d.formControlName)">{{formGroupErrorMessage(d.formControlName)}}
             </mat-error>
 
+            <ng-container *ngSwitchCase="'time'">
+                <input matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName">
+            </ng-container>
+            <mat-error *ngIf="hasLocalTimeError(d.formControlName)">{{getLocalTimeErrorMessage(d.formControlName)}}
+            </mat-error>
+
             <ng-container *ngSwitchCase="'options'">
                 <input type="text" [placeholder]="d.placeholder" matInput
                        [formControlName]="d.formControlName" [matAutocomplete]="auto">
@@ -27,7 +33,14 @@
             </mat-error>
 
             <ng-container *ngSwitchCase="'textArea'">
-                <textarea matInput [placeholder]="d.placeholder" [type]="d.type" [formControlName]="d.formControlName"></textarea>
+                <textarea matInput [placeholder]="d.placeholder" [type]="d.type"
+                          [formControlName]="d.formControlName"></textarea>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'boolean'">
+                <input matInput style="display: none"> <!-- workaround to wrap slide toggle inside a valid mat form field type -->
+                <mat-slide-toggle color="primary" [formControlName]="d.formControlName"
+                                  [checked]="d.value">{{d.placeholder}}</mat-slide-toggle>
             </ng-container>
 
             <ng-container *ngSwitchDefault>

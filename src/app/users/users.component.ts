@@ -1,12 +1,13 @@
 import {Component} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {User} from '../models/user.model'
-import {FormInputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {Validators} from '@angular/forms'
 import {UserService} from '../services/user.service'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {UserAuthorityUpdateDialogComponent} from './update/user-authority-update-dialog.component'
+import {NotImplementedError} from '../utils/functions'
 
 @Component({
     selector: 'app-users',
@@ -89,4 +90,11 @@ export class UsersComponent extends AbstractCRUDComponent<User, User> {
         )
     }
 
+    create(output: FormOutputData[]): User {
+        return NotImplementedError()
+    }
+
+    update(model: User, updatedOutput: FormOutputData[]): User {
+        return NotImplementedError()
+    }
 }

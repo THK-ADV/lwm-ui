@@ -1,15 +1,17 @@
 import {Component} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {CourseProtocol, CourseService} from '../services/course.service'
-import {CourseAtom} from '../models/course'
+import {CourseAtom} from '../models/course.model'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {FormInputData, FormInputOption, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {Validators} from '@angular/forms'
-import {invalidChoiceKey, optionsValidator} from '../utils/options.validator'
+import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
 import {User} from '../models/user.model'
 import {UserService} from '../services/user.service'
 import {subscribe} from '../utils/functions'
+import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {isUniqueEntity} from '../models/unique.entity.model'
 
 @Component({
     selector: 'app-courses',
@@ -29,10 +31,6 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
     }
 
     static inputData(model: Readonly<CourseProtocol | CourseAtom>, isModel: boolean): FormInputData[] {
-        const isCourseAtom = (course: Readonly<CourseProtocol | CourseAtom>): course is CourseAtom => {
-            return (course as CourseAtom).lecturer.firstname !== undefined
-        }
-
         return [
             {
                 formControlName: 'label',
@@ -64,7 +62,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
                 type: isModel ? 'text' : 'options',
                 isDisabled: isModel,
                 validator: isModel ? Validators.required : optionsValidator(),
-                value: isCourseAtom(model) ? `${model.lecturer.lastname}, ${model.lecturer.firstname}` : ''
+                value: isUniqueEntity(model) ? `${model.lecturer.lastname}, ${model.lecturer.firstname}` : model.lecturer
             },
             {
                 formControlName: 'semesterIndex',
@@ -75,6 +73,10 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
                 value: model.semesterIndex
             }
         ]
+    }
+
+    static empty(): CourseProtocol {
+        return {label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}
     }
 
     static prepareTableContent(course: Readonly<CourseAtom>, attr: string): string {
@@ -97,7 +99,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
             CoursesComponent.inputData,
             _ => '',
             CoursesComponent.prepareTableContent,
-            () => ({label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}),
+            CoursesComponent.empty,
             () => undefined
         )
 
@@ -110,15 +112,13 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
         )
     }
 
-    protected update(model: CourseAtom, data: FormOutputData[]): CourseProtocol | CourseAtom {
-        const courseAtom = super.update(model, data) as CourseAtom
+    create(output: FormOutputData[]): CourseProtocol {
+        return createProtocol(output, CoursesComponent.empty())
+    }
 
-        return {
-            label: courseAtom.label,
-            description: courseAtom.description,
-            abbreviation: courseAtom.abbreviation,
-            lecturer: courseAtom.lecturer.id,
-            semesterIndex: courseAtom.semesterIndex
-        }
+    update(model: CourseAtom, updatedOutput: FormOutputData[]): CourseProtocol {
+        return withCreateProtocol(updatedOutput, CoursesComponent.empty(), p => {
+            p.lecturer = model.lecturer.id
+        })
     }
 }

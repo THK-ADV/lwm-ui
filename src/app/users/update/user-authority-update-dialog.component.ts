@@ -6,7 +6,7 @@ import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
 import {Observable, Subscription} from 'rxjs'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {FormControl, FormGroup} from '@angular/forms'
-import {CourseAtom} from '../../models/course'
+import {CourseAtom} from '../../models/course.model'
 import {CourseService} from '../../services/course.service'
 import {subscribe} from '../../utils/functions'
 import {map, startWith} from 'rxjs/operators'
@@ -14,7 +14,7 @@ import {RoleService} from '../../services/role.service'
 import {UserStatus} from '../../models/userStatus.model'
 import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
-import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/options.validator'
+import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/form.validator'
 
 export interface StandardRole {
     label: UserStatus

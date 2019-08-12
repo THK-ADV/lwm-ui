@@ -1,16 +1,18 @@
-import { NgModule } from '@angular/core'
-import { RouterModule, Routes } from '@angular/router'
-import { StudentDashboardComponent } from './dashboard/student-dashboard/student-dashboard.component'
-import { StudentStatusGuard } from './guards/student-status.guard'
-import { EmployeeDashboardComponent } from './dashboard/employee-dashboard/employee-dashboard.component'
-import { EmployeeStatusGuard } from './guards/employee-status.guard'
-import { EntryPageComponent } from './entry-page/entry-page.component'
-import { DashboardGuard } from './guards/dashboard.guard'
-import { CoursesComponent } from './courses/courses.component'
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+
+import { CoursesComponent } from './courses/courses.component';
+import { EmployeeDashboardComponent } from './dashboard/employee-dashboard/employee-dashboard.component';
+import { StudentDashboardComponent } from './dashboard/student-dashboard/student-dashboard.component';
+import { DegreeComponent } from './degrees/degree.component';
+import { EntryPageComponent } from './entry-page/entry-page.component';
+import { DashboardGuard } from './guards/dashboard.guard';
+import { EmployeeStatusGuard } from './guards/employee-status.guard';
+import { StudentStatusGuard } from './guards/student-status.guard';
 import { RoomComponent } from './rooms/room.component';
-import {DegreeComponent} from './degrees/degree.component'
-import {SemestersComponent} from './semesters/semesters.component'
+import { SemestersComponent } from './semesters/semesters.component';
 import { UsersComponent } from './users/users.component';
+import { BlacklistsComponent } from './blacklists/blacklists.component';
 
 const routes: Routes = [
     {
@@ -42,6 +44,10 @@ const routes: Routes = [
             {
                 path: 'semesters',
                 component: SemestersComponent
+            },
+            {
+                path: 'blacklists',
+                component: BlacklistsComponent
             },
             {
                 path: '',

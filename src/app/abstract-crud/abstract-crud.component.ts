@@ -12,13 +12,10 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {AbstractCRUDService} from './abstract-crud.service'
 import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
+import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 
 enum DialogMode {
     edit, create
-}
-
-export interface UniqueEntity {
-    id: string
 }
 
 export interface TableHeaderColumn {
@@ -33,12 +30,12 @@ export type Action = 'create' | 'update' | 'delete'
     templateUrl: './abstract-crud.component.html',
     styleUrls: ['./abstract-crud.component.scss']
 })
-export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> implements OnInit, OnDestroy {
+export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> implements OnInit, OnDestroy {
     protected subs: Subscription[] = []
     protected dataSource = new MatTableDataSource<Model>()
 
     protected service: AbstractCRUDService<Protocol, Model>
-    protected inputOption?: FormInputOption<Object>
+    protected inputOption?: FormInputOption<Object> = undefined
 
     private readonly displayedColumns: string[]
 
@@ -61,7 +58,6 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         protected readonly pageSizeOptions: number[] = [25, 50, 100]
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
-        this.inputOption = undefined
     }
 
     ngOnInit() {
@@ -123,23 +119,19 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
     }
 
     private openDialog<T extends Protocol>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
-        const inputData = this.inputData(data, this.isModel(data))
+        const inputData = this.inputData(data, isUniqueEntity(data))
 
         const payload = {
             headerTitle: this.dialogTitle(mode),
             submitTitle: this.dialogSubmitTitle(mode),
             data: inputData,
-            makeProtocol: updatedValues => this.isModel(data) ? this.update(data, updatedValues) : this.create(data, updatedValues),
+            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
             composedFromGroupValidator: this.composedFromGroupValidator(inputData),
             formInputOption: this.inputOption
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
         this.subscribeAndPush(dialogRef.afterClosed(), next)
-    }
-
-    private isModel(data: Model | Protocol): data is Model {
-        return (data as Model).id !== undefined
     }
 
     protected applyFilter(filterValue: string) {
@@ -171,20 +163,13 @@ export class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> impleme
         }
     }
 
-    protected subscribeAndPush<T>(observable: Observable<T>, next: (T) => void) {
+    protected subscribeAndPush<T>(observable: Observable<T>, next: (t: T) => void) {
         this.subs.push(subscribe(observable, next))
     }
 
-    protected create(protocol: Protocol, updatedValues: FormOutputData[]): Protocol {
-        updatedValues.forEach(d => protocol[d.formControlName] = d.value)
-        return protocol
-    }
+    abstract create(output: FormOutputData[]): Protocol
 
-    // has to be overridden if Atoms occur, because Atoms can't be duck typed to Protocols
-    protected update(model: Model, updatedValues: FormOutputData[]): Protocol | Model {
-        updatedValues.forEach(d => model[d.formControlName] = d.value)
-        return model
-    }
+    abstract update(model: Model, updatedOutput: FormOutputData[]): Protocol
 
     protected afterUpdate(model: Model) {
         this.dataSource.data = this.dataSource.data.map(d => {
