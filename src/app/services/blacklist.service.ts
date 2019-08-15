@@ -27,7 +27,7 @@ export class BlacklistService implements AbstractCRUDService<BlacklistProtocol, 
     private path = 'blacklists'
 
     getAll(): Observable<Blacklist[]> {
-        return this.http.get<BlacklistJSON[]>(this.path)
+        return this.http.getAll<BlacklistJSON[]>(this.path)
             .pipe(map(this.convertMany))
     }
 

@@ -15,7 +15,7 @@ export class RoomService implements AbstractCRUDService<RoomProtocol, Room> {
     private path = 'rooms'
 
     getAll(): Observable<Room[]> {
-        return this.http.get(this.path)
+        return this.http.getAll(this.path)
     }
 
     delete(id: string): Observable<Room> {

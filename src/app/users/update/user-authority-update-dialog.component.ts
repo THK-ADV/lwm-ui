@@ -18,7 +18,7 @@ import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/form.
 
 export interface StandardRole {
     label: UserStatus
-    color: 'primary' | 'accent'
+    color: LWMColor
 }
 
 type AuthCreationControl = 'courseControl' | 'roleControl'

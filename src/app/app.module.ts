@@ -31,11 +31,13 @@ import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create
 import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
 import {DegreeComponent} from './degrees/degree.component'
-import {AbstractCRUDComponent} from './abstract-crud/abstract-crud.component'
 import {SemestersComponent} from './semesters/semesters.component'
 import {UsersComponent} from './users/users.component'
 import {UserAuthorityUpdateDialogComponent} from './users/update/user-authority-update-dialog.component'
 import {BlacklistsComponent} from './blacklists/blacklists.component'
+import {LabworksComponent} from './labworks/labworks.component'
+import {FilterPipe} from './pipe/filter.pipe'
+import {NgInitDirective} from './directives/ng-init.directive'
 
 @NgModule({
     declarations: [
@@ -54,7 +56,10 @@ import {BlacklistsComponent} from './blacklists/blacklists.component'
         SemestersComponent,
         BlacklistsComponent,
         UsersComponent,
-        UserAuthorityUpdateDialogComponent
+        UserAuthorityUpdateDialogComponent,
+        LabworksComponent,
+        FilterPipe,
+        NgInitDirective
     ],
     imports: [
         BrowserModule,

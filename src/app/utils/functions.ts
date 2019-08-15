@@ -18,6 +18,12 @@ export function exists<T>(array: T[], p: (t: T) => boolean): boolean {
     return array.find(p) !== undefined
 }
 
+export function count<T>(array: T[], p: (t: T) => boolean): number {
+    return array.reduce((n, t) => {
+        return p(t) ? n + 1 : 0
+    }, 0)
+}
+
 export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
     if (first.length !== second.length) {
         return []

@@ -24,6 +24,10 @@ export class CourseService implements AbstractCRUDService<CourseProtocol, Course
 
     private path = 'courses'
 
+    get(id: string): Observable<CourseAtom> {
+        return this.http.get(this.path, id)
+    }
+
     createMany(protocol: CourseProtocol): Observable<CourseAtom[]> {
         return this.http.create<CourseProtocol, CourseAtom>(this.path, protocol, atomicParams)
             .pipe(map(course => [course]))
@@ -34,7 +38,7 @@ export class CourseService implements AbstractCRUDService<CourseProtocol, Course
     }
 
     getAll(): Observable<CourseAtom[]> {
-        return this.http.get(this.path)
+        return this.http.getAll(this.path)
     }
 
     update(protocol: CourseProtocol, id: string): Observable<CourseAtom> {

@@ -26,7 +26,7 @@ export class RoleService implements AbstractCRUDService<Role, Role> {
     }
 
     getAll(): Observable<Role[]> {
-        return this.http.get(this.path)
+        return this.http.getAll(this.path)
     }
 
     update(protocol: Role, id: string): Observable<Role> {
@@ -34,7 +34,7 @@ export class RoleService implements AbstractCRUDService<Role, Role> {
     }
 
     getCourseRoles(): Observable<Role[]> {
-        return this.http.get<Role[]>(this.path)
+        return this.http.getAll<Role[]>(this.path)
             .pipe(
                 map(roles => {
                     const userRoles = AllUserStatus()

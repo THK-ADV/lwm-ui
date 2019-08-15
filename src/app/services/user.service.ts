@@ -16,11 +16,11 @@ export class UserService implements AbstractCRUDService<User, User> {
     private path = 'users'
 
     getAllEmployees(): Observable<User[]> {
-        return this.http.get<User[]>(this.path, nonAtomicParams.append('status', 'employee'))
+        return this.http.getAll<User[]>(this.path, nonAtomicParams.append('status', 'employee'))
     }
 
     getAll(): Observable<User[]> {
-        return this.http.get<User[]>(this.path, nonAtomicParams)
+        return this.http.getAll<User[]>(this.path, nonAtomicParams)
     }
 
     delete(id: string): Observable<User> {

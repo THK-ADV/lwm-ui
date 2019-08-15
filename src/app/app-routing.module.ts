@@ -13,6 +13,7 @@ import { RoomComponent } from './rooms/room.component';
 import { SemestersComponent } from './semesters/semesters.component';
 import { UsersComponent } from './users/users.component';
 import { BlacklistsComponent } from './blacklists/blacklists.component';
+import {LabworksComponent} from './labworks/labworks.component'
 
 const routes: Routes = [
     {
@@ -62,7 +63,7 @@ const routes: Routes = [
     },
     {
         path: 'courses/:id',
-        component: CoursesComponent
+        component: LabworksComponent
     },
     {
         path: '**',
