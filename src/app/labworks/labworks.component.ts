@@ -14,20 +14,19 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {LabworkService} from '../services/labwork.service'
 import {Labwork, LabworkAtom, LabworkProtocol} from '../models/labwork.model'
 import {AlertService} from '../services/alert.service'
-import {_groupBy, NotImplementedError, subscribe} from '../utils/functions'
+import {_groupBy, subscribe} from '../utils/functions'
 import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
-import {
-    CreateUpdateDialogComponent,
-    FormInputData,
-    FormOutputData,
-    FormPayload
-} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {CreateUpdateDialogComponent, FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isUniqueEntity} from '../models/unique.entity.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
-import {Validators} from '@angular/forms'
-import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
-import {withCreateProtocol} from '../models/protocol.model'
-import {FormInputOption} from '../shared-dialogs/formInputOption'
+import {invalidChoiceKey} from '../utils/form.validator'
+import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
+import {FormInputBoolean} from '../shared-dialogs/forms/form.input.boolean'
+import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
+import {Degree} from '../models/degree.model'
+import {DegreeService} from '../services/degree.service'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -97,7 +96,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         private readonly courseService: CourseService,
         private readonly semesterService: SemesterService,
         private readonly labworkService: LabworkService,
-        private readonly labworkApplicationService: LabworkApplicationService
+        private readonly labworkApplicationService: LabworkApplicationService,
+        private readonly degreeService: DegreeService
     ) {
         this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
         this.subs = []
@@ -219,21 +219,13 @@ export class LabworksComponent implements OnInit, OnDestroy {
 
     // TODO this is copied. build an abstraction?
     private openDialog(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
-        const inputData: FormInputData[] = this.makeFormInputData(data)
-
-        // const inputOption = new FormInputOption<Semester>(
-        //     'semester',
-        //     invalidChoiceKey,
-        //     value => value.label,
-        //     options => subscribe(this.semesterService.getAll(), options)
-        // )
+        const inputData: FormInput[] = this.makeFormInputData(data)
 
         const payload: FormPayload<LabworkProtocol> = {
             headerTitle: dialogTitle(mode, 'Praktikum'),
             submitTitle: dialogSubmitTitle(mode),
             data: inputData,
             makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
-            // formInputOption: inputOption
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
@@ -249,87 +241,98 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private create(updatedValues: FormOutputData[]): LabworkProtocol {
-        return NotImplementedError()
+        return createProtocol(updatedValues, LabworksComponent.empty())
     }
 
-    private makeFormInputData(data: LabworkAtom | LabworkProtocol): FormInputData[] {
-        const isModel = isUniqueEntity(data)
+    private makeFormInputData(labwork: LabworkAtom | LabworkProtocol): FormInput[] {
+        const isModel = isUniqueEntity(labwork)
 
-        return [
+        const inputs = [
             {
                 formControlName: 'label',
-                placeholder: 'Bezeichnung',
-                type: 'text',
+                displayTitle: 'Bezeichnung',
                 isDisabled: false,
-                validator: Validators.required,
-                value: data.label
+                data: new FormInputString(labwork.label)
             },
             {
                 formControlName: 'description',
-                placeholder: 'Beschreibung',
-                type: 'text',
+                displayTitle: 'Beschreibung',
                 isDisabled: false,
-                validator: Validators.required,
-                value: data.description
+                data: new FormInputTextArea(labwork.description)
             },
             {
                 formControlName: 'semester',
-                placeholder: 'Semester',
-                type: isModel ? 'text' : 'options',
+                displayTitle: 'Semester',
                 isDisabled: isModel,
-                validator: isModel ? Validators.required : optionsValidator(),
-                value: isUniqueEntity(data) ? data.semester.label : data.semester
+                data: isUniqueEntity(labwork) ?
+                    new FormInputString(labwork.semester.label) :
+                    new FormInputOption<Semester>(
+                        labwork.semester,
+                        'semester',
+                        invalidChoiceKey,
+                        semester => semester.label,
+                        options => subscribe(this.semesterService.getAll(), options)
+                    )
             },
             {
                 formControlName: 'course',
-                placeholder: 'Modul',
-                type: isModel ? 'text' : 'options',
-                isDisabled: isModel,
-                validator: isModel ? Validators.required : optionsValidator(),
-                value: isUniqueEntity(data) ? data.course.label : data.course
+                displayTitle: 'Modul',
+                isDisabled: true,
+                data: isUniqueEntity(labwork) ?
+                    new FormInputString(labwork.course.label) :
+                    new FormInputString(labwork.course)
             },
             {
                 formControlName: 'degree',
-                placeholder: 'Studiengang',
-                type: isModel ? 'text' : 'options',
+                displayTitle: 'Studiengang',
                 isDisabled: isModel,
-                validator: isModel ? Validators.required : optionsValidator(),
-                value: isUniqueEntity(data) ? data.degree.label : data.degree
+                data: isUniqueEntity(labwork) ?
+                    new FormInputString(labwork.degree.label) :
+                    new FormInputOption<Degree>(
+                        labwork.degree,
+                        'degree',
+                        invalidChoiceKey,
+                        degree => degree.label,
+                        options => subscribe(this.degreeService.getAll(), options)
+                    )
             },
             {
                 formControlName: 'subscribable',
-                placeholder: 'Anmeldbar',
-                type: 'boolean',
+                displayTitle: 'Anmeldbar',
                 isDisabled: false,
-                validator: Validators.required,
-                value: data.subscribable
+                data: new FormInputBoolean(labwork.subscribable)
             },
             {
                 formControlName: 'published',
-                placeholder: 'Veröffentlicht',
-                type: 'boolean',
+                displayTitle: 'Veröffentlicht',
                 isDisabled: false,
-                validator: Validators.required,
-                value: data.published
+                data: new FormInputBoolean(labwork.published)
             }
         ]
+
+        return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
     private canCreate(): boolean {
         return true // TODO add permission check
     }
 
-    private onCreate() {
+    private onCreate(course: CourseAtom) {
         const s1 = this.openDialog(DialogMode.create, LabworksComponent.empty(), procotol => {
-            const s2 = subscribe(this.labworkService.create('', procotol), this.afterCreate.bind(this))
+            procotol.course = course.id
+            const s2 = subscribe(
+                this.labworkService.create(course.id, procotol),
+                this.afterCreate.bind(this)
+            )
             this.subs.push(s2)
         })
 
         this.subs.push(s1)
     }
 
-    protected afterCreate(labwork: LabworkAtom) {
-        // this.dataSource.data = this.dataSource.data.concat()
-        this.alertService.reportAlert('success', 'created: ' + JSON.stringify(labwork))
+    protected afterCreate(labworks: LabworkAtom[]) {
+        const lwas = labworks.map(l => ({labwork: l, semester: l.semester, applications: 0}))
+        this.dataSource.data = this.dataSource.data.concat(lwas)
+        this.alertService.reportAlert('success', 'created: ' + labworks.map(JSON.stringify.bind(this)))
     }
 }

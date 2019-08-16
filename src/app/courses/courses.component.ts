@@ -4,15 +4,17 @@ import {CourseProtocol, CourseService} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
-import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {Validators} from '@angular/forms'
-import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
+import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {invalidChoiceKey} from '../utils/form.validator'
 import {User} from '../models/user.model'
 import {UserService} from '../services/user.service'
 import {subscribe} from '../utils/functions'
 import {createProtocol, withCreateProtocol} from '../models/protocol.model'
 import {isUniqueEntity} from '../models/unique.entity.model'
-import {FormInputOption} from '../shared-dialogs/formInputOption'
+import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
+import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
 
 @Component({
     selector: 'app-courses',
@@ -21,7 +23,7 @@ import {FormInputOption} from '../shared-dialogs/formInputOption'
 })
 export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, CourseAtom> {
 
-    static columns(): TableHeaderColumn[] {
+    static columns = (): TableHeaderColumn[] => {
         return [
             {attr: 'label', title: 'Bezeichnung'},
             {attr: 'description', title: 'Beschreibung'},
@@ -31,56 +33,56 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
         ]
     }
 
-    static inputData(model: Readonly<CourseProtocol | CourseAtom>, isModel: boolean): FormInputData[] {
-        return [
-            {
-                formControlName: 'label',
-                placeholder: 'Bezeichnung',
-                type: 'text',
-                isDisabled: false,
-                validator: Validators.required,
-                value: model.label
-            },
-            {
-                formControlName: 'description',
-                placeholder: 'Beschreibung',
-                type: 'textArea',
-                isDisabled: false,
-                validator: Validators.required,
-                value: model.description
-            },
-            {
-                formControlName: 'abbreviation',
-                placeholder: 'Abkürzung',
-                type: 'text',
-                isDisabled: false,
-                validator: Validators.required,
-                value: model.abbreviation
-            },
-            {
-                formControlName: 'lecturer',
-                placeholder: 'Dozent',
-                type: isModel ? 'text' : 'options',
-                isDisabled: isModel,
-                validator: isModel ? Validators.required : optionsValidator(),
-                value: isUniqueEntity(model) ? `${model.lecturer.lastname}, ${model.lecturer.firstname}` : model.lecturer
-            },
-            {
-                formControlName: 'semesterIndex',
-                placeholder: 'Fachsemester',
-                type: 'number',
-                isDisabled: false,
-                validator: [Validators.required, Validators.min(0)],
-                value: model.semesterIndex
-            }
-        ]
+    static inputData = (userService: UserService): (m: Readonly<CourseProtocol | CourseAtom>, im: boolean) => FormInput[] => {
+        return (model, isModel) => {
+            return [
+                {
+                    formControlName: 'label',
+                    displayTitle: 'Bezeichnung',
+                    isDisabled: false,
+                    data: new FormInputString(model.label)
+                },
+                {
+                    formControlName: 'description',
+                    displayTitle: 'Beschreibung',
+                    isDisabled: false,
+                    data: new FormInputTextArea(model.description)
+                },
+                {
+                    formControlName: 'abbreviation',
+                    displayTitle: 'Abkürzung',
+                    isDisabled: false,
+                    data: new FormInputString(model.abbreviation)
+                },
+                {
+                    formControlName: 'lecturer',
+                    displayTitle: 'Dozent',
+                    isDisabled: isModel,
+                    data: isUniqueEntity(model) ?
+                        new FormInputString(`${model.lecturer.lastname}, ${model.lecturer.firstname}`) :
+                        new FormInputOption<User>(
+                            model.lecturer,
+                            'lecturer',
+                            invalidChoiceKey,
+                            value => `${value.lastname}, ${value.firstname}`,
+                            options => subscribe(userService.getAllEmployees(), options)
+                        )
+                },
+                {
+                    formControlName: 'semesterIndex',
+                    displayTitle: 'Fachsemester',
+                    isDisabled: false,
+                    data: new FormInputNumber(model.semesterIndex)
+                }
+            ]
+        }
     }
 
-    static empty(): CourseProtocol {
+    static empty = (): CourseProtocol => {
         return {label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}
     }
 
-    static prepareTableContent(course: Readonly<CourseAtom>, attr: string): string {
+    static prepareTableContent = (course: Readonly<CourseAtom>, attr: string): string => {
         if (attr === 'lecturer') {
             return `${course.lecturer.lastname}, ${course.lecturer.firstname}`
         } else {
@@ -90,6 +92,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
 
     constructor(protected courseService: CourseService, protected dialog: MatDialog, protected alertService: AlertService, private userService: UserService) {
         super(
+            courseService,
             dialog,
             alertService,
             CoursesComponent.columns(),
@@ -97,19 +100,11 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
             'label',
             'Modul',
             'Module',
-            CoursesComponent.inputData,
+            CoursesComponent.inputData(userService),
             _ => '',
             CoursesComponent.prepareTableContent,
             CoursesComponent.empty,
             () => undefined
-        )
-
-        this.service = courseService // super.init does not allow types which are generic
-        this.inputOption = new FormInputOption<User>(
-            'lecturer',
-            invalidChoiceKey,
-            value => `${value.lastname}, ${value.firstname}`,
-            options => subscribe(userService.getAllEmployees(), options)
         )
     }
 

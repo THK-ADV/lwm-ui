@@ -2,7 +2,7 @@
     <div class="abstractTableMainTitle"> <!-- TODO move this out -->
         <h1>{{course.label}}</h1>
         <span *ngIf="canCreate()">
-        <button mat-flat-button color="accent" (click)="onCreate()" matTooltip="Hinzufügen"
+        <button mat-flat-button color="accent" (click)="onCreate(course)" matTooltip="Hinzufügen"
                 matTooltipPosition="left">
             <mat-icon>add</mat-icon>
         </button>

@@ -1,17 +1,19 @@
 import {Component} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {Blacklist, BlacklistProtocol} from '../models/blacklist.model'
-import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {Validators} from '@angular/forms'
+import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {BlacklistService} from '../services/blacklist.service'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {Time} from '../models/time.model'
-import {localTimeValidator} from '../utils/form.validator'
 import {NotImplementedError} from '../utils/functions'
 import {withCreateProtocol} from '../models/protocol.model'
-import {isUniqueEntity} from '../models/unique.entity.model'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {FormInputString} from '../shared-dialogs/forms/form.input.string'
+import {FormInputDate} from '../shared-dialogs/forms/form.input.date'
+import {FormInputBoolean} from '../shared-dialogs/forms/form.input.boolean'
+import {FormInputTime} from '../shared-dialogs/forms/form.input.time'
 
 @Component({
     selector: 'app-blacklists',
@@ -30,47 +32,37 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
         ]
     }
 
-    static inputData(model: Readonly<BlacklistProtocol | Blacklist>, isModel: boolean): FormInputData[] {
+    static inputData(model: Readonly<BlacklistProtocol | Blacklist>, isModel: boolean): FormInput[] {
         return [
             {
                 formControlName: 'label',
-                placeholder: 'Bezeichnung',
-                type: 'text',
+                displayTitle: 'Bezeichnung',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.label
+                data: new FormInputString(model.label)
             },
             {
                 formControlName: 'date',
-                placeholder: 'Datum',
-                type: 'date',
+                displayTitle: 'Datum',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.date
+                data: new FormInputDate(model.date)
             },
             {
                 formControlName: 'start',
-                placeholder: 'Start',
-                type: isModel ? 'text' : 'time',
+                displayTitle: 'Start',
                 isDisabled: isModel,
-                validator: isModel ? Validators.required : localTimeValidator(),
-                value: isUniqueEntity(model) ? formatTime(model.start) : model.start
+                data: new FormInputTime(model.start)
             },
             {
                 formControlName: 'end',
-                placeholder: 'Ende',
-                type: isModel ? 'text' : 'time',
+                displayTitle: 'Ende',
                 isDisabled: isModel,
-                validator: isModel ? Validators.required : localTimeValidator(),
-                value: isUniqueEntity(model) ? formatTime(model.end) : model.end
+                data: new FormInputTime(model.end)
             },
             {
                 formControlName: 'global',
-                placeholder: 'Allgemeingültig',
-                type: 'boolean',
+                displayTitle: 'Allgemeingültig',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.global
+                data: new FormInputBoolean(model.global)
             }
         ]
     }
@@ -93,6 +85,7 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
 
     constructor(protected blacklistService: BlacklistService, protected dialog: MatDialog, protected alertService: AlertService) {
         super(
+            blacklistService,
             dialog,
             alertService,
             BlacklistsComponent.columns(),
@@ -106,8 +99,6 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
             BlacklistsComponent.empty,
             () => undefined
         )
-
-        this.service = blacklistService // super.init does not allow types which are generic
     }
 
     create(output: FormOutputData[]): BlacklistProtocol {

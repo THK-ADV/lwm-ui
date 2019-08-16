@@ -3,21 +3,9 @@ import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
 import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
-import {Time} from '../../models/time.model'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
-import {FormInputOption} from '../formInputOption'
-
-type FormDataType = string | number | Date | Time | boolean
-type FormDataStringType = 'text' | 'number' | 'date' | 'time' | 'options' | 'textArea' | 'boolean'
-
-export interface FormInputData {
-    formControlName: string
-    placeholder: string
-    type: FormDataStringType
-    validator: ValidatorFn | ValidatorFn[]
-    isDisabled: boolean
-    value: FormDataType
-}
+import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
+import {FormInputOption} from '../forms/form.input.option'
 
 export interface FormOutputData {
     formControlName: string
@@ -27,10 +15,9 @@ export interface FormOutputData {
 export interface FormPayload<Protocol> {
     headerTitle: string,
     submitTitle: string,
-    data: FormInputData[],
+    data: FormInput[],
     makeProtocol: (formOutputData: FormOutputData[]) => Protocol
-    composedFromGroupValidator?: ValidatorFn,
-    formInputOption?: FormInputOption<Object>
+    composedFromGroupValidator?: ValidatorFn
 }
 
 @Component({
@@ -61,7 +48,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
         this.formGroup = new FormGroup({})
 
         payload.data.forEach(d => {
-            const fc = new FormControl(d.value, d.validator)
+            const fc = new FormControl(d.data.value, d.data.validator)
 
             if (d.isDisabled) {
                 fc.disable()
@@ -77,20 +64,24 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
         }
     }
 
-    ngOnInit(): void {
-        const option = this.payload.formInputOption
+    isOption = (d: FormInputData<any>): d is FormInputOption<any> => {
+        return (d as FormInputOption<any>).options !== undefined
+    }
 
-        if (option) {
-            option.onInit(this.formGroup)
-        }
+    foreachOption = (f: (o: FormInputOption<any>) => void) => {
+        this.payload.data.forEach(d => {
+            if (this.isOption(d.data)) {
+                f(d.data)
+            }
+        })
+    }
+
+    ngOnInit(): void {
+        this.foreachOption(o => o.onInit(this.formGroup))
     }
 
     ngOnDestroy(): void {
-        const option = this.payload.formInputOption
-
-        if (option) {
-            option.onDestroy()
-        }
+        this.foreachOption(o => o.onDestroy())
     }
 
     onCancel(): void {
@@ -103,7 +94,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
                 .filter(d => !d.isDisabled)
                 .map(d => ({
                     formControlName: d.formControlName,
-                    value: this.convertToType(d.type, this.formGroup.controls[d.formControlName].value)
+                    value: this.convertToType(d.data.type, this.formGroup.controls[d.formControlName].value)
                 }))
 
             this.closeModal(this.payload.makeProtocol(updatedValues))
@@ -126,6 +117,14 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
 
     getLocalTimeErrorMessage(controlName: string): string {
         return this.formGroup.controls[controlName].getError(invalidLocalTimeKey)
+    }
+
+    hasOptionError(formInputData: FormInputData<any>): boolean {
+        return this.isOption(formInputData) ? formInputData.hasError() : false
+    }
+
+    getOptionErrorMessage(formInputData: FormInputData<any>): string {
+        return this.isOption(formInputData) ? formInputData.getErrorMessage() : ''
     }
 
     private convertToType(type: FormDataStringType, value: any): FormDataType {

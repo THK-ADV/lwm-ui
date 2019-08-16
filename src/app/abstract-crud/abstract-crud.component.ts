@@ -2,11 +2,7 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
 import {AlertService} from '../services/alert.service'
-import {
-    CreateUpdateDialogComponent,
-    FormInputData,
-    FormOutputData
-} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {CreateUpdateDialogComponent, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AbstractCRUDService} from './abstract-crud.service'
 import {exists, subscribe} from '../utils/functions'
@@ -14,7 +10,7 @@ import {ValidatorFn} from '@angular/forms'
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
-import {FormInputOption} from '../shared-dialogs/formInputOption'
+import {FormInput} from '../shared-dialogs/forms/form.input'
 
 export interface TableHeaderColumn {
     attr: string
@@ -32,15 +28,13 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     protected subs: Subscription[] = []
     protected dataSource = new MatTableDataSource<Model>()
 
-    protected service: AbstractCRUDService<Protocol, Model>
-    protected inputOption?: FormInputOption<Object> = undefined
-
     private readonly displayedColumns: string[]
 
     @ViewChild(MatSort, {static: true}) sort: MatSort
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
 
     constructor(
+        protected readonly service: AbstractCRUDService<Protocol, Model>,
         protected readonly dialog: MatDialog,
         protected readonly alertService: AlertService,
         protected readonly columns: TableHeaderColumn[],
@@ -48,11 +42,11 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
         protected readonly modelName: string,
         protected readonly headerTitle: string,
-        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInputData[],
+        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInput[],
         protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
         protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
         protected readonly empty: () => Readonly<Protocol>,
-        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined,
+        protected readonly composedFromGroupValidator: (data: FormInput[]) => ValidatorFn | undefined,
         protected readonly pageSizeOptions: number[] = [25, 50, 100]
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
@@ -124,8 +118,7 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
             submitTitle: dialogSubmitTitle(mode),
             data: inputData,
             makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
-            composedFromGroupValidator: this.composedFromGroupValidator(inputData),
-            formInputOption: this.inputOption
+            composedFromGroupValidator: this.composedFromGroupValidator(inputData)
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
