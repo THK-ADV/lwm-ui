@@ -13,10 +13,8 @@ import {AbstractCRUDService} from './abstract-crud.service'
 import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
-
-enum DialogMode {
-    edit, create
-}
+import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
+import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 
 export interface TableHeaderColumn {
     attr: string
@@ -122,8 +120,8 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         const inputData = this.inputData(data, isUniqueEntity(data))
 
         const payload = {
-            headerTitle: this.dialogTitle(mode),
-            submitTitle: this.dialogSubmitTitle(mode),
+            headerTitle: dialogTitle(mode, this.modelName),
+            submitTitle: dialogSubmitTitle(mode),
             data: inputData,
             makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
             composedFromGroupValidator: this.composedFromGroupValidator(inputData),
@@ -143,24 +141,6 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         this.sort.active = sortState.active
         this.sort.direction = sortState.direction
         this.sort.sortChange.emit(sortState)
-    }
-
-    protected dialogTitle(mode: DialogMode): string {
-        switch (mode) {
-            case DialogMode.create:
-                return `${this.modelName} erstellen`
-            case DialogMode.edit:
-                return `${this.modelName} bearbeiten`
-        }
-    }
-
-    protected dialogSubmitTitle(mode: DialogMode): string {
-        switch (mode) {
-            case DialogMode.create:
-                return 'Erstellen'
-            case DialogMode.edit:
-                return 'Aktualisieren'
-        }
     }
 
     protected subscribeAndPush<T>(observable: Observable<T>, next: (t: T) => void) {
@@ -184,8 +164,9 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
     }
 
-    protected afterDelete(model: Model) {
-        this.dataSource.data = this.dataSource.data.filter(r => r.id !== model.id)
-        this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(model))
+    protected afterDelete(model: Model) { // TODO test
+        removeFromDataSource(this.alertService, this.dataSource)(model, (a, t) => a.id === t.id)
+        // this.dataSource.data = this.dataSource.data.filter(r => r.id !== model.id)
+        // this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(model))
     }
 }

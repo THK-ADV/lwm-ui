@@ -34,6 +34,16 @@ export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
     })
 }
 
+export function _groupBy<T>(array: T[], key: (t: T) => string): { key: string, value: T[] } {
+    // @ts-ignore
+    return array.reduce((acc, x) => {
+        const k = key(x)
+        acc[k] = acc[k] || []
+        acc[k].push(x)
+        return acc
+    }, {})
+}
+
 export function NotImplementedError(data: string = ''): never {
     throw new Error(`not implemented yet - ${data}`)
 }
