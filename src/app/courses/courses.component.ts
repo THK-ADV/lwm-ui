@@ -4,7 +4,7 @@ import {CourseProtocol, CourseService} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
-import {FormInputData, FormInputOption, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {Validators} from '@angular/forms'
 import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
 import {User} from '../models/user.model'
@@ -12,6 +12,7 @@ import {UserService} from '../services/user.service'
 import {subscribe} from '../utils/functions'
 import {createProtocol, withCreateProtocol} from '../models/protocol.model'
 import {isUniqueEntity} from '../models/unique.entity.model'
+import {FormInputOption} from '../shared-dialogs/formInputOption'
 
 @Component({
     selector: 'app-courses',

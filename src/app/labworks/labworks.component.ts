@@ -25,8 +25,9 @@ import {
 import {isUniqueEntity} from '../models/unique.entity.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {Validators} from '@angular/forms'
-import {optionsValidator} from '../utils/form.validator'
+import {invalidChoiceKey, optionsValidator} from '../utils/form.validator'
 import {withCreateProtocol} from '../models/protocol.model'
+import {FormInputOption} from '../shared-dialogs/formInputOption'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -220,11 +221,19 @@ export class LabworksComponent implements OnInit, OnDestroy {
     private openDialog(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
         const inputData: FormInputData[] = this.makeFormInputData(data)
 
+        // const inputOption = new FormInputOption<Semester>(
+        //     'semester',
+        //     invalidChoiceKey,
+        //     value => value.label,
+        //     options => subscribe(this.semesterService.getAll(), options)
+        // )
+
         const payload: FormPayload<LabworkProtocol> = {
             headerTitle: dialogTitle(mode, 'Praktikum'),
             submitTitle: dialogSubmitTitle(mode),
             data: inputData,
-            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues)
+            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
+            // formInputOption: inputOption
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
@@ -304,5 +313,23 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 value: data.published
             }
         ]
+    }
+
+    private canCreate(): boolean {
+        return true // TODO add permission check
+    }
+
+    private onCreate() {
+        const s1 = this.openDialog(DialogMode.create, LabworksComponent.empty(), procotol => {
+            const s2 = subscribe(this.labworkService.create('', procotol), this.afterCreate.bind(this))
+            this.subs.push(s2)
+        })
+
+        this.subs.push(s1)
+    }
+
+    protected afterCreate(labwork: LabworkAtom) {
+        // this.dataSource.data = this.dataSource.data.concat()
+        this.alertService.reportAlert('success', 'created: ' + JSON.stringify(labwork))
     }
 }

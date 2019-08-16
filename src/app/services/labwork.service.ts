@@ -25,6 +25,10 @@ export class LabworkService {
         return this.http.put(this.makePath(courseId), id, labwork, atomicParams)
     }
 
+    create(courseId: string, labwork: LabworkProtocol): Observable<LabworkAtom> {
+        return this.http.create(this.makePath(courseId), labwork, atomicParams)
+    }
+
     private makePath = (courseId: string): string => `courses/${courseId}/labworks`
 
     private withSemester = (semester?: string): HttpParams | undefined => {

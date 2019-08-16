@@ -5,7 +5,6 @@ import {AlertService} from '../services/alert.service'
 import {
     CreateUpdateDialogComponent,
     FormInputData,
-    FormInputOption,
     FormOutputData
 } from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
@@ -15,6 +14,7 @@ import {ValidatorFn} from '@angular/forms'
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
+import {FormInputOption} from '../shared-dialogs/formInputOption'
 
 export interface TableHeaderColumn {
     attr: string
