@@ -12,6 +12,10 @@ export class LabworkService {
     constructor(private http: HttpService) {
     }
 
+    get(courseId: string, id: string): Observable<LabworkAtom> {
+        return this.http.get(this.makePath(courseId), id, atomicParams)
+    }
+
     getAll(courseId: string, semester?: string): Observable<LabworkAtom[]> {
         const params = this.withSemester(semester)
         return this.http.getAll(this.makePath(courseId), params)

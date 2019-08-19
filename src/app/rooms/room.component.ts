@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {MatDialog} from '@angular/material'
 import {Room, RoomProtocol} from '../models/room.model'
 import {AlertService} from '../services/alert.service'
@@ -15,7 +15,7 @@ import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
+export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> implements OnInit {
 
     static columns(): TableHeaderColumn[] {
         return [
@@ -68,6 +68,11 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             RoomComponent.empty,
             () => undefined
         )
+    }
+
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): RoomProtocol {

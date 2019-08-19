@@ -2,7 +2,7 @@ import {Observable, Subscription} from 'rxjs'
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {map, startWith} from 'rxjs/operators'
 import {FormDataStringType, FormInputData} from './form.input'
-import {optionsValidator} from '../../utils/form.validator'
+import {mandatoryOptionsValidator, optionalOptionsValidator} from '../../utils/form.validator'
 
 export class FormInputOption<Option> implements FormInputData<string> {
     readonly type: FormDataStringType
@@ -19,11 +19,12 @@ export class FormInputOption<Option> implements FormInputData<string> {
         private readonly value_: string,
         private readonly controlName: string,
         private readonly errorKey: string,
+        private readonly required: boolean,
         private readonly display: (value: Option) => string,
         private readonly getOptions: (options: (value: Option[]) => void) => Subscription
     ) {
         this.type = 'options'
-        this.validator = optionsValidator()
+        this.validator = required ? mandatoryOptionsValidator() : optionalOptionsValidator()
         this.value = value_
     }
 

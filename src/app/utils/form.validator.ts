@@ -13,13 +13,23 @@ function isJSON(value: any): boolean {
     return !isUserInput(value)
 }
 
-export function optionsValidator(): ValidatorFn {
+export function mandatoryOptionsValidator(): ValidatorFn {
     return (ctl: AbstractControl): ValidationErrors | null => {
         if (!isJSON(ctl.value) || ctl.value === null || ctl.value === '') {
             return {[invalidChoiceKey]: 'Invalide Auswahl'}
         }
 
         return null
+    }
+}
+
+export function optionalOptionsValidator(): ValidatorFn {
+    return (ctl: AbstractControl): ValidationErrors | null => {
+        if (ctl.value === '' || isJSON(ctl.value)) {
+            return null
+        }
+
+        return {[invalidChoiceKey]: 'Invalide Auswahl'}
     }
 }
 

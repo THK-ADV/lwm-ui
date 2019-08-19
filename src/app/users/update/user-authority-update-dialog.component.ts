@@ -14,7 +14,7 @@ import {RoleService} from '../../services/role.service'
 import {UserStatus} from '../../models/userStatus.model'
 import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
-import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/form.validator'
+import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../utils/form.validator'
 
 export interface StandardRole {
     label: UserStatus
@@ -71,7 +71,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private addControl(controlName: AuthCreationControl) { // TODO move out
-        this.authGroup.addControl(controlName, new FormControl('', optionsValidator()))
+        this.authGroup.addControl(controlName, new FormControl('', mandatoryOptionsValidator()))
     }
 
     private getControl(control: AuthCreationControl): FormControl { // TODO move out

@@ -1,12 +1,7 @@
-<div class="abstractTableMainTitle">
-    <h1>{{headerTitle}}</h1>
-    <span *ngIf="canCreate()">
-        <button mat-flat-button color="accent" (click)="onCreate()" matTooltip="Hinzufügen"
-                matTooltipPosition="left">
-            <mat-icon>add</mat-icon>
-        </button>
-    </span>
-</div>
+<lwm-create-header [headerTitle]="headerTitle"
+                     [canCreate]="canCreate()"
+                     (create)="onCreate()">
+</lwm-create-header>
 
 <mat-form-field>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">

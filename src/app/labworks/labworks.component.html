@@ -1,13 +1,8 @@
 <ng-container *ngIf="course$ | async as course">
-    <div class="abstractTableMainTitle"> <!-- TODO move this out -->
-        <h1>{{course.label}}</h1>
-        <span *ngIf="canCreate()">
-        <button mat-flat-button color="accent" (click)="onCreate(course)" matTooltip="Hinzufügen"
-                matTooltipPosition="left">
-            <mat-icon>add</mat-icon>
-        </button>
-    </span>
-    </div>
+    <lwm-create-header [headerTitle]="course.label"
+                         [canCreate]="canCreate()"
+                         (create)="onCreate(course)">
+    </lwm-create-header>
 
     <h2>Kontakt</h2>
     <p>{{course.lecturer.lastname}}, {{course.lecturer.firstname}}</p>

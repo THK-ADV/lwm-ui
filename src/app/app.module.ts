@@ -39,6 +39,7 @@ import {LabworksComponent} from './labworks/labworks.component'
 import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
 import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
+import {CreateHeaderComponent} from './editable-header/create-header.component'
 
 @NgModule({
     declarations: [
@@ -61,7 +62,8 @@ import {LabworkApplicationsComponent} from './labwork-applications/labwork-appli
         LabworksComponent,
         FilterPipe,
         NgInitDirective,
-        LabworkApplicationsComponent
+        LabworkApplicationsComponent,
+        CreateHeaderComponent
     ],
     imports: [
         BrowserModule,

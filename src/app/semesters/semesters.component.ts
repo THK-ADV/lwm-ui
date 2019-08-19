@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {FormGroup, ValidatorFn} from '@angular/forms'
 import {MatDialog} from '@angular/material'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
@@ -11,7 +11,6 @@ import {withCreateProtocol} from '../models/protocol.model'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {FormInputString} from '../shared-dialogs/forms/form.input.string'
 import {FormInputDate} from '../shared-dialogs/forms/form.input.date'
-import {isUniqueEntity} from '../models/unique.entity.model'
 
 
 @Component({
@@ -19,7 +18,7 @@ import {isUniqueEntity} from '../models/unique.entity.model'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> {
+export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> implements OnInit {
 
     static empty(): SemesterProtocol {
         return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
@@ -119,6 +118,11 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             SemestersComponent.empty,
             SemestersComponent.startEndValidator
         )
+    }
+
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): SemesterProtocol {

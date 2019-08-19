@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {HttpService, nonAtomicParams} from './http.service'
+import {atomicParams, HttpService, nonAtomicParams} from './http.service'
 import {Observable} from 'rxjs'
 import {LabworkApplication, LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
 import {map} from 'rxjs/operators'
@@ -22,8 +22,12 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
         )
     }
 
+    getAllByLabwork(labwork: string): Observable<LabworkApplicationAtom[]> {
+        return this.http.getAll(this.path, atomicParams.set('labwork', labwork))
+    }
+
     createMany(protocol: LabworkApplicationProtocol): Observable<LabworkApplicationAtom[]> {
-        return NotImplementedError()
+        return this.http.createMany(this.path, [protocol], atomicParams)
     }
 
     delete(id: string): Observable<LabworkApplicationAtom> {

@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {User} from '../models/user.model'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
@@ -13,7 +13,7 @@ import {NotImplementedError} from '../utils/functions'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class UsersComponent extends AbstractCRUDComponent<User, User> {
+export class UsersComponent extends AbstractCRUDComponent<User, User> implements OnInit {
 
     static columns(): TableHeaderColumn[] {
         return [
@@ -40,6 +40,11 @@ export class UsersComponent extends AbstractCRUDComponent<User, User> {
             () => ({lastname: '', firstname: '', systemId: '', email: '', id: ''}),
             () => undefined
         )
+    }
+
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     protected onEdit(model) {

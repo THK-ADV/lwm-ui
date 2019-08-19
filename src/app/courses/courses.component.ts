@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {CourseProtocol, CourseService} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
@@ -21,7 +21,7 @@ import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, CourseAtom> {
+export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, CourseAtom> implements OnInit {
 
     static columns = (): TableHeaderColumn[] => {
         return [
@@ -65,7 +65,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
                             'lecturer',
                             invalidChoiceKey,
                             value => `${value.lastname}, ${value.firstname}`,
-                            options => subscribe(userService.getAllEmployees(), options)
+                            options => subscribe(userService.getAllWithFilter({attribute: 'status', value: 'employee'}), options)
                         )
                 },
                 {
@@ -106,6 +106,11 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
             CoursesComponent.empty,
             () => undefined
         )
+    }
+
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): CourseProtocol {

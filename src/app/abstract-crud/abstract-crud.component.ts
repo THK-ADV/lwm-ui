@@ -41,7 +41,7 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         protected readonly actions: Action[],
         protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
         protected readonly modelName: string,
-        protected readonly headerTitle: string,
+        protected headerTitle: string,
         protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInput[],
         protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
         protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
@@ -54,17 +54,18 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
 
     ngOnInit() {
         this.dataSource.sort = this.sort
-
-        this.subscribeAndPush(this.service.getAll(), data => {
-            this.dataSource.data = data
-            this.sortBy(this.sortDescriptor)
-        })
-
         this.dataSource.paginator = this.paginator
     }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
+    }
+
+    fetchData(observable: Observable<Model[]> = this.service.getAll()) {
+        this.subscribeAndPush(observable, data => {
+            this.dataSource.data = data
+            this.sortBy(this.sortDescriptor)
+        })
     }
 
     private canCreate(): boolean {
@@ -80,7 +81,9 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     private onSelect(model: Model) {
-        this.onEdit(model)
+        if (this.canEdit()) {
+            this.onEdit(model)
+        }
     }
 
     protected onEdit(model: Model) {

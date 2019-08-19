@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {MatDialog} from '@angular/material'
@@ -15,7 +15,7 @@ import {FormInputString} from '../shared-dialogs/forms/form.input.string'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> {
+export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> implements OnInit {
 
     static columns(): TableHeaderColumn[] {
         return [
@@ -61,6 +61,11 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
             DegreeComponent.empty,
             () => undefined
         )
+    }
+
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): DegreeProtocol {

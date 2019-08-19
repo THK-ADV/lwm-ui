@@ -1,4 +1,4 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {Blacklist, BlacklistProtocol} from '../models/blacklist.model'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
@@ -20,7 +20,7 @@ import {FormInputTime} from '../shared-dialogs/forms/form.input.time'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol, Blacklist> {
+export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol, Blacklist> implements OnInit {
 
     static columns(): TableHeaderColumn[] {
         return [
@@ -99,6 +99,11 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
             BlacklistsComponent.empty,
             () => undefined
         )
+    }
+
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): BlacklistProtocol {

@@ -31,7 +31,7 @@ export class LWMDateAdapter extends NativeDateAdapter {
     }
 }
 
-export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'HH:mm:ss'
+export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'HH:mm:ss' | 'dd.MM.yyyy - HH:mm'
 
 export function format(date: Date, pattern: DateTimePattern): string {
     registerLocaleData(localDE, 'de')
