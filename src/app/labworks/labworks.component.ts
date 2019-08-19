@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {ActivatedRoute} from '@angular/router'
+import {ActivatedRoute, Router} from '@angular/router'
 import {groupBy, map, mergeAll, switchMap, tap, toArray} from 'rxjs/operators'
 import {CourseService} from '../services/course.service'
 import {identity, merge, Observable, of, Subscription, zip} from 'rxjs'
@@ -97,7 +97,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         private readonly semesterService: SemesterService,
         private readonly labworkService: LabworkService,
         private readonly labworkApplicationService: LabworkApplicationService,
-        private readonly degreeService: DegreeService
+        private readonly degreeService: DegreeService,
+        private readonly router: Router
     ) {
         this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
         this.subs = []
@@ -108,11 +109,11 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.currentSemester$ = this.semesterService.current()
 
         this.course$ = this.route.paramMap.pipe(
-            switchMap(params => this.courseService.get(params.get('id') || '')),
+            switchMap(params => this.courseService.get(params.get('cid') || '')),
             tap(course => {
                 const labworksWithApps$ = this.labworkService.getAll(course.id).pipe(
                     switchMap(ls => {
-                        return ls.map(l => zip(this.labworkApplicationService.getApplications(l.id).pipe(map(xs => xs.length)), of(l)))
+                        return ls.map(l => zip(this.labworkApplicationService.getApplicationCount(l.id), of(l)))
                     }),
                     mergeAll(),
                     map(x => ({labwork: x[1], apps: x[0]})),
@@ -133,7 +134,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => { // TODO this will break if abbreviation do not match the actual dates (e.g. CGA)
+    // TODO this will break if abbreviation do not match the actual dates (e.g. CGA)
+    private semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => {
         return rhs.value[0].semester.abbreviation.localeCompare(lhs.value[0].semester.abbreviation)
     }
 
@@ -164,6 +166,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
             case 'graduates':
                 break
             case 'applications':
+                this.router.navigate(['labworks', labwork.id, 'applications'], {relativeTo: this.route})
                 break
 
         }

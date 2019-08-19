@@ -24,7 +24,7 @@
                     <span>Module</span>
                 </h3>
 
-                <a mat-list-item routerLink="/courses/{{auth.course.id}}" *ngFor="let auth of moduleAuthorities"
+                <a mat-list-item routerLink="e/courses/{{auth.course.id}}" *ngFor="let auth of moduleAuthorities"
                    routerLinkActive="list-item-active" (click)="linkClicked()">{{auth.course.abbreviation}}</a>
 
                 <div *ngIf="isAdmin()">
@@ -32,7 +32,7 @@
                         <mat-icon>build</mat-icon>
                         <span>Konfiguration</span>
                     </h3>
-                    <a mat-list-item routerLink="/{{config.path}}" *ngFor="let config of configs" routerLinkActive
+                    <a mat-list-item routerLink="e/{{config.path}}" *ngFor="let config of configs" routerLinkActive
                        routerLinkActive="list-item-active" (click)="linkClicked()">{{config.label}}</a>
                 </div>
 

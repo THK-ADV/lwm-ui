@@ -38,6 +38,7 @@ import {BlacklistsComponent} from './blacklists/blacklists.component'
 import {LabworksComponent} from './labworks/labworks.component'
 import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
+import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
 
 @NgModule({
     declarations: [
@@ -59,7 +60,8 @@ import {NgInitDirective} from './directives/ng-init.directive'
         UserAuthorityUpdateDialogComponent,
         LabworksComponent,
         FilterPipe,
-        NgInitDirective
+        NgInitDirective,
+        LabworkApplicationsComponent
     ],
     imports: [
         BrowserModule,

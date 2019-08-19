@@ -14,6 +14,7 @@ import { SemestersComponent } from './semesters/semesters.component';
 import { UsersComponent } from './users/users.component';
 import { BlacklistsComponent } from './blacklists/blacklists.component';
 import {LabworksComponent} from './labworks/labworks.component'
+import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
 
 const routes: Routes = [
     {
@@ -53,6 +54,19 @@ const routes: Routes = [
             {
                 path: '',
                 component: EmployeeDashboardComponent
+            },
+            {
+                path: 'courses/:cid',
+                children: [
+                    {
+                        path: 'labworks/:lid/applications',
+                        component: LabworkApplicationsComponent
+                    },
+                    {
+                        path: '',
+                        component: LabworksComponent
+                    }
+                ]
             }
         ]
     },
@@ -60,10 +74,6 @@ const routes: Routes = [
         path: '',
         component: EntryPageComponent,
         canActivate: [DashboardGuard]
-    },
-    {
-        path: 'courses/:id',
-        component: LabworksComponent
     },
     {
         path: '**',
