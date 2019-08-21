@@ -1,6 +1,6 @@
 import {Observable, Subscription} from 'rxjs'
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms'
-import {map, startWith} from 'rxjs/operators'
+import {debounceTime, map, startWith} from 'rxjs/operators'
 import {FormDataStringType, FormInputData} from './form.input'
 import {mandatoryOptionsValidator, optionalOptionsValidator} from '../../utils/form.validator'
 
@@ -34,6 +34,7 @@ export class FormInputOption<Option> implements FormInputData<string> {
 
         this.filteredOptions = this.control.valueChanges
             .pipe(
+                debounceTime(200),
                 startWith(''),
                 map(value => typeof value === 'string' ? value : this.display(value)),
                 map(value => value ? this.filter(value) : this.options.slice())

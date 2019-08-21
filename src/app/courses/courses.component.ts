@@ -64,6 +64,7 @@ export class CoursesComponent extends AbstractCRUDComponent<CourseProtocol, Cour
                             model.lecturer,
                             'lecturer',
                             invalidChoiceKey,
+                            true,
                             value => `${value.lastname}, ${value.firstname}`,
                             options => subscribe(userService.getAllWithFilter({attribute: 'status', value: 'employee'}), options)
                         )

@@ -12,8 +12,6 @@ import {withCreateProtocol} from '../models/protocol.model'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {FormInputString} from '../shared-dialogs/forms/form.input.string'
 import {FormInputDate} from '../shared-dialogs/forms/form.input.date'
-import {FormInputBoolean} from '../shared-dialogs/forms/form.input.boolean'
-import {FormInputTime} from '../shared-dialogs/forms/form.input.time'
 
 @Component({
     selector: 'app-blacklists',
@@ -46,24 +44,24 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
                 isDisabled: isModel,
                 data: new FormInputDate(model.date)
             },
-            {
-                formControlName: 'start',
-                displayTitle: 'Start',
-                isDisabled: isModel,
-                data: new FormInputTime(model.start)
-            },
-            {
-                formControlName: 'end',
-                displayTitle: 'Ende',
-                isDisabled: isModel,
-                data: new FormInputTime(model.end)
-            },
-            {
-                formControlName: 'global',
-                displayTitle: 'Allgemeingültig',
-                isDisabled: isModel,
-                data: new FormInputBoolean(model.global)
-            }
+            // {
+            //     formControlName: 'start',
+            //     displayTitle: 'Start',
+            //     isDisabled: true,
+            //     data: new FormInputTime(Time.startOfTheDay())
+            // },
+            // {
+            //     formControlName: 'end',
+            //     displayTitle: 'Ende',
+            //     isDisabled: true,
+            //     data: new FormInputTime(Time.endOfTheDay())
+            // },
+            // {
+            //     formControlName: 'global',
+            //     displayTitle: 'Allgemeingültig',
+            //     isDisabled: true,
+            //     data: new FormInputBoolean(true)
+            // }
         ]
     }
 
@@ -103,14 +101,22 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
 
     ngOnInit() {
         super.ngOnInit()
-        this.fetchData()
+        this.fetchBlacklists()
+    }
+
+    fetchBlacklists() {
+        const blacklists$ = this.blacklistService.getAllWithFilter({attribute: 'global', value: 'true'})
+        this.fetchData(blacklists$)
     }
 
     create(output: FormOutputData[]): BlacklistProtocol {
         return withCreateProtocol(output, BlacklistsComponent.empty(), p => {
             p.date = format(new Date(p.date), 'yyyy-MM-dd')
-            p.start = formatTime(Time.fromTimeString(p.start))
-            p.end = formatTime(Time.fromTimeString(p.end))
+
+            // global blacklists only
+            p.start = formatTime(Time.startOfTheDay())
+            p.end = formatTime(Time.endOfTheDay())
+            p.global = true
         })
     }
 

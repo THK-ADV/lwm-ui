@@ -4,20 +4,11 @@ import {User} from '../models/user.model'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {HttpService, nonAtomicParams} from './http.service'
 import {NotImplementedError} from '../utils/functions'
-import {HttpParams} from '@angular/common/http'
-
-interface ParamFilter {
-    attribute: string
-    value: string
-}
+import {applyFilter} from './http.filter'
 
 interface UserFilter {
     attribute: 'status' | 'degree'
     value: string
-}
-
-const applyFilter = (filter: ParamFilter[], start: HttpParams): HttpParams => {
-    return filter.reduce((acc, f) => acc.set(f.attribute, f.value), start)
 }
 
 @Injectable({
