@@ -22,7 +22,7 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
         )
     }
 
-    getAllByLabwork(labwork: string): Observable<LabworkApplicationAtom[]> {
+    getAllByLabworkAtom(labwork: string): Observable<LabworkApplicationAtom[]> {
         return this.http.getAll(this.path, atomicParams.set('labwork', labwork))
     }
 
@@ -30,8 +30,8 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
         return this.http.createMany(this.path, [protocol], atomicParams)
     }
 
-    delete(id: string): Observable<LabworkApplicationAtom> {
-        return NotImplementedError()
+    delete(id: string): Observable<LabworkApplicationAtom> { // TODO backend returns LabworkApplicationDb which crashes the http response
+        return this.http.delete(this.path, id)
     }
 
     getAll(): Observable<LabworkApplicationAtom[]> {

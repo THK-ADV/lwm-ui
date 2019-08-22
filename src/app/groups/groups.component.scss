@@ -1,0 +1,10 @@
+.example-card {
+  display: flow;
+  border: 1px solid black;
+  border-radius: 8px;
+
+  mat-card-title {
+    display: flex;
+    justify-content: space-between;
+  }
+}

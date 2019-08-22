@@ -8,7 +8,7 @@ import {AbstractCRUDService} from './abstract-crud.service'
 import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
-import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
+import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 
@@ -156,8 +156,9 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     protected afterCreate(models: Model[]) {
-        this.dataSource.data = this.dataSource.data.concat(models)
-        this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
+        addToDataSource(this.alertService, this.dataSource)(models)
+        // this.dataSource.data = this.dataSource.data.concat(models)
+        // this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
     }
 
     protected afterDelete(model: Model) { // TODO test

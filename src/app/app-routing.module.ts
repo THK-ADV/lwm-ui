@@ -15,6 +15,7 @@ import { UsersComponent } from './users/users.component';
 import { BlacklistsComponent } from './blacklists/blacklists.component';
 import {LabworksComponent} from './labworks/labworks.component'
 import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
+import {GroupsComponent} from './groups/groups.component'
 
 const routes: Routes = [
     {
@@ -61,6 +62,10 @@ const routes: Routes = [
                     {
                         path: 'labworks/:lid/applications',
                         component: LabworkApplicationsComponent
+                    },
+                    {
+                        path: 'labworks/:lid/groups',
+                        component: GroupsComponent
                     },
                     {
                         path: '',

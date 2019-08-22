@@ -32,7 +32,7 @@
                         </mat-option>
                     </mat-autocomplete>
                 </ng-container>
-                <mat-error *ngIf="hasOptionError(d.data)">{{getOptionErrorMessage(d.data)}}
+                <mat-error *ngIf="hasOptionError_(d.data)">{{getOptionErrorMessage_(d.data)}}
                 </mat-error>
 
                 <ng-container *ngSwitchCase="'textArea'">

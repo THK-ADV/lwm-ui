@@ -12,6 +12,7 @@ body {
 
 .lwmUserAuthorityUpdateDialog .mat-dialog-container,
 .lwmCreateUpdateDialog .mat-dialog-container,
-.lwmDeleteDialog .mat-dialog-container {
+.lwmDeleteDialog .mat-dialog-container,
+.lwmGroupEditDialog .mat-dialog-container {
   overflow: hidden;
 }

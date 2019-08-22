@@ -5,7 +5,7 @@ import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
 import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
-import {FormInputOption} from '../forms/form.input.option'
+import {foreachOption, getOptionErrorMessage, hasOptionError, isOption} from '../../utils/component.utils'
 
 export interface FormOutputData {
     formControlName: string
@@ -64,24 +64,12 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
         }
     }
 
-    isOption = (d: FormInputData<any>): d is FormInputOption<any> => {
-        return (d as FormInputOption<any>).options !== undefined
-    }
-
-    foreachOption = (f: (o: FormInputOption<any>) => void) => {
-        this.payload.data.forEach(d => {
-            if (this.isOption(d.data)) {
-                f(d.data)
-            }
-        })
-    }
-
     ngOnInit(): void {
-        this.foreachOption(o => o.onInit(this.formGroup))
+        foreachOption(this.payload.data, o => o.onInit(this.formGroup))
     }
 
     ngOnDestroy(): void {
-        this.foreachOption(o => o.onDestroy())
+        foreachOption(this.payload.data, o => o.onDestroy())
     }
 
     onCancel(): void {
@@ -121,12 +109,12 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
         return this.formGroup.controls[controlName].getError(invalidLocalTimeKey)
     }
 
-    hasOptionError(formInputData: FormInputData<any>): boolean {
-        return this.isOption(formInputData) ? formInputData.hasError() : false
+    hasOptionError_(formInputData: FormInputData<any>): boolean {
+        return hasOptionError(formInputData)
     }
 
-    getOptionErrorMessage(formInputData: FormInputData<any>): string {
-        return this.isOption(formInputData) ? formInputData.getErrorMessage() : ''
+    getOptionErrorMessage_(formInputData: FormInputData<any>): string {
+        return getOptionErrorMessage(formInputData)
     }
 
     private convertToType(type: FormDataStringType, value: any): FormDataType {

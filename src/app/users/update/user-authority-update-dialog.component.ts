@@ -5,7 +5,7 @@ import {AuthorityService} from '../../services/authority.service'
 import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
 import {Observable, Subscription} from 'rxjs'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
-import {FormControl, FormGroup} from '@angular/forms'
+import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
 import {CourseAtom} from '../../models/course.model'
 import {CourseService} from '../../services/course.service'
 import {subscribe} from '../../utils/functions'
@@ -15,6 +15,8 @@ import {UserStatus} from '../../models/userStatus.model'
 import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
 import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../utils/form.validator'
+import {addToDataSource} from '../../shared-dialogs/dataSource.update'
+import {resetControls} from '../../utils/component.utils'
 
 export interface StandardRole {
     label: UserStatus
@@ -74,8 +76,8 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         this.authGroup.addControl(controlName, new FormControl('', mandatoryOptionsValidator()))
     }
 
-    private getControl(control: AuthCreationControl): FormControl { // TODO move out
-        return this.authGroup.controls[control] as FormControl
+    private getControl(control: AuthCreationControl): AbstractControl { // TODO move out
+        return this.authGroup.controls[control]
     }
 
     ngOnInit() {
@@ -156,16 +158,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             )
     }
 
-    private resetControls() {
-        const controls: AuthCreationControl[] = ['roleControl', 'courseControl']
-
-        controls.forEach(c => {
-            const control = this.getControl(c)
-            control.setValue('', {emitEvent: true})
-            control.markAsUntouched()
-        })
-    }
-
     private displayFn(object?: CourseAtom | Role): string | undefined {
         const isCourse = (o: CourseAtom | Role): o is CourseAtom => {
             return (object as CourseAtom).semesterIndex !== undefined
@@ -241,9 +233,9 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private afterCreate(auths: AuthorityAtom[]) {
-        this.dataSource.data = this.dataSource.data.concat(auths)
-        this.resetControls()
-        this.alertService.reportAlert('success', 'created: ' + auths.map(JSON.stringify.bind(this)).join(', '))
+        addToDataSource(this.alertService, this.dataSource)(auths)
+        const controls: AuthCreationControl[] = ['roleControl', 'courseControl']
+        resetControls(controls.map(this.getControl.bind(this)))
     }
 
     onDelete(auth: AuthorityAtom) {

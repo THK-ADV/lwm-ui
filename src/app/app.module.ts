@@ -40,6 +40,8 @@ import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
 import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
 import {CreateHeaderComponent} from './editable-header/create-header.component'
+import {GroupsComponent} from './groups/groups.component'
+import {GroupEditComponent} from './groups/edit/group-edit.component'
 
 @NgModule({
     declarations: [
@@ -63,7 +65,9 @@ import {CreateHeaderComponent} from './editable-header/create-header.component'
         FilterPipe,
         NgInitDirective,
         LabworkApplicationsComponent,
-        CreateHeaderComponent
+        CreateHeaderComponent,
+        GroupsComponent,
+        GroupEditComponent
     ],
     imports: [
         BrowserModule,
@@ -91,7 +95,7 @@ import {CreateHeaderComponent} from './editable-header/create-header.component'
         {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
     ],
     bootstrap: [AppComponent],
-    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent, UserAuthorityUpdateDialogComponent]
+    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent, UserAuthorityUpdateDialogComponent, GroupEditComponent]
 })
 export class AppModule {
 }

@@ -7,7 +7,7 @@ import {CourseAtom} from '../models/course.model'
 import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
-import {MatDialog, MatSort, MatTableDataSource, TooltipPosition} from '@angular/material'
+import {MatDialog, MatSort, MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
@@ -27,6 +27,16 @@ import {FormInputBoolean} from '../shared-dialogs/forms/form.input.boolean'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {Degree} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
+import {
+    deleteAction,
+    editAction,
+    graduatesAction,
+    groupAction,
+    labworkApplicationAction,
+    LWMAction,
+    LWMActionType,
+    scheduleAction
+} from '../utils/component.utils'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -37,16 +47,6 @@ interface LabworkWithApplications {
 interface GroupedLabwork {
     key: string
     value: LabworkWithApplications[]
-}
-
-type LabworkActionType = 'edit' | 'delete' | 'schedule' | 'groups' | 'graduates' | 'applications'
-
-interface LabworkAction {
-    type: LabworkActionType
-    color: LWMColor
-    iconName: string
-    tooltipName: string
-    tooltipPosition: TooltipPosition
 }
 
 @Component({
@@ -63,13 +63,13 @@ export class LabworksComponent implements OnInit, OnDestroy {
         {attr: 'labwork.published', title: 'Veröffentlicht'}
     ]
 
-    private readonly labworkActions: LabworkAction[] = [ // TODO permissions?
-        {type: 'schedule', color: 'primary', iconName: 'schedule', tooltipName: 'Staffelplan', tooltipPosition: 'above'},
-        {type: 'applications', color: 'accent', iconName: 'assignment_ind', tooltipName: 'Anmeldungen', tooltipPosition: 'above'},
-        {type: 'groups', color: 'accent', iconName: 'group', tooltipName: 'Gruppen', tooltipPosition: 'above'},
-        {type: 'graduates', color: 'accent', iconName: 'school', tooltipName: 'Absolventen', tooltipPosition: 'above'},
-        {type: 'edit', color: 'accent', iconName: 'edit', tooltipName: 'Bearbeiten', tooltipPosition: 'above'},
-        {type: 'delete', color: 'warn', iconName: 'delete', tooltipName: 'Löschen', tooltipPosition: 'above'},
+    private readonly labworkActions: LWMAction[] = [ // TODO permissions?
+        scheduleAction(),
+        labworkApplicationAction(),
+        groupAction(),
+        graduatesAction(),
+        editAction(),
+        deleteAction()
     ]
 
     private course$: Observable<CourseAtom>
@@ -151,7 +151,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         console.log(lwa)
     }
 
-    onAction(action: LabworkActionType, labwork: LabworkAtom) {
+    onAction(action: LWMActionType, labwork: LabworkAtom) {
         switch (action) {
             case 'edit':
                 this.edit(labwork)
@@ -160,16 +160,17 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 this.delete(labwork)
                 break
             case 'schedule':
-                break
             case 'groups':
-                break
             case 'graduates':
-                break
             case 'applications':
-                this.router.navigate(['labworks', labwork.id, 'applications'], {relativeTo: this.route})
+                this.routeTo(action, labwork)
+            default:
                 break
-
         }
+    }
+
+    private routeTo(action: LWMActionType, labwork: LabworkAtom) {
+        this.router.navigate(['labworks', labwork.id, action], {relativeTo: this.route})
     }
 
     private delete(labwork: LabworkAtom) {
