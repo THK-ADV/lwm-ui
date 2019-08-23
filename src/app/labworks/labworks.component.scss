@@ -1,12 +1,9 @@
+@import "../../lwm.vars.scss";
 // TODO copied from AbstractCRUDComponent
 
 table {
-  width: 100%;
   button {
-    margin: 5px
-  }
-  td, th {
-    padding: 8px 25px
+    margin: 5px;
   }
 }
 
@@ -14,9 +11,85 @@ th.mat-sort-header-sorted {
   color: black;
 }
 
-.mat-row:hover {
-  background-color: #f5f5f5;
-  cursor: pointer;
+.courseDetailCard {
+	width: 100%;
+	//padding: 20px;
+ 
+	.detailHeader {
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+ 
+		.detailHeaderInfo {
+			display: flex;
+			align-items: center;
+ 
+			.infoBubble {
+				height: 70px;
+				width: 70px;
+				border-radius: 50%;
+				background-color: darkgrey;
+        text-align: center;
+        line-height: 70px;
+				color: #FFF;
+				font-weight: bold;
+				text-transform: uppercase;
+ 
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+			.infoContent {
+				margin: 0 10px;
+			}
+		}
+		.lecturerInfo {
+			flex-direction: row-reverse;
+			.infoContent {
+				 .infoEmail, .infoText {
+					 text-align: right;
+				 }
+			 }
+		}
+	}
+ 
+	.courseDescBox {
+		width: 100%;
+		margin-top: 20px;
+ 
+		.descHeader, .descFooter {
+			width: 100%;
+			padding: 10px;
+			background-color: $ivory;
+			border: 1px solid $ivory-border;
+			
+			text-transform: uppercase;
+			color: $header-font;
+			font-weight: bold;
+		}
+ 
+		.descContent {
+			padding: 10px;
+			min-height: 100px;
+			border-left: 1px solid $ivory-border;
+			border-right: 1px solid $ivory-border;
+			word-wrap:break-word;
+		}
+ 
+		.descFooter {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+	}
 }
-
-
+ 
+@media (max-width: 768px){
+	.courseDetailCard{
+		margin-top: 10px;
+		.courseDescBox{
+			margin-top: 10px;
+		}
+	}
+}

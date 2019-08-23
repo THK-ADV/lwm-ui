@@ -1,5 +1,6 @@
 @import "../../../lwm.vars.scss";
 
 table {
-  box-shadow: none;
+  -webkit-box-shadow: none;
+          box-shadow: none;
 }

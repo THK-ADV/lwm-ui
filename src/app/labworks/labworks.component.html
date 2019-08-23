@@ -4,13 +4,39 @@
                          (create)="onCreate(course)">
     </lwm-create-header>
 
-    <h2>Kontakt</h2>
-    <p>{{course.lecturer.lastname}}, {{course.lecturer.firstname}}</p>
-    <a href="mailto:{{course.lecturer.email}}" target="_blank">Email</a>
 
-    <h2>Beschreibung</h2>
-    <p>{{course.description}}</p>
-    <p>Fachsemester {{course.semesterIndex}}</p>
+
+    <div class="courseDetailCard">
+ 
+            <div class="detailHeader">
+                <div class="courseInfo detailHeaderInfo">
+                    <div class="infoBubble">{{course.abbreviation}}</div>
+                    <div class="infoContent hidden-xs hidden-sm">
+                        <span class="infoText">{{course.label}}</span>
+                    </div>
+                </div>
+                <div class="lecturerInfo detailHeaderInfo">
+                    <div class="infoBubble">TT</div>
+                    <div class="infoContent">
+                        <div class="infoText hidden-xs hidden-sm">{{course.lecturer.lastname}}, {{course.lecturer.firstname}}
+                        </div>
+                        <div class="infoEmail"><a href="mailto:{{course.lecturer.email}}"><span class=" glyphicon glyphicon-envelope"></span> <span class="hidden-xs hidden-sm">Kontakt</span></a></div>
+                    </div>
+                </div>
+            </div>
+         
+            <div class="courseDescBox">
+                <div class="descHeader">Beschreibung</div>
+                <div class="descContent">{{course.description}}</div>
+                <div class="descFooter">
+                    <span>Fachsemester {{course.semesterIndex}}</span>
+                    <button mat-flat-button
+                            data-ng-click="update(courseDetails.id)">Bearbeiten
+                    </button>
+                </div>
+            </div>
+         
+        </div>
 </ng-container>
 
 <ng-container *ngIf="currentSemester$ | async as currentSemester">
@@ -32,7 +58,7 @@
                 </mat-expansion-panel-header>
 
                 <ng-template matExpansionPanelContent>
-                    <div class="mat-elevation-z8">
+                    <div>
                         <table mat-table [dataSource]="dataSource" matSort>
                             <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column.title}}</th>

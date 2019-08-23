@@ -46,15 +46,25 @@
   .mat-card {
     margin: $low-spacing 0 $med-spacing 0;
     padding: 0 !important;
-    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+            box-shadow: none !important;
 
     //background-color: red;
 
     mat-card-content {
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      justify-content: space-between;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+          -ms-flex-direction: row;
+              flex-direction: row;
+      -webkit-box-align: start;
+          -ms-flex-align: start;
+              align-items: flex-start;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
       margin: 0;
       padding: 0;
 
@@ -134,9 +144,15 @@
     app-create-update-dialog .mat-dialog-actions,
     lwm-group-edit .mat-dialog-actions {
       background-color: $ivory;
+      display: -webkit-box;
+      display: -ms-flexbox;
       display: flex;
-      align-items: flex-end;
-      justify-content: flex-end;
+      -webkit-box-align: end;
+          -ms-flex-align: end;
+              align-items: flex-end;
+      -webkit-box-pack: end;
+          -ms-flex-pack: end;
+              justify-content: flex-end;
       margin: $med-spacing $med-spacing * (-1);
       margin-bottom: $med-spacing * (-1);
       padding-right: $med-spacing;
