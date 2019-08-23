@@ -166,7 +166,7 @@ export const deleteAction = (): LWMAction => {
 }
 
 export const createAction = (): LWMAction => {
-    return {type: 'create', color: 'accent', iconName: 'add', tooltipName: 'Hinzufügen', tooltipPosition: 'above'}
+    return {type: 'create', color: 'primary', iconName: 'add', tooltipName: 'Hinzufügen', tooltipPosition: 'above'}
 }
 
 export const swapAction = (): LWMAction => {

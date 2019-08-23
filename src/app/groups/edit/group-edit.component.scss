@@ -1,8 +1,5 @@
-table {
-  width: 100%;
-  box-shadow: none;
+@import "../../../lwm.vars.scss";
 
-  th, td {
-    padding: 0 25px;
-  }
+table {
+  box-shadow: none;
 }

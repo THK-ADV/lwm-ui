@@ -41,6 +41,42 @@
   @include mat-button-toggle-theme(map-get($theme, main));
 }
 
+@mixin lwm-card-theme($theme) {
+  @include mat-card-theme(map-get($theme, main));
+  .mat-card {
+    margin: $low-spacing 0 $med-spacing 0;
+    padding: 0 !important;
+    box-shadow: none !important;
+
+    //background-color: red;
+    
+    
+    mat-card-content {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin: 0;
+        padding: 0;
+
+        mat-form-field:not(:first-child) {
+            margin: 0;
+            margin-left: $h-spacing;
+        }
+    }
+
+    .mat-card-actions {
+        margin: 0;
+        padding: 0;
+
+        button {
+            width: 100%;
+        }
+
+    }
+}
+}
+
 @mixin lwm-checkbox-theme($theme) {
   @include mat-checkbox-theme(map-get($theme, main));
 }
@@ -72,10 +108,6 @@
   
 }
 
-@mixin lwm-table-theme($theme) {
-  @include mat-table-theme(map-get($theme, main));
-}
-
 @mixin lwm-datepicker-theme($theme) {
   @include mat-datepicker-theme(map-get($theme, main));
 }
@@ -102,17 +134,18 @@
 
     app-user-edit-dialog .mat-dialog-actions,
     app-delete-dialog .mat-dialog-actions,
-    app-create-update-dialog .mat-dialog-actions {
+    app-create-update-dialog .mat-dialog-actions,
+    lwm-group-edit .mat-dialog-actions {
       background-color: $ivory;
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
-      margin: 25px -25px;
-      margin-bottom: -25px;
-      padding-right: 25px;
+      margin: $med-spacing $med-spacing*(-1);
+      margin-bottom: $med-spacing*(-1);
+      padding-right: $med-spacing;
 
       button {
-        margin: 25px 0 25px 10px;
+        margin: $med-spacing 0 $med-spacing $low-spacing;
       }
     }
   }
@@ -166,6 +199,9 @@
 
 @mixin lwm-paginator-theme($theme) {
   @include mat-paginator-theme(map-get($theme, main));
+  .mat-paginator {
+    margin-bottom: $high-spacing;
+  }
 }
 
 @mixin lwm-progress-bar-theme($theme) {
@@ -210,6 +246,33 @@
 
 @mixin lwm-sort-theme($theme) {
   @include mat-sort-theme(map-get($theme, main));
+}
+
+@mixin lwm-table-theme($theme) {
+  @include mat-table-theme(map-get($theme, main));
+
+  table {
+    width: 100%;
+    margin-bottom: $high-spacing;
+    border-collapse: initial;
+
+    td.mat-cell,
+    th.mat-cell,
+    td.mat-header-cell,
+    th.mat-header-cell {
+      padding: $low-spacing $med-spacing !important;
+    }
+
+    td.mat-cell,
+    th.mat-cell {
+      vertical-align: text-top;
+    }
+  }
+
+  .mat-row:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+  }
 }
 
 @mixin lwm-tabs-theme($theme) {
@@ -298,6 +361,7 @@
   @include lwm-bottom-sheet-theme($theme);
   @include lwm-button-theme($theme);
   @include lwm-button-toggle-theme($theme);
+  @include lwm-card-theme($theme);
   @include lwm-checkbox-theme($theme);
   @include lwm-chips-theme($theme);
   @include lwm-table-theme($theme);

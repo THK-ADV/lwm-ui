@@ -3,7 +3,7 @@
 <div class="modalContainer">
     <mat-dialog-content>
         <ng-container>
-            <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
                 <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
                     <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
                     <td mat-cell *matCellDef="let element ">{{prepareTableContent(element, column.attr)}} </td>
@@ -40,12 +40,15 @@
                     </td>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>
         </ng-container>
 
-        <ng-container [formGroup]="addStudentFormGroup">
+    </mat-dialog-content>
+
+    <mat-card>
+        <mat-card-content [formGroup]="addStudentFormGroup">
             <mat-form-field class="mat-form-field-modal" color="primary">
                 <input aria-label="" type="text" [placeholder]="addStudentForm.displayTitle" matInput
                        [formControlName]="addStudentForm.formControlName" [matAutocomplete]="auto">
@@ -57,7 +60,9 @@
                 <mat-error *ngIf="hasOptionError_(addStudentForm.data)">{{getOptionErrorMessage_(addStudentForm.data)}}
                 </mat-error>
             </mat-form-field>
-            <button mat-stroked-button
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-flat-button
                     [color]="addAction.color"
                     (click)="create(userFromControl())"
                     [matTooltip]="addAction.tooltipName"
@@ -65,9 +70,8 @@
                     [disabled]="!addStudentFormGroup.valid">
                 <mat-icon>{{addAction.iconName}}</mat-icon>
             </button>
-        </ng-container>
-
-    </mat-dialog-content>
+        </mat-card-actions>
+    </mat-card>
 
     <mat-dialog-actions>
         <button type="button" mat-flat-button (click)="onCancel()" cdkFocusInitial>Abbrechen</button>

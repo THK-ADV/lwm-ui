@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {User} from '../../models/user.model'
 import {AuthorityService} from '../../services/authority.service'
 import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
@@ -57,8 +57,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
     private readonly subs: Subscription[]
 
-    @ViewChild(MatSort, {static: true}) sort: MatSort
-
     protected readonly authGroup: FormGroup
     protected courseOptions: CourseAtom[]
     protected roleOptions: Role[]
@@ -81,7 +79,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.setupSorting()
         this.setupAuthorities()
         this.setupRoles()
         this.setupCourses()
@@ -133,7 +130,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
                 })
 
                 if (this.dataSource.data.length !== 0) {
-                    this.sortBy('course')
+                    this.dataSource.data.sort((lhs, rhs) => lhs.course!.abbreviation.localeCompare(rhs.course!.abbreviation))
                 }
             }
         ))
@@ -184,30 +181,10 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         return this.roleOptions.filter(role => role.label.toLowerCase().indexOf(filterValue) === 0)
     }
 
-    private setupSorting() {
-        this.dataSource.sortingDataAccessor = (auth, attr) => {
-            return this.fold(
-                attr, auth,
-                course => course.abbreviation,
-                role => role.label
-            )
-        }
-
-        this.dataSource.sort = this.sort
-    }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
-    }
-
-    protected sortBy(label: string, ordering: SortDirection = 'asc') { // copy pasted
-        if (this.sort) {
-            const sortState: Sort = {active: label, direction: ordering}
-            this.sort.active = sortState.active
-            this.sort.direction = sortState.direction
-            this.sort.sortChange.emit(sortState)
-        }
-    }
+    }    
 
     onCancel(): void {
         this.closeModal(undefined)
