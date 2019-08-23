@@ -42,6 +42,7 @@ import {LabworkApplicationsComponent} from './labwork-applications/labwork-appli
 import {CreateHeaderComponent} from './editable-header/create-header.component'
 import {GroupsComponent} from './groups/groups.component'
 import {GroupEditComponent} from './groups/edit/group-edit.component'
+import { CourseDetailComponent } from './course-detail/course-detail.component';
 
 @NgModule({
     declarations: [
@@ -67,7 +68,8 @@ import {GroupEditComponent} from './groups/edit/group-edit.component'
         LabworkApplicationsComponent,
         CreateHeaderComponent,
         GroupsComponent,
-        GroupEditComponent
+        GroupEditComponent,
+        CourseDetailComponent
     ],
     imports: [
         BrowserModule,
@@ -95,7 +97,7 @@ import {GroupEditComponent} from './groups/edit/group-edit.component'
         {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
     ],
     bootstrap: [AppComponent],
-    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent, UserAuthorityUpdateDialogComponent, GroupEditComponent]
+    entryComponents: [DeleteDialogComponent, CreateUpdateDialogComponent, UserAuthorityUpdateDialogComponent, GroupEditComponent, CourseDetailComponent]
 })
 export class AppModule {
 }

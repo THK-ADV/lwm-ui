@@ -1,0 +1,30 @@
+<div class="courseDetailCard">
+    <h1>{{course.label}}</h1>
+
+    <div class="detailHeader">
+        <div class="courseInfo detailHeaderInfo">
+            <div class="infoBubble">{{course.abbreviation}}</div>
+        </div>
+        <div class="lecturerInfo detailHeaderInfo">
+            <div class="infoBubble">TT</div>
+            <div class="infoContent">
+                <div class="infoText hidden-xs hidden-sm">{{course.lecturer.lastname}}, {{course.lecturer.firstname}}
+                </div>
+                <div class="infoEmail"><a href="mailto:{{course.lecturer.email}}"><span
+                            class=" glyphicon glyphicon-envelope"></span> <span
+                            class="hidden-xs hidden-sm">Kontakt</span></a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="courseDescBox">
+        <div class="descHeader">Beschreibung</div>
+        <div class="descContent">{{course.description}}</div>
+        <div class="descFooter">
+            <span>Fachsemester {{course.semesterIndex}}</span>
+            <button mat-stroked-button color="primary">Bearbeiten
+            </button>
+        </div>
+    </div>
+
+</div>

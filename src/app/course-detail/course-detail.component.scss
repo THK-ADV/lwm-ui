@@ -1,0 +1,114 @@
+@import "../../lwm.vars.scss";
+
+.courseDetailCard {
+  width: 100%;
+  margin-bottom: $med-spacing;
+
+  .detailHeader {
+    width: 100%;
+    margin-top: $med-spacing;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+
+    .detailHeaderInfo {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+
+      .infoBubble {
+        height: 70px;
+        width: 70px;
+        border-radius: 50%;
+        background-color: darkgrey;
+        text-align: center;
+        line-height: 70px;
+        color: #fff;
+        font-weight: bold;
+        text-transform: uppercase;
+
+        display: -webkit-box;
+
+        display: -ms-flexbox;
+
+        display: flex;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: center;
+            -ms-flex-pack: center;
+                justify-content: center;
+      }
+      .infoContent {
+        margin: 0 10px;
+      }
+    }
+    .lecturerInfo {
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: reverse;
+          -ms-flex-direction: row-reverse;
+              flex-direction: row-reverse;
+      .infoContent {
+        .infoEmail,
+        .infoText {
+          text-align: right;
+        }
+      }
+    }
+  }
+
+  .courseDescBox {
+    width: 100%;
+    margin-top: 20px;
+
+    .descHeader,
+    .descFooter {
+      width: 100%;
+      padding: 10px;
+      background-color: $ivory;
+      border: 1px solid $ivory-border;
+
+      text-transform: uppercase;
+      color: $header-font;
+      font-weight: bold;
+    }
+
+    .descContent {
+      padding: 10px;
+      min-height: 100px;
+      border-left: 1px solid $ivory-border;
+      border-right: 1px solid $ivory-border;
+      word-wrap: break-word;
+    }
+
+    .descFooter {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-pack: justify;
+          -ms-flex-pack: justify;
+              justify-content: space-between;
+      -webkit-box-align: center;
+          -ms-flex-align: center;
+              align-items: center;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .courseDetailCard {
+    margin-top: 10px;
+    .courseDescBox {
+      margin-top: 10px;
+    }
+  }
+}

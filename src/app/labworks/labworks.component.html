@@ -1,106 +1,79 @@
 <ng-container *ngIf="course$ | async as course">
-    <lwm-create-header [headerTitle]="course.label"
-                         [canCreate]="canCreate()"
-                         (create)="onCreate(course)">
-    </lwm-create-header>
+    <lwm-course-detail [course]="course"></lwm-course-detail>
 
 
+    <ng-container *ngIf="currentSemester$ | async as currentSemester">
+        <lwm-create-header headerTitle="Praktika" [canCreate]="canCreate()" (create)="onCreate(course)">
+        </lwm-create-header>
 
-    <div class="courseDetailCard">
- 
-            <div class="detailHeader">
-                <div class="courseInfo detailHeaderInfo">
-                    <div class="infoBubble">{{course.abbreviation}}</div>
-                    <div class="infoContent hidden-xs hidden-sm">
-                        <span class="infoText">{{course.label}}</span>
-                    </div>
-                </div>
-                <div class="lecturerInfo detailHeaderInfo">
-                    <div class="infoBubble">TT</div>
-                    <div class="infoContent">
-                        <div class="infoText hidden-xs hidden-sm">{{course.lecturer.lastname}}, {{course.lecturer.firstname}}
-                        </div>
-                        <div class="infoEmail"><a href="mailto:{{course.lecturer.email}}"><span class=" glyphicon glyphicon-envelope"></span> <span class="hidden-xs hidden-sm">Kontakt</span></a></div>
-                    </div>
-                </div>
-            </div>
-         
-            <div class="courseDescBox">
-                <div class="descHeader">Beschreibung</div>
-                <div class="descContent">{{course.description}}</div>
-                <div class="descFooter">
-                    <span>Fachsemester {{course.semesterIndex}}</span>
-                    <button mat-flat-button
-                            data-ng-click="update(courseDetails.id)">Bearbeiten
-                    </button>
-                </div>
-            </div>
-         
-        </div>
-</ng-container>
+        <ng-container *ngIf="groupedLabworks$ | async as xs">
+            <mat-accordion>
+                <mat-expansion-panel *ngFor="let x of xs | keyvalue: semesterSortingFn"
+                    [expanded]="x.key === currentSemester.id" [toggle]="x.key === currentSemester.id"
+                    (appNgInit)="reloadDataSource(x.value)">
+                    <mat-expansion-panel-header (click)="reloadDataSource(x.value)">
+                        <mat-panel-title>
+                            {{x.value[0].semester.abbreviation}}
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            {{x.value.length}} Praktia mit {{sumApplications(x.value)}} Anmeldungen
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
 
-<ng-container *ngIf="currentSemester$ | async as currentSemester">
-    <h1>Praktika</h1>
+                    <ng-template matExpansionPanelContent>
+                        <div>
+                            <table mat-table [dataSource]="dataSource" matSort>
+                                <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column.title}}</th>
+                                    <td mat-cell *matCellDef="let lwa" [ngSwitch]="column.attr">
+                                        <span *ngSwitchCase="'labwork.label'">{{lwa.labwork.label}}</span>
+                                        <span *ngSwitchCase="'applications'">{{lwa.applications}}</span>
+                                        <span *ngSwitchCase="'labwork.subscribable'">
+                                            <ng-container
+                                                *ngIf="lwa.labwork.subscribable; then thenBlock else elseBlock">
+                                            </ng-container>
+                                            <ng-template #thenBlock>
+                                                <mat-icon>done</mat-icon>
+                                            </ng-template>
+                                            <ng-template #elseBlock>
+                                                <mat-icon>clear</mat-icon>
+                                            </ng-template>
+                                        </span>
+                                        <span *ngSwitchCase="'labwork.published'">
+                                            <ng-container *ngIf="lwa.labwork.published; then thenBlock else elseBlock">
+                                            </ng-container>
+                                            <ng-template #thenBlock>
+                                                <mat-icon>done</mat-icon>
+                                            </ng-template>
+                                            <ng-template #elseBlock>
+                                                <mat-icon>clear</mat-icon>
+                                            </ng-template>
+                                        </span>
+                                        <span *ngSwitchDefault>???</span>
+                                    </td>
+                                </ng-container>
 
-    <ng-container *ngIf="groupedLabworks$ | async as xs">
-        <mat-accordion>
-            <mat-expansion-panel *ngFor="let x of xs | keyvalue: semesterSortingFn"
-                                 [expanded]="x.key === currentSemester.id"
-                                 [toggle]="x.key === currentSemester.id"
-                                 (appNgInit)="reloadDataSource(x.value)">
-                <mat-expansion-panel-header (click)="reloadDataSource(x.value)">
-                    <mat-panel-title>
-                        {{x.value[0].semester.abbreviation}}
-                    </mat-panel-title>
-                    <mat-panel-description>
-                        {{x.value.length}} Praktia mit {{sumApplications(x.value)}} Anmeldungen
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-
-                <ng-template matExpansionPanelContent>
-                    <div>
-                        <table mat-table [dataSource]="dataSource" matSort>
-                            <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>{{column.title}}</th>
-                                <td mat-cell *matCellDef="let lwa" [ngSwitch]="column.attr">
-                                    <span *ngSwitchCase="'labwork.label'">{{lwa.labwork.label}}</span>
-                                    <span *ngSwitchCase="'applications'">{{lwa.applications}}</span>
-                                    <span *ngSwitchCase="'labwork.subscribable'">
-                                <ng-container
-                                        *ngIf="lwa.labwork.subscribable; then thenBlock else elseBlock"></ng-container>
-                                <ng-template #thenBlock><mat-icon>done</mat-icon></ng-template>
-                                <ng-template #elseBlock><mat-icon>clear</mat-icon></ng-template>
-                            </span>
-                                    <span *ngSwitchCase="'labwork.published'">
-                                <ng-container
-                                        *ngIf="lwa.labwork.published; then thenBlock else elseBlock"></ng-container>
-                                <ng-template #thenBlock><mat-icon>done</mat-icon></ng-template>
-                                <ng-template #elseBlock><mat-icon>clear</mat-icon></ng-template>
-                            </span>
-                                    <span *ngSwitchDefault>???</span>
-                                </td>
-                            </ng-container>
-
-                            <ng-container matColumnDef="action">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
-                                <td mat-cell *matCellDef="let lwa" (click)="$event.stopPropagation()">
-                                    <button *ngFor="let action of labworkActions" mat-stroked-button
-                                            [color]="action.color"
-                                            (click)="onAction(action.type, lwa.labwork)"
+                                <ng-container matColumnDef="action">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
+                                    <td mat-cell *matCellDef="let lwa" (click)="$event.stopPropagation()">
+                                        <button *ngFor="let action of labworkActions" mat-stroked-button
+                                            [color]="action.color" (click)="onAction(action.type, lwa.labwork)"
                                             [matTooltip]="action.tooltipName"
                                             [matTooltipPosition]="action.tooltipPosition">
-                                        <mat-icon>{{action.iconName}}</mat-icon>
-                                    </button>
-                                </td>
-                            </ng-container>
+                                            <mat-icon>{{action.iconName}}</mat-icon>
+                                        </button>
+                                    </td>
+                                </ng-container>
 
-                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                            <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row)"></tr>
-                        </table>
-                    </div>
-                </ng-template>
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row)">
+                                </tr>
+                            </table>
+                        </div>
+                    </ng-template>
 
-            </mat-expansion-panel>
-        </mat-accordion>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </ng-container>
     </ng-container>
 </ng-container>
