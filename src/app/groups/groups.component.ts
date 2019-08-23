@@ -1,19 +1,19 @@
-import {Component, OnInit} from '@angular/core'
-import {LabworkService} from '../services/labwork.service'
-import {ActivatedRoute} from '@angular/router'
-import {fetchLabwork, formatUser} from '../utils/component.utils'
-import {Observable, Subscription} from 'rxjs'
-import {GroupService} from '../services/group.service'
-import {map} from 'rxjs/operators'
-import {GroupAtom} from '../models/group.model'
-import {User} from '../models/user.model'
-import {LabworkApplicationAtom} from '../models/labwork.application.model'
-import {LabworkApplicationService} from '../services/labwork-application.service'
-import {subscribe} from '../utils/functions'
-import {LabworkAtom} from '../models/labwork.model'
-import {MatDialog} from '@angular/material'
-import {UserService} from '../services/user.service'
-import {GroupEditComponent} from './edit/group-edit.component'
+import { Component, OnInit } from '@angular/core'
+import { LabworkService } from '../services/labwork.service'
+import { ActivatedRoute } from '@angular/router'
+import { fetchLabwork, formatUser } from '../utils/component.utils'
+import { Observable, Subscription } from 'rxjs'
+import { GroupService } from '../services/group.service'
+import { map } from 'rxjs/operators'
+import { GroupAtom } from '../models/group.model'
+import { User } from '../models/user.model'
+import { LabworkApplicationAtom } from '../models/labwork.application.model'
+import { LabworkApplicationService } from '../services/labwork-application.service'
+import { subscribe } from '../utils/functions'
+import { LabworkAtom } from '../models/labwork.model'
+import { MatDialog } from '@angular/material'
+import { UserService } from '../services/user.service'
+import { GroupEditComponent } from './edit/group-edit.component'
 
 @Component({
     selector: 'lwm-groups',
@@ -69,7 +69,7 @@ export class GroupsComponent implements OnInit {
     }
 
     private displayUser(user: User): string {
-        return formatUser(user)
+        return `${user.lastname}, ${user.firstname}`
     }
 
     private voidF() {
@@ -77,8 +77,8 @@ export class GroupsComponent implements OnInit {
 
     private onEdit(group: GroupAtom) {
         const fellowStudents$ = this.userService.getAllWithFilter(
-            {attribute: 'status', value: 'student'},
-            {attribute: 'degree', value: group.labwork.degree}
+            { attribute: 'status', value: 'student' },
+            { attribute: 'degree', value: group.labwork.degree }
         )
 
         const dialogRef = GroupEditComponent.instance(this.dialog, group, this.groups, fellowStudents$)

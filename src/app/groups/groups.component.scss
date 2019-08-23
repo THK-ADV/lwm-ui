@@ -1,10 +1,39 @@
-.example-card {
-  display: flow;
-  border: 1px solid black;
-  border-radius: 8px;
+@import "../../lwm.vars.scss";
 
-  mat-card-title {
-    display: flex;
-    justify-content: space-between;
+.group-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .group-container {
+    justify-content: flex-start;
+    margin: 0 $med-spacing $med-spacing 0;
+    width: 400px;
+    border-radius: $lwm-border-radius;
+    border: 1px solid $light-bordercolor;
+
+    .group-header {
+      background-color: $heading-background;
+      padding: $low-spacing;
+      border-bottom: 1px solid $light-bordercolor;
+      font-weight: 600;
+
+      .group-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .group-content {
+      .mat-list-item p{
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .mat-list-item:hover {
+        background-color: $hover-color;
+      }
+    }
   }
 }

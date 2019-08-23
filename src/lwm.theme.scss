@@ -49,32 +49,30 @@
     box-shadow: none !important;
 
     //background-color: red;
-    
-    
-    mat-card-content {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin: 0;
-        padding: 0;
 
-        mat-form-field:not(:first-child) {
-            margin: 0;
-            margin-left: $h-spacing;
-        }
+    mat-card-content {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin: 0;
+      padding: 0;
+
+      mat-form-field:not(:first-child) {
+        margin: 0;
+        margin-left: $h-spacing;
+      }
     }
 
     .mat-card-actions {
-        margin: 0;
-        padding: 0;
+      margin: 0;
+      padding: 0;
 
-        button {
-            width: 100%;
-        }
-
+      button {
+        width: 100%;
+      }
     }
-}
+  }
 }
 
 @mixin lwm-checkbox-theme($theme) {
@@ -83,29 +81,28 @@
 
 @mixin lwm-chips-theme($theme) {
   @include mat-chips-theme(map-get($theme, main));
-    $height: 32px;
-    $fontSize: 14px;
+  $height: 32px;
+  $fontSize: 14px;
 
-    mat-basic-chip {
-      display: inline-block;
-      padding: 0 12px;
-      border-radius: $height;
-      height: $height;
-      line-height: $height;
-      font-size: $fontSize;
-      margin: 0 5px;
-    }
+  mat-basic-chip {
+    display: inline-block;
+    padding: 0 12px;
+    border-radius: $height;
+    height: $height;
+    line-height: $height;
+    font-size: $fontSize;
+    margin: 0 5px;
+  }
 
-    mat-basic-chip.primary {
-      background-color: $th-magenta;
-      color: white;
-    }
+  mat-basic-chip.primary {
+    background-color: $th-magenta;
+    color: white;
+  }
 
-    mat-basic-chip.accent {
-      background-color: $th-orange;
-      color: white;
-    }
-  
+  mat-basic-chip.accent {
+    background-color: $th-orange;
+    color: white;
+  }
 }
 
 @mixin lwm-datepicker-theme($theme) {
@@ -140,8 +137,8 @@
       display: flex;
       align-items: flex-end;
       justify-content: flex-end;
-      margin: $med-spacing $med-spacing*(-1);
-      margin-bottom: $med-spacing*(-1);
+      margin: $med-spacing $med-spacing * (-1);
+      margin-bottom: $med-spacing * (-1);
       padding-right: $med-spacing;
 
       button {
@@ -270,7 +267,7 @@
   }
 
   .mat-row:hover {
-    background-color: #f5f5f5;
+    background-color: $hover-color;
     cursor: pointer;
   }
 }
