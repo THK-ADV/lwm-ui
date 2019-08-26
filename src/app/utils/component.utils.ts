@@ -8,13 +8,16 @@ import {UserService} from '../services/user.service'
 import {LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
 import {FormInput, FormInputData} from '../shared-dialogs/forms/form.input'
 import {isUniqueEntity} from '../models/unique.entity.model'
-import {FormInputString} from '../shared-dialogs/forms/form.input.string'
+import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from './form.validator'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {withCreateProtocol} from '../models/protocol.model'
 import {TooltipPosition} from '@angular/material'
 import {AbstractControl} from '@angular/forms'
+import {CourseProtocol} from '../services/course.service'
+import {CourseAtom} from '../models/course.model'
+import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
 
 export const fetchLabwork = (route: ActivatedRoute, labworkService: LabworkService): Observable<LabworkAtom> => {
     return route.paramMap.pipe(
@@ -202,3 +205,66 @@ export const resetControl = (control: AbstractControl) => {
     control.markAsUntouched()
 }
 
+export const courseFormInputData = (userService: UserService): (m: Readonly<CourseProtocol | CourseAtom>, im: boolean) => FormInput[] => {
+    return (model, isModel) => {
+        return [
+            {
+                formControlName: 'label',
+                displayTitle: 'Bezeichnung',
+                isDisabled: isModel,
+                data: new FormInputString(model.label)
+            },
+            {
+                formControlName: 'description',
+                displayTitle: 'Beschreibung',
+                isDisabled: false,
+                data: new FormInputTextArea(model.description)
+            },
+            {
+                formControlName: 'abbreviation',
+                displayTitle: 'Abkürzung',
+                isDisabled: false,
+                data: new FormInputString(model.abbreviation)
+            },
+            {
+                formControlName: 'lecturer',
+                displayTitle: 'Dozent',
+                isDisabled: isModel,
+                data: isUniqueEntity(model) ?
+                    new FormInputString(`${model.lecturer.lastname}, ${model.lecturer.firstname}`) :
+                    new FormInputOption<User>(
+                        model.lecturer,
+                        'lecturer',
+                        invalidChoiceKey,
+                        true,
+                        value => `${value.lastname}, ${value.firstname}`,
+                        userService.getAllWithFilter({attribute: 'status', value: 'employee'})
+                    )
+            },
+            {
+                formControlName: 'semesterIndex',
+                displayTitle: 'Fachsemester',
+                isDisabled: false,
+                data: new FormInputNumber(model.semesterIndex)
+            }
+        ]
+    }
+}
+
+export const emptyCourseProtocol = (): CourseProtocol => {
+    return {label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}
+}
+
+export const updateCourse = (model: CourseAtom, output: FormOutputData[]): CourseProtocol => {
+    return withCreateProtocol(output, emptyCourseProtocol(), p => {
+        p.lecturer = model.lecturer.id
+    })
+}
+
+export const getInitials = (user?: User): string => {
+    if (user) {
+        return user.firstname.substring(0, 1).toUpperCase() + user.lastname.substring(0, 1).toUpperCase()
+    } else {
+        return 'n.a'
+    }
+}

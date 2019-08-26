@@ -6,7 +6,7 @@
             <div class="infoBubble">{{course.abbreviation}}</div>
         </div>
         <div class="lecturerInfo detailHeaderInfo">
-            <div class="infoBubble">TT</div>
+            <div class="infoBubble">{{getInitials_()}}</div>
             <div class="infoContent">
                 <div class="infoText hidden-xs hidden-sm">{{course.lecturer.lastname}}, {{course.lecturer.firstname}}
                 </div>
@@ -22,7 +22,7 @@
         <div class="descContent">{{course.description}}</div>
         <div class="descFooter">
             <span>Fachsemester {{course.semesterIndex}}</span>
-            <button mat-stroked-button color="primary">Bearbeiten
+            <button mat-stroked-button color="primary" (click)="onEdit()">Bearbeiten
             </button>
         </div>
     </div>

@@ -20,13 +20,15 @@ export function addToDataSource<M extends UniqueEntity>
     }
 }
 
-// export function updateDataSource<M extends UniqueEntity>
-// (alertService: AlertService, dataSource: MatTableDataSource<M>): (model: M, match: (lhs: M, rhs: M) => boolean) => void {
-//     return (m, p) => {
-//         dataSource.data = dataSource.data.map(d => {
-//             return p(d, m) ? m : d
-//         })
-//
-//         this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(m))
-//     }
-// }
+export function updateDataSource<M extends UniqueEntity>
+(dataSource: MatTableDataSource<M>, alertService?: AlertService): (model: M, match: (lhs: M, rhs: M) => boolean) => void {
+    return (m, p) => {
+        dataSource.data = dataSource.data.map(d => {
+            return p(d, m) ? m : d
+        })
+
+        if (alertService) {
+            alertService.reportAlert('success', 'updated: ' + JSON.stringify(m))
+        }
+    }
+}
