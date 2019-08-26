@@ -3,16 +3,17 @@ import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {debounceTime, map, startWith} from 'rxjs/operators'
 import {FormDataStringType, FormInputData} from './form.input'
 import {mandatoryOptionsValidator, optionalOptionsValidator} from '../../utils/form.validator'
+import {subscribe} from '../../utils/functions'
 
 export class FormInputOption<Option> implements FormInputData<string> {
     readonly type: FormDataStringType
     readonly validator: ValidatorFn | ValidatorFn[]
     readonly value: string
 
-    options: Option[] = []
-    filteredOptions: Observable<Option[]>
+    private readonly subs: Subscription[]
+    private options: Option[] = []
+    private filteredOptions: Observable<Option[]>
 
-    private sub: Subscription
     private control: AbstractControl
 
     constructor(
@@ -21,17 +22,21 @@ export class FormInputOption<Option> implements FormInputData<string> {
         private readonly errorKey: string,
         private readonly required: boolean,
         private readonly display: (value: Option) => string,
-        private readonly getOptions: (options: (value: Option[]) => void) => Subscription
+        private readonly options$: Observable<Option[]>
     ) {
         this.type = 'options'
         this.validator = required ? mandatoryOptionsValidator() : optionalOptionsValidator()
         this.value = value_
+        this.subs = []
     }
 
     onInit(group: FormGroup) {
-        this.sub = this.getOptions(os => this.options = os)
         this.control = group.controls[this.controlName]
+        this.bindOptions(this.options$)
+    }
 
+    bindOptions(options$: Observable<Option[]>) {
+        this.subs.push(subscribe(options$, os => this.options = os))
         this.filteredOptions = this.control.valueChanges
             .pipe(
                 debounceTime(200),
@@ -42,7 +47,7 @@ export class FormInputOption<Option> implements FormInputData<string> {
     }
 
     onDestroy() {
-        this.sub.unsubscribe()
+        this.subs.forEach(s => s.unsubscribe())
     }
 
     private filter(input: string): Option[] {

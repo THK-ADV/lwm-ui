@@ -11,7 +11,6 @@ import {isUniqueEntity} from '../models/unique.entity.model'
 import {FormInputString} from '../shared-dialogs/forms/form.input.string'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from './form.validator'
-import {subscribe} from './functions'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {withCreateProtocol} from '../models/protocol.model'
 import {TooltipPosition} from '@angular/material'
@@ -87,7 +86,7 @@ export const labworkApplicationFormInputData =
                             invalidChoiceKey,
                             true,
                             formatUser,
-                            options => subscribe(fellowStudents, options)
+                            fellowStudents
                         )
                 },
                 {
@@ -100,7 +99,7 @@ export const labworkApplicationFormInputData =
                         invalidChoiceKey,
                         false,
                         formatUser,
-                        options => subscribe(fellowStudents, options)
+                        fellowStudents
                     )
                 },
                 {
@@ -113,7 +112,7 @@ export const labworkApplicationFormInputData =
                         invalidChoiceKey,
                         false,
                         formatUser,
-                        options => subscribe(fellowStudents, options)
+                        fellowStudents
                     )
                 }
             ]
@@ -174,7 +173,7 @@ export const swapAction = (): LWMAction => {
 }
 
 export const isOption = (d: FormInputData<any>): d is FormInputOption<any> => {
-    return (d as FormInputOption<any>).options !== undefined
+    return (d as FormInputOption<any>).bindOptions !== undefined
 }
 
 export const foreachOption = (inputs: FormInput[], f: (o: FormInputOption<any>) => void) => {

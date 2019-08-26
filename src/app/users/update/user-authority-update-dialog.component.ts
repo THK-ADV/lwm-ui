@@ -210,7 +210,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private afterCreate(auths: AuthorityAtom[]) {
-        addToDataSource(this.alertService, this.dataSource)(auths)
+        addToDataSource(this.dataSource, this.alertService)(auths)
         const controls: AuthCreationControl[] = ['roleControl', 'courseControl']
         resetControls(controls.map(this.getControl.bind(this)))
     }

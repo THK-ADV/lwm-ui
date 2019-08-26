@@ -156,7 +156,7 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     protected afterCreate(models: Model[]) {
-        addToDataSource(this.alertService, this.dataSource)(models)
+        addToDataSource(this.dataSource, this.alertService)(models)
         // this.dataSource.data = this.dataSource.data.concat(models)
         // this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
     }

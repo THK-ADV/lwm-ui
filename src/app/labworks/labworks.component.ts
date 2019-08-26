@@ -276,7 +276,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
                         invalidChoiceKey,
                         true,
                         semester => semester.label,
-                        options => subscribe(this.semesterService.getAll(), options)
+                        this.semesterService.getAll()
                     )
             },
             {
@@ -299,7 +299,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
                         invalidChoiceKey,
                         true,
                         degree => degree.label,
-                        options => subscribe(this.degreeService.getAll(), options)
+                        this.degreeService.getAll()
                     )
             },
             {

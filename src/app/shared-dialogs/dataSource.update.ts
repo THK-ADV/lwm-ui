@@ -11,10 +11,12 @@ export function removeFromDataSource<D, M extends UniqueEntity>
 }
 
 export function addToDataSource<M extends UniqueEntity>
-(alertService: AlertService, dataSource: MatTableDataSource<M>): (m: M[]) => void {
+(dataSource: MatTableDataSource<M>, alertService?: AlertService): (m: M[]) => void {
     return models => {
         dataSource.data = dataSource.data.concat(models)
-        alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
+        if (alertService) {
+            alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
+        }
     }
 }
 
