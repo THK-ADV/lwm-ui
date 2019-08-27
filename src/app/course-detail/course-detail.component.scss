@@ -80,6 +80,9 @@
       text-transform: uppercase;
       color: $header-font;
       font-weight: bold;
+      button {
+        margin-left: $low-spacing; 
+      }
     }
 
     .descContent {

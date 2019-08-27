@@ -1,14 +1,15 @@
-import {Component, Input, OnDestroy} from '@angular/core'
-import {CourseAtom} from '../models/course.model'
-import {MatDialog} from '@angular/material'
-import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
-import {CreateUpdateDialogComponent} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {courseFormInputData, getInitials, updateCourse} from '../utils/component.utils'
-import {UserService} from '../services/user.service'
-import {Subscription} from 'rxjs'
-import {subscribe} from '../utils/functions'
-import {CourseProtocol, CourseService} from '../services/course.service'
-import {AlertService} from '../services/alert.service'
+import { Component, Input, OnDestroy } from '@angular/core'
+import { CourseAtom } from '../models/course.model'
+import { MatDialog } from '@angular/material'
+import { DialogMode, dialogSubmitTitle, dialogTitle } from '../shared-dialogs/dialog.mode'
+import { CreateUpdateDialogComponent } from '../shared-dialogs/create-update/create-update-dialog.component'
+import { courseFormInputData, getInitials, updateCourse } from '../utils/component.utils'
+import { UserService } from '../services/user.service'
+import { Subscription } from 'rxjs'
+import { subscribe } from '../utils/functions'
+import { CourseProtocol, CourseService } from '../services/course.service'
+import { AlertService } from '../services/alert.service'
+import { CourseAuthorityUpdateDialogComponent } from '../course-authority-dialog/course-authority-dialog.component';
 
 @Component({
     selector: 'lwm-course-detail',
@@ -32,6 +33,10 @@ export class CourseDetailComponent implements OnDestroy {
 
     getInitials_(): string {
         return getInitials(this.course.lecturer)
+    }
+
+    editAuthorites() {
+        const dialogRef = CourseAuthorityUpdateDialogComponent.instance(this.dialog, this.course)
     }
 
     onEdit() {

@@ -4,15 +4,16 @@
 
 html,
 body {
-  height: 100%;
+    height: 100%;
 }
 body {
-  margin: 0;
+    margin: 0;
 }
 
 .lwmUserAuthorityUpdateDialog .mat-dialog-container,
 .lwmCreateUpdateDialog .mat-dialog-container,
 .lwmDeleteDialog .mat-dialog-container,
-.lwmGroupEditDialog .mat-dialog-container {
-  overflow: hidden;
+.lwmGroupEditDialog .mat-dialog-container,
+.lwmCourseAuthorityUpdateDialog .mat-dialog-container {
+    overflow: hidden;
 }
