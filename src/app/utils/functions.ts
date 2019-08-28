@@ -14,14 +14,8 @@ export const pipe = <T extends any[], R>(
 export const compose = <R>(fn1: (a: R) => R, ...fns: Array<(a: R) => R>) =>
     fns.reduce((prevFn, nextFn) => value => prevFn(nextFn(value)), fn1)
 
-export function exists<T>(array: T[], p: (t: T) => boolean): boolean {
+export function exists<T>(array: Readonly<T[]>, p: (t: T) => boolean): boolean {
     return array.find(p) !== undefined
-}
-
-export function count<T>(array: T[], p: (t: T) => boolean): number {
-    return array.reduce((n, t) => {
-        return p(t) ? n + 1 : 0
-    }, 0)
 }
 
 export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
@@ -34,7 +28,7 @@ export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
     })
 }
 
-export function _groupBy<T>(array: T[], key: (t: T) => string): { key: string, value: T[] } {
+export function _groupBy<T>(array: Readonly<T[]>, key: (t: T) => string): { key: string, value: T[] } {
     // @ts-ignore
     return array.reduce((acc, x) => {
         const k = key(x)
@@ -42,6 +36,10 @@ export function _groupBy<T>(array: T[], key: (t: T) => string): { key: string, v
         acc[k].push(x)
         return acc
     }, {})
+}
+
+export const count = <T>(xs: Readonly<T[]>, p: (t: T) => boolean): number => {
+    return xs.reduce((i, x) => p(x) ? i + 1 : i, 0)
 }
 
 export function NotImplementedError(data: string = ''): never {

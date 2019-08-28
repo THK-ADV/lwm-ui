@@ -9,5 +9,5 @@ export enum UserRole {
     employee = 'Mitarbeiter',
     courseManager = 'Modulverantwortlicher',
     courseEmployee = 'Modulmitarbeiter',
-    courseAssistant = 'Hilfskraft' 
+    courseAssistant = 'Hilfskraft'
 }

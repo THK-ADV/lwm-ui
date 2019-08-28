@@ -18,6 +18,7 @@ import {AbstractControl} from '@angular/forms'
 import {CourseProtocol} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
 import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
+import {AuthorityProtocol} from '../models/authority.model'
 
 export const fetchLabwork = (route: ActivatedRoute, labworkService: LabworkService): Observable<LabworkAtom> => {
     return route.paramMap.pipe(
@@ -196,11 +197,11 @@ export const getOptionErrorMessage = (formInputData: FormInputData<any>): string
     return isOption(formInputData) ? formInputData.getErrorMessage() : ''
 }
 
-export const resetControls = (controls: AbstractControl[]) => {
+export const resetControls = (controls: Readonly<AbstractControl>[]) => {
     controls.forEach(resetControl)
 }
 
-export const resetControl = (control: AbstractControl) => {
+export const resetControl = (control: Readonly<AbstractControl>) => {
     control.setValue('', {emitEvent: true})
     control.markAsUntouched()
 }
@@ -267,4 +268,8 @@ export const getInitials = (user?: User): string => {
     } else {
         return 'n.a'
     }
+}
+
+export const emptyAuthorityProtocol = (): AuthorityProtocol => {
+    return {user: '', role: '', course: ''}
 }

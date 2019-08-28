@@ -1,25 +1,23 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource } from '@angular/material';
-import { FormPayload } from '../shared-dialogs/create-update/create-update-dialog.component';
-import { CourseAtom } from '../models/course.model';
-import { AuthorityService } from '../services/authority.service';
-import { UserService } from '../services/user.service';
-import { RoleService } from '../services/role.service';
-import { AlertService } from '../services/alert.service';
-import { TableHeaderColumn } from '../abstract-crud/abstract-crud.component';
-import { AuthorityAtom, AuthorityProtocol } from '../models/authority.model';
-import { Subscription, Observable } from 'rxjs';
-import { User } from '../models/user.model';
-import { Role, UserRole } from '../models/role.model';
-import { mandatoryOptionsValidator, invalidChoiceKey, isUserInput } from '../utils/form.validator';
-import { subscribe } from '../utils/functions';
-import { UserStatus } from '../models/userStatus.model';
-import { startWith, map } from 'rxjs/operators';
-import { addToDataSource } from '../shared-dialogs/dataSource.update';
-import { resetControls } from '../utils/component.utils';
-
-type AuthCreationControl = 'userControl' | 'roleControl'
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
+import {FormControl, FormGroup} from '@angular/forms'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
+import {CourseAtom} from '../models/course.model'
+import {AuthorityService} from '../services/authority.service'
+import {UserService} from '../services/user.service'
+import {RoleService} from '../services/role.service'
+import {AlertService} from '../services/alert.service'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {AuthorityAtom, AuthorityProtocol} from '../models/authority.model'
+import {Subscription} from 'rxjs'
+import {User} from '../models/user.model'
+import {Role, UserRole} from '../models/role.model'
+import {invalidChoiceKey} from '../utils/form.validator'
+import {count, subscribe} from '../utils/functions'
+import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
+import {emptyAuthorityProtocol, foreachOption, formatUser, isOption, resetControl} from '../utils/component.utils'
+import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {isRole, isUser} from '../utils/type.check.utils'
 
 @Component({
     selector: 'lwm-course-authority-dialog',
@@ -27,6 +25,15 @@ type AuthCreationControl = 'userControl' | 'roleControl'
     styleUrls: ['./course-authority-dialog.component.scss']
 })
 export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
+
+    protected readonly displayedColumns: string[]
+    protected readonly columns: TableHeaderColumn[]
+
+    private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
+    private readonly subs: Subscription[]
+
+    protected readonly authGroup: FormGroup
+    protected inputs: FormInput[]
 
     constructor(
         private dialogRef: MatDialogRef<CourseAuthorityUpdateDialogComponent>,
@@ -37,26 +44,12 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         private alertService: AlertService
     ) {
         this.displayedColumns = ['user', 'role', 'action']
-        this.columns = [{ attr: 'user', title: 'Nutzer' }, { attr: 'role', title: 'Rolle' }]
+        this.columns = [{attr: 'user', title: 'Nutzer'}, {attr: 'role', title: 'Rolle'}]
         this.subs = []
 
         this.authGroup = new FormGroup({})
-        this.userOptions = []
-        this.roleOptions = []
+        this.inputs = []
     }
-
-
-    protected readonly displayedColumns: string[]
-    protected readonly columns: TableHeaderColumn[]
-
-    private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
-    private readonly subs: Subscription[]
-
-    protected readonly authGroup: FormGroup
-    protected userOptions: User[]
-    protected roleOptions: Role[]
-    protected filteredUserOptions: Observable<User[]>
-    protected filteredRoleOptions: Observable<Role[]>
 
     static instance(dialog: MatDialog, course: CourseAtom): MatDialogRef<CourseAuthorityUpdateDialogComponent> {
         return dialog.open(CourseAuthorityUpdateDialogComponent, {
@@ -64,41 +57,48 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             panelClass: 'lwmCourseAuthorityUpdateDialog'
         })
     }
-    private addControl(controlName: AuthCreationControl) { // TODO move out
-        this.authGroup.addControl(controlName, new FormControl('', mandatoryOptionsValidator()))
-    }
-
-    private getControl(control: AuthCreationControl): AbstractControl { // TODO move out
-        return this.authGroup.controls[control]
-    }
-
-    private hasFormGroupError(control: AuthCreationControl): boolean { // TODO move out
-        return this.getControl(control).hasError(invalidChoiceKey)
-    }
-
-    private formGroupErrorMessage(control: AuthCreationControl) { // TODO move out
-        return this.getControl(control).getError(invalidChoiceKey)
-    }
 
     ngOnInit() {
         this.setupAuthorities()
-        this.setupRoles()
-        this.setupUsers()
+        const roleOption = this.roleFormInput()
+        const userOption = this.userFormInput()
+
+        this.inputs = [userOption, roleOption]
         this.setupFormControls()
     }
 
-    private setupUsers() {
-        this.subs.push(subscribe(
-            this.userService.getAll(),
-            users => this.userOptions = users
-        ))
+    private userFormInput(): FormInput {
+        const fcn = 'userControl'
+        return {
+            formControlName: fcn,
+            displayTitle: 'Nutzer',
+            isDisabled: false,
+            data: new FormInputOption<User>(
+                '',
+                fcn,
+                invalidChoiceKey,
+                true,
+                formatUser,
+                this.userService.getAll()
+            )
+        }
     }
 
-    private setupRoles() {
-        this.subs.push(subscribe(
-            this.roleService.getCourseRoles(),
-            roles => this.roleOptions = roles
-        ))
+    private roleFormInput(): FormInput {
+        const fcn = 'roleControl'
+        return {
+            formControlName: fcn,
+            displayTitle: 'Rolle',
+            isDisabled: false,
+            data: new FormInputOption<Role>(
+                '',
+                fcn,
+                invalidChoiceKey,
+                true,
+                r => r.label,
+                this.roleService.getCourseRoles()
+            )
+        }
     }
 
     private setupAuthorities() {
@@ -115,56 +115,21 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private setupFormControls() {
-        this.addControl('userControl')
-        this.addControl('roleControl')
+        foreachOption(this.inputs, o => {
+            const fc = new FormControl(o.value, o.validator)
+            this.authGroup.addControl(o.controlName, fc)
 
-        this.filteredUserOptions = this.getControl('userControl').valueChanges
-            .pipe(
-                startWith(''),
-                map(value => isUserInput(value) ? value : value.lastname),
-                map(name => name ? this.filterUser(name) : this.userOptions.slice())
-            )
-
-        this.filteredRoleOptions = this.getControl('roleControl').valueChanges
-            .pipe(
-                startWith(''),
-                map(value => isUserInput(value) ? value : value.label),
-                map(label => label ? this.filterRole(label) : this.roleOptions.slice())
-            )
-    }
-
-    private displayFn(object?: User | Role): string | undefined {
-        const isUser = (o: User | Role): o is User => {
-            return (object as User).lastname !== undefined
-        }
-
-        if (!object) {
-            return undefined
-        }
-
-        if (isUser(object)) {
-            return `${object.lastname}, ${object.firstname} (${object.systemId})`
-        } else {
-            return object.label
-        }
-    }
-
-    private filterUser(input: string): User[] {
-        const filterValue = input.toLowerCase()
-        return this.userOptions.filter(user => user.lastname.toLowerCase().indexOf(filterValue) === 0)
-    }
-
-    private filterRole(input: string): Role[] {
-        const filterValue = input.toLowerCase()
-        return this.roleOptions.filter(role => role.label.toLowerCase().indexOf(filterValue) === 0)
+            o.onInit(this.authGroup)
+        })
     }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
+        foreachOption(this.inputs, o => o.onDestroy())
     }
 
     onCancel(): void {
-        this.closeModal(undefined)
+        this.dialogRef.close()
     }
 
     addAuthority() {
@@ -172,9 +137,22 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             return
         }
 
-        const role = this.getControl('roleControl').value as Role
-        const user = this.getControl('userControl').value as User
-        this.createAuthority({ user: user.id, role: role.id, course: this.course.id })
+        const protocol = emptyAuthorityProtocol()
+        protocol.course = this.course.id
+
+        this.inputs.reduce((p, input) => {
+            if (isOption(input.data)) {
+                if (isRole(input.data.control.value)) {
+                    p.role = input.data.control.value.id
+                } else if (isUser(input.data.control.value)) {
+                    p.user = input.data.control.value.id
+                }
+            }
+
+            return p
+        }, protocol)
+
+        this.createAuthority(protocol)
     }
 
     private createAuthority(auth: AuthorityProtocol) {
@@ -186,11 +164,9 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         )
     }
 
-
     private afterCreate(auths: AuthorityAtom[]) {
         addToDataSource(this.dataSource, this.alertService)(auths)
-        const controls: AuthCreationControl[] = ['roleControl', 'userControl']
-        resetControls(controls.map(this.getControl.bind(this)))
+        foreachOption(this.inputs, o => resetControl(o.control))
     }
 
     onDelete(auth: AuthorityAtom) {
@@ -203,8 +179,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private afterDelete(auth: AuthorityAtom) {
-        this.dataSource.data = this.dataSource.data.filter(a => a.id !== auth.id)
-        this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(auth))
+        removeFromDataSource(this.alertService, this.dataSource)(auth, (lhs, rhs) => lhs.id === rhs.id)
     }
 
     private headerTitle(): string {
@@ -227,23 +202,17 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private prepareTableContent(auth: AuthorityAtom, attr: string): string {
-        return this.fold(attr, auth, user => {
-            return `${user.lastname}, ${user.firstname}`
-        }, role => {
-            return auth.role.label
-        })
-    }
-
-    private closeModal(result: AuthorityProtocol | undefined) {
-        this.dialogRef.close(result)
+        return this.fold(attr, auth,
+            user => formatUser(user),
+            role => role.label
+        )
     }
 
     employeeCount(): number {
-        return this.dataSource.data.filter(auth => auth.role.label !== UserRole.courseAssistant).length
+        return count(this.dataSource.data, auth => auth.role.label !== UserRole.courseAssistant)
     }
 
-
     studentCount(): number {
-        return this.dataSource.data.filter(auth => auth.role.label === UserRole.courseAssistant).length
+        return count(this.dataSource.data, auth => auth.role.label === UserRole.courseAssistant)
     }
 }

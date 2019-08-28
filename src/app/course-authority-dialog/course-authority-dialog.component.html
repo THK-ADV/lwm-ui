@@ -4,27 +4,17 @@
 
     <mat-card [formGroup]="authGroup">
         <mat-card-content>
-            <mat-form-field color="primary">
-                <input type="text" placeholder="Nutzer" aria-label="Nutzer" matInput formControlName="userControl"
-                    [matAutocomplete]="userAuto">
-                <mat-autocomplete #userAuto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let user of filteredUserOptions | async" [value]="user">
-                        {{user.lastname}}, {{user.firstname}} ({{user.systemId}})
-                    </mat-option>
-                </mat-autocomplete>
-                <mat-error *ngIf="hasFormGroupError('userControl')">{{formGroupErrorMessage('userControl')}}
-                </mat-error>
-            </mat-form-field>
 
-            <mat-form-field color="primary">
-                <input type="text" placeholder="Rolle" aria-label="Rolle" matInput formControlName="roleControl"
-                    [matAutocomplete]="roleAuto">
-                <mat-autocomplete #roleAuto="matAutocomplete" [displayWith]="displayFn">
-                    <mat-option *ngFor="let role of filteredRoleOptions | async" [value]="role">
-                        {{role.label}}
+            <mat-form-field color="primary" *ngFor="let d of inputs">
+                <input type="text" [placeholder]="d.displayTitle" matInput
+                       [formControlName]="d.formControlName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="d.data.displayFn">
+                    <mat-option *ngFor="let option of d.data.filteredOptions | async" [value]="option">
+                        {{d.data.displayFn(option)}}
                     </mat-option>
                 </mat-autocomplete>
-                <mat-error *ngIf="hasFormGroupError('roleControl')">{{formGroupErrorMessage('roleControl')}}</mat-error>
+                <mat-error *ngIf="d.data.hasError()">{{d.data.getErrorMessage()}}
+                </mat-error>
             </mat-form-field>
         </mat-card-content>
         <mat-card-actions>
@@ -62,6 +52,6 @@
     </ng-container>
 
     <mat-dialog-actions>
-        <button mat-flat-button (click)="onCancel()">Schließen</button>
+        <button mat-flat-button (click)="onCancel()" cdkFocusInitial>Schließen</button>
     </mat-dialog-actions>
 </div>
