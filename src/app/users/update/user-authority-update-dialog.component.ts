@@ -30,7 +30,7 @@ type AuthCreationControl = 'courseControl' | 'roleControl'
     templateUrl: './user-authority-update-dialog.component.html',
     styleUrls: ['./user-authority-update-dialog.component.scss']
 })
-export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
+export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { // TODO apply same refactoring as in CourseAuthorityUpdateDialogComponent
 
     constructor(
         private dialogRef: MatDialogRef<UserAuthorityUpdateDialogComponent>,
