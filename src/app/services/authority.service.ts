@@ -22,6 +22,11 @@ export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, 
         return this.http.getAll(this.path, params)
     }
 
+    getAuthoritiesForCourse(courseId: string): Observable<AuthorityAtom[]> {
+        const params = new HttpParams().set('course', courseId)
+        return this.http.getAll(this.path, params)
+    }
+
     hasStatus(status: UserStatus, authorities: AuthorityAtom[]): boolean {
         return authorities.some(auth => auth.role.label === status)
     }

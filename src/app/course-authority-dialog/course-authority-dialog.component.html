@@ -1,0 +1,57 @@
+<h1 mat-dialog-title>{{headerTitle()}}</h1>
+
+<div class="modalContainer">
+
+    <mat-card [formGroup]="authGroup">
+        <mat-card-content>
+
+            <mat-form-field color="primary" *ngFor="let d of inputs">
+                <input type="text" [placeholder]="d.displayTitle" matInput
+                       [formControlName]="d.formControlName" [matAutocomplete]="auto">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="d.data.displayFn">
+                    <mat-option *ngFor="let option of d.data.filteredOptions | async" [value]="option">
+                        {{d.data.displayFn(option)}}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="d.data.hasError()">{{d.data.getErrorMessage()}}
+                </mat-error>
+            </mat-form-field>
+        </mat-card-content>
+        <mat-card-actions>
+            <button mat-flat-button color="primary" [disabled]="!authGroup.valid" (click)="addAuthority()">
+                Rolle zuweisen
+            </button>
+        </mat-card-actions>
+    </mat-card>
+
+
+    <ng-container *ngIf="!emptyData()">
+        <h2 mat-dialog-title>Mitarbeiter ({{employeeCount()}}) und Hilfskräfte ({{studentCount()}})</h2>
+        <mat-dialog-content>
+
+            <table mat-table [dataSource]="dataSource">
+                <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
+                    <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
+                    <td mat-cell *matCellDef="let element ">{{prepareTableContent(element, column.attr)}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="action">
+                    <th mat-header-cell *matHeaderCellDef></th>
+                    <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+                        <button mat-stroked-button color="warn" (click)="onDelete(element)" matTooltip="Löschen"
+                            matTooltipPosition="right">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </mat-dialog-content>
+    </ng-container>
+
+    <mat-dialog-actions>
+        <button mat-flat-button (click)="onCancel()" cdkFocusInitial>Schließen</button>
+    </mat-dialog-actions>
+</div>

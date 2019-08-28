@@ -14,11 +14,11 @@ export class FormInputOption<Option> implements FormInputData<string> {
     private options: Option[] = []
     private filteredOptions: Observable<Option[]>
 
-    private control: AbstractControl
+    control: Readonly<AbstractControl>
 
     constructor(
         private readonly value_: string,
-        private readonly controlName: string,
+        readonly controlName: string,
         private readonly errorKey: string,
         private readonly required: boolean,
         private readonly display: (value: Option) => string,
