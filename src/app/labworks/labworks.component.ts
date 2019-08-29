@@ -35,7 +35,7 @@ import {
     labworkApplicationAction,
     LWMAction,
     LWMActionType,
-    scheduleAction
+    chainAction
 } from '../utils/component.utils'
 
 interface LabworkWithApplications {
@@ -64,7 +64,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     ]
 
     private readonly labworkActions: LWMAction[] = [ // TODO permissions?
-        scheduleAction(),
+        chainAction(),
         labworkApplicationAction(),
         groupAction(),
         graduatesAction(),
@@ -159,11 +159,12 @@ export class LabworksComponent implements OnInit, OnDestroy {
             case 'delete':
                 this.delete(labwork)
                 break
-            case 'schedule':
+            case 'chain':
             case 'groups':
             case 'graduates':
             case 'applications':
                 this.routeTo(action, labwork)
+                break
             default:
                 break
         }

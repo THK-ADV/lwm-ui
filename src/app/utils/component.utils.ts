@@ -134,7 +134,7 @@ export const createLabworkApplicationProtocol = (output: FormOutputData[], labwo
     })
 }
 
-export type LWMActionType = 'edit' | 'delete' | 'schedule' | 'groups' | 'graduates' | 'applications' | 'create' | 'swap'
+export type LWMActionType = 'edit' | 'delete' | 'chain' | 'groups' | 'graduates' | 'applications' | 'create' | 'swap'
 
 export interface LWMAction {
     type: LWMActionType
@@ -144,8 +144,8 @@ export interface LWMAction {
     tooltipPosition: TooltipPosition
 }
 
-export const scheduleAction = (): LWMAction => {
-    return {type: 'schedule', color: 'primary', iconName: 'schedule', tooltipName: 'Staffelplan', tooltipPosition: 'above'}
+export const chainAction = (): LWMAction => {
+    return {type: 'chain', color: 'primary', iconName: 'schedule', tooltipName: 'Staffelplan', tooltipPosition: 'above'}
 }
 
 export const labworkApplicationAction = (): LWMAction => {

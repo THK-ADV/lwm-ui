@@ -1,4 +1,5 @@
 import {Observable} from 'rxjs'
+import {ParamFilter} from '../services/http.filter'
 
 export interface AbstractCRUDService<Protocol, Model> {
     getAll(): Observable<Model[]>
