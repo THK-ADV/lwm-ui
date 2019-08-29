@@ -1,3 +1,5 @@
+import {validate} from 'codelyzer/walkerFactory/walkerFn'
+
 export interface AssignmentPlan {
     labwork: string
     attendance: number // TODO remove
@@ -53,4 +55,13 @@ export const sortedAssignmentPlanEntryTypes = (e: Readonly<AssignmentEntry>): As
     })
 
     return {...e, types: sorted}
+}
+
+export const findEntryTypeValue = (types: Readonly<AssignmentEntryType[]>, value: Readonly<AssignmentEntryTypeValue>)
+    : AssignmentEntryType | undefined => {
+    return types.find(t => t.entryType === value)
+}
+
+export const hasEntryTypeValue = (types: Readonly<AssignmentEntryType[]>, value: Readonly<AssignmentEntryTypeValue>): boolean => {
+    return findEntryTypeValue(types, value) !== undefined
 }

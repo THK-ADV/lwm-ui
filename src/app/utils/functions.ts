@@ -53,3 +53,9 @@ export function subscribe<T>(observable: Observable<T>, next: (t: T) => void): S
         }
     })
 }
+
+export const foldUndefined = <T, U>(t: T | undefined, f: (t: T) => U, empty: () => U): U => t ? f(t) : empty()
+
+export const parseUnsafeBoolean = (any: any): boolean => !!any
+
+export const parseUnsafeNumber = (any: any): number => +any
