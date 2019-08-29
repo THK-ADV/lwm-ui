@@ -162,7 +162,7 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     protected afterDelete(model: Model) { // TODO test
-        removeFromDataSource(this.alertService, this.dataSource)(model, (a, t) => a.id === t.id)
+        removeFromDataSource(this.dataSource, this.alertService)(model, (a, t) => a.id === t.id)
         // this.dataSource.data = this.dataSource.data.filter(r => r.id !== model.id)
         // this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(model))
     }

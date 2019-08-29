@@ -205,7 +205,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private afterDelete(labwork: Labwork) {
-        removeFromDataSource(this.alertService, this.dataSource)(labwork, (lwa, l) => lwa.labwork.id === l.id)
+        removeFromDataSource(this.dataSource, this.alertService)(labwork, (lwa, l) => lwa.labwork.id === l.id)
     }
 
     private afterUpdate(labwork: LabworkAtom) {

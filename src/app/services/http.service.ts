@@ -100,8 +100,8 @@ export class HttpService {
             )
     }
 
-    put_<O>(url: string, params?: HttpParams): Observable<O> {
-        return this.http.put<O>(url, {params})
+    put_<I, O>(url: string, body: I): Observable<O> {
+        return this.http.put<O>(url, body)
             .pipe(
                 catchError(this.handleError),
                 tap(r => console.log('put resp: ', r))

@@ -3,6 +3,7 @@ import {HttpService} from './http.service'
 import {LabworkApplication} from '../models/labwork.application.model'
 import {Time} from '../models/time.model'
 import {Observable} from 'rxjs'
+import {makePath} from '../utils/component.utils'
 
 interface GroupMembership {
     group: string
@@ -32,7 +33,32 @@ interface ReportCardEntry {
 export interface GroupInsertionResult {
     labworkApplication: LabworkApplication
     membership: GroupMembership
-    reportCards: ReportCardEntry[]
+    reportCardEntries: ReportCardEntry[]
+}
+
+export interface GroupDeletionResult {
+    labworkApplication: LabworkApplication
+    changedMembership: boolean
+    reportCardEntries: ReportCardEntry[]
+}
+
+export interface GroupMovementResult {
+    newMembership: GroupMembership
+    changedMembership: boolean
+    updatedReportCardEntries: ReportCardEntry[]
+}
+
+export interface GroupChangeRequest {
+    labwork: string
+    student: string
+    group: string
+}
+
+export interface GroupMovingRequest {
+    labwork: string
+    student: string
+    srcGroup: string
+    destGroup: string
 }
 
 @Injectable({
@@ -43,7 +69,15 @@ export class LwmService {
     constructor(private readonly http: HttpService) {
     }
 
-    insertStudentIntoGroup(courseId: string, labworkId: string, destGroupId: string, studentId: string): Observable<GroupInsertionResult> {
-        return this.http.put_(`courses/${courseId}/labworks/${labworkId}/groups/${destGroupId}/insert/${studentId}`)
+    insertStudentIntoGroup(courseId: string, request: GroupChangeRequest): Observable<GroupInsertionResult> {
+        return this.http.put_(makePath('insertIntoGroup', courseId), request)
+    }
+
+    removeStudentFromGroup(courseId: string, request: GroupChangeRequest): Observable<GroupDeletionResult> {
+        return this.http.put_(makePath('removeFromGroup', courseId), request)
+    }
+
+    moveStudentToGroup(courseId: string, request: GroupMovingRequest): Observable<GroupMovementResult> {
+        return this.http.put_(makePath('moveToGroup', courseId), request)
     }
 }

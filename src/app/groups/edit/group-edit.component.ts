@@ -23,8 +23,8 @@ import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from '../../utils/form.validator'
 import {exists, subscribe} from '../../utils/functions'
 import {FormInput, FormInputData} from '../../shared-dialogs/forms/form.input'
-import {GroupInsertionResult, LwmService} from '../../services/lwm.service'
-import {map} from 'rxjs/operators'
+import {GroupDeletionResult, GroupInsertionResult, LwmService} from '../../services/lwm.service'
+import {map, tap} from 'rxjs/operators'
 
 @Component({
     selector: 'lwm-group-edit',
@@ -159,26 +159,54 @@ export class GroupEditComponent implements OnInit, OnDestroy {
     }
 
     private delete = (member: User) => {
-        // TODO remove from DS only after request
-        // TODO emit change to previous component
-        removeFromDataSource(this.alertService, this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+        const deletionMsg = (result: GroupDeletionResult): string => {
+            const cardsCreated = result.reportCardEntries.length !== 0
+            let msg = result.changedMembership ? 'removed group membership' : 'not removed group membership'
+            msg += ` and application: ${JSON.stringify(result.labworkApplication)}`
+            if (cardsCreated) {
+                msg += ` and ${result.reportCardEntries.length} reportcard entries`
+            }
+            return msg
+        }
+
+        const result$ = this.service.removeStudentFromGroup(
+            this.payload.group.labwork.course,
+            {
+                labwork: this.payload.group.labwork.id,
+                group: this.payload.group.id,
+                student: member.id
+            }
+        )
+
+        const s = subscribe(result$, result => {
+            removeFromDataSource(this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+
+            this.updateStudentsByAdding(member)
+
+            this.groupChanged.emit()
+            this.alertService.reportAlert('success', deletionMsg(result))
+        })
+
+        this.subs.push(s)
     }
 
     private create = (member: User) => {
         const creationMsg = (result: GroupInsertionResult): string => {
-            const cardsCreated = result.reportCards.length !== 0
+            const cardsCreated = result.reportCardEntries.length !== 0
             let msg = `created group membership ${JSON.stringify(result.membership)}`
             if (cardsCreated) {
-                msg += ` and ${result.reportCards.length} reportcard entries`
+                msg += ` and ${result.reportCardEntries.length} reportcard entries`
             }
             return msg
         }
 
         const result$ = this.service.insertStudentIntoGroup(
             this.payload.group.labwork.course,
-            this.payload.group.labwork.id,
-            this.payload.group.id,
-            member.id
+            {
+                labwork: this.payload.group.labwork.id,
+                group: this.payload.group.id,
+                student: member.id
+            }
         )
 
         const s = subscribe(result$, result => {
@@ -197,6 +225,16 @@ export class GroupEditComponent implements OnInit, OnDestroy {
     private updateStudentsByRemoving = (member: User) => {
         this.payload.fellowStudents$ = this.payload.fellowStudents$.pipe(
             map(xs => xs.filter(x => x.id !== member.id))
+        )
+
+        if (isOption(this.addStudentForm.data)) {
+            this.addStudentForm.data.bindOptions(this.payload.fellowStudents$)
+        }
+    }
+
+    private updateStudentsByAdding = (member: User) => {
+        this.payload.fellowStudents$ = this.payload.fellowStudents$.pipe(
+            tap(xs => xs.push(member))
         )
 
         if (isOption(this.addStudentForm.data)) {
