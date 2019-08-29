@@ -1,13 +1,16 @@
-import {Component} from '@angular/core'
-import {FormGroup, ValidatorFn, Validators} from '@angular/forms'
+import {Component, OnInit} from '@angular/core'
+import {FormGroup, ValidatorFn} from '@angular/forms'
 import {MatDialog} from '@angular/material'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {Semester, SemesterProtocol} from '../models/semester.model'
 import {AlertService} from '../services/alert.service'
 import {SemesterService} from '../services/semester.service'
-import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {format} from '../utils/lwmdate-adapter'
-import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {withCreateProtocol} from '../models/protocol.model'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {FormInputString} from '../shared-dialogs/forms/form.input.string'
+import {FormInputDate} from '../shared-dialogs/forms/form.input.date'
 
 
 @Component({
@@ -15,7 +18,7 @@ import {createProtocol, withCreateProtocol} from '../models/protocol.model'
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> {
+export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, Semester> implements OnInit {
 
     static empty(): SemesterProtocol {
         return {abbreviation: '', end: '', examStart: '', label: '', start: ''}
@@ -23,56 +26,46 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
 
     static columns(): TableHeaderColumn[] { // TODO unify columns, formControls and empty somehow
         return this.inputData(this.empty(), false).map(c => {
-            return {attr: c.formControlName, title: c.placeholder}
+            return {attr: c.formControlName, title: c.displayTitle}
         })
     }
 
-    static inputData(model: Readonly<SemesterProtocol | Semester>, isModel: boolean): FormInputData[] {
+    static inputData(model: Readonly<SemesterProtocol | Semester>, isModel: boolean): FormInput[] {
         return [
             {
                 formControlName: 'label',
-                placeholder: 'Bezeichnung',
-                type: 'text',
+                displayTitle: 'Bezeichnung',
                 isDisabled: false,
-                validator: Validators.required,
-                value: model.label
+                data: new FormInputString(model.label)
             },
             {
                 formControlName: 'abbreviation',
-                placeholder: 'Abkürzung',
-                type: 'text',
+                displayTitle: 'Abkürzung',
                 isDisabled: false,
-                validator: Validators.required,
-                value: model.abbreviation
+                data: new FormInputString(model.abbreviation)
             },
             {
                 formControlName: 'start',
-                placeholder: 'Semesterstart',
-                type: 'date',
+                displayTitle: 'Semesterstart',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.start
+                data: new FormInputDate(model.start)
             },
             {
                 formControlName: 'end',
-                placeholder: 'Semesterende',
-                type: 'date',
+                displayTitle: 'Semesterende',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.end
+                data: new FormInputDate(model.end)
             },
             {
                 formControlName: 'examStart',
-                placeholder: 'Beginn 1. Prüfungsphase',
-                type: 'date',
+                displayTitle: 'Beginn 1. Prüfungsphase',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.examStart
+                data: new FormInputDate(model.examStart)
             }
         ]
     }
 
-    static startEndValidator(data: FormInputData[]): ValidatorFn | undefined {
+    static startEndValidator(data: FormInput[]): ValidatorFn | undefined {
         const start = data.find(d => d.formControlName === 'start')
         const end = data.find(d => d.formControlName === 'end')
 
@@ -93,7 +86,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             }
 
             const error = {}
-            error[start.formControlName] = `${start.placeholder} muss vor dem ${end.placeholder} liegen`
+            error[start.formControlName] = `${start.displayTitle} muss vor dem ${end.displayTitle} liegen`
             startControl.setErrors(error)
             return error
         }
@@ -111,6 +104,7 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
 
     constructor(protected semesterService: SemesterService, protected dialog: MatDialog, protected alertService: AlertService) {
         super(
+            semesterService,
             dialog,
             alertService,
             SemestersComponent.columns(),
@@ -124,9 +118,11 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
             SemestersComponent.empty,
             SemestersComponent.startEndValidator
         )
+    }
 
-        this.service = semesterService // super.init does not allow types which are generic
-
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): SemesterProtocol {
@@ -138,6 +134,8 @@ export class SemestersComponent extends AbstractCRUDComponent<SemesterProtocol, 
     }
 
     update(model: Semester, updatedOutput: FormOutputData[]): SemesterProtocol {
+        console.error(model)
+        console.error(updatedOutput)
         return withCreateProtocol(updatedOutput, SemestersComponent.empty(), p => {
             p.start = format(model.start, 'yyyy-MM-dd')
             p.end = format(model.end, 'yyyy-MM-dd')

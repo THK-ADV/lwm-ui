@@ -22,6 +22,14 @@ export class Time {
     static fromDate(date: Date): Time {
         return new Time(date, date.getHours(), date.getMinutes(), date.getSeconds())
     }
+
+    static startOfTheDay(): Time {
+        return this.fromTimeString('00:00:00')
+    }
+
+    static endOfTheDay(): Time {
+        return this.fromTimeString('23:59:59')
+    }
 }
 
 export const isNumber = (value: any): value is number => !isNaN(value)

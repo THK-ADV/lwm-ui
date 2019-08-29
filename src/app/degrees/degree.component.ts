@@ -1,20 +1,21 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {Validators} from '@angular/forms'
+import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {Degree, DegreeProtocol} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
 import {NotImplementedError} from '../utils/functions'
 import {withCreateProtocol} from '../models/protocol.model'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {FormInputString} from '../shared-dialogs/forms/form.input.string'
 
 @Component({
     selector: 'app-degree',
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> {
+export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degree> implements OnInit {
 
     static columns(): TableHeaderColumn[] {
         return [
@@ -27,29 +28,26 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
         return {label: '', abbreviation: ''}
     }
 
-    static inputData(model: Readonly<DegreeProtocol | Degree>, isModel: boolean): FormInputData[] {
+    static inputData(model: Readonly<DegreeProtocol | Degree>, isModel: boolean): FormInput[] {
         return [
             {
                 formControlName: 'label',
-                placeholder: 'Bezeichnung',
-                type: 'text',
+                displayTitle: 'Bezeichnung',
                 isDisabled: false,
-                validator: Validators.required,
-                value: model.label
+                data: new FormInputString(model.label)
             },
             {
                 formControlName: 'abbreviation',
-                placeholder: 'Abkürzung',
-                type: 'text',
+                displayTitle: 'Abkürzung',
                 isDisabled: isModel,
-                validator: Validators.required,
-                value: model.abbreviation
+                data: new FormInputString(model.abbreviation)
             }
         ]
     }
 
     constructor(protected degreeService: DegreeService, protected dialog: MatDialog, protected alertService: AlertService) {
         super(
+            degreeService,
             dialog,
             alertService,
             DegreeComponent.columns(),
@@ -63,8 +61,11 @@ export class DegreeComponent extends AbstractCRUDComponent<DegreeProtocol, Degre
             DegreeComponent.empty,
             () => undefined
         )
+    }
 
-        this.service = degreeService // super.init does not allow types which are generic
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): DegreeProtocol {

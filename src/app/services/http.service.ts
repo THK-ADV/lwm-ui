@@ -54,8 +54,13 @@ export class HttpService {
         return lwmError
     }
 
-    get<T>(url: string, params?: HttpParams): Observable<T> {
+    getAll<T>(url: string, params?: HttpParams): Observable<T> {
         return this.http.get<T>(url, {params})
+            .pipe(catchError(this.handleError))
+    }
+
+    get<T>(url: string, id: string, params?: HttpParams): Observable<T> {
+        return this.http.get<T>(`${url}/${id}`, {params})
             .pipe(catchError(this.handleError))
     }
 
@@ -91,6 +96,14 @@ export class HttpService {
             .pipe(
                 catchError(this.handleError),
                 map(r => r.updated),
+                tap(r => console.log('put resp: ', r))
+            )
+    }
+
+    put_<I, O>(url: string, body: I): Observable<O> {
+        return this.http.put<O>(url, body)
+            .pipe(
+                catchError(this.handleError),
                 tap(r => console.log('put resp: ', r))
             )
     }

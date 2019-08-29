@@ -1,11 +1,4 @@
-$lwm-font-family: "Helvetica Neue","Ostrich Sans", sans-serif;
-$lwm-font-color: rgb(32, 32, 32);
-
-$th-orange: #ea5a00;
-$th-red: #c81e0f;
-$th-magenta: #b43092;
-
-$ivory: #eee;
+@import "lwm.vars.scss";
 
 $th-magenta-pal: palette-from($th-magenta);
 $th-orange-pal: palette-from($th-orange);

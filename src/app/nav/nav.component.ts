@@ -9,6 +9,7 @@ import {User} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
 import {KeycloakService} from 'keycloak-angular'
 import {AlertService} from '../services/alert.service'
+import {getInitials} from '../utils/component.utils'
 
 @Component({
     selector: 'app-nav',
@@ -65,12 +66,8 @@ export class NavComponent implements OnInit, OnDestroy {
         return this.authorityService.isAdmin(this.roleAuthorities)
     }
 
-    getInitials(): string {
-        if (this.user) {
-            return this.user.firstname.substring(0, 1).toUpperCase() + this.user.lastname.substring(0, 1).toUpperCase()
-        } else {
-            return 'n.a'
-        }
+    getInitials_(): string {
+        return getInitials(this.user)
     }
 
     ngOnInit(): void {

@@ -1,0 +1,57 @@
+@import "../../lwm.vars.scss";
+
+.group-list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+
+  .group-container {
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    margin: 0 $med-spacing $med-spacing 0;
+    width: 400px;
+    border-radius: $lwm-border-radius;
+    border: 1px solid $light-bordercolor;
+
+    .group-header {
+      background-color: $heading-background;
+      padding: $low-spacing;
+      border-bottom: 1px solid $light-bordercolor;
+      font-weight: 600;
+
+      .group-title {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+      }
+    }
+
+    .group-content {
+      .mat-list-item p{
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: justify;
+            -ms-flex-pack: justify;
+                justify-content: space-between;
+      }
+
+      .mat-list-item:hover {
+        background-color: $hover-color;
+      }
+    }
+  }
+}

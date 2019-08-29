@@ -2,21 +2,15 @@ import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog, MatPaginator, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
 import {AlertService} from '../services/alert.service'
-import {
-    CreateUpdateDialogComponent,
-    FormInputData,
-    FormInputOption,
-    FormOutputData
-} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {CreateUpdateDialogComponent, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AbstractCRUDService} from './abstract-crud.service'
 import {exists, subscribe} from '../utils/functions'
 import {ValidatorFn} from '@angular/forms'
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
-
-enum DialogMode {
-    edit, create
-}
+import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
+import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
+import {FormInput} from '../shared-dialogs/forms/form.input'
 
 export interface TableHeaderColumn {
     attr: string
@@ -34,27 +28,25 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     protected subs: Subscription[] = []
     protected dataSource = new MatTableDataSource<Model>()
 
-    protected service: AbstractCRUDService<Protocol, Model>
-    protected inputOption?: FormInputOption<Object> = undefined
-
     private readonly displayedColumns: string[]
 
     @ViewChild(MatSort, {static: true}) sort: MatSort
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
 
     constructor(
+        protected readonly service: AbstractCRUDService<Protocol, Model>,
         protected readonly dialog: MatDialog,
         protected readonly alertService: AlertService,
         protected readonly columns: TableHeaderColumn[],
         protected readonly actions: Action[],
         protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
         protected readonly modelName: string,
-        protected readonly headerTitle: string,
-        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInputData[],
+        protected headerTitle: string,
+        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInput[],
         protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
         protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
         protected readonly empty: () => Readonly<Protocol>,
-        protected readonly composedFromGroupValidator: (data: FormInputData[]) => ValidatorFn | undefined,
+        protected readonly composedFromGroupValidator: (data: FormInput[]) => ValidatorFn | undefined,
         protected readonly pageSizeOptions: number[] = [25, 50, 100]
     ) {
         this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
@@ -62,17 +54,18 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
 
     ngOnInit() {
         this.dataSource.sort = this.sort
-
-        this.subscribeAndPush(this.service.getAll(), data => {
-            this.dataSource.data = data
-            this.sortBy(this.sortDescriptor)
-        })
-
         this.dataSource.paginator = this.paginator
     }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
+    }
+
+    fetchData(observable: Observable<Model[]> = this.service.getAll()) {
+        this.subscribeAndPush(observable, data => {
+            this.dataSource.data = data
+            this.sortBy(this.sortDescriptor)
+        })
     }
 
     private canCreate(): boolean {
@@ -88,7 +81,9 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     private onSelect(model: Model) {
-        this.onEdit(model)
+        if (this.canEdit()) {
+            this.onEdit(model)
+        }
     }
 
     protected onEdit(model: Model) {
@@ -122,12 +117,11 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         const inputData = this.inputData(data, isUniqueEntity(data))
 
         const payload = {
-            headerTitle: this.dialogTitle(mode),
-            submitTitle: this.dialogSubmitTitle(mode),
+            headerTitle: dialogTitle(mode, this.modelName),
+            submitTitle: dialogSubmitTitle(mode),
             data: inputData,
             makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
-            composedFromGroupValidator: this.composedFromGroupValidator(inputData),
-            formInputOption: this.inputOption
+            composedFromGroupValidator: this.composedFromGroupValidator(inputData)
         }
 
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
@@ -143,24 +137,6 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         this.sort.active = sortState.active
         this.sort.direction = sortState.direction
         this.sort.sortChange.emit(sortState)
-    }
-
-    protected dialogTitle(mode: DialogMode): string {
-        switch (mode) {
-            case DialogMode.create:
-                return `${this.modelName} erstellen`
-            case DialogMode.edit:
-                return `${this.modelName} bearbeiten`
-        }
-    }
-
-    protected dialogSubmitTitle(mode: DialogMode): string {
-        switch (mode) {
-            case DialogMode.create:
-                return 'Erstellen'
-            case DialogMode.edit:
-                return 'Aktualisieren'
-        }
     }
 
     protected subscribeAndPush<T>(observable: Observable<T>, next: (t: T) => void) {
@@ -180,12 +156,14 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
     }
 
     protected afterCreate(models: Model[]) {
-        this.dataSource.data = this.dataSource.data.concat(models)
-        this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
+        addToDataSource(this.dataSource, this.alertService)(models)
+        // this.dataSource.data = this.dataSource.data.concat(models)
+        // this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
     }
 
-    protected afterDelete(model: Model) {
-        this.dataSource.data = this.dataSource.data.filter(r => r.id !== model.id)
-        this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(model))
+    protected afterDelete(model: Model) { // TODO test
+        removeFromDataSource(this.dataSource, this.alertService)(model, (a, t) => a.id === t.id)
+        // this.dataSource.data = this.dataSource.data.filter(r => r.id !== model.id)
+        // this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(model))
     }
 }

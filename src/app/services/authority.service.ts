@@ -19,7 +19,12 @@ export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, 
 
     getAuthorities(systemId: string): Observable<AuthorityAtom[]> {
         const params = new HttpParams().set('systemId', systemId)
-        return this.http.get(this.path, params)
+        return this.http.getAll(this.path, params)
+    }
+
+    getAuthoritiesForCourse(courseId: string): Observable<AuthorityAtom[]> {
+        const params = new HttpParams().set('course', courseId)
+        return this.http.getAll(this.path, params)
     }
 
     hasStatus(status: UserStatus, authorities: AuthorityAtom[]): boolean {
@@ -40,7 +45,7 @@ export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, 
     }
 
     getAll(): Observable<AuthorityAtom[]> {
-        return this.http.get(this.path)
+        return this.http.getAll(this.path)
     }
 
     delete(id: string): Observable<AuthorityAtom> {

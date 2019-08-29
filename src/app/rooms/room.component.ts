@@ -1,19 +1,21 @@
-import {Component} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {MatDialog} from '@angular/material'
 import {Room, RoomProtocol} from '../models/room.model'
 import {AlertService} from '../services/alert.service'
 import {AbstractCRUDComponent, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {Validators} from '@angular/forms'
-import {FormInputData, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {RoomService} from '../services/room.service'
 import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {FormInputString} from '../shared-dialogs/forms/form.input.string'
+import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
 
 @Component({
     selector: 'app-room',
     templateUrl: '../abstract-crud/abstract-crud.component.html',
     styleUrls: ['../abstract-crud/abstract-crud.component.scss']
 })
-export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
+export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> implements OnInit {
 
     static columns(): TableHeaderColumn[] {
         return [
@@ -27,37 +29,32 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
         return {label: '', description: '', capacity: 0}
     }
 
-    static inputData(model: Readonly<RoomProtocol | Room>, isRoom: boolean): FormInputData[] {
+    static inputData(model: Readonly<RoomProtocol | Room>, isRoom: boolean): FormInput[] {
         return [
             {
                 formControlName: 'label',
-                placeholder: 'Bezeichnung',
-                type: 'text',
+                displayTitle: 'Bezeichnung',
                 isDisabled: isRoom,
-                validator: Validators.required,
-                value: model.label
+                data: new FormInputString(model.label)
             },
             {
                 formControlName: 'description',
-                placeholder: 'Beschreibung',
-                type: 'text',
+                displayTitle: 'Beschreibung',
                 isDisabled: false,
-                validator: Validators.required,
-                value: model.description
+                data: new FormInputString(model.description)
             },
             {
                 formControlName: 'capacity',
-                placeholder: 'Kapazität',
-                type: 'number',
+                displayTitle: 'Kapazität',
                 isDisabled: false,
-                validator: [Validators.required, Validators.min(0)],
-                value: model.capacity
+                data: new FormInputNumber(model.capacity)
             }
         ]
     }
 
     constructor(protected roomService: RoomService, protected dialog: MatDialog, protected alertService: AlertService) {
         super(
+            roomService,
             dialog,
             alertService,
             RoomComponent.columns(),
@@ -71,8 +68,11 @@ export class RoomComponent extends AbstractCRUDComponent<RoomProtocol, Room> {
             RoomComponent.empty,
             () => undefined
         )
+    }
 
-        this.service = roomService // super.init does not allow types which are generic
+    ngOnInit() {
+        super.ngOnInit()
+        this.fetchData()
     }
 
     create(output: FormOutputData[]): RoomProtocol {

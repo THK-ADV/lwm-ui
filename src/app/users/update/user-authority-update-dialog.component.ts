@@ -1,11 +1,11 @@
 import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {User} from '../../models/user.model'
 import {AuthorityService} from '../../services/authority.service'
 import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
 import {Observable, Subscription} from 'rxjs'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
-import {FormControl, FormGroup} from '@angular/forms'
+import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
 import {CourseAtom} from '../../models/course.model'
 import {CourseService} from '../../services/course.service'
 import {subscribe} from '../../utils/functions'
@@ -14,11 +14,13 @@ import {RoleService} from '../../services/role.service'
 import {UserStatus} from '../../models/userStatus.model'
 import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
-import {invalidChoiceKey, isUserInput, optionsValidator} from '../../utils/form.validator'
+import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../utils/form.validator'
+import {addToDataSource} from '../../shared-dialogs/dataSource.update'
+import {resetControls} from '../../utils/component.utils'
 
 export interface StandardRole {
     label: UserStatus
-    color: 'primary' | 'accent'
+    color: LWMColor
 }
 
 type AuthCreationControl = 'courseControl' | 'roleControl'
@@ -28,7 +30,7 @@ type AuthCreationControl = 'courseControl' | 'roleControl'
     templateUrl: './user-authority-update-dialog.component.html',
     styleUrls: ['./user-authority-update-dialog.component.scss']
 })
-export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
+export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { // TODO apply same refactoring as in CourseAuthorityUpdateDialogComponent
 
     constructor(
         private dialogRef: MatDialogRef<UserAuthorityUpdateDialogComponent>,
@@ -55,8 +57,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
     private readonly subs: Subscription[]
 
-    @ViewChild(MatSort, {static: true}) sort: MatSort
-
     protected readonly authGroup: FormGroup
     protected courseOptions: CourseAtom[]
     protected roleOptions: Role[]
@@ -71,15 +71,14 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private addControl(controlName: AuthCreationControl) { // TODO move out
-        this.authGroup.addControl(controlName, new FormControl('', optionsValidator()))
+        this.authGroup.addControl(controlName, new FormControl('', mandatoryOptionsValidator()))
     }
 
-    private getControl(control: AuthCreationControl): FormControl { // TODO move out
-        return this.authGroup.controls[control] as FormControl
+    private getControl(control: AuthCreationControl): AbstractControl { // TODO move out
+        return this.authGroup.controls[control]
     }
 
     ngOnInit() {
-        this.setupSorting()
         this.setupAuthorities()
         this.setupRoles()
         this.setupCourses()
@@ -131,7 +130,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
                 })
 
                 if (this.dataSource.data.length !== 0) {
-                    this.sortBy('course')
+                    this.dataSource.data.sort((lhs, rhs) => lhs.course!.abbreviation.localeCompare(rhs.course!.abbreviation))
                 }
             }
         ))
@@ -154,16 +153,6 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
                 map(value => isUserInput(value) ? value : value.label),
                 map(label => label ? this.filterRole(label) : this.roleOptions.slice())
             )
-    }
-
-    private resetControls() {
-        const controls: AuthCreationControl[] = ['roleControl', 'courseControl']
-
-        controls.forEach(c => {
-            const control = this.getControl(c)
-            control.setValue('', {emitEvent: true})
-            control.markAsUntouched()
-        })
     }
 
     private displayFn(object?: CourseAtom | Role): string | undefined {
@@ -192,30 +181,10 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         return this.roleOptions.filter(role => role.label.toLowerCase().indexOf(filterValue) === 0)
     }
 
-    private setupSorting() {
-        this.dataSource.sortingDataAccessor = (auth, attr) => {
-            return this.fold(
-                attr, auth,
-                course => course.abbreviation,
-                role => role.label
-            )
-        }
-
-        this.dataSource.sort = this.sort
-    }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
-    }
-
-    protected sortBy(label: string, ordering: SortDirection = 'asc') { // copy pasted
-        if (this.sort) {
-            const sortState: Sort = {active: label, direction: ordering}
-            this.sort.active = sortState.active
-            this.sort.direction = sortState.direction
-            this.sort.sortChange.emit(sortState)
-        }
-    }
+    }    
 
     onCancel(): void {
         this.closeModal(undefined)
@@ -241,9 +210,9 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private afterCreate(auths: AuthorityAtom[]) {
-        this.dataSource.data = this.dataSource.data.concat(auths)
-        this.resetControls()
-        this.alertService.reportAlert('success', 'created: ' + auths.map(JSON.stringify.bind(this)).join(', '))
+        addToDataSource(this.dataSource, this.alertService)(auths)
+        const controls: AuthCreationControl[] = ['roleControl', 'courseControl']
+        resetControls(controls.map(this.getControl.bind(this)))
     }
 
     onDelete(auth: AuthorityAtom) {

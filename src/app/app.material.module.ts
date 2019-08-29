@@ -10,14 +10,15 @@ import {
     MatIconModule,
     MatInputModule,
     MatListModule,
+    MatMenuModule,
     MatNativeDateModule,
     MatPaginatorModule,
     MatSidenavModule,
+    MatSlideToggleModule,
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatSlideToggleModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -44,7 +45,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatChipsModule,
         MatCardModule,
         MatPaginatorModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatMenuModule
     ]
 })
 export class LWMMaterialModule {

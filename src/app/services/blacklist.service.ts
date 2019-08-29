@@ -6,6 +6,7 @@ import {NotImplementedError} from '../utils/functions'
 import {HttpService} from './http.service'
 import {map} from 'rxjs/operators'
 import {Time} from '../models/time.model'
+import {applyFilter} from './http.filter'
 
 interface BlacklistJSON {
     label: string
@@ -14,6 +15,11 @@ interface BlacklistJSON {
     end: string
     global: boolean
     id: string
+}
+
+interface BlacklistFilter {
+    attribute: 'global'
+    value: string
 }
 
 @Injectable({
@@ -26,8 +32,13 @@ export class BlacklistService implements AbstractCRUDService<BlacklistProtocol, 
 
     private path = 'blacklists'
 
+    getAllWithFilter(...filter: BlacklistFilter[]): Observable<Blacklist[]> {
+        return this.http.getAll<BlacklistJSON[]>(this.path, applyFilter(filter))
+            .pipe(map(this.convertMany))
+    }
+
     getAll(): Observable<Blacklist[]> {
-        return this.http.get<BlacklistJSON[]>(this.path)
+        return this.http.getAll<BlacklistJSON[]>(this.path)
             .pipe(map(this.convertMany))
     }
 

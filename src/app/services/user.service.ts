@@ -4,6 +4,12 @@ import {User} from '../models/user.model'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {HttpService, nonAtomicParams} from './http.service'
 import {NotImplementedError} from '../utils/functions'
+import {applyFilter} from './http.filter'
+
+interface UserFilter {
+    attribute: 'status' | 'degree'
+    value: string
+}
 
 @Injectable({
     providedIn: 'root'
@@ -15,12 +21,12 @@ export class UserService implements AbstractCRUDService<User, User> {
 
     private path = 'users'
 
-    getAllEmployees(): Observable<User[]> {
-        return this.http.get<User[]>(this.path, nonAtomicParams.append('status', 'employee'))
+    getAllWithFilter(...filter: UserFilter[]): Observable<User[]> {
+        return this.http.getAll<User[]>(this.path, applyFilter(filter, nonAtomicParams))
     }
 
     getAll(): Observable<User[]> {
-        return this.http.get<User[]>(this.path, nonAtomicParams)
+        return this.http.getAll<User[]>(this.path, nonAtomicParams)
     }
 
     delete(id: string): Observable<User> {

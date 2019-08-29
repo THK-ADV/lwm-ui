@@ -1,24 +1,11 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {AbstractControl, FormControl, FormGroup, ValidatorFn} from '@angular/forms'
+import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
-import {Observable, Subscription} from 'rxjs'
-import {map, startWith} from 'rxjs/operators'
-import {Time} from '../../models/time.model'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
-
-type FormDataType = string | number | Date | Time | boolean
-type FormDataStringType = 'text' | 'number' | 'date' | 'time' | 'options' | 'textArea' | 'boolean'
-
-export interface FormInputData {
-    formControlName: string
-    placeholder: string
-    type: FormDataStringType
-    validator: ValidatorFn | ValidatorFn[]
-    isDisabled: boolean
-    value: FormDataType
-}
+import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
+import {foreachOption, getOptionErrorMessage, hasOptionError, isOption} from '../../utils/component.utils'
 
 export interface FormOutputData {
     formControlName: string
@@ -28,63 +15,9 @@ export interface FormOutputData {
 export interface FormPayload<Protocol> {
     headerTitle: string,
     submitTitle: string,
-    data: FormInputData[],
+    data: FormInput[],
     makeProtocol: (formOutputData: FormOutputData[]) => Protocol
-    composedFromGroupValidator?: ValidatorFn,
-    formInputOption?: FormInputOption<Object>
-}
-
-export class FormInputOption<T> {
-    options: T[] = []
-    filteredOptions: Observable<T[]>
-
-    private sub: Subscription
-    private control: AbstractControl
-
-    constructor(
-        private readonly controlName: string,
-        private readonly errorKey: string,
-        private readonly display: (value: T) => string,
-        private readonly getOptions: (options: (value: T[]) => void) => Subscription
-    ) {
-    }
-
-    onInit(group: FormGroup) {
-        this.sub = this.getOptions(os => this.options = os)
-        this.control = group.controls[this.controlName]
-
-        this.filteredOptions = this.control.valueChanges
-            .pipe(
-                startWith(''),
-                map(value => typeof value === 'string' ? value : this.display(value)),
-                map(value => value ? this.filter(value) : this.options.slice())
-            )
-    }
-
-    onDestroy() {
-        this.sub.unsubscribe()
-    }
-
-    private filter(input: string): T[] {
-        const filterValue = input.toLowerCase()
-        return this.options.filter(t => this.display(t).toLowerCase().indexOf(filterValue) >= 0)
-    }
-
-    displayFn = (object?: T): string | undefined => {
-        if (!object) {
-            return undefined
-        }
-
-        return this.display(object)
-    }
-
-    hasError(): boolean {
-        return !this.control.untouched && this.control.hasError(this.errorKey)
-    }
-
-    getErrorMessage(): string {
-        return this.control.getError(this.errorKey)
-    }
+    composedFromGroupValidator?: ValidatorFn
 }
 
 @Component({
@@ -115,7 +48,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
         this.formGroup = new FormGroup({})
 
         payload.data.forEach(d => {
-            const fc = new FormControl(d.value, d.validator)
+            const fc = new FormControl(d.data.value, d.data.validator)
 
             if (d.isDisabled) {
                 fc.disable()
@@ -132,19 +65,11 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
     }
 
     ngOnInit(): void {
-        const option = this.payload.formInputOption
-
-        if (option) {
-            option.onInit(this.formGroup)
-        }
+        foreachOption(this.payload.data, o => o.onInit(this.formGroup))
     }
 
     ngOnDestroy(): void {
-        const option = this.payload.formInputOption
-
-        if (option) {
-            option.onDestroy()
-        }
+        foreachOption(this.payload.data, o => o.onDestroy())
     }
 
     onCancel(): void {
@@ -157,10 +82,12 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
                 .filter(d => !d.isDisabled)
                 .map(d => ({
                     formControlName: d.formControlName,
-                    value: this.convertToType(d.type, this.formGroup.controls[d.formControlName].value)
+                    value: this.convertToType(d.data.type, this.formGroup.controls[d.formControlName].value)
                 }))
 
             this.closeModal(this.payload.makeProtocol(updatedValues))
+        } else {
+            Object.keys(this.formGroup.controls).forEach(k => console.error(this.formGroup.controls[k].errors))
         }
     }
 
@@ -180,6 +107,14 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
 
     getLocalTimeErrorMessage(controlName: string): string {
         return this.formGroup.controls[controlName].getError(invalidLocalTimeKey)
+    }
+
+    hasOptionError_(formInputData: FormInputData<any>): boolean {
+        return hasOptionError(formInputData)
+    }
+
+    getOptionErrorMessage_(formInputData: FormInputData<any>): string {
+        return getOptionErrorMessage(formInputData)
     }
 
     private convertToType(type: FormDataStringType, value: any): FormDataType {
