@@ -23,7 +23,7 @@
                         <mat-menu #swapMenu="matMenu">
                             <ng-template matMenuContent>
                                 <button *ngFor="let group of payload.otherGroups"
-                                        (click)="swap(element, group)"
+                                        (click)="move(element, group)"
                                         mat-menu-item>
                                     {{group.label}} - {{group.members.length}}
                                 </button>

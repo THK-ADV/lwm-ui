@@ -23,7 +23,7 @@ import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from '../../utils/form.validator'
 import {exists, subscribe} from '../../utils/functions'
 import {FormInput, FormInputData} from '../../shared-dialogs/forms/form.input'
-import {GroupDeletionResult, GroupInsertionResult, LwmService} from '../../services/lwm.service'
+import {GroupDeletionResult, GroupInsertionResult, GroupMovementResult, LwmService} from '../../services/lwm.service'
 import {map, tap} from 'rxjs/operators'
 
 @Component({
@@ -152,10 +152,34 @@ export class GroupEditComponent implements OnInit, OnDestroy {
         this.dialogRef.close()
     }
 
-    private swap = (member: User, dest: GroupAtom) => {
-        // TODO perform actual swap
-        // TODO emit change to previous component
-        this.delete(member)
+    private move = (member: User, dest: GroupAtom) => {
+        const movementMsg = (result: GroupMovementResult): string => {
+            const cardsUpdated = result.updatedReportCardEntries.length !== 0
+            let msg = result.changedMembership ? `moved into group ${result.newMembership.group}` : 'failed to move into dest group'
+            if (cardsUpdated) {
+                msg += ` and updated ${result.updatedReportCardEntries.length} reportcard entries`
+            }
+            return msg
+        }
+
+        const result$ = this.service.moveStudentToGroup(
+            this.payload.group.labwork.course,
+            {
+                labwork: this.payload.group.labwork.id,
+                student: member.id,
+                srcGroup: this.payload.group.id,
+                destGroup: dest.id
+            }
+        )
+
+        const s = subscribe(result$, result => {
+            removeFromDataSource(this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+
+            this.groupChanged.emit()
+            this.alertService.reportAlert('success', movementMsg(result))
+        })
+
+        this.subs.push(s)
     }
 
     private delete = (member: User) => {
