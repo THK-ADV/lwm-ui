@@ -179,7 +179,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private afterDelete(auth: AuthorityAtom) {
-        removeFromDataSource(this.dataSource, this.alertService)(auth, (lhs, rhs) => lhs.id === rhs.id)
+        removeFromDataSource(this.dataSource, this.alertService)(a => a.id === auth.id)
     }
 
     private headerTitle(): string {

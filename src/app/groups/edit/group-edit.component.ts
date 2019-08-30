@@ -173,7 +173,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
         )
 
         const s = subscribe(result$, result => {
-            removeFromDataSource(this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+            removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
             this.groupChanged.emit()
             this.alertService.reportAlert('success', movementMsg(result))
@@ -203,7 +203,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
         )
 
         const s = subscribe(result$, result => {
-            removeFromDataSource(this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+            removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
             this.updateStudentsByAdding(member)
 

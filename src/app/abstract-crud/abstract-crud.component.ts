@@ -157,13 +157,9 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
 
     protected afterCreate(models: Model[]) {
         addToDataSource(this.dataSource, this.alertService)(models)
-        // this.dataSource.data = this.dataSource.data.concat(models)
-        // this.alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
     }
 
-    protected afterDelete(model: Model) { // TODO test
-        removeFromDataSource(this.dataSource, this.alertService)(model, (a, t) => a.id === t.id)
-        // this.dataSource.data = this.dataSource.data.filter(r => r.id !== model.id)
-        // this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(model))
+    protected afterDelete(model: Model) {
+        removeFromDataSource(this.dataSource, this.alertService)(e => e.id === model.id)
     }
 }

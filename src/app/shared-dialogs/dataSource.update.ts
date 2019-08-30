@@ -2,11 +2,22 @@ import {AlertService} from '../services/alert.service'
 import {MatTableDataSource} from '@angular/material'
 
 export function removeFromDataSource<M>
-(dataSource: MatTableDataSource<M>, alertService?: AlertService): (model: M, match: (d: M, m: M) => boolean) => void {
-    return (m, p) => {
-        dataSource.data = dataSource.data.filter(d => !p(d, m))
-        if (alertService) {
-            alertService.reportAlert('success', 'deleted: ' + JSON.stringify(m))
+(dataSource: MatTableDataSource<M>, alertService?: AlertService): (removeIf: (m: M) => boolean) => void {
+    return p => {
+        let removed
+
+        dataSource.data = dataSource.data.filter(m => {
+            const shouldRemove = p(m)
+
+            if (shouldRemove) {
+                removed = m
+            }
+
+            return !shouldRemove
+        })
+
+        if (alertService && removed) {
+            alertService.reportAlert('success', 'deleted: ' + JSON.stringify(removed))
         }
     }
 }

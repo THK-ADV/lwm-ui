@@ -1,22 +1,16 @@
 <mat-horizontal-stepper labelPosition="bottom">
-    <mat-step label="Ablaufplan">
-        <ng-container *ngIf="labwork">
-            <lwm-assignment-plan [labwork]="labwork"></lwm-assignment-plan>
+    <mat-step *ngFor="let step of steps" [label]="label(step)">
+        <ng-container *ngIf="labwork" [ngSwitch]="step">
+            <lwm-assignment-plan *ngSwitchCase="0" [labwork]="labwork"></lwm-assignment-plan>
+            <p *ngSwitchDefault>{{label(step)}}</p>
         </ng-container>
 
         <div>
-            <button mat-button matStepperNext>Next</button>
+            <button *ngIf="hasPrevButton(step)" mat-button matStepperPrevious
+                    [disabled]="chainDisabled()">prev: {{prevButtonLabel(step)}}</button>
+            <button *ngIf="hasNextButton(step)" mat-button matStepperNext
+                    [disabled]="chainDisabled()">next: {{nextButtonLabel(step)}}</button>
         </div>
     </mat-step>
-    <mat-step label="Step 2">
-        <div>
-            <button mat-button matStepperPrevious>Back</button>
-            <button mat-button matStepperNext>Next</button>
-        </div>
-    </mat-step>
-    <mat-step label="Step 3">
-        <p>You're welcome.</p>
-    </mat-step>
-
 </mat-horizontal-stepper>
 

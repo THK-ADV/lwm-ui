@@ -28,14 +28,14 @@ import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {Degree} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
 import {
+    chainAction,
     deleteAction,
     editAction,
     graduatesAction,
     groupAction,
     labworkApplicationAction,
     LWMAction,
-    LWMActionType,
-    chainAction
+    LWMActionType
 } from '../utils/component.utils'
 
 interface LabworkWithApplications {
@@ -206,7 +206,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private afterDelete(labwork: Labwork) {
-        removeFromDataSource(this.dataSource, this.alertService)(labwork, (lwa, l) => lwa.labwork.id === l.id)
+        removeFromDataSource(this.dataSource, this.alertService)(lwa => lwa.labwork.id === labwork.id)
     }
 
     private afterUpdate(labwork: LabworkAtom) {
