@@ -73,14 +73,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             formControlName: fcn,
             displayTitle: 'Nutzer',
             isDisabled: false,
-            data: new FormInputOption<User>(
-                '',
-                fcn,
-                invalidChoiceKey,
-                true,
-                formatUser,
-                this.userService.getAll()
-            )
+            data: new FormInputOption<User>(fcn, invalidChoiceKey, true, formatUser, this.userService.getAll())
         }
     }
 
@@ -90,14 +83,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             formControlName: fcn,
             displayTitle: 'Rolle',
             isDisabled: false,
-            data: new FormInputOption<Role>(
-                '',
-                fcn,
-                invalidChoiceKey,
-                true,
-                r => r.label,
-                this.roleService.getCourseRoles()
-            )
+            data: new FormInputOption<Role>(fcn, invalidChoiceKey, true, r => r.label, this.roleService.getCourseRoles())
         }
     }
 

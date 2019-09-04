@@ -1,6 +1,6 @@
 import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
-import {Observable} from 'rxjs'
+import {EMPTY, Observable} from 'rxjs'
 import {Labwork, LabworkAtom} from '../models/labwork.model'
 import {map, switchMap} from 'rxjs/operators'
 import {User} from '../models/user.model'
@@ -13,7 +13,7 @@ import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from './form.validator'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {withCreateProtocol} from '../models/protocol.model'
-import {TooltipPosition} from '@angular/material'
+import {MatDialogRef, TooltipPosition} from '@angular/material'
 import {AbstractControl} from '@angular/forms'
 import {CourseProtocol} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
@@ -84,40 +84,19 @@ export const labworkApplicationFormInputData =
                     isDisabled: isModel,
                     data: isUniqueEntity(model) ?
                         new FormInputString(model.applicant.systemId) :
-                        new FormInputOption<User>(
-                            model.applicant,
-                            'applicant',
-                            invalidChoiceKey,
-                            true,
-                            formatUser,
-                            fellowStudents
-                        )
+                        new FormInputOption<User>('applicant', invalidChoiceKey, true, formatUser, fellowStudents)
                 },
                 {
                     formControlName: 'friends1',
                     displayTitle: 'Partnerwunsch 1 (Optional)',
                     isDisabled: isModel,
-                    data: new FormInputOption<User>(
-                        getFriend(model.friends),
-                        'friends1',
-                        invalidChoiceKey,
-                        false,
-                        formatUser,
-                        fellowStudents
-                    )
+                    data: new FormInputOption<User>('friends1', invalidChoiceKey, false, formatUser, fellowStudents)
                 },
                 {
                     formControlName: 'friends2',
                     displayTitle: 'Partnerwunsch 2 (Optional)',
                     isDisabled: isModel,
-                    data: new FormInputOption<User>(
-                        getFriend(model.friends),
-                        'friends2',
-                        invalidChoiceKey,
-                        false,
-                        formatUser,
-                        fellowStudents
-                    )
+                    data: new FormInputOption<User>('friends2', invalidChoiceKey, false, formatUser, fellowStudents)
                 }
             ]
         }
@@ -233,14 +212,10 @@ export const courseFormInputData = (userService: UserService): (m: Readonly<Cour
                 isDisabled: isModel,
                 data: isUniqueEntity(model) ?
                     new FormInputString(`${model.lecturer.lastname}, ${model.lecturer.firstname}`) :
-                    new FormInputOption<User>(
-                        model.lecturer,
-                        'lecturer',
-                        invalidChoiceKey,
-                        true,
-                        value => `${value.lastname}, ${value.firstname}`,
-                        userService.getAllWithFilter({attribute: 'status', value: 'employee'})
-                    )
+                    new FormInputOption<User>('lecturer', invalidChoiceKey, true, value => `${value.lastname}, ${value.firstname}`, userService.getAllWithFilter({
+                        attribute: 'status',
+                        value: 'employee'
+                    }))
             },
             {
                 formControlName: 'semesterIndex',
@@ -272,4 +247,9 @@ export const getInitials = (user?: User): string => {
 
 export const emptyAuthorityProtocol = (): AuthorityProtocol => {
     return {user: '', role: '', course: ''}
+}
+
+// TODO use this abstraction everywhere
+export const openDialog = <T, R, U>(dialogRef: MatDialogRef<T, R>, andThen: (e: R) => Observable<U>) => {
+    return dialogRef.afterClosed().pipe(switchMap(x => x ? andThen(x) : EMPTY))
 }

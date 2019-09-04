@@ -14,3 +14,12 @@ export interface SemesterProtocol {
     end: string
     examStart: string
 }
+
+export interface SemesterJSON {
+    label: string
+    abbreviation: string
+    start: string
+    end: string
+    examStart: string
+    id: string
+}

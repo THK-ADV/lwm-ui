@@ -46,6 +46,9 @@ import {CourseDetailComponent} from './course-detail/course-detail.component'
 import {CourseAuthorityUpdateDialogComponent} from './course-authority-dialog/course-authority-dialog.component'
 import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
 import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignment-plan.component'
+import {FullCalendarModule} from '@fullcalendar/angular'
+import {TimetableComponent} from './labwork-chain/timetable/timetable.component'
+import {TimetableEntryComponent} from './labwork-chain/timetable/timetable-entry/timetable-entry.component'
 
 @NgModule({
     declarations: [
@@ -75,7 +78,9 @@ import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignmen
         CourseDetailComponent,
         CourseAuthorityUpdateDialogComponent,
         LabworkChainComponent,
-        AssignmentPlanComponent
+        AssignmentPlanComponent,
+        TimetableComponent,
+        TimetableEntryComponent
     ],
     imports: [
         BrowserModule,
@@ -87,7 +92,8 @@ import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignmen
         ReactiveFormsModule,
         FormsModule,
         LWMMaterialModule,
-        KeycloakAngularModule
+        KeycloakAngularModule,
+        FullCalendarModule
     ],
     providers: [
         AppGuard,
@@ -109,7 +115,8 @@ import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignmen
         UserAuthorityUpdateDialogComponent,
         GroupEditComponent,
         CourseDetailComponent,
-        CourseAuthorityUpdateDialogComponent
+        CourseAuthorityUpdateDialogComponent,
+        TimetableEntryComponent
     ]
 })
 export class AppModule {

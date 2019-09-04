@@ -3,17 +3,9 @@ import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
 import {map, take} from 'rxjs/operators'
-import {Semester, SemesterProtocol} from '../models/semester.model'
+import {Semester, SemesterJSON, SemesterProtocol} from '../models/semester.model'
 import {HttpParams} from '@angular/common/http'
-
-interface SemesterJSON { // this intermediate type is needed to convert from string to Date
-    label: string
-    abbreviation: string
-    start: string
-    end: string
-    examStart: string
-    id: string
-}
+import {convertManySemesters, mapSemesterJSON} from '../utils/http-utils'
 
 @Injectable({
     providedIn: 'root'
@@ -32,7 +24,7 @@ export class SemesterService implements AbstractCRUDService<SemesterProtocol, Se
 
     createMany(protocol: SemesterProtocol): Observable<Semester[]> {
         return this.http.createMany<SemesterProtocol, SemesterJSON>(this.path, [protocol])
-            .pipe(map(this.convertMany))
+            .pipe(map(convertManySemesters))
     }
 
     delete(id: string): Observable<Semester> {
@@ -45,24 +37,11 @@ export class SemesterService implements AbstractCRUDService<SemesterProtocol, Se
 
     update(protocol: SemesterProtocol, id: string): Observable<Semester> {
         return this.http.put<SemesterProtocol, SemesterJSON>(this.path, id, protocol)
-            .pipe(map(this.convert))
+            .pipe(map(mapSemesterJSON))
     }
 
     private getAll0(params?: HttpParams): Observable<Semester[]> {
         return this.http.getAll<SemesterJSON[]>(this.path, params)
-            .pipe(map(this.convertMany))
+            .pipe(map(convertManySemesters))
     }
-
-    private convertMany = (semesters: SemesterJSON[]): Semester[] => semesters.map(this.convert)
-
-    private convert = (s: SemesterJSON): Semester => (
-        {
-            label: s.label,
-            abbreviation: s.abbreviation,
-            start: new Date(s.start),
-            end: new Date(s.end),
-            examStart: new Date(s.examStart),
-            id: s.id
-        }
-    )
 }

@@ -16,3 +16,12 @@ export interface BlacklistProtocol {
     end: string
     global: boolean
 }
+
+export interface BlacklistJSON {
+    label: string
+    date: string
+    start: string
+    end: string
+    global: boolean
+    id: string
+}

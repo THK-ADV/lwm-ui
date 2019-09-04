@@ -1,0 +1,32 @@
+<lwm-create-header
+        [headerTitle]="headerTitle"
+        [canCreate]="false">
+</lwm-create-header>
+
+<full-calendar
+        #calendar
+        defaultView="timeGridWeek"
+        [plugins]="calendarPlugins"
+        [events]="dates"
+        [locale]="'de'"
+        [weekends]="false"
+        [nowIndicator]="false"
+        [allDaySlot]="false"
+        [columnHeaderFormat]="{ weekday: 'long' }"
+        [slotDuration]="'00:15:00'"
+        [slotLabelInterval]="{hours:1}"
+        [slotEventOverlap]="false"
+        [minTime]="'08:00:00'"
+        [maxTime]="'22:00:00'"
+        [header]="false"
+        [selectable]="true"
+        [unselectAuto]="false"
+        [selectMirror]="true"
+        [selectMinDistance]="10"
+        [selectAllow]="allowSelect"
+        [eventColor]="'#b43092'"
+        [eventTextColor]="'#ffffff'"
+        (select)="onDateSelection($event)"
+        (eventClick)="onEventClick($event.event)">
+
+</full-calendar>

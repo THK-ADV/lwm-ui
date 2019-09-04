@@ -271,14 +271,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 isDisabled: isModel,
                 data: isUniqueEntity(labwork) ?
                     new FormInputString(labwork.semester.label) :
-                    new FormInputOption<Semester>(
-                        labwork.semester,
-                        'semester',
-                        invalidChoiceKey,
-                        true,
-                        semester => semester.label,
-                        this.semesterService.getAll()
-                    )
+                    new FormInputOption<Semester>('semester', invalidChoiceKey, true, semester => semester.label, this.semesterService.getAll())
             },
             {
                 formControlName: 'course',
@@ -294,14 +287,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 isDisabled: isModel,
                 data: isUniqueEntity(labwork) ?
                     new FormInputString(labwork.degree.label) :
-                    new FormInputOption<Degree>(
-                        labwork.degree,
-                        'degree',
-                        invalidChoiceKey,
-                        true,
-                        degree => degree.label,
-                        this.degreeService.getAll()
-                    )
+                    new FormInputOption<Degree>('degree', invalidChoiceKey, true, degree => degree.label, this.degreeService.getAll())
             },
             {
                 formControlName: 'subscribable',

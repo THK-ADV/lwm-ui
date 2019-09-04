@@ -2,6 +2,8 @@
     <mat-step *ngFor="let step of steps" [label]="label(step)">
         <ng-container *ngIf="labwork" [ngSwitch]="step">
             <lwm-assignment-plan *ngSwitchCase="0" [labwork]="labwork"></lwm-assignment-plan>
+            <lwm-timetable *ngSwitchCase="1" [labwork]="labwork"></lwm-timetable>
+
             <p *ngSwitchDefault>{{label(step)}}</p>
         </ng-container>
 

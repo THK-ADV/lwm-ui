@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
 import {EMPTY, Observable, Subscription} from 'rxjs'
 import {LabworkAtom} from '../../models/labwork.model'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {
     AssignmentEntry,
@@ -21,6 +21,7 @@ import {FormInputBoolean} from '../../shared-dialogs/forms/form.input.boolean'
 import {FormInputNumber} from '../../shared-dialogs/forms/form.input.number'
 import {withCreateProtocol} from '../../models/protocol.model'
 import {switchMap, tap} from 'rxjs/operators'
+import {openDialog} from '../../utils/component.utils'
 
 @Component({
     selector: 'lwm-assignment-plan',
@@ -92,14 +93,14 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
 
     private onCreate = () => {
         const payload = this.formPayload(DialogMode.create, this.preFilledAssignmentEntry())
-        const s = subscribe(this.openDialog(payload, this.create$).pipe(tap(console.log)), this.updateDataSource)
+        const s = subscribe(this.openDialogFromPayload(payload, this.create$).pipe(tap(console.log)), this.updateDataSource)
 
         this.subs.push(s)
     }
 
     private onEdit = (entry: AssignmentEntry) => {
         const payload = this.formPayload(DialogMode.edit, {...entry})
-        const s = subscribe(this.openDialog(payload, this.update$), this.updateDataSource)
+        const s = subscribe(this.openDialogFromPayload(payload, this.update$), this.updateDataSource)
 
         this.subs.push(s)
     }
@@ -165,10 +166,10 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
             .map(t => t.entryType === AssignmentEntryTypeValue.bonus ? `${t.entryType} (${t.int})` : t.entryType)
     }
 
-    // TODO use this abstraction everywhere
-    private openDialog = <U>(payload: FormPayload<AssignmentEntry>, andThen: (e: AssignmentEntry) => Observable<U>): Observable<U> => {
+
+    private openDialogFromPayload = <T, U>(payload: FormPayload<T>, andThen: (e: T) => Observable<U>): Observable<U> => {
         const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-        return dialogRef.afterClosed().pipe(switchMap(x => x ? andThen(x) : EMPTY))
+        return openDialog(dialogRef, andThen)
     }
 
     private formPayload = (mode: DialogMode, entry: AssignmentEntry): FormPayload<AssignmentEntry> => {

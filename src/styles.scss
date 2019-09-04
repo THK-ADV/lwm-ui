@@ -1,19 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 //@import "./lwm.theme.config.scss";
 @import "./lwm.theme.scss";
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@fullcalendar/timegrid/main.css';
 
 html,
 body {
-    height: 100%;
+  height: 100%;
 }
+
 body {
-    margin: 0;
+  margin: 0;
 }
 
 .lwmUserAuthorityUpdateDialog .mat-dialog-container,
 .lwmCreateUpdateDialog .mat-dialog-container,
 .lwmDeleteDialog .mat-dialog-container,
 .lwmGroupEditDialog .mat-dialog-container,
-.lwmCourseAuthorityUpdateDialog .mat-dialog-container {
-    overflow: hidden;
+.lwmCourseAuthorityUpdateDialog .mat-dialog-container,
+.lwmTimetableEntryDialog {
+  overflow: hidden;
 }

@@ -1,0 +1,68 @@
+<h1 mat-dialog-title>{{headerTitle}}</h1>
+
+<div class="modalContainer">
+    <mat-dialog-content [formGroup]="formGroup">
+        <mat-form-field class="mat-form-field-modal" color="primary">
+            <input aria-label="" type="text" [placeholder]="supervisorInput.displayTitle" matInput
+                   [formControlName]="supervisorInput.formControlName" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="supervisorInput.data.displayFn">
+                <mat-option *ngFor="let option of supervisorInput.data.filteredOptions | async"
+                            [value]="option">
+                    {{supervisorInput.data.displayFn(option)}}
+                </mat-option>
+            </mat-autocomplete>
+            <button matSuffix mat-flat-button mat-icon-button aria-label="add" style="margin-left: 8px; margin-right: 8px"
+                    *ngIf="formGroup.valid && !userIsEmpty()"
+                    (click)="add(userFromControl())"
+                    [color]="addAction.color">
+                <mat-icon>add</mat-icon>
+            </button>
+            <mat-error
+                    *ngIf="hasOptionError_(supervisorInput.data)">{{getOptionErrorMessage_(supervisorInput.data)}}
+            </mat-error>
+        </mat-form-field>
+        <mat-form-field class="mat-form-field-modal" color="primary">
+            <input aria-label="" type="text" [placeholder]="roomInput.displayTitle" matInput
+                   [formControlName]="roomInput.formControlName" [matAutocomplete]="auto2">
+            <mat-autocomplete #auto2="matAutocomplete" [displayWith]="roomInput.data.displayFn">
+                <mat-option *ngFor="let option of roomInput.data.filteredOptions | async"
+                            [value]="option">
+                    {{roomInput.data.displayFn(option)}}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error
+                    *ngIf="hasOptionError_(roomInput.data)">{{getOptionErrorMessage_(roomInput.data)}}
+            </mat-error>
+        </mat-form-field>
+    </mat-dialog-content>
+
+    <ng-container>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+            <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
+                <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
+                <td mat-cell *matCellDef="let element ">{{prepareTableContent(element, column.attr)}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+                    <button mat-stroked-button
+                            [color]="deleteAction.color"
+                            (click)="remove(element)"
+                            [matTooltip]="deleteAction.tooltipName"
+                            [matTooltipPosition]="deleteAction.tooltipPosition">
+                        <mat-icon>{{deleteAction.iconName}}</mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+    </ng-container>
+
+    <mat-dialog-actions>
+        <button type="button" mat-flat-button (click)="cancel()">Abbrechen</button>
+        <button mat-flat-button color="primary" cdkFocusInitial (click)="submit()">Übernehmen</button>
+    </mat-dialog-actions>
+</div>

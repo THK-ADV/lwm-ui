@@ -30,6 +30,11 @@ export class Time {
     static endOfTheDay(): Time {
         return this.fromTimeString('23:59:59')
     }
+
+    static withNewDate(date: Date, time: Time): Time {
+        date = new Date(date.setHours(time.hour, time.minute, time.seconds))
+        return this.fromDate(date)
+    }
 }
 
 export const isNumber = (value: any): value is number => !isNaN(value)

@@ -94,14 +94,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
             formControlName: addStudentFcName,
             displayTitle: 'Student hinzufügen',
             isDisabled: false,
-            data: new FormInputOption<User>(
-                '',
-                addStudentFcName,
-                invalidChoiceKey,
-                true,
-                formatUser,
-                payload.fellowStudents$
-            )
+            data: new FormInputOption<User>(addStudentFcName, invalidChoiceKey, true, formatUser, payload.fellowStudents$)
         }
 
         this.setupFormGroups()
