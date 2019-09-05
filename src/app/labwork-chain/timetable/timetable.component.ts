@@ -1,35 +1,25 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core'
+import {Component, Input, OnInit} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import {MatDialog} from '@angular/material'
 import {TimetableService} from '../../services/timetable.service'
-import {between, subscribe} from '../../utils/functions'
+import {subscribe} from '../../utils/functions'
 import {Observable, Subscription} from 'rxjs'
-import {TimetableAtom, TimetableEntryAtom, TimetableEntryProtocol, TimetableProtocol} from '../../models/timetable'
-import {User} from '../../models/user.model'
-import {Time} from '../../models/time.model'
+import {TimetableAtom} from '../../models/timetable'
 import {TimetableEntryComponent} from './timetable-entry/timetable-entry.component'
 import {AuthorityService} from '../../services/authority.service'
 import {map} from 'rxjs/operators'
-import {format, formatTime} from '../../utils/lwmdate-adapter'
 import {openDialog} from '../../utils/component.utils'
-import {FullCalendarComponent} from '@fullcalendar/angular'
-import {Room} from '../../models/room.model'
 import {RoomService} from '../../services/room.service'
-import {Tuple} from '../../utils/tuple'
-
-interface CalendarEvent {
-    title: string
-    start: Date
-    end: Date
-    editable: boolean
-    id: number
-    extendedProps: {
-        dayIndex: number
-        room: Room
-    }
-}
+import {
+    CalendarEvent,
+    fetchTimetable,
+    makeCalendarEvents,
+    updateSupervisorAndRoom,
+    updateTime,
+    updateTimetableEntry$
+} from './timetable-view-model'
 
 @Component({
     selector: 'lwm-timetable',
@@ -39,8 +29,6 @@ interface CalendarEvent {
 export class TimetableComponent implements OnInit {
 
     @Input() labwork: LabworkAtom
-
-    @ViewChild('calendar', {static: true}) calendar: FullCalendarComponent
 
     private readonly calendarPlugins = [timeGridPlugin, interactionPlugin]
     private dates: CalendarEvent[]
@@ -60,70 +48,12 @@ export class TimetableComponent implements OnInit {
 
     ngOnInit() {
         this.headerTitle = `Rahmenplan für ${this.labwork.label}`
-        this.fetchTimetable(this.setCalendar)
+        this.subs.push(fetchTimetable(this.timetableService, this.labwork, this.updateCalendar))
     }
 
-    private fetchTimetable = (completion: (t: TimetableAtom) => void) => {
-        const s = subscribe(
-            this.timetableService.getAllWithFilter(
-                this.labwork.course.id,
-                {attribute: 'labwork', value: this.labwork.id}
-            ),
-            timetables => {
-                const timetable = timetables.shift()
-
-                if (timetable) {
-                    completion(timetable)
-                }
-            }
-        )
-        this.subs.push(s)
-    }
-
-    private setCalendar = (t: TimetableAtom) => {
+    private updateCalendar = (t: TimetableAtom) => {
         this.timetable = t
-
-        const now = new Date()
-        this.dates = t.entries
-            .sort((lhs, rhs) => lhs.room.label.localeCompare(rhs.room.label))
-            .map((e, i) => this.makeCalendarEvent(now, e, i))
-    }
-
-    private makeCalendarEvent = (now: Date, e: TimetableEntryAtom, i: number): CalendarEvent => {
-        this.setWeekday(now, e.dayIndex)
-
-        return {
-            editable: false,
-            title: `${e.room.label}\n\n ${this.supervisorLabel(e.supervisor)}`,
-            start: Time.withNewDate(now, e.start).date,
-            end: Time.withNewDate(now, e.end).date,
-            extendedProps: {
-                dayIndex: e.dayIndex,
-                room: e.room,
-            },
-            id: i
-        }
-    }
-
-    private supervisorLabel = (supervisors: User[]): string => {
-        return supervisors
-            .sort((lhs, rhs) => lhs.lastname.localeCompare(rhs.lastname))
-            .map(this.shortUserName)
-            .join('\n')
-    }
-
-    private setWeekday = (date: Readonly<Date>, weekday: Readonly<number>) => {
-        if (!between(weekday, 1, 5)) {
-            return
-        }
-
-        const currentDay = date.getDay()
-        const distance = weekday - currentDay
-        date.setDate(date.getDate() + distance)
-    }
-
-    private shortUserName = (u: User): string => {
-        return `${u.firstname.charAt(0)}. ${u.lastname}`
+        this.dates = makeCalendarEvents(t)
     }
 
     private onDateSelection = (event) => {
@@ -143,41 +73,38 @@ export class TimetableComponent implements OnInit {
             )
         )
 
-        const updatedTimetable$ = openDialog(dialogRef, this.updateTimetableEntry$(event.id))
-        const s = subscribe(updatedTimetable$, this.setCalendar)
-        this.subs.push(s)
+        this.run(openDialog(
+            dialogRef,
+            tuple => updateTimetableEntry$(
+                this.timetableService,
+                this.timetable,
+                event.id,
+                updateSupervisorAndRoom(tuple)
+            )
+        ))
     }
 
-    private updateTimetableEntry$ = (id: number): (t: Tuple<User[], Room>) => Observable<TimetableAtom> => {
-        return tuple => {
-            const copy = {...this.timetable}
-            copy.entries[id].supervisor = [...tuple.first]
-            copy.entries[id].room = tuple.second
-
-            return this.timetableService.update(copy.labwork.id, copy.id, this.toTimetableProtocol(copy))
-        }
+    private run = (o: Observable<TimetableAtom>) => {
+        this.subs.push(subscribe(o, this.updateCalendar))
     }
 
     private allowSelect = (event): boolean => {
         return event.end.getDay() === event.start.getDay()
     }
 
-    private toTimetableProtocol = (t: TimetableAtom): TimetableProtocol => {
-        return {
-            labwork: t.labwork.id,
-            start: format(t.start, 'yyyy-MM-dd'),
-            localBlacklist: t.localBlacklist.map(x => x.id),
-            entries: t.entries.map(this.toTimetableEntry)
-        }
+    private onEventDrop = (eventDropInfo) => {
+        this.run(updateTimetableEntry$(
+            this.timetableService,
+            this.timetable,
+            eventDropInfo.event.id,
+            updateTime(eventDropInfo.event.start, eventDropInfo.event.end)
+        ))
     }
 
-    private toTimetableEntry = (e: TimetableEntryAtom): TimetableEntryProtocol => {
-        return {
-            dayIndex: e.dayIndex,
-            room: e.room.id,
-            supervisor: e.supervisor.map(x => x.id),
-            start: formatTime(e.start),
-            end: formatTime(e.end)
-        }
+    private onEventResize = (eventResizeInfo) => {
+        console.log('onEventResize')
+        console.log(eventResizeInfo)
     }
+
+
 }

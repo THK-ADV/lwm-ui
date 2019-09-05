@@ -4,7 +4,6 @@
 </lwm-create-header>
 
 <full-calendar
-        #calendar
         defaultView="timeGridWeek"
         [plugins]="calendarPlugins"
         [events]="dates"
@@ -27,6 +26,8 @@
         [eventColor]="'#b43092'"
         [eventTextColor]="'#ffffff'"
         (select)="onDateSelection($event)"
-        (eventClick)="onEventClick($event.event)">
+        (eventClick)="onEventClick($event.event)"
+        (eventDrop)="onEventDrop($event)"
+        (eventResize)="onEventResize($event)" >
 
 </full-calendar>
