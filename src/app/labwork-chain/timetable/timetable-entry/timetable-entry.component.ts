@@ -19,9 +19,11 @@ import {
     resetControl
 } from '../../../utils/component.utils'
 import {map} from 'rxjs/operators'
-import {exists} from '../../../utils/functions'
+import {exists, foldUndefined} from '../../../utils/functions'
 import {Room} from '../../../models/room.model'
 import {Tuple} from '../../../utils/tuple'
+import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
+import {isRoom, isUser} from '../../../utils/type.check.utils'
 
 @Component({
     selector: 'lwm-timetable-entry',
@@ -33,6 +35,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
     protected readonly displayedColumns: string[]
     protected readonly columns: TableHeaderColumn[]
     private readonly headerTitle: string
+    private readonly submitTitle: string
     private readonly dataSource = new MatTableDataSource<User>()
 
     private readonly formGroup: FormGroup
@@ -48,13 +51,15 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
     constructor(
         private dialogRef: MatDialogRef<TimetableEntryComponent, Tuple<User[], Room>>,
         @Inject(MAT_DIALOG_DATA) private payload: {
-            currentRoom: Room,
+            currentRoom?: Room,
             allRooms$: Readonly<Observable<Room[]>>,
             currentSupervisors: User[],
-            allCourseMembers$: Readonly<Observable<User[]>>
+            allCourseMembers$: Readonly<Observable<User[]>>,
+            mode: DialogMode
         }
     ) {
-        this.headerTitle = 'Eintrag bearbeiten'
+        this.headerTitle = dialogTitle(payload.mode, 'Eintrag')
+        this.submitTitle = dialogSubmitTitle(payload.mode)
         this.columns = [{attr: 'name', title: 'Name, Vorname'}, {attr: 'systemId', title: 'GMID'}]
         this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
         this.dataSource.data = payload.currentSupervisors
@@ -72,17 +77,19 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
 
     static instance(
         dialog: MatDialog,
-        currentRoom: Room,
+        mode: DialogMode,
         allRooms$: Readonly<Observable<Room[]>>,
         currentSupervisors: User[],
-        allCourseMembers$: Readonly<Observable<User[]>>
+        allCourseMembers$: Readonly<Observable<User[]>>,
+        currentRoom?: Room
     ): MatDialogRef<TimetableEntryComponent, Tuple<User[], Room>> {
         return dialog.open(TimetableEntryComponent, {
             data: {
                 currentRoom: currentRoom,
                 allRooms$: allRooms$,
                 currentSupervisors: currentSupervisors,
-                allCourseMembers$: allCourseMembers$
+                allCourseMembers$: allCourseMembers$,
+                mode: mode
             },
             panelClass: 'lwmTimetableEntryDialog'
         })
@@ -117,7 +124,11 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
                 true,
                 r => r.label,
                 this.possibleRooms$,
-                rooms => rooms.find(r => r.id === this.payload.currentRoom.id)
+                rooms => foldUndefined(
+                    this.payload.currentRoom,
+                    c => rooms.find(r => r.id === c.id),
+                    () => undefined
+                )
             )
         }
 
@@ -180,15 +191,17 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         return this.formGroup.controls[this.roomInput.formControlName]
     }
 
-    private userFromControl = (): User => {
-        return this.userFormControl().value as User
+    private validUserInControl = (): boolean => {
+        return isUser(this.userFormControl().value)
     }
 
-    private roomFromControl = (): Room => {
-        return this.roomFormControl().value as Room
-    }
+    private add = () => {
+        const supervisor = this.userFormControl().value
 
-    private add = (supervisor: User) => {
+        if (!isUser(supervisor)) {
+            return
+        }
+
         this.payload.currentSupervisors = this.payload.currentSupervisors.concat(supervisor)
         this.updateEverything()
     }
@@ -218,8 +231,10 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
     }
 
     private submit = () => {
-        if (this.formGroup.valid) {
-            this.dialogRef.close({first: this.payload.currentSupervisors, second: this.roomFromControl()})
+        const room = this.roomFormControl().value
+
+        if (this.formGroup.valid && isRoom(room)) {
+            this.dialogRef.close({first: this.payload.currentSupervisors, second: room})
         } else {
             console.log('invalid form group')
         }

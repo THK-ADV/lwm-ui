@@ -7,7 +7,7 @@
                             [ngSwitch]="d.data.type">
                 <ng-container *ngSwitchCase="'date'">
                     <div class="lwmDatepicker">
-                        <input matInput [matDatepicker]="dp" [placeholder]="d.displayTitle"
+                        <input matInput readonly [matDatepicker]="dp" [placeholder]="d.displayTitle"
                                [formControlName]="d.formControlName" (click)="dp.open()">
                         <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
                     </div>

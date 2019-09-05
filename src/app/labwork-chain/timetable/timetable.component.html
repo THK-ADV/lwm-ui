@@ -3,6 +3,19 @@
         [canCreate]="false">
 </lwm-create-header>
 
+<ng-container [formGroup]="formGroup">
+    <mat-form-field>
+        <input matInput
+               readonly
+               formControlName="start"
+               placeholder="Beginn des Praktikums"
+               [matDatepicker]="dp"
+               (click)="dp.open()">
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp color="primary"></mat-datepicker>
+    </mat-form-field>
+</ng-container>
+
 <full-calendar
         defaultView="timeGridWeek"
         [plugins]="calendarPlugins"
@@ -19,15 +32,14 @@
         [maxTime]="'22:00:00'"
         [header]="false"
         [selectable]="true"
-        [unselectAuto]="false"
         [selectMirror]="true"
         [selectMinDistance]="10"
         [selectAllow]="allowSelect"
         [eventColor]="'#b43092'"
         [eventTextColor]="'#ffffff'"
         (select)="onDateSelection($event)"
+        [unselectCancel]="'.unselectable'"
         (eventClick)="onEventClick($event.event)"
         (eventDrop)="onEventDrop($event)"
-        (eventResize)="onEventResize($event)" >
-
+        (eventResize)="onEventResize($event)">
 </full-calendar>

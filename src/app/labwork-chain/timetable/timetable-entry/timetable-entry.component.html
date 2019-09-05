@@ -1,7 +1,7 @@
-<h1 mat-dialog-title>{{headerTitle}}</h1>
+<h1 mat-dialog-title class="unselectable">{{headerTitle}}</h1>
 
 <div class="modalContainer">
-    <mat-dialog-content [formGroup]="formGroup">
+    <mat-dialog-content [formGroup]="formGroup" class="unselectable">
         <mat-form-field class="mat-form-field-modal" color="primary">
             <input aria-label="" type="text" [placeholder]="supervisorInput.displayTitle" matInput
                    [formControlName]="supervisorInput.formControlName" [matAutocomplete]="auto">
@@ -11,9 +11,10 @@
                     {{supervisorInput.data.displayFn(option)}}
                 </mat-option>
             </mat-autocomplete>
-            <button matSuffix mat-flat-button mat-icon-button aria-label="add" style="margin-left: 8px; margin-right: 8px"
-                    *ngIf="formGroup.valid && !userIsEmpty()"
-                    (click)="add(userFromControl())"
+            <button matSuffix mat-flat-button mat-icon-button aria-label="add"
+                    style="margin-left: 8px; margin-right: 8px"
+                    *ngIf="validUserInControl()"
+                    (click)="add()"
                     [color]="addAction.color">
                 <mat-icon>add</mat-icon>
             </button>
@@ -37,7 +38,7 @@
     </mat-dialog-content>
 
     <ng-container>
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z2 unselectable">
             <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
                 <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
                 <td mat-cell *matCellDef="let element ">{{prepareTableContent(element, column.attr)}} </td>
@@ -63,6 +64,7 @@
 
     <mat-dialog-actions>
         <button type="button" mat-flat-button (click)="cancel()">Abbrechen</button>
-        <button mat-flat-button color="primary" cdkFocusInitial (click)="submit()">Übernehmen</button>
+        <button mat-flat-button color="primary" class="unselectable" cdkFocusInitial
+                (click)="submit()">{{submitTitle}}</button>
     </mat-dialog-actions>
 </div>

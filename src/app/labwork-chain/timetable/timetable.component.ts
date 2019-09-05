@@ -9,25 +9,37 @@ import {Observable, Subscription} from 'rxjs'
 import {TimetableAtom} from '../../models/timetable'
 import {TimetableEntryComponent} from './timetable-entry/timetable-entry.component'
 import {AuthorityService} from '../../services/authority.service'
-import {map} from 'rxjs/operators'
+import {filter, map, switchMap} from 'rxjs/operators'
 import {openDialog} from '../../utils/component.utils'
 import {RoomService} from '../../services/room.service'
 import {
     CalendarEvent,
+    createTimetableEntry$,
     fetchTimetable,
     isValidTimetableEntry,
     makeCalendarEvents,
+    updateStartDate,
     updateSupervisorAndRoom,
     updateTime,
+    updateTimetable$,
     updateTimetableEntry$
 } from './timetable-view-model'
+import {User} from '../../models/user.model'
+import {Room} from '../../models/room.model'
+import {DialogMode} from '../../shared-dialogs/dialog.mode'
+import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
+import {FormControl, FormGroup, Validators} from '@angular/forms'
+import {isDate} from '../../utils/type.check.utils'
 
 @Component({
     selector: 'lwm-timetable',
     templateUrl: './timetable.component.html',
-    styleUrls: ['./timetable.component.scss']
+    styleUrls: ['./timetable.component.scss'],
+    providers: LWMDateAdapter.defaultProviders()
 })
 export class TimetableComponent implements OnInit { // TODO draw timetable entries from labworks which take place in the same semester
+
+    // TODO this entire implementation assumes that a timetable exists. handle first creation
 
     @Input() labwork: LabworkAtom
 
@@ -36,6 +48,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
     private headerTitle: string
     private subs: Subscription[]
     private timetable: TimetableAtom
+    private formGroup: FormGroup
 
     constructor(
         private readonly dialog: MatDialog,
@@ -45,33 +58,53 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
     ) {
         this.dates = []
         this.subs = []
+        this.formGroup = new FormGroup({
+            start: new FormControl({value: '', disabled: false}, Validators.required)
+        })
     }
 
     ngOnInit() {
         this.headerTitle = `Rahmenplan für ${this.labwork.label}`
         this.subs.push(fetchTimetable(this.timetableService, this.labwork, this.updateCalendar))
+
+        this.observeStartDateChanges()
+    }
+
+    private observeStartDateChanges = () => {
+        this.run(this.formGroup.controls.start.valueChanges.pipe(
+            filter(isDate),
+            switchMap(d => updateTimetable$(this.timetableService, this.timetable, updateStartDate(d)))
+        ))
     }
 
     private updateCalendar = (t: TimetableAtom) => {
+        console.log('updating cal')
         this.timetable = t
+        this.formGroup.controls.start.setValue(t.start, {emitEvent: false})
         this.dates = makeCalendarEvents(t)
     }
 
     private onDateSelection = (event) => {
-        // this.dates = this.dates.concat(
-        //     {title: 'new event', start: event.start, end: event.end, editable: true}
-        // )
+        const dialogRef = this.timetableEntryDialog(DialogMode.create, [])
+
+        this.run(openDialog(
+            dialogRef,
+            tuple => createTimetableEntry$(
+                this.timetableService,
+                this.timetable,
+                tuple.first,
+                tuple.second,
+                event.start,
+                event.end,
+            )
+        ))
     }
 
     private onEventClick = (event: CalendarEvent) => {
-        const dialogRef = TimetableEntryComponent.instance(
-            this.dialog,
-            event.extendedProps.room,
-            this.roomService.getAll(),
+        const dialogRef = this.timetableEntryDialog(
+            DialogMode.edit,
             this.timetable.entries[event.id].supervisor,
-            this.authorityService.getAuthoritiesForCourse(this.labwork.course.id).pipe(
-                map(xs => xs.map(x => x.user))
-            )
+            event.extendedProps.room
         )
 
         this.run(openDialog(
@@ -106,6 +139,19 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
             eventResizeInfo.event.id,
             updateTime(eventResizeInfo.event.start, eventResizeInfo.event.end)
         ))
+    }
+
+    private timetableEntryDialog = (mode: DialogMode, supervisors: User[], room?: Room) => {
+        return TimetableEntryComponent.instance(
+            this.dialog,
+            mode,
+            this.roomService.getAll(),
+            supervisors,
+            this.authorityService.getAuthoritiesForCourse(this.labwork.course.id).pipe(
+                map(xs => xs.map(x => x.user))
+            ),
+            room
+        )
     }
 
     private run = (o: Observable<TimetableAtom>) => {

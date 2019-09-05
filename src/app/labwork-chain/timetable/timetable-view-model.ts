@@ -49,7 +49,7 @@ export const makeCalendarEvents = (t: TimetableAtom): CalendarEvent[] => {
 }
 
 const makeCalendarEvent = (now: Date, e: Readonly<TimetableEntryAtom>, i: number): CalendarEvent => {
-    setWeekday(now, e.dayIndex)
+    shiftToWeekday(now, e.dayIndex)
 
     return {
         editable: true, // TODO permission check
@@ -71,13 +71,13 @@ const supervisorLabel = (supervisors: User[]): string => {
         .join('\n')
 }
 
-const setWeekday = (date: Readonly<Date>, weekday: Readonly<number>) => {
-    if (!between(weekday, 1, 5)) {
+const shiftToWeekday = (date: Readonly<Date>, wd: Readonly<number>) => {
+    if (!between(wd, 1, 5)) {
         return
     }
 
-    const currentDay = date.getDay()
-    const distance = weekday - currentDay
+    const currentDay = dayIndex(date)
+    const distance = wd - currentDay
     date.setDate(date.getDate() + distance)
 }
 
@@ -87,13 +87,42 @@ const shortUserName = (u: User): string => {
 
 export const updateTimetableEntry$ = (
     service: TimetableService,
-    t: Readonly<TimetableAtom>,
+    existing: Readonly<TimetableAtom>,
     id: number,
     update: (e: Readonly<TimetableEntryAtom>) => Readonly<TimetableEntryAtom>
 ): Observable<TimetableAtom> => {
-    const copy = {...t}
+    const copy = {...existing}
     copy.entries[id] = update(copy.entries[id])
     return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
+}
+
+export const createTimetableEntry$ = (
+    service: TimetableService,
+    existing: Readonly<TimetableAtom>,
+    supervisor: Readonly<User[]>,
+    room: Readonly<Room>,
+    start: Date,
+    end: Date
+): Observable<TimetableAtom> => {
+    const copy = {...existing}
+    copy.entries.push({
+        dayIndex: dayIndex(start),
+        room: room,
+        supervisor: [...supervisor],
+        start: Time.fromDate(start),
+        end: Time.fromDate(end)
+    })
+
+    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
+}
+
+export const updateTimetable$ = (
+    service: TimetableService,
+    existing: Readonly<TimetableAtom>,
+    update: (t: Readonly<TimetableAtom>) => Readonly<TimetableAtom>
+): Observable<TimetableAtom> => {
+    const copy = {...existing}
+    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(update(copy)))
 }
 
 const toTimetableProtocol = (t: TimetableAtom): TimetableProtocol => {
@@ -117,8 +146,8 @@ const toTimetableEntry = (e: TimetableEntryAtom): TimetableEntryProtocol => {
 
 export const updateTime = (start: Date, end: Date): (entry: Readonly<TimetableEntryAtom>) => Readonly<TimetableEntryAtom> => {
     return entry => {
-        const dayIndex = entry.dayIndex === start.getDay() ? entry.dayIndex : start.getDay()
-        return {...entry, start: Time.fromDate(start), end: Time.fromDate(end), dayIndex: dayIndex}
+        const index = entry.dayIndex === dayIndex(start) ? entry.dayIndex : dayIndex(start)
+        return {...entry, start: Time.fromDate(start), end: Time.fromDate(end), dayIndex: index}
     }
 }
 
@@ -126,6 +155,14 @@ export const updateSupervisorAndRoom = (tuple: Tuple<User[], Room>): (entry: Rea
     return entry => ({...entry, supervisor: [...tuple.first], room: tuple.second})
 }
 
+export const updateStartDate = (date: Date): (t: Readonly<TimetableAtom>) => Readonly<TimetableAtom> => {
+    return t => ({...t, start: date})
+}
+
 export const isValidTimetableEntry = (start: Date, end: Date): boolean => {
-    return start.getDay() === end.getDay()
+    return dayIndex(start) === dayIndex(end)
+}
+
+const dayIndex = (date: Readonly<Date>): number => {
+    return date.getDay()
 }
