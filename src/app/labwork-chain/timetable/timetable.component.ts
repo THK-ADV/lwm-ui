@@ -15,6 +15,7 @@ import {RoomService} from '../../services/room.service'
 import {
     CalendarEvent,
     fetchTimetable,
+    isValidTimetableEntry,
     makeCalendarEvents,
     updateSupervisorAndRoom,
     updateTime,
@@ -26,7 +27,7 @@ import {
     templateUrl: './timetable.component.html',
     styleUrls: ['./timetable.component.scss']
 })
-export class TimetableComponent implements OnInit {
+export class TimetableComponent implements OnInit { // TODO draw timetable entries from labworks which take place in the same semester
 
     @Input() labwork: LabworkAtom
 
@@ -84,14 +85,6 @@ export class TimetableComponent implements OnInit {
         ))
     }
 
-    private run = (o: Observable<TimetableAtom>) => {
-        this.subs.push(subscribe(o, this.updateCalendar))
-    }
-
-    private allowSelect = (event): boolean => {
-        return event.end.getDay() === event.start.getDay()
-    }
-
     private onEventDrop = (eventDropInfo) => {
         this.run(updateTimetableEntry$(
             this.timetableService,
@@ -102,9 +95,24 @@ export class TimetableComponent implements OnInit {
     }
 
     private onEventResize = (eventResizeInfo) => {
-        console.log('onEventResize')
-        console.log(eventResizeInfo)
+        if (!isValidTimetableEntry(eventResizeInfo.event.start, eventResizeInfo.event.end)) {
+            eventResizeInfo.revert()
+            return
+        }
+
+        this.run(updateTimetableEntry$(
+            this.timetableService,
+            this.timetable,
+            eventResizeInfo.event.id,
+            updateTime(eventResizeInfo.event.start, eventResizeInfo.event.end)
+        ))
     }
 
+    private run = (o: Observable<TimetableAtom>) => {
+        this.subs.push(subscribe(o, this.updateCalendar))
+    }
 
+    private allowSelect = (event): boolean => {
+        return isValidTimetableEntry(event.start, event.end)
+    }
 }

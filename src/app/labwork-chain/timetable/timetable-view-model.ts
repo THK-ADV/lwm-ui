@@ -125,3 +125,7 @@ export const updateTime = (start: Date, end: Date): (entry: Readonly<TimetableEn
 export const updateSupervisorAndRoom = (tuple: Tuple<User[], Room>): (entry: Readonly<TimetableEntryAtom>) => Readonly<TimetableEntryAtom> => {
     return entry => ({...entry, supervisor: [...tuple.first], room: tuple.second})
 }
+
+export const isValidTimetableEntry = (start: Date, end: Date): boolean => {
+    return start.getDay() === end.getDay()
+}
