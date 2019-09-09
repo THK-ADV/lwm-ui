@@ -1,1 +1,28 @@
-<p>schedule works!</p>
+<lwm-create-header
+        [headerTitle]="headerTitle"
+        [canCreate]="canPreview()"
+        (create)="onPreview()">
+</lwm-create-header>
+
+<full-calendar
+        defaultView="dayGridMonth"
+        [plugins]="calendarPlugins"
+        [locale]="'de'"
+        [weekends]="false"
+        [nowIndicator]="false"
+        [allDaySlot]="true"
+        [columnHeaderFormat]="{ weekday: 'long' }"
+        [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
+        [events]="dates"
+        [defaultDate]="earliestDate()">
+
+
+    <!--        [selectable]="true"-->
+    <!--        [eventColor]="'#b43092'"-->
+    <!--        [eventTextColor]="'#ffffff'"-->
+    <!--        (select)="onDateSelection($event)"-->
+    <!--        (eventClick)="onEventClick($event.event)"-->
+    <!--        (eventDrop)="onEventDrop($event)"-->
+    <!--        (eventResize)="onEventResize($event)"-->
+
+</full-calendar>

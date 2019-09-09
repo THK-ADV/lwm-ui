@@ -29,6 +29,7 @@ import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {isDate} from '../../utils/type.check.utils'
 import {openDialog} from '../../shared-dialogs/dialog-open-combinator'
+import {color} from '../../utils/colors'
 
 @Component({
     selector: 'lwm-timetable',
@@ -166,4 +167,6 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
     private allowSelect = (event): boolean => {
         return isValidTimetableEntry(event.start, event.end)
     }
+
+    private primaryColor = () => color('primary')
 }

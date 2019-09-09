@@ -1,4 +1,4 @@
-<mat-horizontal-stepper labelPosition="bottom">
+<mat-horizontal-stepper labelPosition="bottom" #stepper>
     <mat-step *ngFor="let step of steps" [label]="label(step)">
         <ng-container [ngSwitch]="step">
             <ng-container *ngIf="labwork">
@@ -28,6 +28,15 @@
                                    [labwork]="labwork"
                                    [scheduleEntries]="scheduleEntries">
                 </lwm-group-preview>
+            </ng-container>
+
+
+            <ng-container *ngIf="labwork && timetable && scheduleEntries">
+                <lwm-schedule *ngSwitchCase="4"
+                              [labwork]="labwork"
+                              [timetable]="timetable"
+                              [scheduleEntries]="scheduleEntries">
+                </lwm-schedule>
             </ng-container>
 
             <p *ngSwitchDefault>{{label(step)}}</p>

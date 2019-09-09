@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core'
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {Subscription} from 'rxjs'
 import {LabworkAtom} from '../models/labwork.model'
 import {ActivatedRoute} from '@angular/router'
@@ -9,6 +9,7 @@ import {fetchLabwork, fetchScheduleEntries, fetchTimetable} from './labwork-chai
 import {TimetableService} from '../services/timetable.service'
 import {ScheduleEntryService} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
+import {MatHorizontalStepper} from '@angular/material'
 
 enum Step {
     application,
@@ -32,6 +33,8 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private scheduleEntries: Readonly<ScheduleEntryAtom[]>
     private steps: Step[]
 
+    @ViewChild('stepper', {static: false}) stepper: MatHorizontalStepper
+
     constructor(
         private readonly route: ActivatedRoute,
         private readonly labworkService: LabworkService,
@@ -52,7 +55,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('chain loaded')
 
-        this.fetchChainData()
+        this.fetchChainData(() => this.stepper.selectedIndex = Step.schedule.valueOf())
     }
 
     ngOnDestroy(): void {
@@ -63,21 +66,23 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.timetable = t
     }
 
-    private fetchChainData = () => {
+    private fetchChainData = (andThen: () => void) => {
         const s1 = fetchLabwork(this.route, this.labworkService, labwork => {
             this.labwork = labwork
 
             const s2 = fetchTimetable(this.timetableService, labwork, timetable => { // TODO fetchOrCreate
                 this.timetable = timetable
+
+                const s3 = fetchScheduleEntries(this.scheduleEntryService, labwork, entries => {
+                    this.scheduleEntries = entries
+
+                    andThen()
+                })
+
+                this.subs.push(s3)
             })
 
             this.subs.push(s2)
-
-            const s3 = fetchScheduleEntries(this.scheduleEntryService, labwork, entries => {
-                this.scheduleEntries = entries
-            })
-
-            this.subs.push(s3)
         })
 
         this.subs.push(s1)
