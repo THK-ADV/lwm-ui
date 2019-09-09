@@ -69,3 +69,15 @@ const addBlacklistToTimetable0 = (
     copy.localBlacklist.push(blacklist)
     return copy
 })
+
+export const updateBlacklistInTimetable$ = (
+    blacklistService: BlacklistService,
+    timetable: Readonly<TimetableAtom>,
+    id: string
+): (blacklist: BlacklistProtocol) => Observable<TimetableAtom> => blacklist => blacklistService.update(blacklist, id).pipe(
+    map(updated => {
+        const copy = {...timetable}
+        copy.localBlacklist = copy.localBlacklist.map(b => b.id === updated.id ? updated : b)
+        return copy
+    })
+)

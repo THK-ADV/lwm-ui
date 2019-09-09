@@ -8,13 +8,20 @@ import {
     createLocalBlacklistFromOutputData,
     formatBlacklistTableEntry,
     localBlacklistCreationInputData,
-    localBlacklistsColumns
+    localBlacklistInputData,
+    localBlacklistsColumns,
+    updateLocalBlacklistFromOutputData
 } from '../../blacklists/blacklist-view-model'
 import {deleteAction, editAction, LWMAction, LWMActionType} from '../../table-action-button/lwm-actions'
 import {BlacklistService} from '../../services/blacklist.service'
 import {TimetableAtom} from '../../models/timetable'
 import {DeleteDialogComponent} from '../../shared-dialogs/delete/delete-dialog.component'
-import {addBlacklistToTimetable$, fullBlacklistLabel, removeBlacklistFromTimetable$} from './timetable-blacklists-view-model'
+import {
+    addBlacklistToTimetable$,
+    fullBlacklistLabel,
+    removeBlacklistFromTimetable$,
+    updateBlacklistInTimetable$
+} from './timetable-blacklists-view-model'
 import {TimetableService} from '../../services/timetable.service'
 import {subscribe} from '../../utils/functions'
 import {FormPayload} from '../../shared-dialogs/create-update/create-update-dialog.component'
@@ -30,7 +37,7 @@ export class TimetableBlacklistsComponent implements OnInit {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
-    @Output() timetableUpdate: EventEmitter<TimetableAtom> // TODO use it
+    @Output() timetableUpdate: EventEmitter<TimetableAtom>
 
     private headerTitle: string
     private subs: Subscription[]
@@ -76,6 +83,19 @@ export class TimetableBlacklistsComponent implements OnInit {
         return true // TODO permission check
     }
 
+    private performAction = (action: LWMActionType, blacklist: Blacklist) => {
+        switch (action) {
+            case 'edit':
+                this.onEdit(blacklist)
+                break
+            case 'delete':
+                this.onDelete(blacklist)
+                break
+            default:
+                break
+        }
+    }
+
     private onCreate = () => {
         const mode = DialogMode.create
         const payload: FormPayload<BlacklistProtocol> = {
@@ -94,22 +114,22 @@ export class TimetableBlacklistsComponent implements OnInit {
         )
     }
 
-
-    private performAction = (action: LWMActionType, blacklist: Blacklist) => {
-        switch (action) {
-            case 'edit':
-                this.onEdit(blacklist)
-                break
-            case 'delete':
-                this.onDelete(blacklist)
-                break
-            default:
-                break
-        }
-    }
-
     private onEdit = (blacklist: Blacklist) => {
+        const mode = DialogMode.edit
+        const payload: FormPayload<BlacklistProtocol> = {
+            headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
+            submitTitle: dialogSubmitTitle(mode),
+            data: localBlacklistInputData(blacklist, true),
+            makeProtocol: updateLocalBlacklistFromOutputData(blacklist)
+        }
 
+        this.updateDataSource$(
+            openDialogFromPayload(
+                this.dialog,
+                payload,
+                updateBlacklistInTimetable$(this.blacklistService, this.timetable, blacklist.id)
+            )
+        )
     }
 
     private onDelete = (blacklist: Blacklist) => {

@@ -58,7 +58,7 @@ export const globalBlacklistInputData = (model: Readonly<BlacklistProtocol | Bla
         {
             formControlName: 'label',
             displayTitle: 'Bezeichnung',
-            isDisabled: isModel,
+            isDisabled: true,
             data: new FormInputString(model.label)
         },
         {
@@ -71,22 +71,30 @@ export const globalBlacklistInputData = (model: Readonly<BlacklistProtocol | Bla
 }
 
 export const localBlacklistInputData = (model: Readonly<BlacklistProtocol | Blacklist>, isModel: boolean): FormInput[] => {
-    return globalBlacklistInputData(model, isModel).concat(
-        [
-            {
-                formControlName: 'start',
-                displayTitle: 'Start',
-                isDisabled: isModel,
-                data: new FormInputTime(isUniqueEntity(model) ? model.start : Time.startOfTheDay())
-            },
-            {
-                formControlName: 'end',
-                displayTitle: 'Ende',
-                isDisabled: isModel,
-                data: new FormInputTime(isUniqueEntity(model) ? model.end : Time.endOfTheDay())
+    return globalBlacklistInputData(model, isModel)
+        .map(i => {
+            if (i.formControlName === 'label') {
+                i.isDisabled = false
             }
-        ]
-    )
+
+            return i
+        })
+        .concat(
+            [
+                {
+                    formControlName: 'start',
+                    displayTitle: 'Start',
+                    isDisabled: false,
+                    data: new FormInputTime(isUniqueEntity(model) ? model.start : Time.startOfTheDay())
+                },
+                {
+                    formControlName: 'end',
+                    displayTitle: 'Ende',
+                    isDisabled: false,
+                    data: new FormInputTime(isUniqueEntity(model) ? model.end : Time.endOfTheDay())
+                }
+            ]
+        )
 }
 
 export const localBlacklistCreationInputData = (labelValue: string) => {
@@ -109,6 +117,17 @@ export const createLocalBlacklistFromOutputData = (output: FormOutputData[]): Bl
     return withCreateProtocol(output, emptyGlobalBlacklistProtocol(), p => {
         const date = new Date(p.date)
         p.date = format(date, 'yyyy-MM-dd')
+
+        p.start = formatTime(Time.fromTimeString(p.start, date))
+        p.end = formatTime(Time.fromTimeString(p.end, date))
+        p.global = false
+    })
+}
+
+export const updateLocalBlacklistFromOutputData = (blacklist: Blacklist): (output: FormOutputData[]) => BlacklistProtocol => {
+    return output => withCreateProtocol(output, emptyLocalBlacklistProtocol(), p => {
+        const date = blacklist.date
+        p.date = format(blacklist.date, 'yyyy-MM-dd')
 
         p.start = formatTime(Time.fromTimeString(p.start, date))
         p.end = formatTime(Time.fromTimeString(p.end, date))

@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core'
 import {Observable} from 'rxjs'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {Blacklist, BlacklistJSON, BlacklistProtocol} from '../models/blacklist.model'
-import {NotImplementedError} from '../utils/functions'
 import {HttpService} from './http.service'
 import {map} from 'rxjs/operators'
 import {applyFilter} from './http.filter'
@@ -47,6 +46,8 @@ export class BlacklistService implements AbstractCRUDService<BlacklistProtocol, 
     }
 
     update = (protocol: BlacklistProtocol, id: string): Observable<Blacklist> => {
-        throw NotImplementedError(JSON.stringify(protocol))
+        return this.http.put<BlacklistProtocol, BlacklistJSON>(this.path, id, protocol).pipe(
+            map(mapBlacklistJSON)
+        )
     }
 }
