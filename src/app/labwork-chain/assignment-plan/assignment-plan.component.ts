@@ -1,7 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
-import {EMPTY, Observable, Subscription} from 'rxjs'
+import {Observable, Subscription} from 'rxjs'
 import {LabworkAtom} from '../../models/labwork.model'
-import {MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
+import {MatDialog, MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {
     AssignmentEntry,
@@ -15,13 +15,13 @@ import {AssignmentPlanService} from '../../services/assignment-plan.service'
 import {foldUndefined, parseUnsafeBoolean, parseUnsafeNumber, subscribe} from '../../utils/functions'
 import {DeleteDialogComponent} from '../../shared-dialogs/delete/delete-dialog.component'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../shared-dialogs/dialog.mode'
-import {CreateUpdateDialogComponent, FormOutputData, FormPayload} from '../../shared-dialogs/create-update/create-update-dialog.component'
+import {FormOutputData, FormPayload} from '../../shared-dialogs/create-update/create-update-dialog.component'
 import {FormInputString} from '../../shared-dialogs/forms/form.input.string'
 import {FormInputBoolean} from '../../shared-dialogs/forms/form.input.boolean'
 import {FormInputNumber} from '../../shared-dialogs/forms/form.input.number'
 import {withCreateProtocol} from '../../models/protocol.model'
-import {switchMap, tap} from 'rxjs/operators'
-import {openDialog} from '../../utils/component.utils'
+import {tap} from 'rxjs/operators'
+import {openDialogFromPayload} from '../../shared-dialogs/dialog-open-combinator'
 
 @Component({
     selector: 'lwm-assignment-plan',
@@ -30,7 +30,7 @@ import {openDialog} from '../../utils/component.utils'
 })
 export class AssignmentPlanComponent implements OnInit, OnDestroy {
 
-    @Input() labwork: LabworkAtom
+    @Input() labwork: Readonly<LabworkAtom>
 
     private headerTitle: String
     private subs: Subscription[]
@@ -60,9 +60,9 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        console.log('plan loaded with ', this.labwork)
-        this.headerTitle = `Ablaufplan für ${this.labwork.label}`
+        console.log('plan component loaded')
 
+        this.headerTitle = `Ablaufplan für ${this.labwork.label}`
         this.fetchAssignmentPlan(this.updateDataSource)
     }
 
@@ -93,14 +93,14 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
 
     private onCreate = () => {
         const payload = this.formPayload(DialogMode.create, this.preFilledAssignmentEntry())
-        const s = subscribe(this.openDialogFromPayload(payload, this.create$).pipe(tap(console.log)), this.updateDataSource)
+        const s = subscribe(openDialogFromPayload(this.dialog, payload, this.create$).pipe(tap(console.log)), this.updateDataSource)
 
         this.subs.push(s)
     }
 
     private onEdit = (entry: AssignmentEntry) => {
         const payload = this.formPayload(DialogMode.edit, {...entry})
-        const s = subscribe(this.openDialogFromPayload(payload, this.update$), this.updateDataSource)
+        const s = subscribe(openDialogFromPayload(this.dialog, payload, this.update$), this.updateDataSource)
 
         this.subs.push(s)
     }
@@ -164,12 +164,6 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
     private displayedEntryTypes = (entry: AssignmentEntry): string[] => {
         return sortedAssignmentPlanEntryTypes(entry).types
             .map(t => t.entryType === AssignmentEntryTypeValue.bonus ? `${t.entryType} (${t.int})` : t.entryType)
-    }
-
-
-    private openDialogFromPayload = <T, U>(payload: FormPayload<T>, andThen: (e: T) => Observable<U>): Observable<U> => {
-        const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-        return openDialog(dialogRef, andThen)
     }
 
     private formPayload = (mode: DialogMode, entry: AssignmentEntry): FormPayload<AssignmentEntry> => {

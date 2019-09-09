@@ -49,6 +49,8 @@ import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignmen
 import {FullCalendarModule} from '@fullcalendar/angular'
 import {TimetableComponent} from './labwork-chain/timetable/timetable.component'
 import {TimetableEntryComponent} from './labwork-chain/timetable/timetable-entry/timetable-entry.component'
+import {TimetableBlacklistsComponent} from './labwork-chain/timetable-blacklists/timetable-blacklists.component'
+import {TableActionButtonComponent} from './table-action-button/table-action-button.component'
 
 @NgModule({
     declarations: [
@@ -80,7 +82,9 @@ import {TimetableEntryComponent} from './labwork-chain/timetable/timetable-entry
         LabworkChainComponent,
         AssignmentPlanComponent,
         TimetableComponent,
-        TimetableEntryComponent
+        TimetableEntryComponent,
+        TimetableBlacklistsComponent,
+        TableActionButtonComponent
     ],
     imports: [
         BrowserModule,

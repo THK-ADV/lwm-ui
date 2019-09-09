@@ -3,12 +3,15 @@ import {Subscription} from 'rxjs'
 import {LabworkAtom} from '../models/labwork.model'
 import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
-import {foldUndefined, subscribe} from '../utils/functions'
-import {fetchLabwork} from '../utils/component.utils'
+import {foldUndefined} from '../utils/functions'
+import {TimetableAtom} from '../models/timetable'
+import {fetchLabwork, fetchTimetable} from './labwork-chain-view-model'
+import {TimetableService} from '../services/timetable.service'
 
 enum Step {
     application,
     timetable,
+    blacklists,
     groups,
     schedule,
     reportCards
@@ -21,17 +24,21 @@ enum Step {
 })
 export class LabworkChainComponent implements OnInit, OnDestroy {
 
-    private sub: Subscription
-    private labwork: LabworkAtom
+    private subs: Subscription[]
+    private labwork: Readonly<LabworkAtom>
+    private timetable: Readonly<TimetableAtom>
     private steps: Step[]
 
     constructor(
         private readonly route: ActivatedRoute,
         private readonly labworkService: LabworkService,
+        private readonly timetableService: TimetableService,
     ) {
+        this.subs = []
         this.steps = [
             Step.application,
             Step.timetable,
+            Step.blacklists,
             Step.groups,
             Step.schedule,
             Step.reportCards
@@ -41,21 +48,39 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('chain loaded')
 
-        this.sub = subscribe(fetchLabwork(this.route, this.labworkService), labwork => {
-            this.labwork = labwork
-        })
+        this.fetchChainData()
     }
 
     ngOnDestroy(): void {
-        this.sub.unsubscribe()
+        this.subs.forEach(s => s.unsubscribe())
     }
 
-    label = (step: Step): string => {
+    private updateTimetable = (t: TimetableAtom) => {
+        this.timetable = t
+    }
+
+    private fetchChainData = () => {
+        const s1 = fetchLabwork(this.route, this.labworkService, labwork => {
+            this.labwork = labwork
+
+            const s2 = fetchTimetable(this.timetableService, labwork, timetable => { // TODO fetchOrCreate
+                this.timetable = timetable
+            })
+
+            this.subs.push(s2)
+        })
+
+        this.subs.push(s1)
+    }
+
+    private label = (step: Step): string => {
         switch (step) {
             case Step.application:
                 return 'Ablaufplan'
             case Step.timetable:
                 return 'Rahmenplan'
+            case Step.blacklists:
+                return 'Geblockte Tage'
             case Step.groups:
                 return 'Gruppen'
             case Step.schedule:
@@ -65,29 +90,29 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         }
     }
 
-    next = (step: Step): Step | undefined => {
+    private next = (step: Step): Step | undefined => {
         return this.steps[step.valueOf() + 1]
     }
 
-    prev = (step: Step): Step | undefined => {
+    private prev = (step: Step): Step | undefined => {
         return this.steps[step.valueOf() - 1]
     }
 
-    nextButtonLabel = (step: Step): string => {
+    private nextButtonLabel = (step: Step): string => {
         return foldUndefined(this.next(step), this.label, () => '???')
     }
 
-    prevButtonLabel = (step: Step): string => {
+    private prevButtonLabel = (step: Step): string => {
         return foldUndefined(this.prev(step), this.label, () => '???')
     }
 
-    hasNextButton = (step: Step): boolean => {
+    private hasNextButton = (step: Step): boolean => {
         return this.next(step) !== undefined
     }
 
-    hasPrevButton = (step: Step): boolean => {
+    private hasPrevButton = (step: Step): boolean => {
         return this.prev(step) !== undefined
     }
 
-    chainDisabled = (): boolean => false
+    private chainDisabled = (): boolean => false // TODO
 }

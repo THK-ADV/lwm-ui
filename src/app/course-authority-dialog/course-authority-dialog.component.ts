@@ -14,10 +14,11 @@ import {Role, UserRole} from '../models/role.model'
 import {invalidChoiceKey} from '../utils/form.validator'
 import {count, subscribe} from '../utils/functions'
 import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
-import {emptyAuthorityProtocol, foreachOption, formatUser, isOption, resetControl} from '../utils/component.utils'
+import {emptyAuthorityProtocol, formatUser} from '../utils/component.utils'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {isRole, isUser} from '../utils/type.check.utils'
+import {foreachOption, isOption, resetControl} from '../utils/form-control-utils'
 
 @Component({
     selector: 'lwm-course-authority-dialog',

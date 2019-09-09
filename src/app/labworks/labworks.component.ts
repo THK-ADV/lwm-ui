@@ -36,7 +36,8 @@ import {
     labworkApplicationAction,
     LWMAction,
     LWMActionType
-} from '../utils/component.utils'
+} from '../table-action-button/lwm-actions'
+import {openDialog} from '../shared-dialogs/dialog-open-combinator'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -178,22 +179,14 @@ export class LabworksComponent implements OnInit, OnDestroy {
         const dialogRef = DeleteDialogComponent
             .instance(this.dialog, {label: `${labwork.label} - ${labwork.semester.abbreviation}`, id: labwork.id})
 
-        const s3 = subscribe(
-            dialogRef.afterClosed(), id => {
-                const s4 = subscribe(
-                    this.labworkService.delete(labwork.course.id, id),
-                    this.afterDelete.bind(this)
-                )
-
-                this.subs.push(s4)
-            }
-        )
-
-        this.subs.push(s3)
+        this.subs.push(subscribe(
+            openDialog(dialogRef, id => this.labworkService.delete(labwork.course.id, id)),
+            this.afterDelete.bind(this)
+        ))
     }
 
     private edit(labwork: LabworkAtom) {
-        const s1 = this.openDialog(DialogMode.edit, labwork, updated => {
+        const s1 = this.openDialog_(DialogMode.edit, labwork, updated => {
             const s2 = subscribe(
                 this.labworkService.update(labwork.course.id, updated, labwork.id),
                 this.afterUpdate.bind(this)
@@ -223,7 +216,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     // TODO this is copied. build an abstraction?
-    private openDialog(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
+    private openDialog_(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
         const inputData: FormInput[] = this.makeFormInputData(data)
 
         const payload: FormPayload<LabworkProtocol> = {
@@ -311,7 +304,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private onCreate(course: CourseAtom) {
-        const s1 = this.openDialog(DialogMode.create, LabworksComponent.empty(), procotol => {
+        const s1 = this.openDialog_(DialogMode.create, LabworksComponent.empty(), procotol => {
             procotol.course = course.id
             const s2 = subscribe(
                 this.labworkService.create(course.id, procotol),

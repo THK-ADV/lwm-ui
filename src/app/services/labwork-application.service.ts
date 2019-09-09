@@ -16,29 +16,25 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
     private readonly path = 'labworkApplications'
 
     // TODO better introduce labworkApplicationCount
-    getApplicationCount(labwork: string): Observable<number> {
+    getApplicationCount = (labwork: string): Observable<number> => {
         return this.http.getAll<LabworkApplication[]>(this.path, nonAtomicParams.set('labwork', labwork)).pipe(
             map(xs => xs.length)
         )
     }
 
-    getAllByLabworkAtom(labwork: string): Observable<LabworkApplicationAtom[]> {
+    getAllByLabworkAtom = (labwork: string): Observable<LabworkApplicationAtom[]> => {
         return this.http.getAll(this.path, atomicParams.set('labwork', labwork))
     }
 
-    createMany(protocol: LabworkApplicationProtocol): Observable<LabworkApplicationAtom[]> {
+    createMany = (protocol: LabworkApplicationProtocol): Observable<LabworkApplicationAtom[]> => {
         return this.http.createMany(this.path, [protocol], atomicParams)
     }
 
-    delete(id: string): Observable<LabworkApplicationAtom> { // TODO backend returns LabworkApplicationDb which crashes the http response
+    delete = (id: string): Observable<LabworkApplicationAtom> => { // TODO backend returns LabworkApplicationDb which crashes the http response
         return this.http.delete(this.path, id)
     }
 
-    getAll(): Observable<LabworkApplicationAtom[]> {
-        return NotImplementedError()
-    }
+    getAll = (): Observable<LabworkApplicationAtom[]> => NotImplementedError()
 
-    update(protocol: LabworkApplicationProtocol, id: string): Observable<LabworkApplicationAtom> {
-        return NotImplementedError()
-    }
+    update = (protocol: LabworkApplicationProtocol, id: string): Observable<LabworkApplicationAtom> => NotImplementedError()
 }

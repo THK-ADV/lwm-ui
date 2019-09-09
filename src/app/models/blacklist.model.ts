@@ -1,6 +1,6 @@
 import {Time} from './time.model'
 
-export interface Blacklist {
+export interface  Blacklist {
     label: string
     date: Date
     start: Time

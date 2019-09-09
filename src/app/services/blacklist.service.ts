@@ -6,7 +6,7 @@ import {NotImplementedError} from '../utils/functions'
 import {HttpService} from './http.service'
 import {map} from 'rxjs/operators'
 import {applyFilter} from './http.filter'
-import {convertManyBlacklists} from '../utils/http-utils'
+import {convertManyBlacklists, mapBlacklistJSON} from '../utils/http-utils'
 
 interface BlacklistFilter {
     attribute: 'global'
@@ -23,26 +23,30 @@ export class BlacklistService implements AbstractCRUDService<BlacklistProtocol, 
 
     private path = 'blacklists'
 
-    getAllWithFilter(...filter: BlacklistFilter[]): Observable<Blacklist[]> {
-        return this.http.getAll<BlacklistJSON[]>(this.path, applyFilter(filter))
-            .pipe(map(convertManyBlacklists))
+    getAllWithFilter = (...filter: BlacklistFilter[]): Observable<Blacklist[]> => {
+        return this.http.getAll<BlacklistJSON[]>(this.path, applyFilter(filter)).pipe(
+            map(convertManyBlacklists)
+        )
     }
 
-    getAll(): Observable<Blacklist[]> {
-        return this.http.getAll<BlacklistJSON[]>(this.path)
-            .pipe(map(convertManyBlacklists))
+    getAll = (): Observable<Blacklist[]> => {
+        return this.http.getAll<BlacklistJSON[]>(this.path).pipe(
+            map(convertManyBlacklists)
+        )
     }
 
-    delete(id: string): Observable<Blacklist> {
-        return this.http.delete(this.path, id)
+    delete = (id: string): Observable<Blacklist> => {
+        return this.http.delete<BlacklistJSON>(this.path, id).pipe(
+            map(mapBlacklistJSON)
+        )
     }
 
-    createMany(protocol: BlacklistProtocol): Observable<Blacklist[]> {
+    createMany = (protocol: BlacklistProtocol): Observable<Blacklist[]> => {
         return this.http.createMany<BlacklistProtocol, BlacklistJSON>(this.path, [protocol])
             .pipe(map(convertManyBlacklists))
     }
 
-    update(protocol: BlacklistProtocol, id: string): Observable<Blacklist> {
+    update = (protocol: BlacklistProtocol, id: string): Observable<Blacklist> => {
         throw NotImplementedError(JSON.stringify(protocol))
     }
 }

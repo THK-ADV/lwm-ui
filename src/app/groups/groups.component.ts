@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core'
 import {LabworkService} from '../services/labwork.service'
 import {ActivatedRoute} from '@angular/router'
-import {fetchLabwork} from '../utils/component.utils'
+import {fetchLabwork$} from '../utils/component.utils'
 import {Observable, Subscription} from 'rxjs'
 import {GroupService} from '../services/group.service'
 import {map} from 'rxjs/operators'
@@ -41,7 +41,7 @@ export class GroupsComponent implements OnInit {
     }
 
     ngOnInit() {
-        const s = subscribe(fetchLabwork(this.route, this.labworkService), labwork => {
+        const s = subscribe(fetchLabwork$(this.route, this.labworkService), labwork => {
             this.headerTitle += ` für ${labwork.label}`
             this.labwork = labwork
 

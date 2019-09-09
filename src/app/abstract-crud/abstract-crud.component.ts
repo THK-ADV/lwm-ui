@@ -11,6 +11,7 @@ import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {FormInput} from '../shared-dialogs/forms/form.input'
+import {openDialog} from '../shared-dialogs/dialog-open-combinator'
 
 export interface TableHeaderColumn {
     attr: string
@@ -88,8 +89,8 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
 
     protected onEdit(model: Model) {
         model = {...model}
-        this.openDialog(DialogMode.edit, model, updatedModel => {
-            this.subscribeAndPush(this.service.update(updatedModel, model.id), this.afterUpdate.bind(this))
+        this.openDialog_(DialogMode.edit, model, updatedModel => {
+            this.subscribeAndPush(this.service.update(updatedModel, model.id), this.afterUpdate)
         })
     }
 
@@ -97,23 +98,20 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         const dialogRef = DeleteDialogComponent.instance(this.dialog, {label: this.titleForDeleteDialog(model), id: model.id})
 
         this.subscribeAndPush(
-            dialogRef.afterClosed(),
-            id => this.subscribeAndPush(
-                this.service.delete(id),
-                this.afterDelete.bind(this)
-            )
+            openDialog(dialogRef, this.service.delete),
+            this.afterDelete
         )
     }
 
     protected onCreate() {
-        this.openDialog(
+        this.openDialog_(
             DialogMode.create,
             this.empty(),
-            model => this.subscribeAndPush(this.service.createMany(model), this.afterCreate.bind(this))
+            model => this.subscribeAndPush(this.service.createMany(model), this.afterCreate)
         )
     }
 
-    private openDialog<T extends Protocol>(mode: DialogMode, data: Model | Protocol, next: (T) => void) {
+    private openDialog_<T extends Protocol>(mode: DialogMode, data: Model | Protocol, next: (T) => void) { // TODO remove soon
         const inputData = this.inputData(data, isUniqueEntity(data))
 
         const payload = {
@@ -147,7 +145,7 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
 
     abstract update(model: Model, updatedOutput: FormOutputData[]): Protocol
 
-    protected afterUpdate(model: Model) {
+    private afterUpdate = (model: Model) => {
         this.dataSource.data = this.dataSource.data.map(d => {
             return d.id === model.id ? model : d
         })
@@ -155,11 +153,11 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(model))
     }
 
-    protected afterCreate(models: Model[]) {
+    private afterCreate = (models: Model[]) => {
         addToDataSource(this.dataSource, this.alertService)(models)
     }
 
-    protected afterDelete(model: Model) {
+    private afterDelete = (model: Model) => {
         removeFromDataSource(this.dataSource, this.alertService)(e => e.id === model.id)
     }
 }

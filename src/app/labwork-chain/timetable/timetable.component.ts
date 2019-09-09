@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
@@ -10,12 +10,10 @@ import {TimetableAtom} from '../../models/timetable'
 import {TimetableEntryComponent} from './timetable-entry/timetable-entry.component'
 import {AuthorityService} from '../../services/authority.service'
 import {filter, map, switchMap} from 'rxjs/operators'
-import {openDialog} from '../../utils/component.utils'
 import {RoomService} from '../../services/room.service'
 import {
     CalendarEvent,
     createTimetableEntry$,
-    fetchTimetable,
     isValidTimetableEntry,
     makeCalendarEvents,
     updateStartDate,
@@ -30,6 +28,7 @@ import {DialogMode} from '../../shared-dialogs/dialog.mode'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {isDate} from '../../utils/type.check.utils'
+import {openDialog} from '../../shared-dialogs/dialog-open-combinator'
 
 @Component({
     selector: 'lwm-timetable',
@@ -41,13 +40,14 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
 
     // TODO this entire implementation assumes that a timetable exists. handle first creation
 
-    @Input() labwork: LabworkAtom
+    @Input() labwork: Readonly<LabworkAtom>
+    @Input() timetable: Readonly<TimetableAtom>
+    @Output() timetableUpdate: EventEmitter<TimetableAtom>
 
     private readonly calendarPlugins = [timeGridPlugin, interactionPlugin]
     private dates: CalendarEvent[]
     private headerTitle: string
     private subs: Subscription[]
-    private timetable: TimetableAtom
     private formGroup: FormGroup
 
     constructor(
@@ -56,6 +56,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
         private readonly authorityService: AuthorityService,
         private readonly roomService: RoomService
     ) {
+        this.timetableUpdate = new EventEmitter<TimetableAtom>()
         this.dates = []
         this.subs = []
         this.formGroup = new FormGroup({
@@ -64,14 +65,15 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
     }
 
     ngOnInit() {
-        this.headerTitle = `Rahmenplan für ${this.labwork.label}`
-        this.subs.push(fetchTimetable(this.timetableService, this.labwork, this.updateCalendar))
+        console.log('timetable component loaded')
 
+        this.headerTitle = `Rahmenplan für ${this.labwork.label}`
+        this.updateCalendar(this.timetable)
         this.observeStartDateChanges()
     }
 
     private observeStartDateChanges = () => {
-        this.run(this.formGroup.controls.start.valueChanges.pipe(
+        this.updateCalendar$(this.formGroup.controls.start.valueChanges.pipe(
             filter(isDate),
             switchMap(d => updateTimetable$(this.timetableService, this.timetable, updateStartDate(d)))
         ))
@@ -79,15 +81,22 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
 
     private updateCalendar = (t: TimetableAtom) => {
         console.log('updating cal')
+
         this.timetable = t
+        this.timetableUpdate.emit(t)
+
         this.formGroup.controls.start.setValue(t.start, {emitEvent: false})
         this.dates = makeCalendarEvents(t)
+    }
+
+    private updateCalendar$ = (o: Observable<TimetableAtom>) => {
+        this.subs.push(subscribe(o, this.updateCalendar))
     }
 
     private onDateSelection = (event) => {
         const dialogRef = this.timetableEntryDialog(DialogMode.create, [])
 
-        this.run(openDialog(
+        this.updateCalendar$(openDialog(
             dialogRef,
             tuple => createTimetableEntry$(
                 this.timetableService,
@@ -107,7 +116,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
             event.extendedProps.room
         )
 
-        this.run(openDialog(
+        this.updateCalendar$(openDialog(
             dialogRef,
             tuple => updateTimetableEntry$(
                 this.timetableService,
@@ -119,7 +128,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
     }
 
     private onEventDrop = (eventDropInfo) => {
-        this.run(updateTimetableEntry$(
+        this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
             eventDropInfo.event.id,
@@ -133,7 +142,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
             return
         }
 
-        this.run(updateTimetableEntry$(
+        this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
             eventResizeInfo.event.id,
@@ -152,10 +161,6 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
             ),
             room
         )
-    }
-
-    private run = (o: Observable<TimetableAtom>) => {
-        this.subs.push(subscribe(o, this.updateCalendar))
     }
 
     private allowSelect = (event): boolean => {

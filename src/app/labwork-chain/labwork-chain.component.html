@@ -1,8 +1,27 @@
 <mat-horizontal-stepper labelPosition="bottom">
     <mat-step *ngFor="let step of steps" [label]="label(step)">
-        <ng-container *ngIf="labwork" [ngSwitch]="step">
-            <lwm-assignment-plan *ngSwitchCase="0" [labwork]="labwork"></lwm-assignment-plan>
-            <lwm-timetable *ngSwitchCase="1" [labwork]="labwork"></lwm-timetable>
+        <ng-container [ngSwitch]="step">
+            <ng-container *ngIf="labwork">
+                <lwm-assignment-plan *ngSwitchCase="0"
+                                     [labwork]="labwork">
+                </lwm-assignment-plan>
+            </ng-container>
+
+            <ng-container *ngIf="labwork && timetable">
+                <lwm-timetable *ngSwitchCase="1"
+                               [labwork]="labwork"
+                               [timetable]="timetable"
+                               (timetableUpdate)="updateTimetable($event)">
+                </lwm-timetable>
+            </ng-container>
+
+            <ng-container *ngIf="labwork && timetable">
+                <lwm-timetable-blacklists *ngSwitchCase="2"
+                                          [labwork]="labwork"
+                                          [timetable]="timetable"
+                                          (timetableUpdate)="updateTimetable($event)">
+                </lwm-timetable-blacklists>
+            </ng-container>
 
             <p *ngSwitchDefault>{{label(step)}}</p>
         </ng-container>

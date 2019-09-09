@@ -1,5 +1,3 @@
-import {validate} from 'codelyzer/walkerFactory/walkerFn'
-
 export interface AssignmentPlan {
     labwork: string
     attendance: number // TODO remove

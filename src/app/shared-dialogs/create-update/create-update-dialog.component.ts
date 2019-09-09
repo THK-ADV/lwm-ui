@@ -5,7 +5,7 @@ import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
 import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
-import {foreachOption, getOptionErrorMessage, hasOptionError, isOption} from '../../utils/component.utils'
+import {foreachOption, getOptionErrorMessage, hasOptionError} from '../../utils/form-control-utils'
 import {parseUnsafeBoolean, parseUnsafeNumber} from '../../utils/functions'
 
 export interface FormOutputData {

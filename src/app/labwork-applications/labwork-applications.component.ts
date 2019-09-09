@@ -16,7 +16,7 @@ import {format} from '../utils/lwmdate-adapter'
 import {
     createLabworkApplicationProtocol,
     emptyLabworkApplicationProtocol,
-    fetchLabwork,
+    fetchLabwork$,
     formatUser,
     labworkApplicationFormInputData
 } from '../utils/component.utils'
@@ -85,7 +85,7 @@ export class LabworkApplicationsComponent
     }
 
     private fetchApplications() {
-        const apps$ = fetchLabwork(this.route, this.labworkService).pipe(
+        const apps$ = fetchLabwork$(this.route, this.labworkService).pipe(
             tap(l => {
                 this.headerTitle += ` für ${l.label}`
                 this.labwork = l

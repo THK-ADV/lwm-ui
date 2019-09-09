@@ -1,4 +1,4 @@
-import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core'
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {User} from '../../models/user.model'
 import {AuthorityService} from '../../services/authority.service'
@@ -16,7 +16,7 @@ import {Role} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
 import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../utils/form.validator'
 import {addToDataSource} from '../../shared-dialogs/dataSource.update'
-import {resetControls} from '../../utils/component.utils'
+import {resetControls} from '../../utils/form-control-utils'
 
 export interface StandardRole {
     label: UserStatus
@@ -184,7 +184,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { /
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
-    }    
+    }
 
     onCancel(): void {
         this.closeModal(undefined)

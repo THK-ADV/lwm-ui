@@ -1,11 +1,10 @@
 import {TimetableAtom, TimetableEntryAtom, TimetableEntryProtocol, TimetableProtocol} from '../../models/timetable'
 import {Time} from '../../models/time.model'
 import {User} from '../../models/user.model'
-import {between, subscribe} from '../../utils/functions'
+import {between} from '../../utils/functions'
 import {Room} from '../../models/room.model'
-import {Observable, Subscription} from 'rxjs'
+import {Observable} from 'rxjs'
 import {TimetableService} from '../../services/timetable.service'
-import {LabworkAtom} from '../../models/labwork.model'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
 import {Tuple} from '../../utils/tuple'
 
@@ -19,26 +18,6 @@ export interface CalendarEvent {
         dayIndex: number
         room: Room
     }
-}
-
-export const fetchTimetable = (
-    service: TimetableService,
-    labwork: LabworkAtom,
-    completion: (t: TimetableAtom) => void
-): Subscription => {
-    return subscribe(
-        service.getAllWithFilter(
-            labwork.course.id,
-            {attribute: 'labwork', value: labwork.id}
-        ),
-        timetables => {
-            const timetable = timetables.shift()
-
-            if (timetable) {
-                completion(timetable)
-            }
-        }
-    )
 }
 
 export const makeCalendarEvents = (t: TimetableAtom): CalendarEvent[] => {

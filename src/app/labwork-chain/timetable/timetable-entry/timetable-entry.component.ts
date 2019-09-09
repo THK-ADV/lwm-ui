@@ -3,27 +3,19 @@ import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {Observable} from 'rxjs'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
-import {FormInput, FormInputData} from '../../../shared-dialogs/forms/form.input'
+import {FormInput} from '../../../shared-dialogs/forms/form.input'
 import {User} from '../../../models/user.model'
 import {FormInputOption} from '../../../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from '../../../utils/form.validator'
-import {
-    createAction,
-    deleteAction,
-    foreachOption,
-    formatUser,
-    getOptionErrorMessage,
-    hasOptionError,
-    isOption,
-    LWMAction,
-    resetControl
-} from '../../../utils/component.utils'
+import {formatUser} from '../../../utils/component.utils'
 import {map} from 'rxjs/operators'
 import {exists, foldUndefined} from '../../../utils/functions'
 import {Room} from '../../../models/room.model'
 import {Tuple} from '../../../utils/tuple'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {isRoom, isUser} from '../../../utils/type.check.utils'
+import {createAction, deleteAction, LWMAction} from '../../../table-action-button/lwm-actions'
+import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetControl} from '../../../utils/form-control-utils'
 
 @Component({
     selector: 'lwm-timetable-entry',
@@ -31,22 +23,6 @@ import {isRoom, isUser} from '../../../utils/type.check.utils'
     styleUrls: ['./timetable-entry.component.scss']
 })
 export class TimetableEntryComponent implements OnInit, OnDestroy {
-
-    protected readonly displayedColumns: string[]
-    protected readonly columns: TableHeaderColumn[]
-    private readonly headerTitle: string
-    private readonly submitTitle: string
-    private readonly dataSource = new MatTableDataSource<User>()
-
-    private readonly formGroup: FormGroup
-    private readonly supervisorInput: FormInput
-    private readonly roomInput: FormInput
-
-    private readonly addAction: LWMAction
-    private readonly deleteAction: LWMAction
-
-    private possibleSupervisors$: Observable<User[]>
-    private possibleRooms$: Observable<Room[]>
 
     constructor(
         private dialogRef: MatDialogRef<TimetableEntryComponent, Tuple<User[], Room>>,
@@ -74,6 +50,25 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         this.supervisorInput = this.createAndAddSupervisorInput()
         this.roomInput = this.createAndAddRoomInput()
     }
+
+    protected readonly displayedColumns: string[]
+    protected readonly columns: TableHeaderColumn[]
+    private readonly headerTitle: string
+    private readonly submitTitle: string
+    private readonly dataSource = new MatTableDataSource<User>()
+
+    private readonly formGroup: FormGroup
+    private readonly supervisorInput: FormInput
+    private readonly roomInput: FormInput
+
+    private readonly addAction: LWMAction
+    private readonly deleteAction: LWMAction
+
+    private possibleSupervisors$: Observable<User[]>
+    private possibleRooms$: Observable<Room[]>
+
+    private readonly hasOptionError_ = hasOptionError
+    private readonly getOptionErrorMessage_ = getOptionErrorMessage
 
     static instance(
         dialog: MatDialog,
@@ -160,14 +155,6 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         foreachOption(this.inputs(), i => i.onDestroy())
-    }
-
-    private hasOptionError_(formInputData: FormInputData<any>): boolean {
-        return hasOptionError(formInputData)
-    }
-
-    private getOptionErrorMessage_(formInputData: FormInputData<any>): string {
-        return getOptionErrorMessage(formInputData)
     }
 
     private prepareTableContent = (user: User, attr: string): string => {
