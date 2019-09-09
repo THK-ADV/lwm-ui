@@ -14,6 +14,7 @@ import {LabworkAtom} from '../models/labwork.model'
 import {MatDialog} from '@angular/material'
 import {UserService} from '../services/user.service'
 import {GroupEditComponent} from './edit/group-edit.component'
+import {Card} from '../card-list/card-list.component'
 
 @Component({
     selector: 'lwm-groups',
@@ -24,8 +25,9 @@ export class GroupsComponent implements OnInit {
 
     private headerTitle: String
     private subs: Subscription[]
-    private groups: GroupAtom[]
     private labwork: LabworkAtom
+
+    private groups: Card<GroupAtom, User>[]
 
     constructor(
         private readonly dialog: MatDialog,
@@ -60,7 +62,9 @@ export class GroupsComponent implements OnInit {
             }))
         )
 
-        const s = subscribe(groups$, groups => this.groups = groups)
+        const s = subscribe(groups$, groups => {
+            this.groups = groups.map(g => ({value: g, entries: g.members}))
+        })
         this.subs.push(s)
     }
 
@@ -68,20 +72,17 @@ export class GroupsComponent implements OnInit {
         return this.labworkApplicationService.getAllByLabworkAtom(l.id)
     }
 
-    private displayUser(user: User): string {
-        return `${user.lastname}, ${user.firstname}`
-    }
+    private displayUser = (user: User): string => `${user.lastname}, ${user.firstname}`
 
-    private voidF() {
-    }
+    private displaySystemId = (user: User): string => user.systemId
 
-    private onEdit(group: GroupAtom) {
+    private onEdit = (group: GroupAtom) => {
         const fellowStudents$ = this.userService.getAllWithFilter(
             {attribute: 'status', value: 'student'},
             {attribute: 'degree', value: group.labwork.degree}
         )
 
-        const dialogRef = GroupEditComponent.instance(this.dialog, group, this.groups, fellowStudents$)
+        const dialogRef = GroupEditComponent.instance(this.dialog, group, this.groups.map(g => g.value), fellowStudents$)
         const s = dialogRef.componentInstance.groupChanged.subscribe(_ => {
             this.fetchGroups(this.labwork)
         })
@@ -92,11 +93,9 @@ export class GroupsComponent implements OnInit {
         this.subs.push(s1)
     }
 
-    private canEdit(): boolean {
+    private canEdit = (): boolean => {
         return true // TODO permission
     }
 
-    private cardTitle(group: GroupAtom): string {
-        return `${group.label} - ${group.members.length}`
-    }
+    private cardTitle = (group: GroupAtom): string => `${group.label} - ${group.members.length} Teilnehmer`
 }

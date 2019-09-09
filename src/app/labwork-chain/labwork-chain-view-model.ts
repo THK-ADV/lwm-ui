@@ -6,6 +6,8 @@ import {subscribe} from '../utils/functions'
 import {fetchLabwork$} from '../utils/component.utils'
 import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
+import {ScheduleEntryService} from '../services/schedule-entry.service'
+import {ScheduleEntryAtom} from '../models/schedule-entry.model'
 
 export const fetchTimetable = (
     service: TimetableService,
@@ -33,4 +35,12 @@ export const fetchLabwork = (
     completion: (l: LabworkAtom) => void
 ): Subscription => {
     return subscribe(fetchLabwork$(route, labworkService), completion)
+}
+
+export const fetchScheduleEntries = (
+    service: ScheduleEntryService,
+    labwork: LabworkAtom,
+    completion: (es: ScheduleEntryAtom[]) => void
+): Subscription => {
+    return subscribe(service.getAllWithFilter(labwork.course.id, labwork.id), completion)
 }

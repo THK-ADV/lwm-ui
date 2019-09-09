@@ -31,13 +31,15 @@ export class LWMDateAdapter extends NativeDateAdapter {
     }
 }
 
-export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'HH:mm:ss' | 'dd.MM.yyyy - HH:mm'
+export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'dd.MM.yyyy - HH:mm'
 
-export function format(date: Date, pattern: DateTimePattern): string {
+export type TimePattern = 'HH:mm:ss' | 'HH:mm'
+
+export function format(date: Date, pattern: DateTimePattern | TimePattern): string {
     registerLocaleData(localDE, 'de')
     return formatDate(date, pattern, 'de')
 }
 
-export function formatTime(time: Time): string {
-    return format(time.date, 'HH:mm:ss')
+export function formatTime(time: Time, pattern: TimePattern = 'HH:mm:ss'): string {
+    return format(time.date, pattern)
 }

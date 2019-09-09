@@ -23,6 +23,13 @@
                 </lwm-timetable-blacklists>
             </ng-container>
 
+            <ng-container *ngIf="labwork && timetable && scheduleEntries">
+                <lwm-group-preview *ngSwitchCase="3"
+                                   [labwork]="labwork"
+                                   [scheduleEntries]="scheduleEntries">
+                </lwm-group-preview>
+            </ng-container>
+
             <p *ngSwitchDefault>{{label(step)}}</p>
         </ng-container>
 

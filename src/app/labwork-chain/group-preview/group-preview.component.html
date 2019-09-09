@@ -1,6 +1,7 @@
 <lwm-create-header
         [headerTitle]="headerTitle"
-        [canCreate]="false">
+        [canCreate]="canPreview()"
+        (create)="onPreview()">
 </lwm-create-header>
 
 <lwm-card-list
@@ -8,6 +9,6 @@
         [cardTitle]="cardTitle"
         [canEdit]="canEdit"
         [onEdit]="onEdit"
-        [leftEntryLabel]="displayUser"
-        [rightEntryLabel]="displaySystemId">
+        [leftEntryLabel]="displayDate"
+        [rightEntryLabel]="displayTime">
 </lwm-card-list>

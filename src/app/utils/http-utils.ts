@@ -2,6 +2,7 @@ import {Blacklist, BlacklistJSON} from '../models/blacklist.model'
 import {Time} from '../models/time.model'
 import {Semester, SemesterJSON} from '../models/semester.model'
 import {TimetableAtom, TimetableAtomJSON, TimetableEntryAtom, TimetableEntryAtomJSON} from '../models/timetable'
+import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 
@@ -56,6 +57,17 @@ export const mapTimetableEntryAtomJSON = (d: Date): (e: TimetableEntryAtomJSON) 
     }
 }
 
+export const mapScheduleEntryAtomJSON = (e: ScheduleEntryAtomJSON): ScheduleEntryAtom => {
+    const date = new Date(e.date)
+
+    return {
+        ...e,
+        date: date,
+        start: Time.fromTimeString(e.start, date),
+        end: Time.fromTimeString(e.end, date)
+    }
+}
+
 export const convertManySemesters = (ss: SemesterJSON[]): Semester[] => {
     return convertMany(ss, mapSemesterJSON)
 }
@@ -70,4 +82,8 @@ export const convertManyTimetables = (tt: TimetableAtomJSON[]): TimetableAtom[] 
 
 export const convertManyTimetablesEntries = (es: TimetableEntryAtomJSON[], date: Date): TimetableEntryAtom[] => {
     return convertMany(es, mapTimetableEntryAtomJSON(date))
+}
+
+export const convertManyScheduleEntries = (se: ScheduleEntryAtomJSON[]): ScheduleEntryAtom[] => {
+    return convertMany(se, mapScheduleEntryAtomJSON)
 }

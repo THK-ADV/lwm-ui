@@ -51,6 +51,9 @@ import {TimetableComponent} from './labwork-chain/timetable/timetable.component'
 import {TimetableEntryComponent} from './labwork-chain/timetable/timetable-entry/timetable-entry.component'
 import {TimetableBlacklistsComponent} from './labwork-chain/timetable-blacklists/timetable-blacklists.component'
 import {TableActionButtonComponent} from './table-action-button/table-action-button.component'
+import {ScheduleComponent} from './labwork-chain/schedule/schedule.component'
+import {GroupPreviewComponent} from './labwork-chain/group-preview/group-preview.component'
+import {CardListComponent} from './card-list/card-list.component'
 
 @NgModule({
     declarations: [
@@ -84,7 +87,10 @@ import {TableActionButtonComponent} from './table-action-button/table-action-but
         TimetableComponent,
         TimetableEntryComponent,
         TimetableBlacklistsComponent,
-        TableActionButtonComponent
+        TableActionButtonComponent,
+        ScheduleComponent,
+        GroupPreviewComponent,
+        CardListComponent
     ],
     imports: [
         BrowserModule,

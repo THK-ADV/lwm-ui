@@ -5,8 +5,10 @@ import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
 import {foldUndefined} from '../utils/functions'
 import {TimetableAtom} from '../models/timetable'
-import {fetchLabwork, fetchTimetable} from './labwork-chain-view-model'
+import {fetchLabwork, fetchScheduleEntries, fetchTimetable} from './labwork-chain-view-model'
 import {TimetableService} from '../services/timetable.service'
+import {ScheduleEntryService} from '../services/schedule-entry.service'
+import {ScheduleEntryAtom} from '../models/schedule-entry.model'
 
 enum Step {
     application,
@@ -27,12 +29,14 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private subs: Subscription[]
     private labwork: Readonly<LabworkAtom>
     private timetable: Readonly<TimetableAtom>
+    private scheduleEntries: Readonly<ScheduleEntryAtom[]>
     private steps: Step[]
 
     constructor(
         private readonly route: ActivatedRoute,
         private readonly labworkService: LabworkService,
         private readonly timetableService: TimetableService,
+        private readonly scheduleEntryService: ScheduleEntryService
     ) {
         this.subs = []
         this.steps = [
@@ -68,6 +72,12 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             })
 
             this.subs.push(s2)
+
+            const s3 = fetchScheduleEntries(this.scheduleEntryService, labwork, entries => {
+                this.scheduleEntries = entries
+            })
+
+            this.subs.push(s3)
         })
 
         this.subs.push(s1)
