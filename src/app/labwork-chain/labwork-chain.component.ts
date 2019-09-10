@@ -17,7 +17,7 @@ enum Step {
     blacklists,
     groups,
     schedule,
-    reportCards
+    closing
 }
 
 @Component({
@@ -48,14 +48,14 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             Step.blacklists,
             Step.groups,
             Step.schedule,
-            Step.reportCards
+            Step.closing
         ]
     }
 
     ngOnInit() {
         console.log('chain loaded')
 
-        this.fetchChainData(() => this.stepper.selectedIndex = Step.timetable.valueOf())
+        this.fetchChainData(() => {}) // (() => this.stepper.selectedIndex = Step.closing.valueOf())
     }
 
     ngOnDestroy(): void {
@@ -64,6 +64,10 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private updateTimetable = (t: TimetableAtom) => {
         this.timetable = t
+    }
+
+    private updateLabwork = (l: LabworkAtom) => {
+        this.labwork = l
     }
 
     private fetchChainData = (andThen: () => void) => {
@@ -100,8 +104,8 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
                 return 'Gruppen'
             case Step.schedule:
                 return 'Staffelplan'
-            case Step.reportCards:
-                return 'Notenhefte'
+            case Step.closing:
+                return 'Abschluss'
         }
     }
 

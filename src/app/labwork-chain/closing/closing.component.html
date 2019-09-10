@@ -1,0 +1,29 @@
+<lwm-create-header
+        [headerTitle]="headerTitle"
+        [canCreate]="false" >
+</lwm-create-header>
+
+<div>
+    <ng-container *ngIf="reportCardsAvailable(); then thenBlock else elseBlock"></ng-container>
+    <ng-template #thenBlock>
+        <p>Anzahl der Notenhefte: {{numberOfReportCards()}}</p>
+    </ng-template>
+    <ng-template #elseBlock>
+        <button mat-flat-button
+                color="primary"
+                (click)="createReportCards()">Notenhefte erstellen</button>
+    </ng-template>
+</div>
+
+<div>
+    <ng-container *ngIf="reportCardsAvailable() && !reportCardPublished(); then thenBlock2 else elseBlock2"></ng-container>
+    <ng-template #thenBlock2>
+        <button mat-flat-button
+                color="primary"
+                (click)="publishReportCards()">Notenhefte veröffentlichen</button>
+
+    </ng-template>
+    <ng-template #elseBlock2>
+        <p>Notenhefte veröffentlicht</p>
+    </ng-template>
+</div>

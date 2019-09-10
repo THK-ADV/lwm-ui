@@ -54,6 +54,7 @@ import {TableActionButtonComponent} from './table-action-button/table-action-but
 import {ScheduleComponent} from './labwork-chain/schedule/schedule.component'
 import {GroupPreviewComponent} from './labwork-chain/group-preview/group-preview.component'
 import {CardListComponent} from './card-list/card-list.component'
+import {ClosingComponent} from './labwork-chain/closing/closing.component'
 
 @NgModule({
     declarations: [
@@ -90,7 +91,8 @@ import {CardListComponent} from './card-list/card-list.component'
         TableActionButtonComponent,
         ScheduleComponent,
         GroupPreviewComponent,
-        CardListComponent
+        CardListComponent,
+        ClosingComponent
     ],
     imports: [
         BrowserModule,

@@ -39,6 +39,13 @@
                 </lwm-schedule>
             </ng-container>
 
+            <ng-container *ngIf="labwork && timetable && scheduleEntries">
+                <lwm-closing *ngSwitchCase="5"
+                             [labwork]="labwork"
+                             (labworkUpdate)="updateLabwork($event)">
+                </lwm-closing>
+            </ng-container>
+
             <p *ngSwitchDefault>{{label(step)}}</p>
         </ng-container>
 
