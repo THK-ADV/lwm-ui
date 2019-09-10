@@ -4,8 +4,6 @@
         (create)="onPreview()">
 </lwm-create-header>
 
-<!-- week numbers does not work -->
-
 <full-calendar
         defaultView="dayGridMonth"
         #calendar
@@ -29,14 +27,4 @@
         [validRange]="semesterBoundaries"
         [weekNumbersWithinDays]=true
         [defaultDate]="earliestDate()">
-
-
-    <!--        [selectable]="true"-->
-    <!--        [eventColor]="'#b43092'"-->
-    <!--        [eventTextColor]="'#ffffff'"-->
-    <!--        (select)="onDateSelection($event)"-->
-    <!--        (eventClick)="onEventClick($event.event)"-->
-    <!--        (eventDrop)="onEventDrop($event)"-->
-    <!--        (eventResize)="onEventResize($event)"-->
-
 </full-calendar>
