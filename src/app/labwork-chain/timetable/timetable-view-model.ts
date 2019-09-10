@@ -60,7 +60,7 @@ const shiftToWeekday = (date: Readonly<Date>, wd: Readonly<number>) => {
     date.setDate(date.getDate() + distance)
 }
 
-const shortUserName = (u: User): string => {
+export const shortUserName = (u: User): string => {
     return `${u.firstname.charAt(0)}. ${u.lastname}`
 }
 

@@ -4,16 +4,30 @@
         (create)="onPreview()">
 </lwm-create-header>
 
+<!-- week numbers does not work -->
+
 <full-calendar
         defaultView="dayGridMonth"
+        #calendar
         [plugins]="calendarPlugins"
         [locale]="'de'"
+        [nowIndicator]=false
         [weekends]="false"
-        [nowIndicator]="false"
-        [allDaySlot]="true"
+        [firstDay]=1
+        [allDaySlot]=true
+        [header]="{left: 'month, list, labworkStart', center: 'title', right: 'prev,next'}"
+        [customButtons]="{
+            labworkStart: { text: 'Praktikumsbeginn', click: showLabworkStartDate},
+            month: { text: 'Monat', click: showMonthView},
+            list: { text: 'Liste', click: showListView}
+        }"
+        [buttonText]="{month: 'Monat', list: 'Liste'}"
         [columnHeaderFormat]="{ weekday: 'long' }"
         [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
         [events]="dates"
+        [weekNumbers]=true
+        [validRange]="semesterBoundaries"
+        [weekNumbersWithinDays]=true
         [defaultDate]="earliestDate()">
 
 

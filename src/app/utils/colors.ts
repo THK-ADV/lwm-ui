@@ -1,4 +1,4 @@
-type LWMColor = 'primary' | 'accent' | 'warn'
+export type LWMColor = 'primary' | 'accent' | 'warn'
 
 export const color = (c: LWMColor) => {
     switch (c) {

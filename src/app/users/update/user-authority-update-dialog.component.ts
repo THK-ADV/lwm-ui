@@ -17,6 +17,7 @@ import {AlertService} from '../../services/alert.service'
 import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../utils/form.validator'
 import {addToDataSource} from '../../shared-dialogs/dataSource.update'
 import {resetControls} from '../../utils/form-control-utils'
+import {LWMColor} from '../../utils/colors'
 
 export interface StandardRole {
     label: UserStatus
