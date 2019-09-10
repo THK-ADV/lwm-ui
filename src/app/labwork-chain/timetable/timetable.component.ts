@@ -5,9 +5,9 @@ import interactionPlugin from '@fullcalendar/interaction'
 import {MatDialog} from '@angular/material'
 import {TimetableService} from '../../services/timetable.service'
 import {subscribe} from '../../utils/functions'
-import {Observable, Subscription} from 'rxjs'
+import {EMPTY, Observable, Subscription} from 'rxjs'
 import {TimetableAtom} from '../../models/timetable'
-import {TimetableEntryComponent} from './timetable-entry/timetable-entry.component'
+import {TimetableEntryComponent, TimetableEntryDialogResult} from './timetable-entry/timetable-entry.component'
 import {AuthorityService} from '../../services/authority.service'
 import {filter, map, switchMap} from 'rxjs/operators'
 import {RoomService} from '../../services/room.service'
@@ -16,6 +16,7 @@ import {
     createTimetableEntry$,
     isValidTimetableEntry,
     makeCalendarEvents,
+    removeTimetableEntry$,
     updateStartDate,
     updateSupervisorAndRoom,
     updateTime,
@@ -99,14 +100,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            tuple => createTimetableEntry$(
-                this.timetableService,
-                this.timetable,
-                tuple.first,
-                tuple.second,
-                event.start,
-                event.end,
-            )
+            this.createIfNeeded(event.id, event.start, event.end)
         ))
     }
 
@@ -119,12 +113,7 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            tuple => updateTimetableEntry$(
-                this.timetableService,
-                this.timetable,
-                event.id,
-                updateSupervisorAndRoom(tuple)
-            )
+            this.updateIfNeeded(event.id)
         ))
     }
 
@@ -169,4 +158,45 @@ export class TimetableComponent implements OnInit { // TODO draw timetable entri
     }
 
     private primaryColor = () => color('primary')
+
+    private updateIfNeeded = (id: number): (reason: TimetableEntryDialogResult) => Observable<TimetableAtom> => {
+        return reason => {
+            switch (reason.kind) {
+                case 'update':
+                    return updateTimetableEntry$(
+                        this.timetableService,
+                        this.timetable,
+                        id,
+                        updateSupervisorAndRoom(reason.room, reason.supervisors)
+                    )
+                case 'delete':
+                    return removeTimetableEntry$(
+                        this.timetableService,
+                        this.timetable,
+                        id
+                    )
+                case 'cancel':
+                    return EMPTY
+            }
+        }
+    }
+
+    private createIfNeeded = (id: number, start: Date, end: Date): (reason: TimetableEntryDialogResult) => Observable<TimetableAtom> => {
+        return reason => {
+            switch (reason.kind) {
+                case 'update':
+                    return createTimetableEntry$(
+                        this.timetableService,
+                        this.timetable,
+                        reason.supervisors,
+                        reason.room,
+                        start,
+                        end,
+                    )
+                case 'delete':
+                case 'cancel':
+                    return EMPTY
+            }
+        }
+    }
 }

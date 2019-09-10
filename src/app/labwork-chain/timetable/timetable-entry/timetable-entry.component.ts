@@ -11,11 +11,26 @@ import {formatUser} from '../../../utils/component.utils'
 import {map} from 'rxjs/operators'
 import {exists, foldUndefined} from '../../../utils/functions'
 import {Room} from '../../../models/room.model'
-import {Tuple} from '../../../utils/tuple'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {isRoom, isUser} from '../../../utils/type.check.utils'
 import {createAction, deleteAction, LWMAction} from '../../../table-action-button/lwm-actions'
 import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetControl} from '../../../utils/form-control-utils'
+
+export interface Delete {
+    readonly kind: 'delete'
+}
+
+export interface Cancel {
+    readonly kind: 'cancel'
+}
+
+export interface Update {
+    readonly kind: 'update'
+    readonly supervisors: User[]
+    readonly room: Room
+}
+
+export type TimetableEntryDialogResult = Delete | Cancel | Update
 
 @Component({
     selector: 'lwm-timetable-entry',
@@ -25,7 +40,7 @@ import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetCon
 export class TimetableEntryComponent implements OnInit, OnDestroy {
 
     constructor(
-        private dialogRef: MatDialogRef<TimetableEntryComponent, Tuple<User[], Room>>,
+        private dialogRef: MatDialogRef<TimetableEntryComponent, TimetableEntryDialogResult>,
         @Inject(MAT_DIALOG_DATA) private payload: {
             currentRoom?: Room,
             allRooms$: Readonly<Observable<Room[]>>,
@@ -36,6 +51,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
     ) {
         this.headerTitle = dialogTitle(payload.mode, 'Eintrag')
         this.submitTitle = dialogSubmitTitle(payload.mode)
+        this.deleteTitle = 'Entfernen'
         this.columns = [{attr: 'name', title: 'Name, Vorname'}, {attr: 'systemId', title: 'GMID'}]
         this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
         this.dataSource.data = payload.currentSupervisors
@@ -55,6 +71,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
     protected readonly columns: TableHeaderColumn[]
     private readonly headerTitle: string
     private readonly submitTitle: string
+    private readonly deleteTitle: string
     private readonly dataSource = new MatTableDataSource<User>()
 
     private readonly formGroup: FormGroup
@@ -77,7 +94,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         currentSupervisors: User[],
         allCourseMembers$: Readonly<Observable<User[]>>,
         currentRoom?: Room
-    ): MatDialogRef<TimetableEntryComponent, Tuple<User[], Room>> {
+    ): MatDialogRef<TimetableEntryComponent, TimetableEntryDialogResult> {
         return dialog.open(TimetableEntryComponent, {
             data: {
                 currentRoom: currentRoom,
@@ -199,7 +216,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
     }
 
     private cancel = () => {
-        this.dialogRef.close(undefined)
+        this.dialogRef.close({kind: 'cancel'})
     }
 
     private updateDataSource = () => this.dataSource.data = this.payload.currentSupervisors
@@ -221,9 +238,15 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         const room = this.roomFormControl().value
 
         if (this.formGroup.valid && isRoom(room)) {
-            this.dialogRef.close({first: this.payload.currentSupervisors, second: room})
+            this.dialogRef.close({kind: 'update', room: room, supervisors: this.payload.currentSupervisors})
         } else {
             console.log('invalid form group')
         }
+    }
+
+    private canDelete = () => this.payload.mode === DialogMode.edit
+
+    private delete = () => {
+        this.dialogRef.close({kind: 'delete'})
     }
 }

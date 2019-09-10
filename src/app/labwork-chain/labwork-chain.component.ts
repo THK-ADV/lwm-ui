@@ -55,7 +55,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('chain loaded')
 
-        this.fetchChainData(() => this.stepper.selectedIndex = Step.schedule.valueOf())
+        this.fetchChainData(() => this.stepper.selectedIndex = Step.timetable.valueOf())
     }
 
     ngOnDestroy(): void {

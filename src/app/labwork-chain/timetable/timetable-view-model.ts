@@ -6,7 +6,6 @@ import {Room} from '../../models/room.model'
 import {Observable} from 'rxjs'
 import {TimetableService} from '../../services/timetable.service'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
-import {Tuple} from '../../utils/tuple'
 
 export interface CalendarEvent {
     title: string
@@ -75,6 +74,16 @@ export const updateTimetableEntry$ = (
     return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
 }
 
+export const removeTimetableEntry$ = (
+    service: TimetableService,
+    existing: Readonly<TimetableAtom>,
+    id: number
+): Observable<TimetableAtom> => {
+    const copy = {...existing}
+    copy.entries.splice(id, 1)
+    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
+}
+
 export const createTimetableEntry$ = (
     service: TimetableService,
     existing: Readonly<TimetableAtom>,
@@ -130,8 +139,10 @@ export const updateTime = (start: Date, end: Date): (entry: Readonly<TimetableEn
     }
 }
 
-export const updateSupervisorAndRoom = (tuple: Tuple<User[], Room>): (entry: Readonly<TimetableEntryAtom>) => Readonly<TimetableEntryAtom> => {
-    return entry => ({...entry, supervisor: [...tuple.first], room: tuple.second})
+export const updateSupervisorAndRoom = (
+    room: Room, supervisors: User[]
+): (entry: Readonly<TimetableEntryAtom>) => Readonly<TimetableEntryAtom> => {
+    return entry => ({...entry, supervisor: supervisors, room: room})
 }
 
 export const updateStartDate = (date: Date): (t: Readonly<TimetableAtom>) => Readonly<TimetableAtom> => {

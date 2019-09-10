@@ -62,7 +62,15 @@
 
     <mat-dialog-actions>
         <button type="button" mat-flat-button (click)="cancel()">Abbrechen</button>
-        <button mat-flat-button color="primary" class="unselectable" cdkFocusInitial
+        <button mat-flat-button
+                cdkFocusInitial
+                color="primary"
+                class="unselectable"
                 (click)="submit()">{{submitTitle}}</button>
+        <button *ngIf="canDelete()"
+                mat-flat-button
+                color="warn"
+                class="unselectable"
+                (click)="delete()">{{deleteTitle}}</button>
     </mat-dialog-actions>
 </div>
