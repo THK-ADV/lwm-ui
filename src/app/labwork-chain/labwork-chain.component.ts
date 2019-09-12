@@ -1,15 +1,25 @@
 import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {Subscription} from 'rxjs'
+import {Observable, Subscription} from 'rxjs'
 import {LabworkAtom} from '../models/labwork.model'
 import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
-import {foldUndefined} from '../utils/functions'
+import {foldUndefined, isEmpty, subscribe} from '../utils/functions'
 import {TimetableAtom} from '../models/timetable'
-import {fetchLabwork, fetchScheduleEntries, fetchTimetable} from './labwork-chain-view-model'
+import {
+    fetchApplicationCount,
+    fetchLabwork,
+    fetchOrCreateAssignmentPlan,
+    fetchOrCreateTimetable,
+    fetchScheduleEntries
+} from './labwork-chain-view-model'
 import {TimetableService} from '../services/timetable.service'
-import {ScheduleEntryService} from '../services/schedule-entry.service'
+import {ScheduleEntryService, SchedulePreview} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
 import {MatHorizontalStepper} from '@angular/material'
+import {AssignmentPlanService} from '../services/assignment-plan.service'
+import {AssignmentPlan} from '../models/assignment-plan.model'
+import {BlacklistService} from '../services/blacklist.service'
+import {LabworkApplicationService} from '../services/labwork-application.service'
 
 enum Step {
     application,
@@ -19,6 +29,8 @@ enum Step {
     schedule,
     closing
 }
+
+type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPresent'
 
 @Component({
     selector: 'lwm-labwork-chain',
@@ -31,6 +43,10 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private labwork: Readonly<LabworkAtom>
     private timetable: Readonly<TimetableAtom>
     private scheduleEntries: Readonly<ScheduleEntryAtom[]>
+    private assignmentPlan: Readonly<AssignmentPlan>
+    private applications: Readonly<number>
+    private schedulePreview: Readonly<SchedulePreview> | undefined
+
     private steps: Step[]
 
     @ViewChild('stepper', {static: false}) stepper: MatHorizontalStepper
@@ -39,7 +55,10 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         private readonly route: ActivatedRoute,
         private readonly labworkService: LabworkService,
         private readonly timetableService: TimetableService,
-        private readonly scheduleEntryService: ScheduleEntryService
+        private readonly blacklistService: BlacklistService,
+        private readonly scheduleEntryService: ScheduleEntryService,
+        private readonly assignmentPlanService: AssignmentPlanService,
+        private readonly labworkApplicationService: LabworkApplicationService
     ) {
         this.subs = []
         this.steps = [
@@ -53,9 +72,10 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        console.log('chain loaded')
+        console.log('chain loaded', this.schedulePreview)
 
-        this.fetchChainData(() => {}) // (() => this.stepper.selectedIndex = Step.closing.valueOf())
+        this.fetchChainData(() => {
+        }) // (() => this.stepper.selectedIndex = Step.closing.valueOf())
     }
 
     ngOnDestroy(): void {
@@ -70,26 +90,29 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.labwork = l
     }
 
+    private updateAssignmentPlan = (a: AssignmentPlan) => {
+        this.assignmentPlan = a
+    }
+
+    private updateSchedulePreview = (p: SchedulePreview) => {
+        this.schedulePreview = p
+    }
+
     private fetchChainData = (andThen: () => void) => {
         const s1 = fetchLabwork(this.route, this.labworkService, labwork => {
             this.labwork = labwork
 
-            const s2 = fetchTimetable(this.timetableService, labwork, timetable => { // TODO fetchOrCreate
-                this.timetable = timetable
-
-                const s3 = fetchScheduleEntries(this.scheduleEntryService, labwork, entries => {
-                    this.scheduleEntries = entries
-
-                    andThen()
-                })
-
-                this.subs.push(s3)
-            })
-
-            this.subs.push(s2)
+            this.subscribeAndPush(fetchOrCreateAssignmentPlan(this.assignmentPlanService, labwork), ap => this.assignmentPlan = ap)
+            this.subscribeAndPush(fetchOrCreateTimetable(this.timetableService, this.blacklistService, labwork), tt => this.timetable = tt)
+            this.subscribeAndPush(fetchApplicationCount(this.labworkApplicationService, labwork), a => this.applications = a)
+            this.subscribeAndPush(fetchScheduleEntries(this.scheduleEntryService, labwork), s => this.scheduleEntries = s)
         })
 
         this.subs.push(s1)
+    }
+
+    private subscribeAndPush = <T>(o: Observable<T>, f: (t: T) => void) => {
+        this.subs.push(subscribe(o, f))
     }
 
     private label = (step: Step): string => {
@@ -134,4 +157,41 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     }
 
     private chainDisabled = (): boolean => false // TODO
+
+    private isStepCompleted = (step: Step): boolean => {
+        switch (step) {
+            case Step.application:
+            case Step.timetable:
+            case Step.blacklists:
+                return true
+            case Step.groups:
+                return this.hasSchedulePreview() || this.hasScheduleEntries()
+            case Step.schedule:
+                return this.hasScheduleEntries()
+            case Step.closing:
+                return false // TODO reportCardEntries are present
+        }
+    }
+
+    private hasScheduleEntries = () => foldUndefined(this.scheduleEntries, xs => xs.length > 0, () => false)
+
+    private hasSchedulePreview = () => foldUndefined(this.schedulePreview, () => true, () => false)
+
+    private groupViewMode = (): GroupViewMode => {
+        if (this.applications > 0) {
+            if (isEmpty(this.scheduleEntries)) {
+                return 'waitingForPreview'
+            } else {
+                return 'groupsPresent'
+            }
+        } else {
+            return 'waitingForApplications'
+        }
+    }
+
+    private waitingForApplications = (): GroupViewMode => 'waitingForApplications'
+
+    private waitingForPreview = (): GroupViewMode => 'waitingForPreview'
+
+    private groupsPresent = (): GroupViewMode => 'groupsPresent'
 }

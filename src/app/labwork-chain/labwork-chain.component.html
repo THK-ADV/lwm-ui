@@ -1,9 +1,12 @@
-<mat-horizontal-stepper labelPosition="bottom" #stepper>
-    <mat-step *ngFor="let step of steps" [label]="label(step)">
+<mat-horizontal-stepper labelPosition="bottom" #stepper [linear]=true>
+    <mat-step *ngFor="let step of steps" [label]="label(step)" [completed]="isStepCompleted(step)">
         <ng-container [ngSwitch]="step">
-            <ng-container *ngIf="labwork">
+
+            <ng-container *ngIf="labwork && assignmentPlan">
                 <lwm-assignment-plan *ngSwitchCase="0"
-                                     [labwork]="labwork">
+                                     [labwork]="labwork"
+                                     [plan]="assignmentPlan"
+                                     (planUpdate)="updateAssignmentPlan($event)">
                 </lwm-assignment-plan>
             </ng-container>
 
@@ -23,11 +26,26 @@
                 </lwm-timetable-blacklists>
             </ng-container>
 
-            <ng-container *ngIf="labwork && timetable && scheduleEntries">
-                <lwm-group-preview *ngSwitchCase="3"
-                                   [labwork]="labwork"
-                                   [scheduleEntries]="scheduleEntries">
-                </lwm-group-preview>
+            <ng-container *ngIf="labwork && timetable && scheduleEntries && applications">
+                <ng-container *ngSwitchCase="3">
+                    <ng-container [ngSwitch]="groupViewMode()">
+                        <lwm-create-header *ngSwitchCase="waitingForApplications()"
+                                           headerTitle="Keine Anmeldungen vorhanden"
+                                           [canCreate]="false">
+                        </lwm-create-header>
+
+                        <lwm-group-preview *ngSwitchCase="waitingForPreview()"
+                                           [labwork]="labwork"
+                                           [applications]="applications"
+                                           (schedulePreviewEmitter)="updateSchedulePreview($event)">
+                        </lwm-group-preview>
+
+                        <lwm-group-immutable *ngSwitchCase="groupsPresent()"
+                                             [labwork]="labwork"
+                                             [scheduleEntries]="scheduleEntries">
+                        </lwm-group-immutable>
+                    </ng-container>
+                </ng-container>
             </ng-container>
 
 
@@ -46,13 +64,13 @@
                 </lwm-closing>
             </ng-container>
 
-            <p *ngSwitchDefault>{{label(step)}}</p>
+            <p *ngSwitchDefault>???</p>
         </ng-container>
 
         <div>
             <button *ngIf="hasPrevButton(step)" mat-button matStepperPrevious
                     [disabled]="chainDisabled()">prev: {{prevButtonLabel(step)}}</button>
-            <button *ngIf="hasNextButton(step)" mat-button matStepperNext
+            <button *ngIf="hasNextButton(step) && isStepCompleted(step)" mat-button matStepperNext
                     [disabled]="chainDisabled()">next: {{nextButtonLabel(step)}}</button>
         </div>
     </mat-step>

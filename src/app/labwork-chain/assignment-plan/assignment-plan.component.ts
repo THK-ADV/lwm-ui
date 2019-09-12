@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core'
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
 import {LabworkAtom} from '../../models/labwork.model'
 import {MatDialog, MatTableDataSource} from '@angular/material'
@@ -31,11 +31,13 @@ import {openDialogFromPayload} from '../../shared-dialogs/dialog-open-combinator
 export class AssignmentPlanComponent implements OnInit, OnDestroy {
 
     @Input() labwork: Readonly<LabworkAtom>
+    @Input() plan: Readonly<AssignmentPlan>
+
+    @Output() planUpdate: EventEmitter<AssignmentPlan>
 
     private headerTitle: String
     private subs: Subscription[]
     private dataSource = new MatTableDataSource<AssignmentEntry>()
-    private plan: Readonly<AssignmentPlan>
 
     private readonly displayedColumns: string[]
     private readonly columns: TableHeaderColumn[]
@@ -48,6 +50,7 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
         private readonly assignmentPlanService: AssignmentPlanService,
         private readonly dialog: MatDialog
     ) {
+        this.planUpdate = new EventEmitter<AssignmentPlan>()
         this.columns = [
             {title: 'Termin', attr: 'index'},
             {title: 'Bezeichnung', attr: 'label'},
@@ -63,30 +66,17 @@ export class AssignmentPlanComponent implements OnInit, OnDestroy {
         console.log('plan component loaded')
 
         this.headerTitle = `Ablaufplan für ${this.labwork.label}`
-        this.fetchAssignmentPlan(this.updateDataSource)
+        this.updateDataSource(this.plan)
     }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private fetchAssignmentPlan = (completion: (p: AssignmentPlan) => void) => {
-        const s = subscribe(
-            this.assignmentPlanService.getAllWithFilter(this.labwork.course.id, {attribute: 'labwork', value: this.labwork.id}),
-            plans => {
-                const plan = plans.shift()
-
-                if (plan) {
-                    completion(plan)
-                }
-            }
-        )
-
-        this.subs.push(s)
-    }
-
     private updateDataSource = (plan: AssignmentPlan) => {
         this.plan = plan
+        this.planUpdate.emit(plan)
+
         this.dataSource.data = plan.entries
             .sort((lhs, rhs) => lhs.index - rhs.index)
     }

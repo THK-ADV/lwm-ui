@@ -55,8 +55,10 @@ export class HttpService {
     }
 
     getAll<T>(url: string, params?: HttpParams): Observable<T> {
-        return this.http.get<T>(url, {params})
-            .pipe(catchError(this.handleError))
+        return this.http.get<T>(url, {params}).pipe(
+            // tap(console.log),
+            catchError(this.handleError)
+        )
     }
 
     get<T>(url: string, id: string, params?: HttpParams): Observable<T> {

@@ -55,6 +55,9 @@ import {ScheduleComponent} from './labwork-chain/schedule/schedule.component'
 import {GroupPreviewComponent} from './labwork-chain/group-preview/group-preview.component'
 import {CardListComponent} from './card-list/card-list.component'
 import {ClosingComponent} from './labwork-chain/closing/closing.component'
+import {GroupCardViewComponent} from './labwork-chain/group-card-view/group-card-view.component'
+import {GroupPreviewModalComponent} from './labwork-chain/group-preview/group-preview-modal/group-preview-modal.component'
+import {GroupImmutableComponent} from './labwork-chain/group-immutable/group-immutable.component'
 
 @NgModule({
     declarations: [
@@ -92,7 +95,10 @@ import {ClosingComponent} from './labwork-chain/closing/closing.component'
         ScheduleComponent,
         GroupPreviewComponent,
         CardListComponent,
-        ClosingComponent
+        ClosingComponent,
+        GroupCardViewComponent,
+        GroupPreviewModalComponent,
+        GroupImmutableComponent
     ],
     imports: [
         BrowserModule,
@@ -128,7 +134,8 @@ import {ClosingComponent} from './labwork-chain/closing/closing.component'
         GroupEditComponent,
         CourseDetailComponent,
         CourseAuthorityUpdateDialogComponent,
-        TimetableEntryComponent
+        TimetableEntryComponent,
+        GroupPreviewModalComponent
     ]
 })
 export class AppModule {

@@ -1,0 +1,54 @@
+<h1 mat-dialog-title>{{title}}</h1>
+
+<div class="modalContainer">
+    <mat-dialog-content [formGroup]="formGroup">
+        <mat-form-field>
+            <mat-label>Strategie</mat-label>
+            <mat-select [(value)]="selectedValue">
+                <mat-option *ngFor="let strategy of strategies" [value]="strategy.value">
+                    {{strategy.viewValue}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <ng-container *ngIf="selectedValue">
+            <ng-container [ngSwitch]="selectedValue">
+                <ng-container *ngSwitchCase="countOption.value">
+                    <mat-form-field class="mat-form-field-modal">
+                        <input matInput placeholder="Anzahl" type="number"
+                               formControlName="count">
+                    </mat-form-field>
+                    <mat-error *ngIf="hasError('count')">{{getErrorMsg('count')}}
+                    </mat-error>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="minMaxOption.value">
+                    <mat-form-field class="mat-form-field-modal">
+                        <input matInput placeholder="Minimum" type="number" formControlName="min">
+                    </mat-form-field>
+
+                    <mat-form-field class="mat-form-field-modal">
+                        <input matInput placeholder="Maximum" type="number" formControlName="max">
+                    </mat-form-field>
+
+                    <mat-error *ngIf="hasError('max')">{{getErrorMsg('max')}}
+                    </mat-error>
+                </ng-container>
+            </ng-container>
+        </ng-container>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+        <button type="button"
+                mat-flat-button
+                (click)="cancel()">
+            Abbrechen
+        </button>
+        <button mat-flat-button
+                cdkFocusInitial
+                color="primary"
+                (click)="submit()">
+            Vorschau erzeugen
+        </button>
+    </mat-dialog-actions>
+</div>

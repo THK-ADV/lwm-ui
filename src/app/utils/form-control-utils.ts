@@ -1,6 +1,6 @@
 import {FormInput, FormInputData} from '../shared-dialogs/forms/form.input'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
-import {AbstractControl} from '@angular/forms'
+import {AbstractControl, FormGroup} from '@angular/forms'
 
 export const isOption = (d: FormInputData<any>): d is FormInputOption<any> => {
     return (d as FormInputOption<any>).bindOptions !== undefined
@@ -30,4 +30,10 @@ export const resetControls = (controls: Readonly<AbstractControl>[]) => {
 export const resetControl = (control: Readonly<AbstractControl>) => {
     control.setValue('', {emitEvent: true})
     control.markAsUntouched()
+}
+
+export const printFormControlErrors = (formGroup: FormGroup) => {
+    Object.keys(formGroup.controls).forEach(k => {
+        console.error(k, formGroup.controls[k].errors)
+    })
 }

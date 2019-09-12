@@ -3,6 +3,7 @@ import {Time} from '../models/time.model'
 import {Semester, SemesterJSON} from '../models/semester.model'
 import {TimetableAtom, TimetableAtomJSON, TimetableEntryAtom, TimetableEntryAtomJSON} from '../models/timetable'
 import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
+import {ScheduleEntryGen, ScheduleEntryGenJSON} from '../services/schedule-entry.service'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 
@@ -68,6 +69,17 @@ export const mapScheduleEntryAtomJSON = (e: ScheduleEntryAtomJSON): ScheduleEntr
     }
 }
 
+export const mapScheduleEntryGenJSON = (e: ScheduleEntryGenJSON): ScheduleEntryGen => {
+    const date = new Date(e.date)
+
+    return {
+        ...e,
+        date: date,
+        start: Time.fromTimeString(e.start, date),
+        end: Time.fromTimeString(e.end, date)
+    }
+}
+
 export const convertManySemesters = (ss: SemesterJSON[]): Semester[] => {
     return convertMany(ss, mapSemesterJSON)
 }
@@ -86,4 +98,8 @@ export const convertManyTimetablesEntries = (es: TimetableEntryAtomJSON[], date:
 
 export const convertManyScheduleEntries = (se: ScheduleEntryAtomJSON[]): ScheduleEntryAtom[] => {
     return convertMany(se, mapScheduleEntryAtomJSON)
+}
+
+export const convertManyScheduleEntryGens = (se: ScheduleEntryGenJSON[]): ScheduleEntryGen[] => {
+    return convertMany(se, mapScheduleEntryGenJSON)
 }

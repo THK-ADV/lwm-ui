@@ -60,6 +60,11 @@ export const parseUnsafeBoolean = (any: any): boolean => !!any
 
 export const parseUnsafeNumber = (any: any): number => +any
 
+export const parseUnsafeString = (any: any): string => '' + any
+
 export const between = (x: number, min: number, max: number): boolean => x >= min && x <= max
 
-export const voidF = () => {}
+export const voidF = () => {
+}
+
+export const isEmpty = <T>(xs: Readonly<Array<T>>): boolean => xs.length === 0

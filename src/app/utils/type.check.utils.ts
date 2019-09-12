@@ -18,3 +18,7 @@ export const isRoom = (any: any): any is Room => {
 export const isDate = (any: any): any is Date => {
     return (any as Date).getDay() !== undefined
 }
+
+export const isString = (any: any): any is string => {
+    return (any as string).charAt !== undefined
+}

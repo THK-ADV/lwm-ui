@@ -8,7 +8,7 @@ import {applyFilter} from './http.filter'
 import {convertManyBlacklists, mapBlacklistJSON} from '../utils/http-utils'
 
 interface BlacklistFilter {
-    attribute: 'global'
+    attribute: 'global' | 'since' | 'until'
     value: string
 }
 

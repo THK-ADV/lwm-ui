@@ -19,7 +19,8 @@ import {
     MatTableModule,
     MatToolbarModule,
     MatTooltipModule,
-    MatStepperModule
+    MatStepperModule,
+    MatSelectModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -48,7 +49,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatPaginatorModule,
         MatSlideToggleModule,
         MatMenuModule,
-        MatStepperModule
+        MatStepperModule,
+        MatSelectModule
     ]
 })
 export class LWMMaterialModule {
