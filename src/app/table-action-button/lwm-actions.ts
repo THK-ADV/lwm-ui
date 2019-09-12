@@ -1,7 +1,7 @@
 import {TooltipPosition} from '@angular/material'
 import {LWMColor} from '../utils/colors'
 
-export type LWMActionType = 'edit' | 'delete' | 'chain' | 'groups' | 'graduates' | 'applications' | 'create' | 'swap'
+export type LWMActionType = 'edit' | 'delete' | 'chain' | 'groups' | 'graduates' | 'applications' | 'create' | 'swap' | 'preview' | 'upload'
 
 export interface LWMAction {
     type: LWMActionType
@@ -41,4 +41,37 @@ export const createAction = (): LWMAction => {
 
 export const swapAction = (): LWMAction => {
     return {type: 'swap', color: 'accent', iconName: 'swap_horiz', tooltipName: 'Wechseln', tooltipPosition: 'above'}
+}
+
+export const previewAction = (): LWMAction => {
+    return {type: 'preview', color: 'accent', iconName: 'autorenew', tooltipName: 'Vorschau', tooltipPosition: 'above'}
+}
+
+export const uploadAction = (): LWMAction => {
+    return {type: 'upload', color: 'accent', iconName: 'cloud_upload', tooltipName: 'Übernehmen', tooltipPosition: 'above'}
+}
+
+export const action = (type: LWMActionType): LWMAction => {
+    switch (type) {
+        case 'edit':
+            return editAction()
+        case 'delete':
+            return deleteAction()
+        case 'chain':
+            return chainAction()
+        case 'groups':
+            return groupAction()
+        case 'graduates':
+            return graduatesAction()
+        case 'applications':
+            return labworkApplicationAction()
+        case 'create':
+            return createAction()
+        case 'swap':
+            return swapAction()
+        case 'preview':
+            return previewAction()
+        case 'upload':
+            return uploadAction()
+    }
 }

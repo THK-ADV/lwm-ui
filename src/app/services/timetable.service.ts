@@ -35,9 +35,10 @@ export class TimetableService {
     }
 
     create(courseId: string, body: TimetableProtocol): Observable<TimetableAtom> {
-        return this.http.createMany<TimetableProtocol, TimetableAtom>(this.path(courseId), [body], atomicParams).pipe(
+        return this.http.createMany<TimetableProtocol, TimetableAtomJSON>(this.path(courseId), [body], atomicParams).pipe(
             filter(xs => xs.length === 1),
-            map(xs => xs[0])
+            map(xs => xs[0]),
+            map(mapTimetableAtomJSON)
         )
     }
 }

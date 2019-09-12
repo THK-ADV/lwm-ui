@@ -1,4 +1,5 @@
 import {Observable, Subscription} from 'rxjs'
+import {isNumber} from '../models/time.model'
 
 export const pipe = <T extends any[], R>(
     fn1: (...args: T) => R,
@@ -48,13 +49,18 @@ export function NotImplementedError(data: string = ''): never {
 
 export function subscribe<T>(observable: Observable<T>, next: (t: T) => void): Subscription {
     return observable.subscribe(e => {
-        if (e) {
+        if (isNumber(e)) {
             next(e)
+        } else {
+            foldUndefined(e, next, () => {
+            })
         }
     })
 }
 
 export const foldUndefined = <T, U>(t: T | undefined, f: (t: T) => U, nil: () => U): U => t ? f(t) : nil()
+
+export const mapUndefined = <T, U>(t: T | undefined, f: (t: T) => U): U | undefined => foldUndefined(t, f, () => undefined)
 
 export const parseUnsafeBoolean = (any: any): boolean => !!any
 
@@ -68,3 +74,19 @@ export const voidF = () => {
 }
 
 export const isEmpty = <T>(xs: Readonly<Array<T>>): boolean => xs.length === 0
+
+export const maxBy = <T>(xs: Readonly<Array<T>>, higher: (lhs: T, rhs: T) => boolean): T | undefined => {
+    if (isEmpty(xs)) {
+        return undefined
+    }
+
+    return xs.reduce((lhs, rhs) => higher(lhs, rhs) ? lhs : rhs)
+}
+
+export const minBy = <T>(xs: Readonly<Array<T>>, lower: (lhs: T, rhs: T) => boolean): T | undefined => {
+    if (isEmpty(xs)) {
+        return undefined
+    }
+
+    return xs.reduce((lhs, rhs) => lower(lhs, rhs) ? lhs : rhs)
+}

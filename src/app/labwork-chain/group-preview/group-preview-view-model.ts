@@ -13,12 +13,17 @@ export interface CountStrategy {
     count: number
 }
 
+export interface SchedulePreviewConfig {
+    strategy: GroupStrategy
+    considerSemesterIndex: boolean
+}
+
 export type GroupStrategy = MinMaxStrategy | CountStrategy
 
 export const fetchPreview = (
     service: ScheduleEntryService,
     labwork: LabworkAtom
-): (strategy: GroupStrategy) => Observable<SchedulePreview> => {
-    return strategy => service.preview(labwork.course.id, labwork.id, strategy)
+): (config: SchedulePreviewConfig) => Observable<SchedulePreview> => {
+    return config => service.preview(labwork.course.id, labwork.id, config.strategy, config.considerSemesterIndex)
 }
 

@@ -1,8 +1,8 @@
 import {Component, Inject} from '@angular/core'
-import {FormControl, FormGroup, ValidationErrors, ValidatorFn} from '@angular/forms'
+import {FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
-import {GroupStrategy} from '../group-preview-view-model'
-import {parseUnsafeNumber} from '../../../utils/functions'
+import {GroupStrategy, SchedulePreviewConfig} from '../group-preview-view-model'
+import {mapUndefined, parseUnsafeBoolean, parseUnsafeNumber} from '../../../utils/functions'
 
 interface StrategyOption {
     value: string
@@ -25,7 +25,7 @@ export class GroupPreviewModalComponent {
     private readonly minMaxOption = ({value: 'min-max', viewValue: 'Gruppengröße'})
 
     constructor(
-        private dialogRef: MatDialogRef<GroupPreviewModalComponent, GroupStrategy>,
+        private dialogRef: MatDialogRef<GroupPreviewModalComponent, SchedulePreviewConfig>,
         @Inject(MAT_DIALOG_DATA) private applications: number
     ) {
         this.title = `${applications} Anmeldungen aufteilen nach`
@@ -33,7 +33,8 @@ export class GroupPreviewModalComponent {
         this.formGroup = new FormGroup({
             count: new FormControl(undefined),
             min: new FormControl(undefined),
-            max: new FormControl(undefined)
+            max: new FormControl(undefined),
+            considerSemesterIndex: new FormControl(true, Validators.required)
         })
 
         this.formGroup.setValidators(this.strategyValidator())
@@ -42,8 +43,8 @@ export class GroupPreviewModalComponent {
     static instance(
         dialog: MatDialog,
         applications: number
-    ): MatDialogRef<GroupPreviewModalComponent, GroupStrategy> {
-        return dialog.open<GroupPreviewModalComponent, number, GroupStrategy>(GroupPreviewModalComponent, {
+    ): MatDialogRef<GroupPreviewModalComponent, SchedulePreviewConfig> {
+        return dialog.open<GroupPreviewModalComponent, number, SchedulePreviewConfig>(GroupPreviewModalComponent, {
             data: applications,
             panelClass: 'lwmGroupPreviewDialog'
         })
@@ -62,12 +63,14 @@ export class GroupPreviewModalComponent {
             () => undefined
         )
 
-        this.dialogRef.close(strategy)
+        this.dialogRef.close(mapUndefined(strategy, s => ({strategy: s, considerSemesterIndex: this.considerSemesterIndexValue()})))
     }
 
     private hasError = (fcName: string) => !this.formGroup.controls[fcName].untouched && this.formGroup.controls[fcName].hasError(fcName)
 
     private getErrorMsg = (fcName: string) => this.formGroup.controls[fcName].getError(fcName)
+
+    private considerSemesterIndexValue = () => parseUnsafeBoolean(this.formGroup.controls.considerSemesterIndex.value)
 
     private foldSelectedValue = <T>(count: (count: number) => T, minMax: (min: number, max: number) => T, nil: () => T): T => {
         if (!this.selectedValue) {

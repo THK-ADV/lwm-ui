@@ -39,7 +39,7 @@ import {LabworksComponent} from './labworks/labworks.component'
 import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
 import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
-import {CreateHeaderComponent} from './editable-header/create-header.component'
+import {AbstractHeaderComponent} from './abstract-header/abstract-header.component'
 import {GroupsComponent} from './groups/groups.component'
 import {GroupEditComponent} from './groups/edit/group-edit.component'
 import {CourseDetailComponent} from './course-detail/course-detail.component'
@@ -55,9 +55,12 @@ import {ScheduleComponent} from './labwork-chain/schedule/schedule.component'
 import {GroupPreviewComponent} from './labwork-chain/group-preview/group-preview.component'
 import {CardListComponent} from './card-list/card-list.component'
 import {ClosingComponent} from './labwork-chain/closing/closing.component'
-import {GroupCardViewComponent} from './labwork-chain/group-card-view/group-card-view.component'
+import {AbstractGroupViewComponent} from './labwork-chain/abstract-group-view/abstract-group-view.component'
 import {GroupPreviewModalComponent} from './labwork-chain/group-preview/group-preview-modal/group-preview-modal.component'
 import {GroupImmutableComponent} from './labwork-chain/group-immutable/group-immutable.component'
+import {AbstractScheduleViewComponent} from './labwork-chain/abstract-schedule-view/abstract-schedule-view.component'
+import {SchedulePreviewComponent} from './labwork-chain/schedule-preview/schedule-preview.component'
+import {ConfirmDialogComponent} from './shared-dialogs/confirm-dialog/confirm-dialog.component'
 
 @NgModule({
     declarations: [
@@ -81,7 +84,7 @@ import {GroupImmutableComponent} from './labwork-chain/group-immutable/group-imm
         FilterPipe,
         NgInitDirective,
         LabworkApplicationsComponent,
-        CreateHeaderComponent,
+        AbstractHeaderComponent,
         GroupsComponent,
         GroupEditComponent,
         CourseDetailComponent,
@@ -96,9 +99,12 @@ import {GroupImmutableComponent} from './labwork-chain/group-immutable/group-imm
         GroupPreviewComponent,
         CardListComponent,
         ClosingComponent,
-        GroupCardViewComponent,
+        AbstractGroupViewComponent,
         GroupPreviewModalComponent,
-        GroupImmutableComponent
+        GroupImmutableComponent,
+        AbstractScheduleViewComponent,
+        SchedulePreviewComponent,
+        ConfirmDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -135,7 +141,8 @@ import {GroupImmutableComponent} from './labwork-chain/group-immutable/group-imm
         CourseDetailComponent,
         CourseAuthorityUpdateDialogComponent,
         TimetableEntryComponent,
-        GroupPreviewModalComponent
+        GroupPreviewModalComponent,
+        ConfirmDialogComponent
     ]
 })
 export class AppModule {

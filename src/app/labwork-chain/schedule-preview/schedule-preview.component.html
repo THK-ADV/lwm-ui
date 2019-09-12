@@ -1,5 +1,7 @@
 <lwm-abstract-header
-        [headerTitle]="headerTitle" >
+        [headerTitle]="headerTitle"
+        [actionType]="canCommit()"
+        (performAction)="commit()">
 </lwm-abstract-header>
 
 <lwm-abstract-schedule-view

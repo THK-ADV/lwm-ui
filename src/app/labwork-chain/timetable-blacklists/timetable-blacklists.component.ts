@@ -79,8 +79,8 @@ export class TimetableBlacklistsComponent implements OnInit {
         this.subs.push(subscribe(ot, this.updateDataSource))
     }
 
-    private canCreate = () => {
-        return true // TODO permission check
+    private canCreate = (): LWMActionType | undefined => {
+        return 'create' // TODO permission check
     }
 
     private performAction = (action: LWMActionType, blacklist: Blacklist) => {

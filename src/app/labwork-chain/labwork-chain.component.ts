@@ -32,12 +32,20 @@ enum Step {
 
 type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPresent'
 
+type ScheduleViewMode = 'preview' | 'committed'
+
 @Component({
     selector: 'lwm-labwork-chain',
     templateUrl: './labwork-chain.component.html',
     styleUrls: ['./labwork-chain.component.scss']
 })
 export class LabworkChainComponent implements OnInit, OnDestroy {
+
+    // TODO lock chain if last step is completed
+    // TODO unlock chain by deleting reportCards > schedule > groups (cascade)
+    // TODO permissions if locked or unlocked and user privilege
+    // TODO copy assignment plan for other degree within same semester
+    // TODO pretty closing and next/prev buttons
 
     private subs: Subscription[]
     private labwork: Readonly<LabworkAtom>
@@ -61,6 +69,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         private readonly labworkApplicationService: LabworkApplicationService
     ) {
         this.subs = []
+        this.applications = 0
         this.steps = [
             Step.application,
             Step.timetable,
@@ -72,7 +81,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        console.log('chain loaded', this.schedulePreview)
+        console.log('chain loaded')
 
         this.fetchChainData(() => {
         }) // (() => this.stepper.selectedIndex = Step.closing.valueOf())
@@ -180,12 +189,12 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private groupViewMode = (): GroupViewMode => {
         if (this.applications > 0) {
             if (isEmpty(this.scheduleEntries)) {
-                return 'waitingForPreview'
+                return this.waitingForPreview()
             } else {
-                return 'groupsPresent'
+                return this.groupsPresent()
             }
         } else {
-            return 'waitingForApplications'
+            return this.waitingForApplications()
         }
     }
 
@@ -194,4 +203,16 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private waitingForPreview = (): GroupViewMode => 'waitingForPreview'
 
     private groupsPresent = (): GroupViewMode => 'groupsPresent'
+
+    private scheduleViewMode = (): ScheduleViewMode => {
+        if (this.hasSchedulePreview() && !this.hasScheduleEntries()) {
+            return this.schedulePreviewMode()
+        } else {
+            return this.scheduleCommittedMode()
+        }
+    }
+
+    private schedulePreviewMode = (): ScheduleViewMode => 'preview'
+
+    private scheduleCommittedMode = (): ScheduleViewMode => 'committed'
 }

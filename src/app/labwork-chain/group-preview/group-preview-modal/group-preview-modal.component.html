@@ -35,6 +35,15 @@
                     </mat-error>
                 </ng-container>
             </ng-container>
+
+            <mat-form-field class="mat-form-field-modal">
+                <!-- workaround to wrap slide toggle inside a valid mat form field type -->
+                <input matInput style="display: none">
+                <mat-slide-toggle color="primary"
+                                  formControlName="considerSemesterIndex"
+                                  [checked]=considerSemesterIndexValue()>Praktika des gleichen Fachsemesters berücksichtigen
+                </mat-slide-toggle>
+            </mat-form-field>
         </ng-container>
     </mat-dialog-content>
 

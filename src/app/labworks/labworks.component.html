@@ -3,8 +3,8 @@
 
 
     <ng-container *ngIf="currentSemester$ | async as currentSemester">
-        <lwm-create-header headerTitle="Praktika" [canCreate]="canCreate()" (create)="onCreate(course)">
-        </lwm-create-header>
+        <lwm-abstract-header headerTitle="Praktika" [actionType]="canCreate()" (performAction)="onCreate(course)">
+        </lwm-abstract-header>
 
         <ng-container *ngIf="groupedLabworks$ | async as xs">
             <mat-accordion>

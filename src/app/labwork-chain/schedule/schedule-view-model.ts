@@ -3,15 +3,14 @@ import {Time} from '../../models/time.model'
 import {Blacklist} from '../../models/blacklist.model'
 import {color, whiteColor} from '../../utils/colors'
 import {User} from '../../models/user.model'
-import {Room} from '../../models/room.model'
 import {Group} from '../../models/group.model'
 import {shortUserName} from '../timetable/timetable-view-model'
 
-type CalendarView = 'month' | 'list'
+export type CalendarView = 'month' | 'list'
 
 export interface ExtendedProps {
-    supervisor: User[]
-    room: Room
+    supervisorLabel: string
+    roomLabel: string
     group: Group
 }
 
@@ -38,8 +37,8 @@ const makeScheduleEntryEvent = (e: ScheduleEntryAtom): ScheduleEntryEvent => {
     const backgroundColor = color('primary')
     const foregroundColor = whiteColor()
     const props = {
-        supervisor: e.supervisor,
-        room: e.room,
+        supervisorLabel: supervisorLabel(e.supervisor),
+        roomLabel: e.room.label,
         group: e.group
     }
 
@@ -101,12 +100,11 @@ const supervisorLabel = (supervisors: User[]): string => {
         .join(', ')
 }
 
-const eventTitle = (view: CalendarView, props: ExtendedProps) => {
+export const eventTitle = (view: CalendarView, props: ExtendedProps) => {
     switch (view) {
         case 'month':
-            return `- Gruppe ${props.group.label} (${props.room.label})`
+            return `- Grp. ${props.group.label} - ${props.roomLabel}`
         case 'list':
-            const supervisors = supervisorLabel(props.supervisor)
-            return `Gruppe ${props.group.label} (${props.room.label}):\t ${supervisors}`
+            return `Grp. ${props.group.label} - ${props.roomLabel}: ${props.supervisorLabel}`
     }
 }

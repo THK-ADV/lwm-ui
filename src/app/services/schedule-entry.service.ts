@@ -63,10 +63,13 @@ export class ScheduleEntryService {
         )
     }
 
-    preview = (courseId: string, labworkId: string, strategy: GroupStrategy): Observable<SchedulePreview> => {
+    preview = (courseId: string, labworkId: string, strategy: GroupStrategy, considerSemesterIndex: boolean): Observable<SchedulePreview> => {
         return this.http.getAll<SchedulePreview>(
             makePath('scheduleEntries/preview', courseId, labworkId),
-            applyFilter(this.groupStrategy(strategy))
+            applyFilter(this.groupStrategy(strategy).concat({
+                attribute: 'considerSemesterIndex',
+                value: parseUnsafeString(considerSemesterIndex)
+            }))
         ).pipe(
             map(this.mapDateTime)
         )

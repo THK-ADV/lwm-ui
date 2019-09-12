@@ -1,8 +1,8 @@
-<lwm-create-header
+<lwm-abstract-header
         [headerTitle]="headerTitle"
-        [canCreate]="canCreate()"
-        (create)="onCreate()">
-</lwm-create-header>
+        [actionType]="'create'"
+        (performAction)="onCreate()">
+</lwm-abstract-header>
 
 <div class="mat-elevation-z2">
     <table mat-table [dataSource]="dataSource">

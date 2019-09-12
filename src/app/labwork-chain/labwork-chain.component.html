@@ -26,13 +26,12 @@
                 </lwm-timetable-blacklists>
             </ng-container>
 
-            <ng-container *ngIf="labwork && timetable && scheduleEntries && applications">
+            <ng-container *ngIf="labwork && timetable && scheduleEntries">
                 <ng-container *ngSwitchCase="3">
                     <ng-container [ngSwitch]="groupViewMode()">
-                        <lwm-create-header *ngSwitchCase="waitingForApplications()"
-                                           headerTitle="Keine Anmeldungen vorhanden"
-                                           [canCreate]="false">
-                        </lwm-create-header>
+                        <lwm-abstract-header *ngSwitchCase="waitingForApplications()"
+                                             headerTitle="Keine Anmeldungen vorhanden">
+                        </lwm-abstract-header>
 
                         <lwm-group-preview *ngSwitchCase="waitingForPreview()"
                                            [labwork]="labwork"
@@ -50,11 +49,21 @@
 
 
             <ng-container *ngIf="labwork && timetable && scheduleEntries">
-                <lwm-schedule *ngSwitchCase="4"
-                              [labwork]="labwork"
-                              [timetable]="timetable"
-                              [scheduleEntries]="scheduleEntries">
-                </lwm-schedule>
+                <ng-container *ngSwitchCase="4">
+                    <ng-container [ngSwitch]="scheduleViewMode()">
+                        <lwm-schedule *ngSwitchCase="scheduleCommittedMode()"
+                                      [labwork]="labwork"
+                                      [timetable]="timetable"
+                                      [scheduleEntries]="scheduleEntries">
+                        </lwm-schedule>
+
+                        <lwm-schedule-preview *ngSwitchCase="schedulePreviewMode()"
+                                              [labwork]="labwork"
+                                              [timetable]="timetable"
+                                              [entries]="schedulePreview.schedule.entries">
+                        </lwm-schedule-preview>
+                    </ng-container>
+                </ng-container>
             </ng-container>
 
             <ng-container *ngIf="labwork && timetable && scheduleEntries">

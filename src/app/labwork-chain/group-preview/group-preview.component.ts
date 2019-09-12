@@ -1,13 +1,20 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
-import {ScheduleEntryService, SchedulePreview} from '../../services/schedule-entry.service'
-import {subscribe} from '../../utils/functions'
+import {Conflict, ScheduleEntryService, SchedulePreview} from '../../services/schedule-entry.service'
+import {foldUndefined, isEmpty, maxBy, minBy, subscribe} from '../../utils/functions'
 import {MatDialog} from '@angular/material'
 import {openDialog} from '../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
-import {Subscription} from 'rxjs'
-import {fetchPreview} from './group-preview-view-model'
-import {ScheduleEntryLike} from '../group-card-view/group-card-view.component'
+import {Observable, Subscription} from 'rxjs'
+import {fetchPreview, SchedulePreviewConfig} from './group-preview-view-model'
+import {ScheduleEntryLike} from '../abstract-group-view/abstract-group-view.component'
+import {format} from '../../utils/lwmdate-adapter'
+import {LWMActionType} from '../../table-action-button/lwm-actions'
+
+interface SchedulePreviewResult {
+    fitness: number
+    conflicts: Conflict[]
+}
 
 @Component({
     selector: 'lwm-group-preview',
@@ -16,15 +23,6 @@ import {ScheduleEntryLike} from '../group-card-view/group-card-view.component'
 })
 export class GroupPreviewComponent implements OnInit, OnDestroy {
 
-    @Input() labwork: Readonly<LabworkAtom>
-    @Input() applications: Readonly<number>
-
-    @Output() schedulePreviewEmitter: EventEmitter<SchedulePreview>
-
-    private headerTitle: string
-    private scheduleEntries: ScheduleEntryLike[]
-    private subs: Subscription[]
-
     constructor(
         private readonly dialog: MatDialog,
         private readonly scheduleService: ScheduleEntryService
@@ -32,7 +30,19 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
         this.schedulePreviewEmitter = new EventEmitter<SchedulePreview>()
         this.subs = []
         this.scheduleEntries = []
+        this.previewIsLoading = false
     }
+
+    @Input() labwork: Readonly<LabworkAtom>
+    @Input() applications: Readonly<number>
+
+    @Output() schedulePreviewEmitter: EventEmitter<SchedulePreview>
+
+    private headerTitle: string
+    private scheduleEntries: ScheduleEntryLike[]
+    private previewResult: SchedulePreviewResult | undefined
+    private subs: Subscription[]
+    private previewIsLoading: boolean
 
     ngOnInit() {
         console.log('group preview component loaded')
@@ -42,19 +52,46 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())
 
-    private canPreview = () => {
-        return true // TODO permission check
+    private canPreview = (): LWMActionType | undefined => {
+        return 'preview' // TODO permission check
     }
 
     private onPreview = () => {
         const preview$ = openDialog(
             GroupPreviewModalComponent.instance(this.dialog, this.applications),
-            fetchPreview(this.scheduleService, this.labwork)
+            this.fetchPreview
         )
 
         this.subs.push(subscribe(preview$, p => {
+            this.previewIsLoading = false
+
             this.schedulePreviewEmitter.emit(p)
             this.scheduleEntries = p.schedule.entries
+            this.previewResult = {conflicts: p.conflicts, fitness: p.fitness}
         }))
+    }
+
+    private hasConflicts = () => foldUndefined(this.previewResult, r => !isEmpty(r.conflicts), () => false)
+
+    private hasScheduleEntries = () => !isEmpty(this.scheduleEntries)
+
+    private firstDate = () => {
+        const min = minBy(this.scheduleEntries, (lhs, rhs) => lhs.date.getTime() < rhs.date.getTime())
+        return this.getFormattedDate(min)
+    }
+
+    private lastDate = () => {
+        const max = maxBy(this.scheduleEntries, (lhs, rhs) => lhs.date.getTime() > rhs.date.getTime())
+        return this.getFormattedDate(max)
+    }
+
+    private getFormattedDate = entry => foldUndefined(entry, e => format(e.date, 'dd.MM.yyyy'), () => 'Kein Eintrag')
+
+    private fetchPreview = (config: SchedulePreviewConfig): Observable<SchedulePreview> => {
+        this.scheduleEntries = []
+        this.previewResult = undefined
+        this.previewIsLoading = true
+
+        return fetchPreview(this.scheduleService, this.labwork)(config)
     }
 }

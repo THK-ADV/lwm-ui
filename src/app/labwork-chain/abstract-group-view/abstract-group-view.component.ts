@@ -13,11 +13,11 @@ export interface ScheduleEntryLike {
 }
 
 @Component({
-    selector: 'lwm-group-card-view',
-    templateUrl: './group-card-view.component.html',
-    styleUrls: ['./group-card-view.component.scss']
+    selector: 'lwm-abstract-group-view',
+    templateUrl: './abstract-group-view.component.html',
+    styleUrls: ['./abstract-group-view.component.scss']
 })
-export class GroupCardViewComponent {
+export class AbstractGroupViewComponent {
 
     @Input() set entries(entries: ScheduleEntryLike[]) {
         this.groups = this.toCardGroups(entries)

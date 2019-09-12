@@ -21,6 +21,7 @@ body {
 .lwmGroupEditDialog .mat-dialog-container,
 .lwmCourseAuthorityUpdateDialog .mat-dialog-container,
 .lwmTimetableEntryDialog .mat-dialog-container,
-.lwmGroupPreviewDialog .mat-dialog-container {
+.lwmGroupPreviewDialog .mat-dialog-container,
+.lwmConfirmationDialog .mat-dialog-container {
   overflow: hidden;
 }

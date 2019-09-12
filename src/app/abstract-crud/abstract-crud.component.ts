@@ -12,6 +12,7 @@ import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSourc
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {LWMActionType} from '../table-action-button/lwm-actions'
 
 export interface TableHeaderColumn {
     attr: string
@@ -69,8 +70,8 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         })
     }
 
-    private canCreate(): boolean {
-        return exists(this.actions, a => a === 'create')
+    private canCreate(): LWMActionType | undefined {
+        return exists(this.actions, a => a === 'create') ? 'create' : undefined
     }
 
     private canEdit(): boolean {

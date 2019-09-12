@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core'
 import {atomicParams, HttpService, nonAtomicParams} from './http.service'
 import {Observable} from 'rxjs'
 import {LabworkApplication, LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
-import {map} from 'rxjs/operators'
+import {map, tap} from 'rxjs/operators'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {NotImplementedError} from '../utils/functions'
 

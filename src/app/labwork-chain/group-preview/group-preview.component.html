@@ -1,7 +1,27 @@
-<lwm-create-header
+<lwm-abstract-header
         [headerTitle]="headerTitle"
-        [canCreate]="canPreview()"
-        (create)="onPreview()">
-</lwm-create-header>
+        [actionType]="canPreview()"
+        (performAction)="onPreview()">
+</lwm-abstract-header>
 
-<lwm-group-card-view [entries]="scheduleEntries"></lwm-group-card-view>
+<ng-container *ngIf="previewIsLoading">
+    <mat-spinner color="primary"></mat-spinner>
+</ng-container>
+
+<ng-container *ngIf="previewResult">
+    <p>
+        Staffelplan wurde in {{previewResult.fitness + 1}} Durchläufen mit {{previewResult.conflicts.length}} Konflikten
+        generiert.
+    </p>
+
+    <ng-container *ngIf="hasConflicts()">
+        <p *ngFor="let conflict of previewResult.conflicts">{{conflict | json}}</p>
+    </ng-container>
+</ng-container>
+
+<ng-container *ngIf="hasScheduleEntries()">
+    <p>Erster Termin: {{firstDate()}}</p>
+    <p>Letzer Termin: {{lastDate()}}</p>
+</ng-container>
+
+<lwm-abstract-group-view [entries]="scheduleEntries"></lwm-abstract-group-view>
