@@ -11,7 +11,6 @@ export interface CalendarEvent {
     title: string
     start: Date
     end: Date
-    editable: boolean
     id: number
     extendedProps: {
         dayIndex: number
@@ -30,7 +29,6 @@ const makeCalendarEvent = (now: Date, e: Readonly<TimetableEntryAtom>, i: number
     shiftToWeekday(now, e.dayIndex)
 
     return {
-        editable: true, // TODO permission check
         title: `${e.room.label}\n\n${supervisorLabel(e.supervisor)}`,
         start: Time.withNewDate(now, e.start).date,
         end: Time.withNewDate(now, e.end).date,

@@ -11,7 +11,6 @@
                         <lwm-assignment-plan
                                 [labwork]="labwork"
                                 [plan]="assignmentPlan">
-
                         </lwm-assignment-plan>
                     </ng-template>
                     <ng-template #elseBlock>
@@ -19,18 +18,28 @@
                                 [labwork]="labwork"
                                 [plan]="assignmentPlan"
                                 (planUpdate)="updateAssignmentPlan($event)">
-
                         </lwm-assignment-plan-edit>
                     </ng-template>
                 </ng-container>
             </ng-container>
 
             <ng-container *ngIf="labwork && timetable">
-                <lwm-timetable *ngSwitchCase="1"
-                               [labwork]="labwork"
-                               [timetable]="timetable"
-                               (timetableUpdate)="updateTimetable($event)">
-                </lwm-timetable>
+                <ng-container *ngSwitchCase="1">
+                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
+                    <ng-template #thenBlock>
+                        <lwm-timetable-view *ngSwitchCase="1"
+                                            [labwork]="labwork"
+                                            [timetable]="timetable">
+                        </lwm-timetable-view>
+                    </ng-template>
+                    <ng-template #elseBlock>
+                        <lwm-timetable-edit *ngSwitchCase="1"
+                                            [labwork]="labwork"
+                                            [timetable]="timetable"
+                                            (timetableUpdate)="updateTimetable($event)">
+                        </lwm-timetable-edit>
+                    </ng-template>
+                </ng-container>
             </ng-container>
 
             <ng-container *ngIf="labwork && timetable">
@@ -93,10 +102,16 @@
         </ng-container>
 
         <div>
-            <button *ngIf="hasPrevButton(step)" mat-button matStepperPrevious
-                    [disabled]="chainDisabled()">prev: {{prevButtonLabel(step)}}</button>
-            <button *ngIf="hasNextButton(step) && isStepCompleted(step)" mat-button matStepperNext
-                    [disabled]="chainDisabled()">next: {{nextButtonLabel(step)}}</button>
+            <button *ngIf="hasPrevButton(step)"
+                    mat-button
+                    matStepperPrevious>
+                prev: {{prevButtonLabel(step)}}
+            </button>
+            <button *ngIf="hasNextButton(step) && isStepCompleted(step)"
+                    mat-button
+                    matStepperNext>
+                next: {{nextButtonLabel(step)}}
+            </button>
         </div>
     </mat-step>
 </mat-horizontal-stepper>

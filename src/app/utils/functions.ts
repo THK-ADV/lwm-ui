@@ -93,5 +93,5 @@ export const minBy = <T>(xs: Readonly<Array<T>>, lower: (lhs: T, rhs: T) => bool
 
 export const assertNotUndefined = (...values: Array<any>) => {
     const msg = () => values.map((v, i) => v === undefined ? i : -1).filter(v => v !== -1).join(', ')
-    console.assert(values.every(v => v !== undefined), `values are index ${msg()} are undefined`)
+    console.assert(values.every(v => v !== undefined), `values at index ${msg()} are undefined`)
 }

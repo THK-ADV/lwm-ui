@@ -9,7 +9,8 @@ import {
     fetchApplicationCount,
     fetchLabwork,
     fetchOrCreateAssignmentPlan,
-    fetchOrCreateTimetable, fetchReportCardEntryCount,
+    fetchOrCreateTimetable,
+    fetchReportCardEntryCount,
     fetchScheduleEntries
 } from './labwork-chain-view-model'
 import {TimetableService} from '../services/timetable.service'
@@ -176,8 +177,6 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private hasPrevButton = (step: Step): boolean => {
         return this.prev(step) !== undefined
     }
-
-    private chainDisabled = (): boolean => false // TODO
 
     private isStepCompleted = (step: Step): boolean => {
         switch (step) {

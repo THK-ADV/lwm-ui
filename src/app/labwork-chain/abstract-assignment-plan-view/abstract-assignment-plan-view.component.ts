@@ -49,7 +49,7 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
     ngOnInit() {
         console.log('plan component loaded')
 
-        this.headerTitle = `Ablaufplan für ${this.labwork.label}`
+        this.headerTitle = `[${this.canEdit ? '🔓' : '🔒'}] Ablaufplan für ${this.labwork.label}`
     }
 
     private displayedEntryTypes = (entry: AssignmentEntry): string[] => {

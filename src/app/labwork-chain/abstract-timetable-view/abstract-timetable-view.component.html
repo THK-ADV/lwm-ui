@@ -17,6 +17,7 @@
 
 <full-calendar
         defaultView="timeGridWeek"
+        [editable]="canEdit"
         [plugins]="calendarPlugins"
         [events]="dates"
         [locale]="'de'"
@@ -39,6 +40,6 @@
         (select)="onDateSelection($event)"
         [unselectCancel]="'.unselectable'"
         (eventClick)="onEventClick($event.event)"
-        (eventDrop)="onEventDrop($event)"
+        (eventDrop)="onEventDrop($event.event)"
         (eventResize)="onEventResize($event)">
 </full-calendar>

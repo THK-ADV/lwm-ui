@@ -47,7 +47,7 @@ import {CourseAuthorityUpdateDialogComponent} from './course-authority-dialog/co
 import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
 import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignment-plan.component'
 import {FullCalendarModule} from '@fullcalendar/angular'
-import {TimetableComponent} from './labwork-chain/timetable/timetable.component'
+import {TimetableEditComponent} from './labwork-chain/timetable/timetable-edit/timetable-edit.component'
 import {TimetableEntryComponent} from './labwork-chain/timetable/timetable-entry/timetable-entry.component'
 import {TimetableBlacklistsComponent} from './labwork-chain/timetable-blacklists/timetable-blacklists.component'
 import {TableActionButtonComponent} from './table-action-button/table-action-button.component'
@@ -63,6 +63,8 @@ import {SchedulePreviewComponent} from './labwork-chain/schedule-preview/schedul
 import {ConfirmDialogComponent} from './shared-dialogs/confirm-dialog/confirm-dialog.component'
 import {AbstractAssignmentPlanViewComponent} from './labwork-chain/abstract-assignment-plan-view/abstract-assignment-plan-view.component'
 import {AssignmentPlanEditComponent} from './labwork-chain/assignment-plan-edit/assignment-plan-edit.component'
+import {AbstractTimetableViewComponent} from './labwork-chain/abstract-timetable-view/abstract-timetable-view.component'
+import {TimetableViewComponent} from './labwork-chain/timetable/timetable-view/timetable-view.component'
 
 @NgModule({
     declarations: [
@@ -93,7 +95,7 @@ import {AssignmentPlanEditComponent} from './labwork-chain/assignment-plan-edit/
         CourseAuthorityUpdateDialogComponent,
         LabworkChainComponent,
         AssignmentPlanComponent,
-        TimetableComponent,
+        TimetableEditComponent,
         TimetableEntryComponent,
         TimetableBlacklistsComponent,
         TableActionButtonComponent,
@@ -108,7 +110,9 @@ import {AssignmentPlanEditComponent} from './labwork-chain/assignment-plan-edit/
         SchedulePreviewComponent,
         ConfirmDialogComponent,
         AbstractAssignmentPlanViewComponent,
-        AssignmentPlanEditComponent
+        AssignmentPlanEditComponent,
+        AbstractTimetableViewComponent,
+        TimetableViewComponent
     ],
     imports: [
         BrowserModule,
