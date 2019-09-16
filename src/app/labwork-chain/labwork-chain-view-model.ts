@@ -16,6 +16,7 @@ import {BlacklistService} from '../services/blacklist.service'
 import {Blacklist} from '../models/blacklist.model'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
+import {ReportCardEntryService} from '../services/report-card-entry.service'
 
 export const fetchLabwork = (
     route: ActivatedRoute,
@@ -30,6 +31,13 @@ export const fetchScheduleEntries = (
     labwork: LabworkAtom
 ): Observable<ScheduleEntryAtom[]> => {
     return service.getAllWithFilter(labwork.course.id, labwork.id)
+}
+
+export const fetchReportCardEntryCount = (
+    service: ReportCardEntryService,
+    labwork: LabworkAtom
+): Observable<number> => {
+    return service.count(labwork.course.id, labwork.id)
 }
 
 export const fetchOrCreateAssignmentPlan = (

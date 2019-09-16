@@ -1,13 +1,28 @@
+<button (click)="toggleLock()">TOGGLE LOCK</button>
+
 <mat-horizontal-stepper labelPosition="bottom" #stepper [linear]=true>
     <mat-step *ngFor="let step of steps" [label]="label(step)" [completed]="isStepCompleted(step)">
         <ng-container [ngSwitch]="step">
 
             <ng-container *ngIf="labwork && assignmentPlan">
-                <lwm-assignment-plan *ngSwitchCase="0"
-                                     [labwork]="labwork"
-                                     [plan]="assignmentPlan"
-                                     (planUpdate)="updateAssignmentPlan($event)">
-                </lwm-assignment-plan>
+                <ng-container *ngSwitchCase="0">
+                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
+                    <ng-template #thenBlock>
+                        <lwm-assignment-plan
+                                [labwork]="labwork"
+                                [plan]="assignmentPlan">
+
+                        </lwm-assignment-plan>
+                    </ng-template>
+                    <ng-template #elseBlock>
+                        <lwm-assignment-plan-edit
+                                [labwork]="labwork"
+                                [plan]="assignmentPlan"
+                                (planUpdate)="updateAssignmentPlan($event)">
+
+                        </lwm-assignment-plan-edit>
+                    </ng-template>
+                </ng-container>
             </ng-container>
 
             <ng-container *ngIf="labwork && timetable">
@@ -69,6 +84,7 @@
             <ng-container *ngIf="labwork && timetable && scheduleEntries">
                 <lwm-closing *ngSwitchCase="5"
                              [labwork]="labwork"
+                             [reportCards]="reportCards"
                              (labworkUpdate)="updateLabwork($event)">
                 </lwm-closing>
             </ng-container>

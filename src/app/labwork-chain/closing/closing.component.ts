@@ -13,18 +13,17 @@ import {updateLabwork$} from '../../labworks/labwork-view-model'
 })
 export class ClosingComponent implements OnInit {
 
-    @Input() labwork: LabworkAtom
+    @Input() labwork: Readonly<LabworkAtom>
+    @Input() reportCards: Readonly<number>
     @Output() labworkUpdate: EventEmitter<LabworkAtom>
 
     private headerTitle: string
-    private reportCardEntriesCount: number
     private subs: Subscription[]
 
     constructor(
         private readonly reportCardEntryService: ReportCardEntryService,
         private readonly labworkService: LabworkService
     ) {
-        this.reportCardEntriesCount = 0
         this.subs = []
         this.labworkUpdate = new EventEmitter<LabworkAtom>()
     }
@@ -33,15 +32,9 @@ export class ClosingComponent implements OnInit {
         console.log('closing component loaded')
 
         this.headerTitle = `Abschluss für ${this.labwork.label}`
-        this.subs.push(subscribe(
-            this.reportCardEntryService.count(this.labwork.course.id, this.labwork.id),
-            n => this.reportCardEntriesCount = n
-        ))
     }
 
-    private reportCardsAvailable = () => this.reportCardEntriesCount > 0
-
-    private numberOfReportCards = () => this.reportCardEntriesCount
+    private reportCardsAvailable = () => this.reportCards > 0
 
     private createReportCards = () => {
         // TODO

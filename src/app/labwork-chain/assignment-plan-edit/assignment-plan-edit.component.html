@@ -1,0 +1,10 @@
+<lwm-abstract-assignment-plan-view
+        [labwork]="labwork"
+        [plan]="plan"
+        [canEdit]="canEdit()"
+        [canCreate]="canCreate()"
+        [canDelete]="canDelete()"
+        (createEmitter)="onCreate()"
+        (deleteEmitter)="onDelete($event)"
+        (updateEmitter)="onEdit($event)">
+</lwm-abstract-assignment-plan-view>

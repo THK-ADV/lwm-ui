@@ -61,6 +61,8 @@ import {GroupImmutableComponent} from './labwork-chain/group-immutable/group-imm
 import {AbstractScheduleViewComponent} from './labwork-chain/abstract-schedule-view/abstract-schedule-view.component'
 import {SchedulePreviewComponent} from './labwork-chain/schedule-preview/schedule-preview.component'
 import {ConfirmDialogComponent} from './shared-dialogs/confirm-dialog/confirm-dialog.component'
+import {AbstractAssignmentPlanViewComponent} from './labwork-chain/abstract-assignment-plan-view/abstract-assignment-plan-view.component'
+import {AssignmentPlanEditComponent} from './labwork-chain/assignment-plan-edit/assignment-plan-edit.component'
 
 @NgModule({
     declarations: [
@@ -104,7 +106,9 @@ import {ConfirmDialogComponent} from './shared-dialogs/confirm-dialog/confirm-di
         GroupImmutableComponent,
         AbstractScheduleViewComponent,
         SchedulePreviewComponent,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        AbstractAssignmentPlanViewComponent,
+        AssignmentPlanEditComponent
     ],
     imports: [
         BrowserModule,

@@ -9,7 +9,7 @@ import {
     fetchApplicationCount,
     fetchLabwork,
     fetchOrCreateAssignmentPlan,
-    fetchOrCreateTimetable,
+    fetchOrCreateTimetable, fetchReportCardEntryCount,
     fetchScheduleEntries
 } from './labwork-chain-view-model'
 import {TimetableService} from '../services/timetable.service'
@@ -20,6 +20,7 @@ import {AssignmentPlanService} from '../services/assignment-plan.service'
 import {AssignmentPlan} from '../models/assignment-plan.model'
 import {BlacklistService} from '../services/blacklist.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'
+import {ReportCardEntryService} from '../services/report-card-entry.service'
 
 enum Step {
     application,
@@ -50,10 +51,14 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private subs: Subscription[]
     private labwork: Readonly<LabworkAtom>
     private timetable: Readonly<TimetableAtom>
-    private scheduleEntries: Readonly<ScheduleEntryAtom[]>
     private assignmentPlan: Readonly<AssignmentPlan>
+
+    private scheduleEntries: Readonly<ScheduleEntryAtom[]>
     private applications: Readonly<number>
+    private reportCards: Readonly<number>
     private schedulePreview: Readonly<SchedulePreview> | undefined
+
+    private forceUnlock = false // TODO remove
 
     private steps: Step[]
 
@@ -66,10 +71,14 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         private readonly blacklistService: BlacklistService,
         private readonly scheduleEntryService: ScheduleEntryService,
         private readonly assignmentPlanService: AssignmentPlanService,
-        private readonly labworkApplicationService: LabworkApplicationService
+        private readonly labworkApplicationService: LabworkApplicationService,
+        private readonly reportCardService: ReportCardEntryService
     ) {
         this.subs = []
+        this.scheduleEntries = []
         this.applications = 0
+        this.reportCards = 0
+        this.schedulePreview = undefined
         this.steps = [
             Step.application,
             Step.timetable,
@@ -107,6 +116,8 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.schedulePreview = p
     }
 
+    private toggleLock = () => this.forceUnlock = !this.forceUnlock
+
     private fetchChainData = (andThen: () => void) => {
         const s1 = fetchLabwork(this.route, this.labworkService, labwork => {
             this.labwork = labwork
@@ -115,6 +126,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             this.subscribeAndPush(fetchOrCreateTimetable(this.timetableService, this.blacklistService, labwork), tt => this.timetable = tt)
             this.subscribeAndPush(fetchApplicationCount(this.labworkApplicationService, labwork), a => this.applications = a)
             this.subscribeAndPush(fetchScheduleEntries(this.scheduleEntryService, labwork), s => this.scheduleEntries = s)
+            this.subscribeAndPush(fetchReportCardEntryCount(this.reportCardService, labwork), n => this.reportCards = n)
         })
 
         this.subs.push(s1)
@@ -178,9 +190,28 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             case Step.schedule:
                 return this.hasScheduleEntries()
             case Step.closing:
-                return false // TODO reportCardEntries are present
+                return this.hasReportCardEntries()
         }
     }
+
+    private isStepLocked = (step: Step): boolean => {
+        if (this.forceUnlock) {
+            return false
+        }
+
+        switch (step) {
+            case Step.application:
+            case Step.timetable:
+            case Step.blacklists:
+                return this.hasScheduleEntries()
+            case Step.groups:
+            case Step.schedule:
+            case Step.closing:
+                return this.hasScheduleEntries() && this.hasReportCardEntries()
+        }
+    }
+
+    private hasReportCardEntries = () => this.reportCards > 0
 
     private hasScheduleEntries = () => foldUndefined(this.scheduleEntries, xs => xs.length > 0, () => false)
 
