@@ -36,6 +36,20 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     @Input() labwork: Readonly<LabworkAtom>
     @Input() applications: Readonly<number>
 
+    @Input() set preview(maybePreview: Readonly<SchedulePreview> | undefined) {
+        const setPreview = (p: Readonly<SchedulePreview>) => {
+            this.scheduleEntries = p.schedule.entries
+            this.previewResult = {conflicts: p.conflicts, fitness: p.fitness}
+        }
+
+        const resetPreview = () => {
+            this.scheduleEntries = []
+            this.previewResult = undefined
+        }
+
+        foldUndefined(maybePreview, setPreview, resetPreview)
+    }
+
     @Output() schedulePreviewEmitter: EventEmitter<SchedulePreview>
 
     private headerTitle: string
@@ -64,10 +78,7 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
         this.subs.push(subscribe(preview$, p => {
             this.previewIsLoading = false
-
             this.schedulePreviewEmitter.emit(p)
-            this.scheduleEntries = p.schedule.entries
-            this.previewResult = {conflicts: p.conflicts, fitness: p.fitness}
         }))
     }
 
@@ -88,8 +99,7 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     private getFormattedDate = entry => foldUndefined(entry, e => format(e.date, 'dd.MM.yyyy'), () => 'Kein Eintrag')
 
     private fetchPreview = (config: SchedulePreviewConfig): Observable<SchedulePreview> => {
-        this.scheduleEntries = []
-        this.previewResult = undefined
+        this.preview = undefined
         this.previewIsLoading = true
 
         return fetchPreview(this.scheduleService, this.labwork)(config)

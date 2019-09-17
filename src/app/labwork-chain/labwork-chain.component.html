@@ -73,6 +73,7 @@
                         <lwm-group-preview *ngSwitchCase="waitingForPreview()"
                                            [labwork]="labwork"
                                            [applications]="applications"
+                                           [preview]="schedulePreview"
                                            (schedulePreviewEmitter)="updateSchedulePreview($event)">
                         </lwm-group-preview>
 

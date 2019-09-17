@@ -61,8 +61,8 @@ export class ScheduleComponent implements OnInit {
             {
                 id: this.labwork.id,
                 label: this.hasReportCards ?
-                    `Staffelplan und Notenhefte für ${this.labwork.label}` :
-                    `Staffelplan für ${this.labwork.label}`
+                    'Staffelplan inkl. Notenhefte' :
+                    'Staffelplan'
             }
         )
 
