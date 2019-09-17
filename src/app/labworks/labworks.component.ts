@@ -106,6 +106,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.dataSource.sortingDataAccessor = nestedObjectSortingDataAccessor
     }
 
+    // TODO a) group results in backend
+    // TODO b) fetch applications on demand via $lapps | async
     ngOnInit() {
         this.currentSemester$ = this.semesterService.current()
 

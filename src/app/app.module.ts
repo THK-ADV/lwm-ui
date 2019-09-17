@@ -45,11 +45,11 @@ import {GroupEditComponent} from './groups/edit/group-edit.component'
 import {CourseDetailComponent} from './course-detail/course-detail.component'
 import {CourseAuthorityUpdateDialogComponent} from './course-authority-dialog/course-authority-dialog.component'
 import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
-import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/assignment-plan.component'
+import {AssignmentPlanComponent} from './labwork-chain/assignment-plan/view/assignment-plan.component'
 import {FullCalendarModule} from '@fullcalendar/angular'
-import {TimetableEditComponent} from './labwork-chain/timetable/timetable-edit/timetable-edit.component'
-import {TimetableEntryComponent} from './labwork-chain/timetable/timetable-entry/timetable-entry.component'
-import {TimetableBlacklistsComponent} from './labwork-chain/timetable-blacklists/timetable-blacklists.component'
+import {TimetableEditComponent} from './labwork-chain/timetable/edit/timetable-edit.component'
+import {TimetableEntryComponent} from './labwork-chain/timetable/entry/timetable-entry.component'
+import {TimetableBlacklistsEditComponent} from './labwork-chain/timetable-blacklists/edit/timetable-blacklists-edit.component'
 import {TableActionButtonComponent} from './table-action-button/table-action-button.component'
 import {ScheduleComponent} from './labwork-chain/schedule/schedule.component'
 import {GroupPreviewComponent} from './labwork-chain/group-preview/group-preview.component'
@@ -62,9 +62,11 @@ import {AbstractScheduleViewComponent} from './labwork-chain/abstract-schedule-v
 import {SchedulePreviewComponent} from './labwork-chain/schedule-preview/schedule-preview.component'
 import {ConfirmDialogComponent} from './shared-dialogs/confirm-dialog/confirm-dialog.component'
 import {AbstractAssignmentPlanViewComponent} from './labwork-chain/abstract-assignment-plan-view/abstract-assignment-plan-view.component'
-import {AssignmentPlanEditComponent} from './labwork-chain/assignment-plan-edit/assignment-plan-edit.component'
+import {AssignmentPlanEditComponent} from './labwork-chain/assignment-plan/edit/assignment-plan-edit.component'
 import {AbstractTimetableViewComponent} from './labwork-chain/abstract-timetable-view/abstract-timetable-view.component'
-import {TimetableViewComponent} from './labwork-chain/timetable/timetable-view/timetable-view.component'
+import {TimetableViewComponent} from './labwork-chain/timetable/view/timetable-view.component'
+import {AbstractBlacklistTimetableViewComponent} from './labwork-chain/abstract-blacklist-timetable-view/abstract-blacklist-timetable-view.component'
+import {TimetableBlacklistViewComponent} from './labwork-chain/timetable-blacklists/view/timetable-blacklist-view.component'
 
 @NgModule({
     declarations: [
@@ -97,7 +99,7 @@ import {TimetableViewComponent} from './labwork-chain/timetable/timetable-view/t
         AssignmentPlanComponent,
         TimetableEditComponent,
         TimetableEntryComponent,
-        TimetableBlacklistsComponent,
+        TimetableBlacklistsEditComponent,
         TableActionButtonComponent,
         ScheduleComponent,
         GroupPreviewComponent,
@@ -112,7 +114,9 @@ import {TimetableViewComponent} from './labwork-chain/timetable/timetable-view/t
         AbstractAssignmentPlanViewComponent,
         AssignmentPlanEditComponent,
         AbstractTimetableViewComponent,
-        TimetableViewComponent
+        TimetableViewComponent,
+        AbstractBlacklistTimetableViewComponent,
+        TimetableBlacklistViewComponent
     ],
     imports: [
         BrowserModule,

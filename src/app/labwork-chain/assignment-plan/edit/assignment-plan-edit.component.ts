@@ -1,26 +1,26 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
-import {LabworkAtom} from '../../models/labwork.model'
+import {LabworkAtom} from '../../../models/labwork.model'
 import {
     AssignmentEntry,
     AssignmentEntryType,
     AssignmentEntryTypeValue,
     AssignmentPlan,
     findEntryTypeValue
-} from '../../models/assignment-plan.model'
+} from '../../../models/assignment-plan.model'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
-import {AssignmentPlanService} from '../../services/assignment-plan.service'
-import {foldUndefined, parseUnsafeBoolean, parseUnsafeNumber, subscribe} from '../../utils/functions'
-import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../shared-dialogs/dialog.mode'
-import {openDialogFromPayload} from '../../shared-dialogs/dialog-open-combinator'
+import {AssignmentPlanService} from '../../../services/assignment-plan.service'
+import {foldUndefined, parseUnsafeBoolean, parseUnsafeNumber, subscribe} from '../../../utils/functions'
+import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
+import {openDialogFromPayload} from '../../../shared-dialogs/dialog-open-combinator'
 import {tap} from 'rxjs/operators'
-import {DeleteDialogComponent} from '../../shared-dialogs/delete/delete-dialog.component'
-import {LWMActionType} from '../../table-action-button/lwm-actions'
-import {FormOutputData, FormPayload} from '../../shared-dialogs/create-update/create-update-dialog.component'
-import {FormInputString} from '../../shared-dialogs/forms/form.input.string'
-import {FormInputBoolean} from '../../shared-dialogs/forms/form.input.boolean'
-import {FormInputNumber} from '../../shared-dialogs/forms/form.input.number'
-import {withCreateProtocol} from '../../models/protocol.model'
+import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
+import {LWMActionType} from '../../../table-action-button/lwm-actions'
+import {FormOutputData, FormPayload} from '../../../shared-dialogs/create-update/create-update-dialog.component'
+import {FormInputString} from '../../../shared-dialogs/forms/form.input.string'
+import {FormInputBoolean} from '../../../shared-dialogs/forms/form.input.boolean'
+import {FormInputNumber} from '../../../shared-dialogs/forms/form.input.number'
+import {withCreateProtocol} from '../../../models/protocol.model'
 
 @Component({
     selector: 'lwm-assignment-plan-edit',

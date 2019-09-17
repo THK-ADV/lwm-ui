@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core'
-import {LabworkAtom} from '../../models/labwork.model'
-import {AssignmentPlan} from '../../models/assignment-plan.model'
+import {LabworkAtom} from '../../../models/labwork.model'
+import {AssignmentPlan} from '../../../models/assignment-plan.model'
 
 @Component({
     selector: 'lwm-assignment-plan',

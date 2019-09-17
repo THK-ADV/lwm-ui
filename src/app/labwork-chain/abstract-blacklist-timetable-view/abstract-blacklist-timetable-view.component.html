@@ -1,6 +1,6 @@
 <lwm-abstract-header
         [headerTitle]="headerTitle"
-        [actionType]="canCreate()"
+        [actionType]="canCreate"
         (performAction)="onCreate()">
 </lwm-abstract-header>
 
@@ -23,6 +23,6 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onEdit(row)"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="onSelect(row)"></tr>
     </table>
 </div>

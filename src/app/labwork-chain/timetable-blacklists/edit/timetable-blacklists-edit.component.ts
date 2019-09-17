@@ -1,52 +1,42 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
-import {LabworkAtom} from '../../models/labwork.model'
+import {Component, EventEmitter, Input, Output} from '@angular/core'
+import {LabworkAtom} from '../../../models/labwork.model'
 import {Observable, Subscription} from 'rxjs'
-import {MatDialog, MatTableDataSource} from '@angular/material'
-import {Blacklist, BlacklistProtocol} from '../../models/blacklist.model'
-import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
+import {MatDialog} from '@angular/material'
+import {Blacklist, BlacklistProtocol} from '../../../models/blacklist.model'
 import {
     createLocalBlacklistFromOutputData,
-    formatBlacklistTableEntry,
     localBlacklistCreationInputData,
     localBlacklistInputData,
-    localBlacklistsColumns,
     updateLocalBlacklistFromOutputData
-} from '../../blacklists/blacklist-view-model'
-import {deleteAction, editAction, LWMAction, LWMActionType} from '../../table-action-button/lwm-actions'
-import {BlacklistService} from '../../services/blacklist.service'
-import {TimetableAtom} from '../../models/timetable'
-import {DeleteDialogComponent} from '../../shared-dialogs/delete/delete-dialog.component'
+} from '../../../blacklists/blacklist-view-model'
+import {BlacklistService} from '../../../services/blacklist.service'
+import {TimetableAtom} from '../../../models/timetable'
+import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
 import {
     addBlacklistToTimetable$,
     fullBlacklistLabel,
     removeBlacklistFromTimetable$,
     updateBlacklistInTimetable$
-} from './timetable-blacklists-view-model'
-import {TimetableService} from '../../services/timetable.service'
-import {subscribe} from '../../utils/functions'
-import {FormPayload} from '../../shared-dialogs/create-update/create-update-dialog.component'
-import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../shared-dialogs/dialog.mode'
-import {openDialog, openDialogFromPayload} from '../../shared-dialogs/dialog-open-combinator'
+} from '../timetable-blacklists-view-model'
+import {TimetableService} from '../../../services/timetable.service'
+import {subscribe} from '../../../utils/functions'
+import {FormPayload} from '../../../shared-dialogs/create-update/create-update-dialog.component'
+import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
+import {openDialog, openDialogFromPayload} from '../../../shared-dialogs/dialog-open-combinator'
+import {LWMActionType} from '../../../table-action-button/lwm-actions'
 
 @Component({
-    selector: 'lwm-timetable-blacklists',
-    templateUrl: './timetable-blacklists.component.html',
-    styleUrls: ['./timetable-blacklists.component.scss']
+    selector: 'lwm-timetable-blacklists-edit',
+    templateUrl: './timetable-blacklists-edit.component.html',
+    styleUrls: ['./timetable-blacklists-edit.component.scss']
 })
-export class TimetableBlacklistsComponent implements OnInit {
+export class TimetableBlacklistsEditComponent {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
     @Output() timetableUpdate: EventEmitter<TimetableAtom>
 
-    private headerTitle: string
-    private subs: Subscription[]
-    private dataSource = new MatTableDataSource<Blacklist>()
-
-    private readonly displayedColumns: string[]
-    private readonly columns: TableHeaderColumn[]
-    private readonly actions: LWMAction[]
-    private readonly prepareTableContent = formatBlacklistTableEntry // TODO apply this pattern everywhere
+    private readonly subs: Subscription[]
 
     constructor(
         private readonly dialog: MatDialog,
@@ -54,15 +44,7 @@ export class TimetableBlacklistsComponent implements OnInit {
         private readonly timetableService: TimetableService
     ) {
         this.timetableUpdate = new EventEmitter<TimetableAtom>()
-        this.columns = localBlacklistsColumns()
         this.subs = []
-        this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
-        this.actions = [editAction(), deleteAction()] // TODO permission
-    }
-
-    ngOnInit() { // TODO pre fill with global blacklists for current semester
-        this.headerTitle = `Geblockte Tage für ${this.labwork.label}`
-        this.updateDataSource(this.timetable)
     }
 
     private updateDataSource = (t: TimetableAtom) => {
@@ -70,9 +52,6 @@ export class TimetableBlacklistsComponent implements OnInit {
 
         this.timetable = t
         this.timetableUpdate.emit(t)
-
-        this.dataSource.data = t.localBlacklist
-            .sort((lhs, rhs) => lhs.date.getTime() - rhs.date.getTime())
     }
 
     private updateDataSource$ = (ot: Observable<TimetableAtom>) => {
@@ -83,17 +62,12 @@ export class TimetableBlacklistsComponent implements OnInit {
         return 'create' // TODO permission check
     }
 
-    private performAction = (action: LWMActionType, blacklist: Blacklist) => {
-        switch (action) {
-            case 'edit':
-                this.onEdit(blacklist)
-                break
-            case 'delete':
-                this.onDelete(blacklist)
-                break
-            default:
-                break
-        }
+    private canEdit = (): boolean => {
+        return true // TODO permission check
+    }
+
+    private canDelete = (): boolean => {
+        return true // TODO permission check
     }
 
     private onCreate = () => {

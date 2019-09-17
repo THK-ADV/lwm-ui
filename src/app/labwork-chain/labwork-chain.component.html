@@ -27,27 +27,38 @@
                 <ng-container *ngSwitchCase="1">
                     <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
                     <ng-template #thenBlock>
-                        <lwm-timetable-view *ngSwitchCase="1"
-                                            [labwork]="labwork"
-                                            [timetable]="timetable">
+                        <lwm-timetable-view
+                                [labwork]="labwork"
+                                [timetable]="timetable">
                         </lwm-timetable-view>
                     </ng-template>
                     <ng-template #elseBlock>
-                        <lwm-timetable-edit *ngSwitchCase="1"
-                                            [labwork]="labwork"
-                                            [timetable]="timetable"
-                                            (timetableUpdate)="updateTimetable($event)">
+                        <lwm-timetable-edit
+                                [labwork]="labwork"
+                                [timetable]="timetable"
+                                (timetableUpdate)="updateTimetable($event)">
                         </lwm-timetable-edit>
                     </ng-template>
                 </ng-container>
             </ng-container>
 
             <ng-container *ngIf="labwork && timetable">
-                <lwm-timetable-blacklists *ngSwitchCase="2"
-                                          [labwork]="labwork"
-                                          [timetable]="timetable"
-                                          (timetableUpdate)="updateTimetable($event)">
-                </lwm-timetable-blacklists>
+                <ng-container *ngSwitchCase="2">
+                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
+                    <ng-template #thenBlock>
+                        <lwm-timetable-blacklist-view
+                                [labwork]="labwork"
+                                [timetable]="timetable">
+                        </lwm-timetable-blacklist-view>
+                    </ng-template>
+                    <ng-template #elseBlock>
+                        <lwm-timetable-blacklists-edit
+                                [labwork]="labwork"
+                                [timetable]="timetable"
+                                (timetableUpdate)="updateTimetable($event)">
+                        </lwm-timetable-blacklists-edit>
+                    </ng-template>
+                </ng-container>
             </ng-container>
 
             <ng-container *ngIf="labwork && timetable && scheduleEntries">
