@@ -15,6 +15,7 @@ export class ClosingComponent implements OnInit {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() reportCards: Readonly<number>
+
     @Output() labworkUpdate: EventEmitter<LabworkAtom>
 
     private headerTitle: string

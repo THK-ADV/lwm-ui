@@ -79,7 +79,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.scheduleEntries = []
         this.applications = 0
         this.reportCards = 0
-        this.schedulePreview = undefined
+        this.schedulePreview = {fitness: -1, conflicts: [], 'conflict value': -1, schedule: {labwork: '???', entries: []}}// undefined TODO remove
         this.steps = [
             Step.application,
             Step.timetable,
@@ -202,11 +202,11 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             case Step.application:
             case Step.timetable:
             case Step.blacklists:
-                return this.hasScheduleEntries()
+                return this.hasScheduleEntries() || this.hasReportCardEntries()
             case Step.groups:
             case Step.schedule:
             case Step.closing:
-                return this.hasScheduleEntries() && this.hasReportCardEntries()
+                return true
         }
     }
 
@@ -218,11 +218,16 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private groupViewMode = (): GroupViewMode => {
         if (this.applications > 0) {
-            if (isEmpty(this.scheduleEntries)) {
+            if (this.forceUnlock) {
                 return this.waitingForPreview()
             } else {
                 return this.groupsPresent()
             }
+            // if (isEmpty(this.scheduleEntries)) {
+            //     return this.waitingForPreview()
+            // } else {
+            //     return this.groupsPresent()
+            // }
         } else {
             return this.waitingForApplications()
         }
@@ -235,11 +240,17 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private groupsPresent = (): GroupViewMode => 'groupsPresent'
 
     private scheduleViewMode = (): ScheduleViewMode => {
-        if (this.hasSchedulePreview() && !this.hasScheduleEntries()) {
+        if (this.forceUnlock) {
             return this.schedulePreviewMode()
         } else {
             return this.scheduleCommittedMode()
         }
+
+        // if (this.hasSchedulePreview() && !this.hasScheduleEntries()) {
+        //     return this.schedulePreviewMode()
+        // } else {
+        //     return this.scheduleCommittedMode()
+        // }
     }
 
     private schedulePreviewMode = (): ScheduleViewMode => 'preview'

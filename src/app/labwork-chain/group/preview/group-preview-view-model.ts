@@ -1,6 +1,6 @@
 import {Observable} from 'rxjs'
-import {ScheduleEntryService, SchedulePreview} from '../../services/schedule-entry.service'
-import {LabworkAtom} from '../../models/labwork.model'
+import {ScheduleEntryService, SchedulePreview} from '../../../services/schedule-entry.service'
+import {LabworkAtom} from '../../../models/labwork.model'
 
 export interface MinMaxStrategy {
     kind: 'min-max'

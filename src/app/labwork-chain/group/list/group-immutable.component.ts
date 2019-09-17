@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core'
-import {LabworkAtom} from '../../models/labwork.model'
-import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
+import {LabworkAtom} from '../../../models/labwork.model'
+import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 
 @Component({
     selector: 'lwm-group-immutable',
@@ -21,6 +21,6 @@ export class GroupImmutableComponent implements OnInit {
     ngOnInit() {
         console.log('group immutable component loaded')
 
-        this.headerTitle = `Gruppen für ${this.labwork.label}`
+        this.headerTitle = `[🔒] Gruppen für ${this.labwork.label}`
     }
 }

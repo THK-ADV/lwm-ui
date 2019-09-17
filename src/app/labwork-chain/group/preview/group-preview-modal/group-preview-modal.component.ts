@@ -2,7 +2,7 @@ import {Component, Inject} from '@angular/core'
 import {FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
 import {GroupStrategy, SchedulePreviewConfig} from '../group-preview-view-model'
-import {mapUndefined, parseUnsafeBoolean, parseUnsafeNumber} from '../../../utils/functions'
+import {mapUndefined, parseUnsafeBoolean, parseUnsafeNumber} from '../../../../utils/functions'
 
 interface StrategyOption {
     value: string

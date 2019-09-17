@@ -37,7 +37,7 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('schedule preview component loaded')
 
-        this.headerTitle = `Staffelplan-Vorschau für ${this.labwork.label}`
+        this.headerTitle = `[🔓] Staffelplan-Vorschau für ${this.labwork.label}`
     }
 
     ngOnDestroy() {

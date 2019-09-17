@@ -1,15 +1,15 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
-import {LabworkAtom} from '../../models/labwork.model'
-import {Conflict, ScheduleEntryService, SchedulePreview} from '../../services/schedule-entry.service'
-import {foldUndefined, isEmpty, maxBy, minBy, subscribe} from '../../utils/functions'
+import {LabworkAtom} from '../../../models/labwork.model'
+import {Conflict, ScheduleEntryService, SchedulePreview} from '../../../services/schedule-entry.service'
+import {foldUndefined, isEmpty, maxBy, minBy, subscribe} from '../../../utils/functions'
 import {MatDialog} from '@angular/material'
-import {openDialog} from '../../shared-dialogs/dialog-open-combinator'
+import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
 import {Observable, Subscription} from 'rxjs'
 import {fetchPreview, SchedulePreviewConfig} from './group-preview-view-model'
-import {ScheduleEntryLike} from '../abstract-group-view/abstract-group-view.component'
-import {format} from '../../utils/lwmdate-adapter'
-import {LWMActionType} from '../../table-action-button/lwm-actions'
+import {ScheduleEntryLike} from '../../abstract-group-view/abstract-group-view.component'
+import {format} from '../../../utils/lwmdate-adapter'
+import {LWMActionType} from '../../../table-action-button/lwm-actions'
 
 interface SchedulePreviewResult {
     fitness: number
@@ -47,7 +47,7 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('group preview component loaded')
 
-        this.headerTitle = `Gruppen-Vorschau für ${this.labwork.label}`
+        this.headerTitle = `[🔓] Gruppen-Vorschau für ${this.labwork.label}`
     }
 
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())

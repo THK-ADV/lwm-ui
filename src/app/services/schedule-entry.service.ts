@@ -8,7 +8,7 @@ import {makePath} from '../utils/component.utils'
 import {Time} from '../models/time.model'
 import {Group} from '../models/group.model'
 import {applyFilter, ParamFilter} from './http.filter'
-import {GroupStrategy} from '../labwork-chain/group-preview/group-preview-view-model'
+import {GroupStrategy} from '../labwork-chain/group/preview/group-preview-view-model'
 import {parseUnsafeString} from '../utils/functions'
 
 export interface SchedulePreview {
