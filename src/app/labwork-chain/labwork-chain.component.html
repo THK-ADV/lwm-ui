@@ -89,29 +89,43 @@
             <!-- schedule -->
             <ng-container *ngIf="labwork && timetable && scheduleEntries">
                 <ng-container *ngSwitchCase="4">
-                    <ng-container [ngSwitch]="scheduleViewMode()">
-                        <lwm-schedule *ngSwitchCase="scheduleCommittedMode()"
-                                      [labwork]="labwork"
-                                      [timetable]="timetable"
-                                      [scheduleEntries]="scheduleEntries">
+                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
+                    <ng-template #thenBlock>
+                        <lwm-schedule
+                                [labwork]="labwork"
+                                [timetable]="timetable"
+                                [scheduleEntries]="scheduleEntries">
                         </lwm-schedule>
-
-                        <lwm-schedule-preview *ngSwitchCase="schedulePreviewMode()"
-                                              [labwork]="labwork"
-                                              [timetable]="timetable"
-                                              [entries]="schedulePreview.schedule.entries">
+                    </ng-template>
+                    <ng-template #elseBlock>
+                        <lwm-schedule-preview *ngIf="schedulePreview"
+                                [labwork]="labwork"
+                                [timetable]="timetable"
+                                [entries]="schedulePreview.schedule.entries">
                         </lwm-schedule-preview>
-                    </ng-container>
+                    </ng-template>
                 </ng-container>
             </ng-container>
 
-            <!-- closing -->
+            <!-- report-cards -->
             <ng-container *ngIf="labwork && timetable && scheduleEntries">
-                <lwm-closing *ngSwitchCase="5"
-                             [labwork]="labwork"
-                             [reportCards]="reportCards"
-                             (labworkUpdate)="updateLabwork($event)">
-                </lwm-closing>
+                <ng-container *ngSwitchCase="5">
+                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
+                    <ng-template #thenBlock>
+                        <lwm-closing
+                                [labwork]="labwork"
+                                [reportCards]="reportCards"
+                                (labworkUpdate)="updateLabwork($event)">
+                        </lwm-closing>
+                    </ng-template>
+                    <ng-template #elseBlock>
+                        <lwm-report-cards
+                                [labwork]="labwork"
+                                [reportCards]="reportCards"
+                                (labworkUpdate)="updateLabwork($event)">
+                        </lwm-report-cards>
+                    </ng-template>
+                </ng-container>
             </ng-container>
 
             <p *ngSwitchDefault>???</p>

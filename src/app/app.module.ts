@@ -54,7 +54,7 @@ import {TableActionButtonComponent} from './table-action-button/table-action-but
 import {ScheduleComponent} from './labwork-chain/schedule/schedule.component'
 import {GroupPreviewComponent} from './labwork-chain/group/preview/group-preview.component'
 import {CardListComponent} from './card-list/card-list.component'
-import {ClosingComponent} from './labwork-chain/closing/closing.component'
+import {ReportCardsComponent} from './labwork-chain/report-cards/create/report-cards.component'
 import {AbstractGroupViewComponent} from './labwork-chain/abstract-group-view/abstract-group-view.component'
 import {GroupPreviewModalComponent} from './labwork-chain/group/preview/group-preview-modal/group-preview-modal.component'
 import {GroupImmutableComponent} from './labwork-chain/group/list/group-immutable.component'
@@ -67,6 +67,8 @@ import {AbstractTimetableViewComponent} from './labwork-chain/abstract-timetable
 import {TimetableViewComponent} from './labwork-chain/timetable/view/timetable-view.component'
 import {AbstractBlacklistTimetableViewComponent} from './labwork-chain/abstract-blacklist-timetable-view/abstract-blacklist-timetable-view.component'
 import {TimetableBlacklistViewComponent} from './labwork-chain/timetable-blacklists/view/timetable-blacklist-view.component'
+import {AbstractClosingViewComponent} from './labwork-chain/abstract-closing-view/abstract-closing-view.component'
+import {ClosingComponent} from './labwork-chain/report-cards/closing/closing.component'
 
 @NgModule({
     declarations: [
@@ -104,7 +106,7 @@ import {TimetableBlacklistViewComponent} from './labwork-chain/timetable-blackli
         ScheduleComponent,
         GroupPreviewComponent,
         CardListComponent,
-        ClosingComponent,
+        ReportCardsComponent,
         AbstractGroupViewComponent,
         GroupPreviewModalComponent,
         GroupImmutableComponent,
@@ -116,7 +118,9 @@ import {TimetableBlacklistViewComponent} from './labwork-chain/timetable-blackli
         AbstractTimetableViewComponent,
         TimetableViewComponent,
         AbstractBlacklistTimetableViewComponent,
-        TimetableBlacklistViewComponent
+        TimetableBlacklistViewComponent,
+        AbstractClosingViewComponent,
+        ClosingComponent
     ],
     imports: [
         BrowserModule,

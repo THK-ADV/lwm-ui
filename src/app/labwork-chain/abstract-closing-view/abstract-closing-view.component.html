@@ -1,0 +1,20 @@
+<lwm-abstract-header
+        [headerTitle]="headerTitle">
+</lwm-abstract-header>
+
+<ng-content></ng-content>
+
+<div>
+    <ng-container
+            *ngIf="reportCardsAvailable && !reportCardPublished(); then thenBlock else elseBlock"></ng-container>
+    <ng-template #thenBlock>
+        <button mat-flat-button
+                color="primary"
+                (click)="publishReportCards()">Notenhefte veröffentlichen
+        </button>
+
+    </ng-template>
+    <ng-template #elseBlock>
+        <p>Notenhefte veröffentlicht</p>
+    </ng-template>
+</div>

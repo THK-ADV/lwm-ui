@@ -1,44 +1,35 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
+import {Component, EventEmitter, Input, OnInit} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
-import {ReportCardEntryService} from '../../services/report-card-entry.service'
-import {subscribe} from '../../utils/functions'
 import {Subscription} from 'rxjs'
 import {LabworkService} from '../../services/labwork.service'
+import {subscribe} from '../../utils/functions'
 import {updateLabwork$} from '../../labworks/labwork-view-model'
 
 @Component({
-    selector: 'lwm-closing',
-    templateUrl: './closing.component.html',
-    styleUrls: ['./closing.component.scss']
+    selector: 'lwm-abstract-closing-view',
+    templateUrl: './abstract-closing-view.component.html',
+    styleUrls: ['./abstract-closing-view.component.scss']
 })
-export class ClosingComponent implements OnInit {
+export class AbstractClosingViewComponent implements OnInit {
 
     @Input() labwork: Readonly<LabworkAtom>
-    @Input() reportCards: Readonly<number>
-
-    @Output() labworkUpdate: EventEmitter<LabworkAtom>
+    @Input() titlePrefix: Readonly<string>
+    @Input() reportCardsAvailable: Readonly<boolean>
+    @Input() labworkUpdate: EventEmitter<LabworkAtom>
 
     private headerTitle: string
     private subs: Subscription[]
 
     constructor(
-        private readonly reportCardEntryService: ReportCardEntryService,
         private readonly labworkService: LabworkService
     ) {
         this.subs = []
-        this.labworkUpdate = new EventEmitter<LabworkAtom>()
     }
 
     ngOnInit() {
-        console.log('closing component loaded')
+        console.log('report-cards component loaded')
 
-        this.headerTitle = `Abschluss für ${this.labwork.label}`
-    }
-
-    private reportCardsAvailable = () => this.reportCards > 0
-
-    private createReportCards = () => {
-        // TODO
+        this.headerTitle = `${this.titlePrefix} für ${this.labwork.label}`
     }
 
     private reportCardPublished = () => this.labwork.published

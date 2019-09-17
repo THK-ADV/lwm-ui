@@ -3,7 +3,7 @@ import {Observable, Subscription} from 'rxjs'
 import {LabworkAtom} from '../models/labwork.model'
 import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
-import {foldUndefined, isEmpty, subscribe} from '../utils/functions'
+import {foldUndefined, NotImplementedError, subscribe} from '../utils/functions'
 import {TimetableAtom} from '../models/timetable'
 import {
     fetchApplicationCount,
@@ -34,8 +34,6 @@ enum Step {
 
 type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPresent'
 
-type ScheduleViewMode = 'preview' | 'committed'
-
 @Component({
     selector: 'lwm-labwork-chain',
     templateUrl: './labwork-chain.component.html',
@@ -47,7 +45,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     // TODO unlock chain by deleting reportCards > schedule > groups (cascade)
     // TODO permissions if locked or unlocked and user privilege
     // TODO copy assignment plan for other degree within same semester
-    // TODO pretty closing and next/prev buttons
+    // TODO pretty report-cards and next/prev buttons
 
     private subs: Subscription[]
     private labwork: Readonly<LabworkAtom>
@@ -76,10 +74,6 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         private readonly reportCardService: ReportCardEntryService
     ) {
         this.subs = []
-        this.scheduleEntries = []
-        this.applications = 0
-        this.reportCards = 0
-        this.schedulePreview = {fitness: -1, conflicts: [], 'conflict value': -1, schedule: {labwork: '???', entries: []}}// undefined TODO remove
         this.steps = [
             Step.application,
             Step.timetable,
@@ -94,7 +88,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         console.log('chain loaded')
 
         this.fetchChainData(() => {
-        }) // (() => this.stepper.selectedIndex = Step.closing.valueOf())
+        }) // (() => this.stepper.selectedIndex = Step.report-cards.valueOf())
     }
 
     ngOnDestroy(): void {
@@ -189,7 +183,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             case Step.schedule:
                 return this.hasScheduleEntries()
             case Step.closing:
-                return this.hasReportCardEntries()
+                return this.isStepCompleted(Step.schedule) && this.hasReportCardEntries()
         }
     }
 
@@ -204,9 +198,11 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
             case Step.blacklists:
                 return this.hasScheduleEntries() || this.hasReportCardEntries()
             case Step.groups:
+                return NotImplementedError('use groupViewMode() instead')
             case Step.schedule:
+                return !this.hasSchedulePreview() && this.hasScheduleEntries()
             case Step.closing:
-                return true
+                return this.isStepLocked(Step.schedule) && this.hasReportCardEntries()
         }
     }
 
@@ -238,22 +234,4 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private waitingForPreview = (): GroupViewMode => 'waitingForPreview'
 
     private groupsPresent = (): GroupViewMode => 'groupsPresent'
-
-    private scheduleViewMode = (): ScheduleViewMode => {
-        if (this.forceUnlock) {
-            return this.schedulePreviewMode()
-        } else {
-            return this.scheduleCommittedMode()
-        }
-
-        // if (this.hasSchedulePreview() && !this.hasScheduleEntries()) {
-        //     return this.schedulePreviewMode()
-        // } else {
-        //     return this.scheduleCommittedMode()
-        // }
-    }
-
-    private schedulePreviewMode = (): ScheduleViewMode => 'preview'
-
-    private scheduleCommittedMode = (): ScheduleViewMode => 'committed'
 }

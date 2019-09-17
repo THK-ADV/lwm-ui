@@ -1,0 +1,13 @@
+<lwm-abstract-closing-view
+        [labwork]="labwork"
+        [labworkUpdate]="labworkUpdate"
+        [reportCardsAvailable]="reportCardsAvailable()"
+        titlePrefix="[🔓] Notenhefterstellung">
+    <div>
+        <button mat-flat-button
+                color="primary"
+                *ngIf="canEdit()"
+                (click)="createReportCards()">Notenhefte erstellen
+        </button>
+    </div>
+</lwm-abstract-closing-view>
