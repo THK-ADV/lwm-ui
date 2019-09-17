@@ -1,18 +1,27 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core'
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {action, LWMAction, LWMActionType} from '../table-action-button/lwm-actions'
-import {mapUndefined} from '../utils/functions'
 
 @Component({
     selector: 'lwm-abstract-header',
     templateUrl: './abstract-header.component.html',
     styleUrls: ['./abstract-header.component.scss']
 })
-export class AbstractHeaderComponent {
-
+export class AbstractHeaderComponent implements OnInit {
     @Input() headerTitle: string
-    @Input() actionType: LWMActionType | undefined
+    @Input() actionTypes: LWMActionType[]
 
-    @Output() performAction: EventEmitter<void> = new EventEmitter()
+    @Output() performAction: EventEmitter<LWMActionType>
 
-    private action = (): LWMAction | undefined => mapUndefined(this.actionType, action)
+    private actions_: LWMAction[]
+
+    constructor() {
+        this.performAction = new EventEmitter<LWMActionType>()
+        this.actionTypes = []
+        this.actions_ = []
+    }
+
+    ngOnInit(): void {
+        this.actions_ = this.actionTypes.map(action)
+    }
+
 }

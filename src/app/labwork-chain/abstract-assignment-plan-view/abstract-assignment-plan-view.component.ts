@@ -4,6 +4,7 @@ import {AssignmentEntry, AssignmentEntryTypeValue, AssignmentPlan, sortedAssignm
 import {MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {LWMActionType} from '../../table-action-button/lwm-actions'
+import {foldUndefined} from '../../utils/functions'
 
 @Component({
     selector: 'lwm-abstract-assignment-plan-view',
@@ -52,6 +53,8 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
         this.headerTitle = `[${this.canEdit ? '🔓' : '🔒'}] Ablaufplan für ${this.labwork.label}`
     }
 
+    private canCreateF = (): LWMActionType[] => foldUndefined(this.canCreate, x => [x], () => [])
+
     private displayedEntryTypes = (entry: AssignmentEntry): string[] => {
         return sortedAssignmentPlanEntryTypes(entry).types
             .map(t => t.entryType === AssignmentEntryTypeValue.bonus ? `${t.entryType} (${t.int})` : t.entryType)
@@ -72,6 +75,7 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
     }
 
     private onCreate = () => {
+        console.log('abstract ap emit')
         this.createEmitter.emit()
     }
 }

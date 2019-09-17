@@ -2,7 +2,7 @@ import {Component, Input, ViewChild} from '@angular/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list'
 import {FullCalendarComponent} from '@fullcalendar/angular'
-import {eventEntriesForList, eventEntriesForMonth, makeBlacklistEvents, ScheduleEntryEvent} from '../schedule/schedule-view-model'
+import {eventEntriesForList, eventEntriesForMonth, makeBlacklistEvents, ScheduleEntryEvent} from '../schedule/view/schedule-view-model'
 import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
 

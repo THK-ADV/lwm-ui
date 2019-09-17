@@ -1,10 +1,10 @@
-import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
-import {Time} from '../../models/time.model'
-import {Blacklist} from '../../models/blacklist.model'
-import {color, whiteColor} from '../../utils/colors'
-import {User} from '../../models/user.model'
-import {Group} from '../../models/group.model'
-import {shortUserName} from '../timetable/timetable-view-model'
+import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
+import {Time} from '../../../models/time.model'
+import {Blacklist} from '../../../models/blacklist.model'
+import {color, whiteColor} from '../../../utils/colors'
+import {User} from '../../../models/user.model'
+import {Group} from '../../../models/group.model'
+import {shortUserName} from '../../timetable/timetable-view-model'
 
 export type CalendarView = 'month' | 'list'
 

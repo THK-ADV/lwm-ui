@@ -51,13 +51,10 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     private labwork: Readonly<LabworkAtom>
     private timetable: Readonly<TimetableAtom>
     private assignmentPlan: Readonly<AssignmentPlan>
-
+    private schedulePreview: Readonly<SchedulePreview> | undefined
     private scheduleEntries: Readonly<ScheduleEntryAtom[]>
     private applications: Readonly<number>
     private reportCards: Readonly<number>
-    private schedulePreview: Readonly<SchedulePreview> | undefined
-
-    private forceUnlock = false // TODO remove
 
     private steps: Step[]
 
@@ -87,20 +84,19 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('chain loaded')
 
-        this.fetchChainData(() => {
-        }) // (() => this.stepper.selectedIndex = Step.report-cards.valueOf())
+        this.fetchChainData()
     }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private updateTimetable = (t: TimetableAtom) => {
-        this.timetable = t
-    }
-
     private updateLabwork = (l: LabworkAtom) => {
         this.labwork = l
+    }
+
+    private updateTimetable = (t: TimetableAtom) => {
+        this.timetable = t
     }
 
     private updateAssignmentPlan = (a: AssignmentPlan) => {
@@ -111,9 +107,32 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.schedulePreview = p
     }
 
-    private toggleLock = () => this.forceUnlock = !this.forceUnlock
+    private deleteScheduleEntries = () => {
+        this.scheduleEntries = []
+        this.jumpToGroups()
+    }
 
-    private fetchChainData = (andThen: () => void) => {
+    private deleteReportCards = () => {
+        this.reportCards = 0
+    }
+
+    private createScheduleEntries = (es: ScheduleEntryAtom[]) => {
+        this.scheduleEntries = es
+        this.schedulePreview = undefined
+    }
+
+    private createReportCards = (n: number) => {
+        this.reportCards = n
+    }
+
+    private deleteSchedulePreview = () => {
+        this.schedulePreview = undefined
+        this.jumpToGroups()
+    }
+
+    private jumpToGroups = () => this.stepper.selectedIndex = Step.groups.valueOf()
+
+    private fetchChainData = () => {
         const s1 = fetchLabwork(this.route, this.labworkService, labwork => {
             this.labwork = labwork
 
@@ -188,15 +207,11 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
     }
 
     private isStepLocked = (step: Step): boolean => {
-        if (this.forceUnlock) {
-            return false
-        }
-
         switch (step) {
             case Step.application:
             case Step.timetable:
             case Step.blacklists:
-                return this.hasScheduleEntries() || this.hasReportCardEntries()
+                return this.hasSchedulePreview() || this.hasScheduleEntries() || this.hasReportCardEntries()
             case Step.groups:
                 return NotImplementedError('use groupViewMode() instead')
             case Step.schedule:
@@ -214,16 +229,11 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private groupViewMode = (): GroupViewMode => {
         if (this.applications > 0) {
-            if (this.forceUnlock) {
-                return this.waitingForPreview()
-            } else {
+            if (this.hasScheduleEntries()) {
                 return this.groupsPresent()
+            } else {
+                return this.waitingForPreview()
             }
-            // if (isEmpty(this.scheduleEntries)) {
-            //     return this.waitingForPreview()
-            // } else {
-            //     return this.groupsPresent()
-            // }
         } else {
             return this.waitingForApplications()
         }

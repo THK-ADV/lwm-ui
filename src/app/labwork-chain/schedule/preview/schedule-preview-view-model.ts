@@ -1,8 +1,8 @@
-import {ScheduleEntryGen} from '../../services/schedule-entry.service'
-import {eventTitle, ScheduleEntryEvent} from '../schedule/schedule-view-model'
-import {color, whiteColor} from '../../utils/colors'
-import {Time} from '../../models/time.model'
-import {_groupBy} from '../../utils/functions'
+import {ScheduleEntryGen} from '../../../services/schedule-entry.service'
+import {eventTitle, ScheduleEntryEvent} from '../view/schedule-view-model'
+import {color, whiteColor} from '../../../utils/colors'
+import {Time} from '../../../models/time.model'
+import {_groupBy} from '../../../utils/functions'
 import {identity} from 'rxjs'
 
 export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryGen[]>): ScheduleEntryEvent[] => {

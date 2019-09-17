@@ -14,6 +14,7 @@ export class ReportCardsComponent {
     @Input() reportCards: Readonly<number>
 
     @Output() labworkUpdate: EventEmitter<LabworkAtom>
+    @Output() createReportCardEmitter: EventEmitter<number> // TODO
 
     private subs: Subscription[]
 
@@ -21,11 +22,12 @@ export class ReportCardsComponent {
         private readonly reportCardEntryService: ReportCardEntryService,
     ) {
         this.labworkUpdate = new EventEmitter<LabworkAtom>()
+        this.createReportCardEmitter = new EventEmitter<number>()
         this.subs = []
     }
 
     private createReportCards = () => {
-        // TODO
+        this.createReportCardEmitter.emit(42)
     }
 
     private canEdit = () => true // todo permission check

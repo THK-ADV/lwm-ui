@@ -1,7 +1,7 @@
 <lwm-abstract-header
         [headerTitle]="headerTitle"
-        [actionType]="canCommit()"
-        (performAction)="commit()">
+        [actionTypes]="canDelete()"
+        (performAction)="onDelete()">
 </lwm-abstract-header>
 
 <lwm-abstract-schedule-view

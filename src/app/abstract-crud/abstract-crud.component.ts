@@ -70,8 +70,8 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         })
     }
 
-    private canCreate(): LWMActionType | undefined {
-        return exists(this.actions, a => a === 'create') ? 'create' : undefined
+    private canCreate(): LWMActionType[] {
+        return exists(this.actions, a => a === 'create') ? ['create'] : []
     }
 
     private canEdit(): boolean {

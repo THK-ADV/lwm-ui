@@ -1,7 +1,7 @@
 <lwm-abstract-header
         [headerTitle]="headerTitle"
-        [actionType]="canCreate"
-        (performAction)="onCreate()">
+        [actionTypes]="canCreateF()"
+        (performAction)="onCreate()" >
 </lwm-abstract-header>
 
 <div class="mat-elevation-z2">

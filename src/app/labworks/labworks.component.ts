@@ -301,8 +301,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    private canCreate(): LWMActionType | undefined {
-        return 'create' // TODO add permission check
+    private canCreate(): LWMActionType[] {
+        return ['create'] // TODO add permission check
     }
 
     private onCreate(course: CourseAtom) {

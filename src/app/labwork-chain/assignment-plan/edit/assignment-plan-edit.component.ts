@@ -58,6 +58,7 @@ export class AssignmentPlanEditComponent implements OnDestroy {
     }
 
     private onCreate = () => {
+        console.log('edit ap create')
         const payload = this.formPayload(DialogMode.create, this.preFilledAssignmentEntry())
         const s = subscribe(openDialogFromPayload(this.dialog, payload, this.create$).pipe(tap(console.log)), this.updateDataSource)
 

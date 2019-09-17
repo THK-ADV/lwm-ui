@@ -52,8 +52,8 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())
 
-    private canPreview = (): LWMActionType | undefined => {
-        return 'preview' // TODO permission check
+    private canPreview = (): LWMActionType[] => {
+        return ['preview'] // TODO permission check
     }
 
     private onPreview = () => {
