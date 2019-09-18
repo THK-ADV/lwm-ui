@@ -20,6 +20,7 @@ import {
     formatUser,
     labworkApplicationFormInputData
 } from '../utils/component.utils'
+import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 
 @Component({
     selector: 'app-labwork-applications',
@@ -30,7 +31,8 @@ export class LabworkApplicationsComponent
     extends AbstractCRUDComponent<LabworkApplicationProtocol, LabworkApplicationAtom>
     implements OnInit, OnDestroy {
 
-    private labwork: LabworkAtom
+    private labwork: Readonly<LabworkAtom>
+    private hasPermission: Readonly<boolean>
 
     static columns = (): TableHeaderColumn[] => {
         return [
@@ -66,7 +68,7 @@ export class LabworkApplicationsComponent
             dialog,
             alertService,
             LabworkApplicationsComponent.columns(),
-            ['create', 'delete'],
+            [],
             'applicant.lastname',
             'Anmeldung',
             'Anmeldungen',
@@ -76,6 +78,8 @@ export class LabworkApplicationsComponent
             emptyLabworkApplicationProtocol,
             () => undefined
         )
+
+        this.hasPermission = false
     }
 
     ngOnInit() {
@@ -89,6 +93,8 @@ export class LabworkApplicationsComponent
             tap(l => {
                 this.headerTitle += ` für ${l.label}`
                 this.labwork = l
+
+                this.setupPermissionChecks(l.course.id)
             }),
             switchMap(l => this.service.getAllByLabworkAtom(l.id))
         )
@@ -105,6 +111,13 @@ export class LabworkApplicationsComponent
                 app.friends.some(f => f.systemId.toLowerCase().includes(filter)) ||
                 format(app.lastModified, 'dd.MM.yyyy - HH:mm').includes(filter)
         }
+    }
+
+    private setupPermissionChecks = (courseId: string) => {
+        this.hasPermission = hasCourseManagerPermission(this.route, courseId)
+        // if (!this.hasPermission) {
+        //     this.updateActions(['create', 'delete']) // TODO
+        // }
     }
 
     ngOnDestroy(): void {

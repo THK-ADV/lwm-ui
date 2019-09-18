@@ -64,10 +64,12 @@ const routes: Routes = [
                 children: [
                     {
                         path: 'labworks/:lid/applications',
+                        resolve: {userAuths: UserAuthorityResolver},
                         component: LabworkApplicationsComponent
                     },
                     {
                         path: 'labworks/:lid/groups',
+                        resolve: {userAuths: UserAuthorityResolver},
                         component: GroupsComponent
                     },
                     {

@@ -66,7 +66,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         {attr: 'labwork.published', title: 'Veröffentlicht'}
     ]
 
-    private readonly labworkActions: LWMAction[]
+    private labworkActions: LWMAction[]
     private hasPermission: Readonly<boolean>
 
     private course$: Observable<CourseAtom>
@@ -100,12 +100,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.hasPermission = false
         this.displayedColumns = this.columns.map(c => c.attr).concat('action')
         this.subs = []
-        this.labworkActions = [
-            chainAction(),
-            labworkApplicationAction(),
-            groupAction(),
-            graduatesAction()
-        ]
+        this.labworkActions = []
         this.dataSource.sortingDataAccessor = nestedObjectSortingDataAccessor
     }
 
@@ -143,18 +138,26 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private setupPermissionChecks = (courseId: string) => {
+        this.labworkActions = []
+        const mandatory = [
+            chainAction(),
+            labworkApplicationAction(),
+            groupAction(),
+            graduatesAction()
+        ]
+
         const auths = userAuths(this.route)
         const isCM = isCourseManager(courseId, auths)
         const isA = hasAdminStatus(auths)
 
         this.hasPermission = isCM || isA
 
-        if (this.hasPermission) {
-            this.labworkActions.push(editAction())
-        }
-
         if (isA) {
-            this.labworkActions.push(deleteAction())
+            this.labworkActions = mandatory.concat(editAction(), deleteAction())
+        } else if (isCM) {
+            this.labworkActions = mandatory.concat(editAction())
+        } else {
+            this.labworkActions = mandatory
         }
     }
 

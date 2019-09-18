@@ -15,6 +15,7 @@ import {MatDialog} from '@angular/material'
 import {UserService} from '../services/user.service'
 import {GroupEditComponent} from './edit/group-edit.component'
 import {Card} from '../card-list/card-list.component'
+import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 
 @Component({
     selector: 'lwm-groups',
@@ -25,7 +26,8 @@ export class GroupsComponent implements OnInit {
 
     private headerTitle: String
     private subs: Subscription[]
-    private labwork: LabworkAtom
+    private labwork: Readonly<LabworkAtom>
+    private hasPermission: Readonly<boolean>
 
     private groups: Card<GroupAtom, User>[]
 
@@ -40,6 +42,7 @@ export class GroupsComponent implements OnInit {
         this.subs = []
         this.groups = []
         this.headerTitle = 'Gruppen'
+        this.hasPermission = false
     }
 
     ngOnInit() {
@@ -47,10 +50,15 @@ export class GroupsComponent implements OnInit {
             this.headerTitle += ` für ${labwork.label}`
             this.labwork = labwork
 
+            this.setupPermissionChecks(labwork.course.id)
             this.fetchGroups(labwork)
         })
 
         this.subs.push(s)
+    }
+
+    private setupPermissionChecks = (courseId: string) => {
+        this.hasPermission = hasCourseManagerPermission(this.route, courseId)
     }
 
     private fetchGroups(l: LabworkAtom) {
@@ -94,7 +102,7 @@ export class GroupsComponent implements OnInit {
     }
 
     private canEdit = (): boolean => {
-        return true // TODO permission
+        return this.hasPermission
     }
 
     private cardTitle = (group: GroupAtom): string => `${group.label} - ${group.members.length} Teilnehmer`
