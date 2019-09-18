@@ -21,6 +21,6 @@ export class GroupImmutableComponent implements OnInit {
     ngOnInit() {
         console.log('group immutable component loaded')
 
-        this.headerTitle = `[🔒] Gruppen für ${this.labwork.label}`
+        this.headerTitle = `Gruppen für ${this.labwork.label}`
     }
 }

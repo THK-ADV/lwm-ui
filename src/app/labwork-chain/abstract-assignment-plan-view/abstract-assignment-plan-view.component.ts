@@ -50,7 +50,7 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
     ngOnInit() {
         console.log('plan component loaded')
 
-        this.headerTitle = `[${this.canEdit ? '🔓' : '🔒'}] Ablaufplan für ${this.labwork.label}`
+        this.headerTitle = `${this.canEdit ? 'Ablaufplanbearbeitung' : 'Ablaufplan'} für ${this.labwork.label}`
     }
 
     private canCreateF = (): LWMActionType[] => foldUndefined(this.canCreate, x => [x], () => [])

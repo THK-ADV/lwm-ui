@@ -45,7 +45,7 @@ export class ScheduleComponent implements OnInit {
     ngOnInit() {
         console.log('schedule component loaded')
 
-        this.headerTitle = `[🔒] Staffelplan für ${this.labwork.label}`
+        this.headerTitle = `Staffelplan für ${this.labwork.label}`
         this.updateCalendar(this.scheduleEntries)
     }
 

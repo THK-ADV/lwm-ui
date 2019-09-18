@@ -51,7 +51,7 @@ export class AbstractTimetableViewComponent implements OnInit {
             this.startDateControl().disable()
         }
 
-        this.headerTitle = `[${this.canEdit ? '🔓' : '🔒'}] Rahmenplan für ${this.labwork.label}`
+        this.headerTitle = `${this.canEdit ? 'Rahmenplanbearbeitung' : 'Rahmenplan'} für ${this.labwork.label}`
     }
 
     startDateControl = () => this.formGroup.controls.start
