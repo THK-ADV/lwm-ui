@@ -26,14 +26,17 @@
 
   button.mat-stroked-button.mat-primary {
     border: 2px lighten($th-magenta, 40) solid;
+    margin-right: $small-spacing;
   }
 
   button.mat-stroked-button.mat-accent {
     border: 2px lighten($th-orange, 40) solid;
+    margin-right: $small-spacing;
   }
 
   button.mat-stroked-button.mat-warn {
     border: 2px lighten($th-red, 40) solid;
+    margin-right: $small-spacing;
   }
 }
 
