@@ -60,6 +60,7 @@ const routes: Routes = [
             },
             {
                 path: 'courses/:cid',
+                resolve: {userAuths: UserAuthorityResolver},
                 children: [
                     {
                         path: 'labworks/:lid/applications',

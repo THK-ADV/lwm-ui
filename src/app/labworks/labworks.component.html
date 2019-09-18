@@ -1,9 +1,14 @@
 <ng-container *ngIf="course$ | async as course">
-    <lwm-course-detail [course]="course"></lwm-course-detail>
-
+    <lwm-course-detail
+            [course]="course"
+            [hasPermission]="hasPermission">
+    </lwm-course-detail>
 
     <ng-container *ngIf="currentSemester$ | async as currentSemester">
-        <lwm-abstract-header headerTitle="Praktika" [actionTypes]="canCreate()" (performAction)="onCreate(course)">
+        <lwm-abstract-header
+                headerTitle="Praktika"
+                [actionTypes]="canCreate()"
+                (performAction)="onCreate(course)">
         </lwm-abstract-header>
 
         <ng-container *ngIf="groupedLabworks$ | async as xs">

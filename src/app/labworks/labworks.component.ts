@@ -38,6 +38,8 @@ import {
     LWMActionType
 } from '../table-action-button/lwm-actions'
 import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {userAuths} from '../security/user-authority-resolver'
+import {hasAdminStatus, isCourseManager} from '../utils/role-checker'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -64,14 +66,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         {attr: 'labwork.published', title: 'Veröffentlicht'}
     ]
 
-    private readonly labworkActions: LWMAction[] = [ // TODO permissions?
-        chainAction(),
-        labworkApplicationAction(),
-        groupAction(),
-        graduatesAction(),
-        editAction(),
-        deleteAction()
-    ]
+    private readonly labworkActions: LWMAction[]
+    private hasPermission: Readonly<boolean>
 
     private course$: Observable<CourseAtom>
     private currentSemester$: Observable<Semester>
@@ -101,8 +97,15 @@ export class LabworksComponent implements OnInit, OnDestroy {
         private readonly degreeService: DegreeService,
         private readonly router: Router
     ) {
-        this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
+        this.hasPermission = false
+        this.displayedColumns = this.columns.map(c => c.attr).concat('action')
         this.subs = []
+        this.labworkActions = [
+            chainAction(),
+            labworkApplicationAction(),
+            groupAction(),
+            graduatesAction()
+        ]
         this.dataSource.sortingDataAccessor = nestedObjectSortingDataAccessor
     }
 
@@ -114,6 +117,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.course$ = this.route.paramMap.pipe(
             switchMap(params => this.courseService.get(params.get('cid') || '')),
             tap(course => {
+                this.setupPermissionChecks(course.id)
+
                 const labworksWithApps$ = this.labworkService.getAll(course.id).pipe(
                     switchMap(ls => {
                         return ls.map(l => zip(this.labworkApplicationService.getApplicationCount(l.id), of(l)))
@@ -137,6 +142,22 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
+    private setupPermissionChecks = (courseId: string) => {
+        const auths = userAuths(this.route)
+        const isCM = isCourseManager(courseId, auths)
+        const isA = hasAdminStatus(auths)
+
+        this.hasPermission = isCM || isA
+
+        if (this.hasPermission) {
+            this.labworkActions.push(editAction())
+        }
+
+        if (isA) {
+            this.labworkActions.push(deleteAction())
+        }
+    }
+
     // TODO this will break if abbreviation do not match the actual dates (e.g. CGA)
     private semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => {
         return rhs.value[0].semester.abbreviation.localeCompare(lhs.value[0].semester.abbreviation)
@@ -151,7 +172,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     onSelect(lwa: LabworkWithApplications) {
-        console.log(lwa)
+        this.onAction('chain', lwa.labwork)
     }
 
     onAction(action: LWMActionType, labwork: LabworkAtom) {
@@ -301,8 +322,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    private canCreate(): LWMActionType[] {
-        return ['create'] // TODO add permission check
+    private canCreate = (): LWMActionType[] => {
+        return this.hasPermission ? ['create'] : []
     }
 
     private onCreate(course: CourseAtom) {

@@ -22,8 +22,7 @@ import {AssignmentPlan} from '../models/assignment-plan.model'
 import {BlacklistService} from '../services/blacklist.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
-import {userAuths} from '../security/user-authority-resolver'
-import {hasAdminStatus, isCourseManager} from '../utils/role-checker'
+import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 
 enum Step {
     application,
@@ -207,10 +206,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         }
     }
 
-    private hasPermission = (): boolean => {
-        const auths = userAuths(this.route)
-        return isCourseManager(this.labwork.course.id, auths) || hasAdminStatus(auths)
-    }
+    private hasPermission = (): boolean => hasCourseManagerPermission(this.route, this.labwork.course.id)
 
     private isStepLocked = (step: Step): boolean => {
         if (!this.hasPermission()) {
