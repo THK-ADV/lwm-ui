@@ -3,7 +3,7 @@
         [labworkUpdate]="labworkUpdate"
         [hasPermission]="hasPermission"
         [reportCardsAvailable]="reportCardsAvailable()"
-        titlePrefix="[🔓] Notenhefterstellung">
+        titlePrefix="Notenhefterstellung">
     <div>
         <ng-container *ngIf="hasPermission; then thenBlock else elseBlock"></ng-container>
         <ng-template #thenBlock>

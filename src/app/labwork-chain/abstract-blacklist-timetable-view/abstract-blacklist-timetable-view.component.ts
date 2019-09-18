@@ -49,7 +49,7 @@ export class AbstractBlacklistTimetableViewComponent implements OnInit {
 
     ngOnInit() {
         console.log('timetable blacklist component loaded')
-        this.headerTitle = `[${this.canEdit ? '🔓' : '🔒'}] Geblockte Tage für ${this.labwork.label}`
+        this.headerTitle = `${this.canEdit ? 'Bearbeitung geblockter' : 'Geblockte'}  Tage für ${this.labwork.label}`
 
         // TODO permission
         if (this.canEdit) {

@@ -1,9 +1,12 @@
+@import "../../lwm.vars.scss";
+
 .abstractTableMainTitle {
   h1 {
     display: inline;
   }
   span button{
     float: right;
+    margin-left: $small-spacing;
   }
   margin: 20px 0 40px 0;
 }

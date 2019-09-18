@@ -62,7 +62,7 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     ngOnInit() {
         console.log('group preview component loaded')
 
-        this.headerTitle = `[🔓] Gruppen-Vorschau für ${this.labwork.label}`
+        this.headerTitle = `Gruppen-Vorschau für ${this.labwork.label}`
     }
 
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())
