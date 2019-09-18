@@ -18,6 +18,7 @@ import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../ut
 import {addToDataSource} from '../../shared-dialogs/dataSource.update'
 import {resetControls} from '../../utils/form-control-utils'
 import {LWMColor} from '../../utils/colors'
+import {hasStatus} from '../../utils/role-checker'
 
 export interface StandardRole {
     label: UserStatus
@@ -113,15 +114,15 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { /
             this.authorityService.getAuthorities(this.user.systemId),
             auths => {
                 auths.forEach(auth => {
-                    if (this.authorityService.is(UserStatus.admin, auth)) {
+                    if (hasStatus(UserStatus.admin, auth)) {
                         this.standardRoles.push({label: UserStatus.admin, color: 'accent'})
                     }
 
-                    if (this.authorityService.is(UserStatus.employee, auth)) {
+                    if (hasStatus(UserStatus.employee, auth)) {
                         this.standardRoles.push({label: UserStatus.employee, color: 'primary'})
                     }
 
-                    if (this.authorityService.is(UserStatus.student, auth)) {
+                    if (hasStatus(UserStatus.student, auth)) {
                         this.standardRoles.push({label: UserStatus.student, color: 'primary'})
                     }
 

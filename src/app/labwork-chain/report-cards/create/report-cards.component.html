@@ -1,13 +1,20 @@
 <lwm-abstract-closing-view
         [labwork]="labwork"
         [labworkUpdate]="labworkUpdate"
+        [hasPermission]="hasPermission"
         [reportCardsAvailable]="reportCardsAvailable()"
         titlePrefix="[🔓] Notenhefterstellung">
     <div>
-        <button mat-flat-button
-                color="primary"
-                *ngIf="canEdit()"
-                (click)="createReportCards()">Notenhefte erstellen
-        </button>
+        <ng-container *ngIf="hasPermission; then thenBlock else elseBlock"></ng-container>
+        <ng-template #thenBlock>
+            <button mat-flat-button
+                    color="primary"
+                    *ngIf="hasPermission"
+                    (click)="createReportCards()">Notenhefte erstellen
+            </button>
+        </ng-template>
+        <ng-template #elseBlock>
+            <p>Notenhefte noch nicht erstellt</p>
+        </ng-template>
     </div>
 </lwm-abstract-closing-view>

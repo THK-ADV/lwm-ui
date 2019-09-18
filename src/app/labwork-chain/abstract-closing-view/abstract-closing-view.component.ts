@@ -16,6 +16,7 @@ export class AbstractClosingViewComponent implements OnInit {
     @Input() titlePrefix: Readonly<string>
     @Input() reportCardsAvailable: Readonly<boolean>
     @Input() labworkUpdate: EventEmitter<LabworkAtom>
+    @Input() hasPermission: Readonly<boolean>
 
     private headerTitle: string
     private subs: Subscription[]

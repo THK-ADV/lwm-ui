@@ -1,7 +1,7 @@
 <lwm-abstract-timetable-view
         [labwork]="labwork"
         [timetable]="timetable"
-        [canEdit]="canEdit()"
+        [canEdit]="hasPermission"
         [clickEvent]="onEventClick"
         [dropEvent]="onEventDrop"
         [resizeEvent]="onEventResize"

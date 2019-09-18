@@ -22,6 +22,8 @@ import {AssignmentPlan} from '../models/assignment-plan.model'
 import {BlacklistService} from '../services/blacklist.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
+import {userAuths} from '../security/user-authority-resolver'
+import {hasAdminStatus, isCourseManager} from '../utils/role-checker'
 
 enum Step {
     application,
@@ -41,13 +43,12 @@ type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPre
 })
 export class LabworkChainComponent implements OnInit, OnDestroy {
 
-    // TODO lock chain if last step is completed
-    // TODO unlock chain by deleting reportCards > schedule > groups (cascade)
     // TODO permissions if locked or unlocked and user privilege
     // TODO copy assignment plan for other degree within same semester
     // TODO pretty report-cards and next/prev buttons
 
     private subs: Subscription[]
+
     private labwork: Readonly<LabworkAtom>
     private timetable: Readonly<TimetableAtom>
     private assignmentPlan: Readonly<AssignmentPlan>
@@ -68,7 +69,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         private readonly scheduleEntryService: ScheduleEntryService,
         private readonly assignmentPlanService: AssignmentPlanService,
         private readonly labworkApplicationService: LabworkApplicationService,
-        private readonly reportCardService: ReportCardEntryService
+        private readonly reportCardService: ReportCardEntryService,
     ) {
         this.subs = []
         this.steps = [
@@ -206,7 +207,16 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         }
     }
 
+    private hasPermission = (): boolean => {
+        const auths = userAuths(this.route)
+        return isCourseManager(this.labwork.course.id, auths) || hasAdminStatus(auths)
+    }
+
     private isStepLocked = (step: Step): boolean => {
+        if (!this.hasPermission()) {
+            return true
+        }
+
         switch (step) {
             case Step.application:
             case Step.timetable:

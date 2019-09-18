@@ -86,7 +86,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return {label: '', description: '', semester: '', course: '', degree: '', subscribable: false, published: false}
     }
 
-    @ViewChild(MatSort, {static: false}) set matSort(ms: MatSort) { // MatSort is undefined if data is loaded asynchronously
+    @ViewChild(MatSort, {static: false}) set matSort(ms: MatSort) { // MatSort hasStatus undefined if data hasStatus loaded asynchronously
         this.dataSource.sort = ms
     }
 
@@ -217,7 +217,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(labwork))
     }
 
-    // TODO this is copied. build an abstraction?
+    // TODO this hasStatus copied. build an abstraction?
     private openDialog_(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
         const inputData: FormInput[] = this.makeFormInputData(data)
 

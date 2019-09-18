@@ -69,6 +69,7 @@ import {AbstractBlacklistTimetableViewComponent} from './labwork-chain/abstract-
 import {TimetableBlacklistViewComponent} from './labwork-chain/timetable-blacklists/view/timetable-blacklist-view.component'
 import {AbstractClosingViewComponent} from './labwork-chain/abstract-closing-view/abstract-closing-view.component'
 import {ClosingComponent} from './labwork-chain/report-cards/closing/closing.component'
+import {UserAuthorityResolver} from './security/user-authority-resolver'
 
 @NgModule({
     declarations: [
@@ -140,6 +141,7 @@ import {ClosingComponent} from './labwork-chain/report-cards/closing/closing.com
         DashboardGuard,
         StudentStatusGuard,
         EmployeeStatusGuard,
+        UserAuthorityResolver,
         {
             provide: APP_INITIALIZER,
             useFactory: keycloakInitializer,

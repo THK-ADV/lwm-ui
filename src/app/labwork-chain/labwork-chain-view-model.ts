@@ -17,6 +17,8 @@ import {Blacklist} from '../models/blacklist.model'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
+import {AuthorityService} from '../services/authority.service'
+import {AuthorityAtom} from '../models/authority.model'
 
 export const fetchLabwork = (
     route: ActivatedRoute,

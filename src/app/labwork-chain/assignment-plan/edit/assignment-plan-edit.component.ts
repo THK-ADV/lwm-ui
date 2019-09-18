@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
+import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {
     AssignmentEntry,
@@ -31,6 +31,7 @@ export class AssignmentPlanEditComponent implements OnDestroy {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() plan: Readonly<AssignmentPlan>
+    @Input() hasPermission: Readonly<boolean>
 
     @Output() planUpdate: EventEmitter<AssignmentPlan>
 
@@ -117,15 +118,7 @@ export class AssignmentPlanEditComponent implements OnDestroy {
     }
 
     private canCreate = (): LWMActionType | undefined => {
-        return 'create' // TODO permission check
-    }
-
-    private canEdit = (): boolean => {
-        return true // TODO permission check
-    }
-
-    private canDelete = (): boolean => {
-        return true // TODO permission check
+        return this.hasPermission ? 'create' : undefined
     }
 
     private formPayload = (mode: DialogMode, entry: AssignmentEntry): FormPayload<AssignmentEntry> => {

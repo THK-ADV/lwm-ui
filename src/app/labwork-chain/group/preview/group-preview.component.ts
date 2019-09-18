@@ -35,6 +35,7 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() applications: Readonly<number>
+    @Input() hasPermission: Readonly<boolean>
 
     @Input() set preview(maybePreview: Readonly<SchedulePreview> | undefined) {
         const setPreview = (p: Readonly<SchedulePreview>) => {
@@ -67,7 +68,7 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())
 
     private canPreview = (): LWMActionType[] => {
-        return ['preview'] // TODO permission check
+        return this.hasPermission ? ['preview'] : []
     }
 
     private onPreview = () => {

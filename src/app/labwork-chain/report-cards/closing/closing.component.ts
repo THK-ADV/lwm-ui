@@ -10,6 +10,7 @@ export class ClosingComponent {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() reportCards: Readonly<number>
+    @Input() hasPermission: Readonly<boolean>
 
     @Output() labworkUpdate: EventEmitter<LabworkAtom>
 

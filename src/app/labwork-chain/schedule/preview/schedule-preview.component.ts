@@ -24,6 +24,7 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
+    @Input() hasPermission: Readonly<boolean>
 
     private _entries: Readonly<ScheduleEntryGen[]>
 
@@ -62,7 +63,7 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
         this.dates = makeScheduleEntryEvents(scheduleEntries)
     }
 
-    private canDeleteAndCommit = (): LWMActionType[] => ['delete', 'upload'] // TODO permission check
+    private canDeleteAndCommit = (): LWMActionType[] => this.hasPermission ? ['delete', 'upload'] : []
 
     private performAction = (action: LWMActionType) => {
         switch (action) {

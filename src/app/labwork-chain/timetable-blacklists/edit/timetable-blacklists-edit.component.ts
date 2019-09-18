@@ -34,6 +34,8 @@ export class TimetableBlacklistsEditComponent {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
+    @Input() hasPermission: Readonly<boolean>
+
     @Output() timetableUpdate: EventEmitter<TimetableAtom>
 
     private readonly subs: Subscription[]
@@ -59,15 +61,7 @@ export class TimetableBlacklistsEditComponent {
     }
 
     private canCreate = (): LWMActionType | undefined => {
-        return 'create' // TODO permission check
-    }
-
-    private canEdit = (): boolean => {
-        return true // TODO permission check
-    }
-
-    private canDelete = (): boolean => {
-        return true // TODO permission check
+        return this.hasPermission ? 'create' : undefined
     }
 
     private onCreate = () => {

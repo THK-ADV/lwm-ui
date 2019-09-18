@@ -16,6 +16,7 @@
                         <lwm-assignment-plan-edit
                                 [labwork]="labwork"
                                 [plan]="assignmentPlan"
+                                [hasPermission]="hasPermission()"
                                 (planUpdate)="updateAssignmentPlan($event)">
                         </lwm-assignment-plan-edit>
                     </ng-template>
@@ -36,6 +37,7 @@
                         <lwm-timetable-edit
                                 [labwork]="labwork"
                                 [timetable]="timetable"
+                                [hasPermission]="hasPermission()"
                                 (timetableUpdate)="updateTimetable($event)">
                         </lwm-timetable-edit>
                     </ng-template>
@@ -56,6 +58,7 @@
                         <lwm-timetable-blacklists-edit
                                 [labwork]="labwork"
                                 [timetable]="timetable"
+                                [hasPermission]="hasPermission()"
                                 (timetableUpdate)="updateTimetable($event)">
                         </lwm-timetable-blacklists-edit>
                     </ng-template>
@@ -74,6 +77,7 @@
                                            [labwork]="labwork"
                                            [applications]="applications"
                                            [preview]="schedulePreview"
+                                           [hasPermission]="hasPermission()"
                                            (schedulePreviewEmitter)="updateSchedulePreview($event)">
                         </lwm-group-preview>
 
@@ -95,6 +99,7 @@
                                 [timetable]="timetable"
                                 [hasReportCards]="hasReportCardEntries()"
                                 [scheduleEntries]="scheduleEntries"
+                                [hasPermission]="hasPermission()"
                                 (deleteScheduleEmitter)="deleteScheduleEntries()"
                                 (deleteReportCardsEmitter)="deleteReportCards()">
                         </lwm-schedule>
@@ -104,6 +109,7 @@
                                               [labwork]="labwork"
                                               [timetable]="timetable"
                                               [entries]="schedulePreview.schedule.entries"
+                                              [hasPermission]="hasPermission()"
                                               (createScheduleEmitter)="createScheduleEntries($event)"
                                               (deleteSchedulePreviewEmitter)="deleteSchedulePreview()">
                         </lwm-schedule-preview>
@@ -119,6 +125,7 @@
                         <lwm-closing
                                 [labwork]="labwork"
                                 [reportCards]="reportCards"
+                                [hasPermission]="hasPermission()"
                                 (labworkUpdate)="updateLabwork($event)">
                         </lwm-closing>
                     </ng-template>
@@ -126,6 +133,7 @@
                         <lwm-report-cards
                                 [labwork]="labwork"
                                 [reportCards]="reportCards"
+                                [hasPermission]="hasPermission()"
                                 (labworkUpdate)="updateLabwork($event)"
                                 (createReportCardEmitter)="createReportCards($event)">
                         </lwm-report-cards>

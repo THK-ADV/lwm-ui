@@ -1,9 +1,9 @@
 <lwm-abstract-assignment-plan-view
         [labwork]="labwork"
         [plan]="plan"
-        [canEdit]="canEdit()"
         [canCreate]="canCreate()"
-        [canDelete]="canDelete()"
+        [canEdit]="hasPermission"
+        [canDelete]="hasPermission"
         (createEmitter)="onCreate()"
         (deleteEmitter)="onDelete($event)"
         (updateEmitter)="onEdit($event)">

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core'
 import {KeycloakService} from 'keycloak-angular'
+import {mapUndefined} from '../utils/functions'
 
 export enum KeycloakTokenKey {
     SYSTEMID = 'systemId',
@@ -20,13 +21,7 @@ export class KeycloakTokenService {
     }
 
     get(key: KeycloakTokenKey): string | undefined {
-        const token = this.keycloak.getKeycloakInstance().tokenParsed
-        
-        if (token) {
-            return token[key]
-        } else {
-            return undefined
-        }
+        return mapUndefined(this.keycloak.getKeycloakInstance().tokenParsed, t => t[key])
     }
 
     hasUserStatus(status: KeycloakUserStatus): boolean {
@@ -36,6 +31,6 @@ export class KeycloakTokenService {
     getUserStatus(): KeycloakUserStatus {
         return this.hasUserStatus(KeycloakUserStatus.STUDENT)
             ? KeycloakUserStatus.STUDENT
-            : KeycloakUserStatus.EMPLOYEE // TODO is this sufficient enough?
+            : KeycloakUserStatus.EMPLOYEE // TODO hasStatus this sufficient enough?
     }
 }

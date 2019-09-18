@@ -17,6 +17,7 @@ import {LabworksComponent} from './labworks/labworks.component'
 import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
 import {GroupsComponent} from './groups/groups.component'
 import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
+import {UserAuthorityResolver} from './security/user-authority-resolver'
 
 const routes: Routes = [
     {
@@ -70,6 +71,7 @@ const routes: Routes = [
                     },
                     {
                         path: 'labworks/:lid/chain',
+                        resolve: {userAuths: UserAuthorityResolver},
                         children: [
                             {
                                 path: '',

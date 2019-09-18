@@ -35,6 +35,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
+    @Input() hasPermission: Readonly<boolean>
 
     @Output() timetableUpdate: EventEmitter<TimetableAtom>
 
@@ -59,8 +60,6 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
     ngOnDestroy() {
         this.subs.forEach(s => s.unsubscribe())
     }
-
-    private canEdit = () => true // TODO permission check
 
     private observeStartDateChanges = () => {
         this.updateCalendar$(this.timetableComponent.startDateControl().valueChanges.pipe(

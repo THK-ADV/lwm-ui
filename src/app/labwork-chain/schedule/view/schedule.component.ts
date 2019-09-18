@@ -23,6 +23,7 @@ export class ScheduleComponent implements OnInit {
     @Input() scheduleEntries: Readonly<ScheduleEntryAtom[]>
     @Input() timetable: Readonly<TimetableAtom>
     @Input() hasReportCards: Readonly<boolean>
+    @Input() hasPermission: Readonly<boolean>
 
     @Output() deleteScheduleEmitter: EventEmitter<void>
     @Output() deleteReportCardsEmitter: EventEmitter<void>
@@ -53,7 +54,7 @@ export class ScheduleComponent implements OnInit {
         this.dates = makeScheduleEntryEvents(scheduleEntries)
     }
 
-    private canDelete = (): LWMActionType[] => ['delete'] // TODO permission check
+    private canDelete = (): LWMActionType[] => this.hasPermission ? ['delete'] : []
 
     private onDelete = () => {
         const dialogRef = DeleteDialogComponent.instance(

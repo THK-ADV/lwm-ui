@@ -12,6 +12,7 @@ export class ReportCardsComponent {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() reportCards: Readonly<number>
+    @Input() hasPermission: Readonly<boolean>
 
     @Output() labworkUpdate: EventEmitter<LabworkAtom>
     @Output() createReportCardEmitter: EventEmitter<number> // TODO
@@ -29,8 +30,6 @@ export class ReportCardsComponent {
     private createReportCards = () => {
         this.createReportCardEmitter.emit(42)
     }
-
-    private canEdit = () => true // todo permission check
 
     private reportCardsAvailable = () => this.reportCards > 0
 }

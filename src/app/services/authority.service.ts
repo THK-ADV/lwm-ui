@@ -3,7 +3,6 @@ import {HttpParams} from '@angular/common/http'
 import {AuthorityAtom, AuthorityProtocol} from '../models/authority.model'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
-import {UserStatus} from '../models/userStatus.model'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {NotImplementedError} from '../utils/functions'
 
@@ -26,12 +25,6 @@ export class AuthorityService implements AbstractCRUDService<AuthorityProtocol, 
         const params = new HttpParams().set('course', courseId)
         return this.http.getAll(this.path, params)
     }
-
-    hasStatus = (status: UserStatus, authorities: AuthorityAtom[]): boolean => authorities.some(auth => auth.role.label === status)
-
-    is = (status: UserStatus, auth: AuthorityAtom): boolean => auth.role.label === status
-
-    isAdmin = (authorities: AuthorityAtom[]): boolean => this.hasStatus(UserStatus.admin, authorities)
 
     createMany = (protocol: AuthorityProtocol): Observable<AuthorityAtom[]> => {
         const params = new HttpParams().set('atomic', 'true')
