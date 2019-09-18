@@ -146,7 +146,10 @@
     app-delete-dialog .mat-dialog-actions,
     app-create-update-dialog .mat-dialog-actions,
     lwm-group-edit .mat-dialog-actions,
-    lwm-course-authority-dialog .mat-dialog-actions {
+    lwm-course-authority-dialog .mat-dialog-actions,
+    lwm-timetable-entry .mat-dialog-actions,
+    lwm-group-preview-modal .mat-dialog-actions,
+    lwm-confirm-dialog .mat-dialog-actions {
       background-color: $ivory;
       display: -webkit-box;
       display: -ms-flexbox;
