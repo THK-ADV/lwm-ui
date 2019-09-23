@@ -6,7 +6,7 @@ import {TimetableService} from '../../services/timetable.service'
 import {TimetableAtom} from '../../models/timetable'
 import {updateTimetable$} from '../timetable/timetable-view-model'
 import {BlacklistService} from '../../services/blacklist.service'
-import {filter, map, switchMap} from 'rxjs/operators'
+import {map, switchMap} from 'rxjs/operators'
 
 export const fullBlacklistLabel = (blacklist: Blacklist): string => {
     let str = `${blacklist.label} am ${format(blacklist.date, 'dd.MM.yyyy')}`
@@ -55,8 +55,7 @@ export const addBlacklistToTimetable$ = (
     timetable: Readonly<TimetableAtom>
 ): (b: BlacklistProtocol) => Observable<TimetableAtom> => {
     return b => blacklistService.create(b).pipe(
-        filter(xs => xs.length === 1),
-        switchMap(xs => addBlacklistToTimetable0(timetableService, timetable, xs[0]))
+        switchMap(bl => addBlacklistToTimetable0(timetableService, timetable, bl))
     )
 }
 
