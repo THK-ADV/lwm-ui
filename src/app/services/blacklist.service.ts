@@ -22,32 +22,23 @@ export class BlacklistService implements AbstractCRUDService<BlacklistProtocol, 
 
     private path = 'blacklists'
 
-    getAllWithFilter = (...filter: BlacklistFilter[]): Observable<Blacklist[]> => {
-        return this.http.getAll<BlacklistJSON[]>(this.path, applyFilter(filter)).pipe(
-            map(convertManyBlacklists)
-        )
-    }
+    getAllWithFilter = (...filter: BlacklistFilter[]): Observable<Blacklist[]> => this.http
+        .getAll<BlacklistJSON>(this.path, applyFilter(filter))
+        .pipe(map(convertManyBlacklists))
 
-    getAll = (): Observable<Blacklist[]> => {
-        return this.http.getAll<BlacklistJSON[]>(this.path).pipe(
-            map(convertManyBlacklists)
-        )
-    }
+    getAll = (): Observable<Blacklist[]> => this.http
+        .getAll<BlacklistJSON>(this.path)
+        .pipe(map(convertManyBlacklists))
 
-    delete = (id: string): Observable<Blacklist> => {
-        return this.http.delete<BlacklistJSON>(this.path, id).pipe(
-            map(mapBlacklistJSON)
-        )
-    }
+    delete = (id: string): Observable<Blacklist> => this.http
+        .delete<BlacklistJSON>(this.path, id)
+        .pipe(map(mapBlacklistJSON))
 
-    createMany = (protocol: BlacklistProtocol): Observable<Blacklist[]> => {
-        return this.http.createMany<BlacklistProtocol, BlacklistJSON>(this.path, [protocol])
-            .pipe(map(convertManyBlacklists))
-    }
+    create = (protocol: BlacklistProtocol): Observable<Blacklist> => this.http
+        .create<BlacklistProtocol, BlacklistJSON>(this.path, protocol)
+        .pipe(map(mapBlacklistJSON))
 
-    update = (protocol: BlacklistProtocol, id: string): Observable<Blacklist> => {
-        return this.http.put<BlacklistProtocol, BlacklistJSON>(this.path, id, protocol).pipe(
-            map(mapBlacklistJSON)
-        )
-    }
+    update = (protocol: BlacklistProtocol, id: string): Observable<Blacklist> => this.http
+        .put<BlacklistProtocol, BlacklistJSON>(this.path, id, protocol)
+        .pipe(map(mapBlacklistJSON))
 }

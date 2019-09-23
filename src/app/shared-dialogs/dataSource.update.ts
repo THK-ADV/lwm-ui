@@ -23,11 +23,11 @@ export function removeFromDataSource<M>
 }
 
 export function addToDataSource<M>
-(dataSource: MatTableDataSource<M>, alertService?: AlertService): (m: M[]) => void {
-    return models => {
-        dataSource.data = dataSource.data.concat(models)
+(dataSource: MatTableDataSource<M>, alertService?: AlertService): (m: M) => void {
+    return model => {
+        dataSource.data = dataSource.data.concat(model)
         if (alertService) {
-            alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
+            alertService.reportAlert('success', 'created: ' + JSON.stringify(model))
         }
     }
 }

@@ -57,23 +57,26 @@ export class ScheduleEntryService {
 
     private readonly path = (course: string, labwork: string) => makePath('scheduleEntries', course, labwork)
 
-    getAllWithFilter = (courseId: string, labworkId: string): Observable<ScheduleEntryAtom[]> => {
-        return this.http.getAll<ScheduleEntryAtomJSON[]>(this.path(courseId, labworkId), atomicParams).pipe(
-            map(convertManyScheduleEntries)
-        )
-    }
+    getAllWithFilter = (
+        courseId: string,
+        labworkId: string
+    ): Observable<ScheduleEntryAtom[]> => this.http
+        .getAll<ScheduleEntryAtomJSON>(this.path(courseId, labworkId), atomicParams)
+        .pipe(map(convertManyScheduleEntries))
 
-    preview = (courseId: string, labworkId: string, strategy: GroupStrategy, considerSemesterIndex: boolean): Observable<SchedulePreview> => {
-        return this.http.getAll<SchedulePreview>(
+    preview = (
+        courseId: string,
+        labworkId: string,
+        strategy: GroupStrategy,
+        considerSemesterIndex: boolean
+    ): Observable<SchedulePreview> => this.http
+        .get_(
             makePath('scheduleEntries/preview', courseId, labworkId),
             applyFilter(this.groupStrategy(strategy).concat({
                 attribute: 'considerSemesterIndex',
                 value: parseUnsafeString(considerSemesterIndex)
             }))
-        ).pipe(
-            map(this.mapDateTime)
-        )
-    }
+        ).pipe(map(this.mapDateTime))
 
     private groupStrategy = (strategy: GroupStrategy): ParamFilter[] => {
         switch (strategy.kind) {

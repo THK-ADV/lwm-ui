@@ -108,7 +108,7 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         this.openDialog_(
             DialogMode.create,
             this.empty(),
-            model => this.subscribeAndPush(this.service.createMany(model), this.afterCreate)
+            model => this.subscribeAndPush(this.service.create(model), this.afterCreate)
         )
     }
 
@@ -154,8 +154,8 @@ export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity
         this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(model))
     }
 
-    private afterCreate = (models: Model[]) => {
-        addToDataSource(this.dataSource, this.alertService)(models)
+    private afterCreate = (model: Model) => {
+        addToDataSource(this.dataSource, this.alertService)(model)
     }
 
     private afterDelete = (model: Model) => {

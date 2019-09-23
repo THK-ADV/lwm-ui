@@ -20,15 +20,11 @@ export class KeycloakTokenService {
     constructor(private keycloak: KeycloakService) {
     }
 
-    get(key: KeycloakTokenKey): string | undefined {
-        return mapUndefined(this.keycloak.getKeycloakInstance().tokenParsed, t => t[key])
-    }
+    get = (key: KeycloakTokenKey): string | undefined => mapUndefined(this.keycloak.getKeycloakInstance().tokenParsed, t => t[key])
 
-    hasUserStatus(status: KeycloakUserStatus): boolean {
-        return this.get(KeycloakTokenKey.STATUS) === status
-    }
+    hasUserStatus = (status: KeycloakUserStatus): boolean => this.get(KeycloakTokenKey.STATUS) === status
 
-    getUserStatus(): KeycloakUserStatus {
+    getUserStatus = (): KeycloakUserStatus => {
         return this.hasUserStatus(KeycloakUserStatus.STUDENT)
             ? KeycloakUserStatus.STUDENT
             : KeycloakUserStatus.EMPLOYEE // TODO hasStatus this sufficient enough?

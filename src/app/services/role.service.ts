@@ -17,21 +17,20 @@ export class RoleService implements AbstractCRUDService<Role, Role> {
 
     private readonly path = 'roles'
 
-    createMany = (protocol: Role): Observable<Role[]> => NotImplementedError()
+    create = (protocol: Role): Observable<Role> => NotImplementedError()
 
     delete = (id: string): Observable<Role> => NotImplementedError()
 
-    getAll = (): Observable<Role[]> => this.http.getAll(this.path)
-
     update = (protocol: Role, id: string): Observable<Role> => NotImplementedError()
 
-    getCourseRoles = (): Observable<Role[]> => {
-        return this.http.getAll<Role[]>(this.path)
-            .pipe(
-                map(roles => {
-                    const userRoles = AllUserStatus()
-                    return roles.filter(r => !exists(userRoles, u => r.label === u) && r.label !== 'Rechteverantwortlicher') // TODO move to backend
-                })
-            )
-    }
+    getAll = (): Observable<Role[]> => this.http.getAll(this.path)
+
+    getCourseRoles = (): Observable<Role[]> => this.http
+        .getAll<Role>(this.path)
+        .pipe(
+            map(roles => {
+                const userRoles = AllUserStatus()
+                return roles.filter(r => !exists(userRoles, u => r.label === u) && r.label !== 'Rechteverantwortlicher') // TODO move to backend
+            })
+        )
 }

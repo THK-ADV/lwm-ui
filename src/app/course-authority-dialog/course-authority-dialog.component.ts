@@ -145,14 +145,14 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private createAuthority(auth: AuthorityProtocol) {
         this.subs.push(
             subscribe(
-                this.authorityService.createMany(auth),
+                this.authorityService.create(auth),
                 this.afterCreate.bind(this)
             )
         )
     }
 
-    private afterCreate(auths: AuthorityAtom[]) {
-        addToDataSource(this.dataSource, this.alertService)(auths)
+    private afterCreate(auth: AuthorityAtom) {
+        addToDataSource(this.dataSource, this.alertService)(auth)
         foreachOption(this.inputs, o => resetControl(o.control))
     }
 

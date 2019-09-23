@@ -18,7 +18,7 @@ export class RoomService implements AbstractCRUDService<RoomProtocol, Room> {
 
     delete = (id: string): Observable<Room> => this.http.delete(this.path, id)
 
-    createMany = (room: RoomProtocol): Observable<Room[]> => this.http.createMany(this.path, [room])
+    create = (room: RoomProtocol): Observable<Room> => this.http.create(this.path, room)
 
     update = (room: RoomProtocol, id: string): Observable<Room> => this.http.put(this.path, id, room)
 }

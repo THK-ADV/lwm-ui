@@ -4,7 +4,7 @@ import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
 import {applyFilter} from './http.filter'
 import {TimetableAtom, TimetableAtomJSON, TimetableProtocol} from '../models/timetable'
-import {filter, map} from 'rxjs/operators'
+import {map} from 'rxjs/operators'
 import {convertManyTimetables, mapTimetableAtomJSON} from '../utils/http-utils'
 
 interface TimetablePlanFilter {
@@ -22,23 +22,25 @@ export class TimetableService {
 
     private readonly path = (course: string) => makePath('timetables', course)
 
-    getAllWithFilter(courseId: string, ...filter: TimetablePlanFilter[]): Observable<TimetableAtom[]> {
-        return this.http.getAll<TimetableAtomJSON[]>(this.path(courseId), applyFilter(filter, atomicParams)).pipe(
-            map(convertManyTimetables)
-        )
-    }
+    getAllWithFilter = (
+        courseId: string,
+        ...filter: TimetablePlanFilter[]
+    ): Observable<TimetableAtom[]> => this.http
+        .getAll<TimetableAtomJSON>(this.path(courseId), applyFilter(filter, atomicParams))
+        .pipe(map(convertManyTimetables))
 
-    update(courseId: string, id: string, body: TimetableProtocol): Observable<TimetableAtom> {
-        return this.http.put<TimetableProtocol, TimetableAtomJSON>(this.path(courseId), id, body, atomicParams).pipe(
-            map(mapTimetableAtomJSON)
-        )
-    }
+    update = (
+        courseId: string,
+        id: string,
+        body: TimetableProtocol
+    ): Observable<TimetableAtom> => this.http
+        .put<TimetableProtocol, TimetableAtomJSON>(this.path(courseId), id, body, atomicParams)
+        .pipe(map(mapTimetableAtomJSON))
 
-    create(courseId: string, body: TimetableProtocol): Observable<TimetableAtom> {
-        return this.http.createMany<TimetableProtocol, TimetableAtomJSON>(this.path(courseId), [body], atomicParams).pipe(
-            filter(xs => xs.length === 1),
-            map(xs => xs[0]),
-            map(mapTimetableAtomJSON)
-        )
-    }
+    create = (
+        courseId: string,
+        body: TimetableProtocol
+    ): Observable<TimetableAtom> => this.http
+        .create<TimetableProtocol, TimetableAtomJSON>(this.path(courseId), body, atomicParams)
+        .pipe(map(mapTimetableAtomJSON))
 }

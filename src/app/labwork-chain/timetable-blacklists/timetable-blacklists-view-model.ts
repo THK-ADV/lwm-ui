@@ -54,7 +54,7 @@ export const addBlacklistToTimetable$ = (
     blacklistService: BlacklistService,
     timetable: Readonly<TimetableAtom>
 ): (b: BlacklistProtocol) => Observable<TimetableAtom> => {
-    return b => blacklistService.createMany(b).pipe(
+    return b => blacklistService.create(b).pipe(
         filter(xs => xs.length === 1),
         switchMap(xs => addBlacklistToTimetable0(timetableService, timetable, xs[0]))
     )

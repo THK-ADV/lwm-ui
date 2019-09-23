@@ -4,7 +4,6 @@ import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
 import {CourseAtom} from '../models/course.model'
 import {Observable} from 'rxjs'
 import {NotImplementedError} from '../utils/functions'
-import {map} from 'rxjs/operators'
 
 export interface CourseProtocol {
     label: string
@@ -26,14 +25,13 @@ export class CourseService implements AbstractCRUDService<CourseProtocol, Course
 
     get = (id: string): Observable<CourseAtom> => this.http.get(this.path, id)
 
-    createMany = (protocol: CourseProtocol): Observable<CourseAtom[]> => {
-        return this.http.create<CourseProtocol, CourseAtom>(this.path, protocol, atomicParams)
-            .pipe(map(course => [course]))
-    }
+    create = (protocol: CourseProtocol): Observable<CourseAtom> => this.http
+        .create<CourseProtocol, CourseAtom>(this.path, protocol, atomicParams)
 
     delete = (id: string): Observable<CourseAtom> => NotImplementedError()
 
     getAll = (): Observable<CourseAtom[]> => this.http.getAll(this.path)
 
-    update = (protocol: CourseProtocol, id: string): Observable<CourseAtom> => this.http.put(this.path, id, protocol, atomicParams)
+    update = (protocol: CourseProtocol, id: string): Observable<CourseAtom> => this.http
+        .put(this.path, id, protocol, atomicParams)
 }

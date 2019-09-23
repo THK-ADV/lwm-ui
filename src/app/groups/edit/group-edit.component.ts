@@ -213,7 +213,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         )
 
         const s = subscribe(result$, result => {
-            addToDataSource(this.dataSource)([member])
+            addToDataSource(this.dataSource)(member)
             resetControl(this.userFormControl())
 
             this.updateStudentsByRemoving(member)

@@ -21,7 +21,7 @@ export class ReportCardEntryService {
 
     count = (courseId: string, labworkId: string): Observable<number> => {
         const labworkFilter = {attribute: 'labwork', value: labworkId}
-        return this.http.getAll<ReportCardEntryAtomJSON[]>(
+        return this.http.getAll<ReportCardEntryAtomJSON>(
             makePath(this.path, courseId),
             applyFilter([labworkFilter], atomicParams)
         ).pipe(
