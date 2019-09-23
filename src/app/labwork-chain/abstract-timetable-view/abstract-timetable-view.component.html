@@ -43,3 +43,7 @@
         (eventDrop)="onEventDrop($event.event)"
         (eventResize)="onEventResize($event)">
 </full-calendar>
+
+<p *ngFor="let workload of workloads">
+    {{displayWorkload(workload)}}
+</p>
