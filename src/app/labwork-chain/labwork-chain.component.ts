@@ -42,9 +42,7 @@ type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPre
 })
 export class LabworkChainComponent implements OnInit, OnDestroy {
 
-    // TODO permissions if locked or unlocked and user privilege
     // TODO copy assignment plan for other degree within same semester
-    // TODO pretty report-cards and next/prev buttons
 
     private subs: Subscription[]
 

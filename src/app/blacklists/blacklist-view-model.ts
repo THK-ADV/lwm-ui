@@ -58,7 +58,7 @@ export const globalBlacklistInputData = (model: Readonly<BlacklistProtocol | Bla
         {
             formControlName: 'label',
             displayTitle: 'Bezeichnung',
-            isDisabled: true,
+            isDisabled: false,
             data: new FormInputString(model.label)
         },
         {

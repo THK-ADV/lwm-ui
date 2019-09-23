@@ -27,7 +27,7 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
             dialog,
             alertService,
             globalBlacklistColumns(),
-            ['create', 'delete'],
+            ['create', 'delete', 'update'],
             'label',
             'Globalen Blacklist',
             'Globale Blacklists',
@@ -52,6 +52,6 @@ export class BlacklistsComponent extends AbstractCRUDComponent<BlacklistProtocol
     }
 
     update(model: Blacklist, updatedOutput: FormOutputData[]): BlacklistProtocol {
-        return NotImplementedError()
+        return NotImplementedError() // TODO
     }
 }
