@@ -1,8 +1,11 @@
 import {User, StudentAtom, Employee} from './user.model';
+import { Semester } from './semester.model';
+import { CourseAtom } from './course.model';
+import { ScheduleEntryLike } from '../labwork-chain/abstract-group-view/abstract-group-view.component';
 
 export interface Dashboard {
   status: string;
-  semester: string; // Semester;
+  semester: Semester;
 }
 
 export interface StudentDashboard extends Dashboard {
@@ -17,7 +20,7 @@ export interface StudentDashboard extends Dashboard {
 
 export interface EmployeeDashboard extends Dashboard {
   user?: Employee;
-  courses?: string; // Traversable[CourseAtom],
-  scheduleEntries?: string; // Traversable[ScheduleEntryLike]
+  courses?: CourseAtom[];
+  scheduleEntries?: ScheduleEntryLike[]
 }
 
