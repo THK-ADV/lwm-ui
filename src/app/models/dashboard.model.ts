@@ -1,11 +1,16 @@
-import {User, StudentAtom, Employee} from './user.model';
-import { Semester } from './semester.model';
+import { User, StudentAtom, Employee } from './user.model';
+import { Semester, SemesterJSON } from './semester.model';
 import { CourseAtom } from './course.model';
-import { ScheduleEntryLike } from '../labwork-chain/abstract-group-view/abstract-group-view.component';
+import { ScheduleEntryAtom, ScheduleEntryAtomJSON } from './schedule-entry.model';
 
 export interface Dashboard {
   status: string;
   semester: Semester;
+}
+
+export interface DashboardJSON {
+  status: string;
+  semester: SemesterJSON;
 }
 
 export interface StudentDashboard extends Dashboard {
@@ -19,8 +24,13 @@ export interface StudentDashboard extends Dashboard {
 }
 
 export interface EmployeeDashboard extends Dashboard {
-  user?: Employee;
-  courses?: CourseAtom[];
-  scheduleEntries?: ScheduleEntryLike[]
+  user: Employee
+  courses: CourseAtom[]
+  scheduleEntries: ScheduleEntryAtom[]
 }
 
+export interface EmployeeDashboardJSON extends DashboardJSON {
+  user: Employee
+  courses: CourseAtom[]
+  scheduleEntries: ScheduleEntryAtomJSON[]
+}

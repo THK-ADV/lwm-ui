@@ -5,37 +5,33 @@
   </div>
 </div>
 
-<div *ngIf="courses">
-  <div class="schedule-card-list">
-    <div *ngFor="let course of courses" class="schedule-card-container">
-
-      <div class="schedule-card-header">
-        <div class="schedule-card-title">
-          <span>{{course.label}}</span>
-          <span class="abbreviation" [style.background-color]=getColor(course)>{{course.abbreviation}}</span>
-        </div>
-      </div>
-
-      <div class="schedule-card-content">
-        <ng-container *ngIf="(scheduleEntries.length>0); then thenBlock else elseBlock"></ng-container>
-
-        <ng-template #thenBlock>
-          <p>Termin</p>
-          <p>Termin</p>
-          <p>Termin</p>
-          <p>Termin</p>
-          <p>Termin</p>
-
-        </ng-template>
-        <ng-template #elseBlock>
-          <p>In diesem Semester existieren keine aktiven Staffelpläne für dieses Modul.</p>
-        </ng-template>
-
-      </div>
-
-      <div class="schedule-card-footer">
-        <button mat-flat-button color="primary" (click)="onCancel()" cdkFocusInitial>Schließen</button>
-      </div>
-    </div>
-  </div>
+<div *ngIf="dashboard">
+  <full-calendar
+        defaultView="dayGridMonth"
+        #calendar
+        [plugins]="calendarPlugins"
+        [locale]="'de'"
+        [nowIndicator]=true
+        [weekends]="false"
+        [firstDay]=1
+        [allDaySlot]=true
+        [header]="{left: 'month, list, filteredassignments', center: 'title', right: 'today, prev,next'}"
+        [customButtons]="{
+            filteredassignments : {text: 'Meine Termine anzeigen', click: showFilteredAssignments},
+            month: { text: 'Monat', click: showMonthView},
+            list: { text: 'Liste', click: showListView}
+        }"
+        [buttonText]="{month: 'Monat', list: 'Liste'}"
+        [columnHeaderFormat]="{ weekday: 'long' }"
+        [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
+        [events]="allDates"
+        [weekNumbers]=true
+        [validRange]="semesterBoundaries"
+        [weekNumbersWithinDays]=true
+        [defaultDate]="earliestDate()">
+  </full-calendar>
 </div>
+
+<!--
+            myassignments: {text: 'Meine Termine', click: showMyAssignments},
+            allassignments: {text: 'Alle Termine', click: showAllAssignments},-->

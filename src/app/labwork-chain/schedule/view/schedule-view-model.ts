@@ -5,6 +5,7 @@ import {color, whiteColor} from '../../../utils/colors'
 import {User} from '../../../models/user.model'
 import {Group} from '../../../models/group.model'
 import {shortUserName} from '../../timetable/timetable-view-model'
+import { LabworkAtom } from 'src/app/models/labwork.model'
 
 export type CalendarView = 'month' | 'list'
 
@@ -12,6 +13,7 @@ export interface ExtendedProps {
     supervisorLabel: string
     roomLabel: string
     group: Group
+    labworkLabel: string
 }
 
 export interface ScheduleEntryEvent {
@@ -39,7 +41,8 @@ const makeScheduleEntryEvent = (e: ScheduleEntryAtom): ScheduleEntryEvent => {
     const props = {
         supervisorLabel: supervisorLabel(e.supervisor),
         roomLabel: e.room.label,
-        group: e.group
+        group: e.group,
+        labworkLabel: ""
     }
 
     return {
@@ -93,7 +96,7 @@ export const eventEntriesForList = (entries: ScheduleEntryEvent[]) => {
     })
 }
 
-const supervisorLabel = (supervisors: User[]): string => {
+export const supervisorLabel = (supervisors: User[]): string => {
     return supervisors
         .sort((lhs, rhs) => lhs.lastname.localeCompare(rhs.lastname))
         .map(shortUserName)

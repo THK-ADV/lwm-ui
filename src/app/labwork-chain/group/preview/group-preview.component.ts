@@ -7,9 +7,9 @@ import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
 import {Observable, Subscription} from 'rxjs'
 import {fetchPreview, SchedulePreviewConfig} from './group-preview-view-model'
-import {ScheduleEntryLike} from '../../abstract-group-view/abstract-group-view.component'
 import {format} from '../../../utils/lwmdate-adapter'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
+import { ScheduleEntryLike } from 'src/app/models/schedule-entry.model'
 
 interface SchedulePreviewResult {
     fitness: number

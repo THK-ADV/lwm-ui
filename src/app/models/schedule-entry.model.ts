@@ -4,14 +4,17 @@ import {Room} from './room.model'
 import {User} from './user.model'
 import {Group} from './group.model'
 
-export interface ScheduleEntryAtom {
-    labwork: LabworkAtom
+export interface ScheduleEntryLike {
+    group: Group
+    date: Date
     start: Time
     end: Time
-    date: Date
+}
+
+export interface ScheduleEntryAtom extends ScheduleEntryLike {
+    labwork: LabworkAtom
     room: Room
     supervisor: User[]
-    group: Group
     id: string
 }
 

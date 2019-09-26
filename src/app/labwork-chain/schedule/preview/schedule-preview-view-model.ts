@@ -17,8 +17,10 @@ const makeScheduleEntryEvent = (rooms: string[]): (e: ScheduleEntryGen) => Sched
         const props = {
             supervisorLabel: `${e.supervisor.length.toString()} Betreuer`,
             roomLabel: `Raum ${rooms.indexOf(e.room) + 1}`,
-            group: e.group
+            group: e.group,
+            labworkLabel: ""
         }
+        
         return {
             allDay: false,
             start: Time.withNewDate(e.date, e.start).date,

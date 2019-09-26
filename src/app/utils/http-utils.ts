@@ -4,6 +4,7 @@ import {Semester, SemesterJSON} from '../models/semester.model'
 import {TimetableAtom, TimetableAtomJSON, TimetableEntryAtom, TimetableEntryAtomJSON} from '../models/timetable'
 import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {ScheduleEntryGen, ScheduleEntryGenJSON} from '../services/schedule-entry.service'
+import { EmployeeDashboardJSON, EmployeeDashboard } from '../models/dashboard.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 
@@ -102,4 +103,8 @@ export const convertManyScheduleEntries = (se: ScheduleEntryAtomJSON[]): Schedul
 
 export const convertManyScheduleEntryGens = (se: ScheduleEntryGenJSON[]): ScheduleEntryGen[] => {
     return convertMany(se, mapScheduleEntryGenJSON)
+}
+
+export const convertDashboard = (d: EmployeeDashboardJSON): EmployeeDashboard => {
+    return {...d, semester: mapSemesterJSON(d.semester), scheduleEntries: convertManyScheduleEntries(d.scheduleEntries)}
 }

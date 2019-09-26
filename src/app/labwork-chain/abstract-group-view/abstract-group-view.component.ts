@@ -1,16 +1,9 @@
-import {Component, Input} from '@angular/core'
-import {Group} from '../../models/group.model'
-import {format, formatTime} from '../../utils/lwmdate-adapter'
-import {Card} from '../../card-list/card-list.component'
-import {Time} from '../../models/time.model'
-import {_groupBy} from '../../utils/functions'
-
-export interface ScheduleEntryLike {
-    group: Group
-    date: Date
-    start: Time
-    end: Time
-}
+import { Component, Input } from '@angular/core'
+import { Group } from '../../models/group.model'
+import { format, formatTime } from '../../utils/lwmdate-adapter'
+import { Card } from '../../card-list/card-list.component'
+import { _groupBy } from '../../utils/functions'
+import { ScheduleEntryLike } from 'src/app/models/schedule-entry.model'
 
 @Component({
     selector: 'lwm-abstract-group-view',

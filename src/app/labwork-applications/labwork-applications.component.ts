@@ -68,7 +68,7 @@ export class LabworkApplicationsComponent
             dialog,
             alertService,
             LabworkApplicationsComponent.columns(),
-            [],
+            ['create', 'delete'],
             'applicant.lastname',
             'Anmeldung',
             'Anmeldungen',

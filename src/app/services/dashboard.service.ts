@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Dashboard, EmployeeDashboard, StudentDashboard } from '../models/dashboard.model';
+import { Dashboard, EmployeeDashboard, StudentDashboard, EmployeeDashboardJSON } from '../models/dashboard.model';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { convertDashboard } from '../utils/http-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +12,9 @@ export class DashboardService {
 
   constructor(private http: HttpClient) { }
 
-  getDashboard<T extends Dashboard>(): Observable<T> {
-    return this.http.get<T>('dashboard');
+  getEmployeeDashboard(): Observable<EmployeeDashboard> {
+    return this.http.get<EmployeeDashboardJSON>('dashboard?entriesSinceNow=false')
+      .pipe(map(convertDashboard))
   }
 
   // getDashboardForCurrentSession(): Promise<StudentDashboard | EmployeeDashboard> {
