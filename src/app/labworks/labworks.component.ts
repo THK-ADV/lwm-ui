@@ -14,7 +14,7 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {LabworkService} from '../services/labwork.service'
 import {Labwork, LabworkAtom, LabworkProtocol} from '../models/labwork.model'
 import {AlertService} from '../services/alert.service'
-import {_groupBy, subscribe} from '../utils/functions'
+import {_groupBy, dateOrderingDESC, isEmpty, subscribe} from '../utils/functions'
 import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
 import {CreateUpdateDialogComponent, FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isUniqueEntity} from '../models/unique.entity.model'
@@ -161,9 +161,12 @@ export class LabworksComponent implements OnInit, OnDestroy {
         }
     }
 
-    // TODO this will break if abbreviation do not match the actual dates (e.g. CGA)
     private semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => {
-        return rhs.value[0].semester.abbreviation.localeCompare(lhs.value[0].semester.abbreviation)
+        if (isEmpty(lhs.value) && isEmpty(rhs.value)) {
+            return 0
+        }
+
+        return dateOrderingDESC(lhs.value[0].semester.start, rhs.value[0].semester.start)
     }
 
     private sumApplications = (lwas: LabworkWithApplications[]): number => {

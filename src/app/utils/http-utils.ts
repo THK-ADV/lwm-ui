@@ -4,6 +4,7 @@ import {Semester, SemesterJSON} from '../models/semester.model'
 import {TimetableAtom, TimetableAtomJSON, TimetableEntryAtom, TimetableEntryAtomJSON} from '../models/timetable'
 import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {ScheduleEntryGen, ScheduleEntryGenJSON} from '../services/schedule-entry.service'
+import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 
@@ -80,6 +81,11 @@ export const mapScheduleEntryGenJSON = (e: ScheduleEntryGenJSON): ScheduleEntryG
     }
 }
 
+export const mapLabworkJSON = (x: LabworkAtomJSON): LabworkAtom => ({
+    ...x,
+    semester: mapSemesterJSON(x.semester)
+})
+
 export const convertManySemesters = (ss: SemesterJSON[]): Semester[] => {
     return convertMany(ss, mapSemesterJSON)
 }
@@ -102,4 +108,8 @@ export const convertManyScheduleEntries = (se: ScheduleEntryAtomJSON[]): Schedul
 
 export const convertManyScheduleEntryGens = (se: ScheduleEntryGenJSON[]): ScheduleEntryGen[] => {
     return convertMany(se, mapScheduleEntryGenJSON)
+}
+
+export const convertManyLabworks = (xs: LabworkAtomJSON[]): LabworkAtom[] => {
+    return convertMany(xs, mapLabworkJSON)
 }
