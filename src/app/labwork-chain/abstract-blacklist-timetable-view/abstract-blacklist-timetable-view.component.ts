@@ -6,7 +6,7 @@ import {Blacklist} from '../../models/blacklist.model'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {deleteAction, editAction, LWMAction, LWMActionType} from '../../table-action-button/lwm-actions'
 import {formatBlacklistTableEntry, localBlacklistsColumns} from '../../blacklists/blacklist-view-model'
-import {foldUndefined} from '../../utils/functions'
+import {dateOrderingASC, foldUndefined} from '../../utils/functions'
 
 @Component({
     selector: 'lwm-abstract-blacklist-timetable-view',
@@ -22,7 +22,7 @@ export class AbstractBlacklistTimetableViewComponent implements OnInit {
 
     @Input() set timetable(t: Readonly<TimetableAtom>) {
         this.dataSource.data = t.localBlacklist
-            .sort((lhs, rhs) => lhs.date.getTime() - rhs.date.getTime())
+            .sort((lhs, rhs) => dateOrderingASC(lhs.date, rhs.date))
     }
 
     @Output() createEmitter: EventEmitter<void>

@@ -3,7 +3,7 @@ import {Group} from '../../models/group.model'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
 import {Card} from '../../card-list/card-list.component'
 import {Time} from '../../models/time.model'
-import {_groupBy} from '../../utils/functions'
+import {_groupBy, dateOrderingASC} from '../../utils/functions'
 
 export interface ScheduleEntryLike {
     group: Group
@@ -44,7 +44,7 @@ export class AbstractGroupViewComponent {
 
                 return {
                     value: es[0].group,
-                    entries: es.sort((lhs, rhs) => lhs.date.getTime() - rhs.date.getTime())
+                    entries: es.sort((lhs, rhs) => dateOrderingASC(lhs.date, rhs.date))
                 }
             })
             .sort((lhs, rhs) => lhs.value.label.localeCompare(rhs.value.label))
