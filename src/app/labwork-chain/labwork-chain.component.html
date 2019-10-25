@@ -17,16 +17,16 @@
         <ng-container [ngSwitch]="step">
 
             <!-- assignment plan -->
-            <ng-container *ngIf="labwork && assignmentPlan">
+            <ng-container *ngIf="labwork && assignmentEntries">
                 <ng-container *ngSwitchCase="0">
                     <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
                     <ng-template #thenBlock>
-                        <lwm-assignment-plan [labwork]="labwork" [plan]="assignmentPlan">
+                        <lwm-assignment-plan [labwork]="labwork" [assignmentEntries]="assignmentEntries">
                         </lwm-assignment-plan>
                     </ng-template>
                     <ng-template #elseBlock>
-                        <lwm-assignment-plan-edit [labwork]="labwork" [plan]="assignmentPlan"
-                            [hasPermission]="hasPermission()" (planUpdate)="updateAssignmentPlan($event)">
+                        <lwm-assignment-plan-edit [labwork]="labwork" [assignmentEntries]="assignmentEntries"
+                            [hasPermission]="hasPermission()" (assignmentEntriesUpdate)="updateAssignmentEntries($event)">
                         </lwm-assignment-plan-edit>
                     </ng-template>
                 </ng-container>

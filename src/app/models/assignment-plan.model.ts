@@ -1,29 +1,21 @@
-export interface AssignmentPlan {
-    labwork: string
-    attendance: number // TODO remove
-    mandatory: number // TODO remove
-    entries: AssignmentEntry[]
+export interface AssignmentEntry {
+    labwork: string,
+    index: number,
+    label: string
+    types: AssignmentEntryType[]
+    duration: number,
     id: string
 }
 
-export interface AssignmentPlanProtocol {
-    labwork: string
-    attendance: number // TODO remove
-    mandatory: number // TODO remove
-    entries: AssignmentEntry[]
-}
-
-export interface AssignmentEntry {
-    index: number,
+export interface AssignmentEntryProtocol {
+    labwork: string,
     label: string
     types: AssignmentEntryType[]
     duration: number
 }
 
-export interface AssignmentEntryType { // TODO better: AssignmentEntryTypeProtocol with entryType only
+export interface AssignmentEntryType {
     entryType: AssignmentEntryTypeValue
-    bool: boolean
-    int: number
 }
 
 export enum AssignmentEntryTypeValue {

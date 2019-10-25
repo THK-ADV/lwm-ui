@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
-import {AssignmentEntry, AssignmentEntryTypeValue, AssignmentPlan, sortedAssignmentPlanEntryTypes} from '../../models/assignment-plan.model'
+import {AssignmentEntry, sortedAssignmentPlanEntryTypes} from '../../models/assignment-plan.model'
 import {MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {LWMActionType} from '../../table-action-button/lwm-actions'
@@ -18,9 +18,8 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
     @Input() canDelete: boolean
     @Input() canEdit: boolean
 
-    @Input() set plan(plan: Readonly<AssignmentPlan>) {
-        this.dataSource.data = plan.entries
-            .sort((lhs, rhs) => lhs.index - rhs.index)
+    @Input() set assignmentEntries(xs: Readonly<AssignmentEntry[]>) {
+        this.dataSource.data = [...xs].sort((lhs, rhs) => lhs.index - rhs.index)
     }
 
     @Output() createEmitter: EventEmitter<void>
@@ -56,8 +55,7 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
     private canCreateF = (): LWMActionType[] => foldUndefined(this.canCreate, x => [x], () => [])
 
     private displayedEntryTypes = (entry: AssignmentEntry): string[] => {
-        return sortedAssignmentPlanEntryTypes(entry).types
-            .map(t => t.entryType === AssignmentEntryTypeValue.bonus ? `${t.entryType} (${t.int})` : t.entryType)
+        return sortedAssignmentPlanEntryTypes(entry).types.map(t => t.entryType)
     }
 
     private onSelect = (entry: AssignmentEntry) => {
@@ -75,7 +73,6 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
     }
 
     private onCreate = () => {
-        console.log('abstract ap emit')
         this.createEmitter.emit()
     }
 }

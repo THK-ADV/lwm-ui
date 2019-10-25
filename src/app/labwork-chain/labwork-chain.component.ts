@@ -7,8 +7,8 @@ import {foldUndefined, NotImplementedError, subscribe} from '../utils/functions'
 import {TimetableAtom} from '../models/timetable'
 import {
     fetchApplicationCount,
+    fetchAssignmentEntries,
     fetchLabwork,
-    fetchOrCreateAssignmentPlan,
     fetchOrCreateTimetable,
     fetchReportCardEntryCount,
     fetchScheduleEntries
@@ -17,12 +17,12 @@ import {TimetableService} from '../services/timetable.service'
 import {ScheduleEntryService, SchedulePreview} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
 import {MatHorizontalStepper} from '@angular/material'
-import {AssignmentPlanService} from '../services/assignment-plan.service'
-import {AssignmentPlan} from '../models/assignment-plan.model'
+import {AssignmentEntriesService} from '../services/assignment-entries.service'
 import {BlacklistService} from '../services/blacklist.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
+import {AssignmentEntry} from '../models/assignment-plan.model'
 
 enum Step {
     application,
@@ -48,7 +48,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private labwork: Readonly<LabworkAtom>
     private timetable: Readonly<TimetableAtom>
-    private assignmentPlan: Readonly<AssignmentPlan>
+    private assignmentEntries: Readonly<AssignmentEntry[]>
     private schedulePreview: Readonly<SchedulePreview> | undefined
     private scheduleEntries: Readonly<ScheduleEntryAtom[]>
     private applications: Readonly<number>
@@ -64,7 +64,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         private readonly timetableService: TimetableService,
         private readonly blacklistService: BlacklistService,
         private readonly scheduleEntryService: ScheduleEntryService,
-        private readonly assignmentPlanService: AssignmentPlanService,
+        private readonly assignmentPlanService: AssignmentEntriesService,
         private readonly labworkApplicationService: LabworkApplicationService,
         private readonly reportCardService: ReportCardEntryService,
     ) {
@@ -97,8 +97,8 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.timetable = t
     }
 
-    private updateAssignmentPlan = (a: AssignmentPlan) => {
-        this.assignmentPlan = a
+    private updateAssignmentEntries = (xs: AssignmentEntry[]) => {
+        this.assignmentEntries = xs
     }
 
     private updateSchedulePreview = (p: SchedulePreview) => {
@@ -134,7 +134,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         const s1 = fetchLabwork(this.route, this.labworkService, labwork => {
             this.labwork = labwork
 
-            this.subscribeAndPush(fetchOrCreateAssignmentPlan(this.assignmentPlanService, labwork), ap => this.assignmentPlan = ap)
+            this.subscribeAndPush(fetchAssignmentEntries(this.assignmentPlanService, labwork), xs => this.assignmentEntries = xs)
             this.subscribeAndPush(fetchOrCreateTimetable(this.timetableService, this.blacklistService, labwork), tt => this.timetable = tt)
             this.subscribeAndPush(fetchApplicationCount(this.labworkApplicationService, labwork), a => this.applications = a)
             this.subscribeAndPush(fetchScheduleEntries(this.scheduleEntryService, labwork), s => this.scheduleEntries = s)
@@ -171,14 +171,6 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private prev = (step: Step): Step | undefined => {
         return this.steps[step.valueOf() - 1]
-    }
-
-    private nextButtonLabel = (step: Step): string => {
-        return foldUndefined(this.next(step), this.label, () => '???')
-    }
-
-    private prevButtonLabel = (step: Step): string => {
-        return foldUndefined(this.prev(step), this.label, () => '???')
     }
 
     private hasNextButton = (step: Step): boolean => {

@@ -5,7 +5,7 @@ import {CreateUpdateDialogComponent, FormPayload} from './create-update/create-u
 
 // TODO use this abstraction everywhere
 export const openDialog = <T, R, U>(dialogRef: MatDialogRef<T, R>, andThen: (e: R) => Observable<U>) => {
-    return dialogRef.afterClosed().pipe(switchMap(x => x ? andThen(x) : EMPTY))
+    return dialogRef.afterClosed().pipe(switchMap(x => x !== undefined ? andThen(x) : EMPTY))
 }
 
 export const openDialogFromPayload = <T, U>(

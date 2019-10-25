@@ -8,17 +8,15 @@ import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
 import {ScheduleEntryService} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
-import {AssignmentPlan} from '../models/assignment-plan.model'
-import {AssignmentPlanService} from '../services/assignment-plan.service'
-import {map, switchMap, tap} from 'rxjs/operators'
+import {AssignmentEntry} from '../models/assignment-plan.model'
+import {AssignmentEntriesService} from '../services/assignment-entries.service'
+import {map, switchMap} from 'rxjs/operators'
 import {format} from '../utils/lwmdate-adapter'
 import {BlacklistService} from '../services/blacklist.service'
 import {Blacklist} from '../models/blacklist.model'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
-import {AuthorityService} from '../services/authority.service'
-import {AuthorityAtom} from '../models/authority.model'
 
 export const fetchLabwork = (
     route: ActivatedRoute,
@@ -42,12 +40,12 @@ export const fetchReportCardEntryCount = (
     return service.count(labwork.course.id, labwork.id)
 }
 
-export const fetchOrCreateAssignmentPlan = (
-    service: AssignmentPlanService,
-    labwork: LabworkAtom
-): Observable<AssignmentPlan> => fetchAssignmentPlan(service, labwork).pipe(
-    switchMap(ap => ap ? of(ap) : createAssignmentPlanSkeleton(service, labwork))
-)
+// export const fetchOrCreateAssignmentPlan = (
+//     service: AssignmentEntriesService,
+//     labwork: LabworkAtom
+// ): Observable<AssignmentPlan> => fetchAssignmentPlan(service, labwork).pipe(
+//     switchMap(ap => ap ? of(ap) : createAssignmentPlanSkeleton(service, labwork))
+// )
 
 export const fetchOrCreateTimetable = (
     timetableService: TimetableService,
@@ -64,21 +62,19 @@ export const fetchApplicationCount = (
     labwork: LabworkAtom
 ): Observable<number> => service.getApplicationCount(labwork.id)
 
-const fetchAssignmentPlan = (
-    service: AssignmentPlanService,
+export const fetchAssignmentEntries = (
+    service: AssignmentEntriesService,
     labwork: LabworkAtom
-): Observable<AssignmentPlan | undefined> => {
-    return service.getAllWithFilter(labwork.course.id, {attribute: 'labwork', value: labwork.id}).pipe(
-        map(xs => xs.shift())
-    )
+): Observable<AssignmentEntry[]> => {
+    return service.getAllWithFilter(labwork.course.id, {attribute: 'labwork', value: labwork.id})
 }
 
-const createAssignmentPlanSkeleton = (
-    service: AssignmentPlanService,
-    labwork: LabworkAtom
-): Observable<AssignmentPlan> => {
-    return service.create(labwork.course.id, {labwork: labwork.id, entries: [], attendance: 0, mandatory: 0})
-}
+// const createAssignmentPlanSkeleton = (
+//     service: AssignmentEntriesService,
+//     labwork: LabworkAtom
+// ): Observable<AssignmentPlan> => {
+//     return service.create(labwork.course.id, {labwork: labwork.id, entries: [], attendance: 0, mandatory: 0})
+// }
 
 const fetchTimetable = (
     service: TimetableService,

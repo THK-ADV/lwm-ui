@@ -12,8 +12,7 @@ export const pipe = <T extends any[], R>(
     return (...args: T) => piped(fn1(...args))
 }
 
-export const compose = <R>(fn1: (a: R) => R, ...fns: Array<(a: R) => R>) =>
-    fns.reduce((prevFn, nextFn) => value => prevFn(nextFn(value)), fn1)
+export const compose = <A, B, C>(f: (a: A) => B, g: (b: B) => C): (a: A) => C => a => g(f(a))
 
 export function exists<T>(array: Readonly<T[]>, p: (t: T) => boolean): boolean {
     return array.find(p) !== undefined
