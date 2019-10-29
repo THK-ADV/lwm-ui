@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {Conflict, ScheduleEntryService, SchedulePreview} from '../../../services/schedule-entry.service'
-import {foldUndefined, isEmpty, maxBy, minBy, subscribe} from '../../../utils/functions'
+import {foldUndefined, isEmpty, maxBy, minBy} from '../../../utils/functions'
 import {MatDialog} from '@angular/material'
 import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
@@ -77,10 +77,14 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
             this.fetchPreview
         )
 
-        this.subs.push(subscribe(preview$, p => {
+        const s = preview$.subscribe(p => {
             this.previewIsLoading = false
             this.schedulePreviewEmitter.emit(p)
-        }))
+        }, _ => {
+            this.previewIsLoading = false
+        })
+
+        this.subs.push(s)
     }
 
     private hasConflicts = () => foldUndefined(this.previewResult, r => !isEmpty(r.conflicts), () => false)
