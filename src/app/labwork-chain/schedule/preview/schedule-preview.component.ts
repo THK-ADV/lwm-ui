@@ -2,18 +2,17 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {LabworkAtom} from '../../../models/labwork.model'
 import {TimetableAtom} from '../../../models/timetable'
 import {ScheduleEntryEvent} from '../view/schedule-view-model'
-import {ScheduleEntryGen} from '../../../services/schedule-entry.service'
+import {ScheduleEntryGen, ScheduleEntryService} from '../../../services/schedule-entry.service'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {ConfirmDialogComponent} from '../../../shared-dialogs/confirm-dialog/confirm-dialog.component'
 import {MatDialog} from '@angular/material'
-import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
+import {subscribeConfirmationDialog, subscribeDeleteDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {of, Subscription} from 'rxjs'
-import {subscribe} from '../../../utils/functions'
-import {makeScheduleEntryEvents} from './schedule-preview-view-model'
+import {createSchedule, makeScheduleEntryEvents} from './schedule-preview-view-model'
 import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
-import {Room} from '../../../models/room.model'
-import {User} from '../../../models/user.model'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
+import {voidF} from '../../../utils/functions'
+import {LoadingService, withSpinning} from '../../../services/loading.service'
 
 @Component({
     selector: 'lwm-schedule-preview',
@@ -41,7 +40,9 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
     private subs: Subscription[]
 
     constructor(
-        private readonly dialog: MatDialog
+        private readonly dialog: MatDialog,
+        private readonly service: ScheduleEntryService,
+        private readonly loadingService: LoadingService
     ) {
         this.createScheduleEmitter = new EventEmitter<ScheduleEntryAtom[]>()
         this.deleteSchedulePreviewEmitter = new EventEmitter<void>()
@@ -87,36 +88,32 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
             }
         )
 
-        this.subs.push(subscribe(openDialog(dialogRef, of), this.delete0))
-    }
+        const s = subscribeDeleteDialog(
+            dialogRef,
+            of,
+            () => this.deleteSchedulePreviewEmitter.emit(),
+            console.log
+        )
 
-    private delete0 = () => {
-        this.deleteSchedulePreviewEmitter.emit()
+        this.subs.push(s)
     }
 
     private commit = () => {
-        const dialog = ConfirmDialogComponent.instance(
+        const dialogRef = ConfirmDialogComponent.instance(
             this.dialog,
             'Staffelplan erstellen',
             'Möchten Sie den Staffelplan erstellen?'
         )
 
-        this.subs.push(subscribe(openDialog(dialog, of), this.commit0)) // TODO commit
-    }
+        const spinning = withSpinning<ScheduleEntryAtom[]>(this.loadingService)
 
-    private commit0 = () => {
-        const fakeRoom: Room = ({id: '1', label: 'fake', capacity: 1, description: 'fake desc'})
-        const fakeUser: User = ({id: '1', systemId: 'fakeId', lastname: 'fake last', firstname: 'fake first', email: 'fake mail'})
+        const s = subscribeConfirmationDialog(
+            dialogRef,
+            () => spinning(createSchedule(this.labwork.course.id, this.labwork.id, this._entries, this.service)),
+            xs => this.createScheduleEmitter.emit(xs),
+            voidF
+        )
 
-        this.createScheduleEmitter.emit(this._entries.map((v, i) => ({
-            id: i.toString(),
-            room: fakeRoom,
-            group: v.group,
-            start: v.start,
-            end: v.end,
-            date: v.date,
-            labwork: this.labwork,
-            supervisor: [fakeUser]
-        })))
+        this.subs.push(s)
     }
 }

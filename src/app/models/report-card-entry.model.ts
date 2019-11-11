@@ -18,6 +18,21 @@ export interface ReportCardEntryAtom {
     id: string
 }
 
+export interface ReportCardEntryJSON {
+    student: string
+    labwork: string
+    label: string
+    date: string
+    start: string
+    end: string
+    room: string
+    entryTypes: ReportCardEntryType[]
+    assignmentIndex: number
+    rescheduled?: string
+    retry?: string
+    id: string
+}
+
 export interface ReportCardEntryAtomJSON {
     student: User
     labwork: Labwork

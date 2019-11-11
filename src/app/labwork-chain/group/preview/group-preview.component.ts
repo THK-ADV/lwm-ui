@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {Conflict, ScheduleEntryService, SchedulePreview} from '../../../services/schedule-entry.service'
-import {foldUndefined, isEmpty, maxBy, minBy} from '../../../utils/functions'
+import {compose, foldUndefined, isEmpty, maxBy, minBy, subscribe} from '../../../utils/functions'
 import {MatDialog} from '@angular/material'
 import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
@@ -10,6 +10,7 @@ import {fetchPreview, SchedulePreviewConfig} from './group-preview-view-model'
 import {ScheduleEntryLike} from '../../abstract-group-view/abstract-group-view.component'
 import {format} from '../../../utils/lwmdate-adapter'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
+import {LoadingService, withSpinning} from '../../../services/loading.service'
 
 interface SchedulePreviewResult {
     fitness: number
@@ -25,12 +26,12 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     constructor(
         private readonly dialog: MatDialog,
-        private readonly scheduleService: ScheduleEntryService
+        private readonly scheduleService: ScheduleEntryService,
+        private readonly loadingService: LoadingService
     ) {
         this.schedulePreviewEmitter = new EventEmitter<SchedulePreview>()
         this.subs = []
         this.scheduleEntries = []
-        this.previewIsLoading = false
     }
 
     @Input() labwork: Readonly<LabworkAtom>
@@ -57,7 +58,6 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     private scheduleEntries: ScheduleEntryLike[]
     private previewResult: SchedulePreviewResult | undefined
     private subs: Subscription[]
-    private previewIsLoading: boolean
 
     ngOnInit() {
         console.log('group preview component loaded')
@@ -74,16 +74,10 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
     private onPreview = () => {
         const preview$ = openDialog(
             GroupPreviewModalComponent.instance(this.dialog, this.applications),
-            this.fetchPreview
+            compose(this.fetchPreview, withSpinning(this.loadingService))
         )
 
-        const s = preview$.subscribe(p => {
-            this.previewIsLoading = false
-            this.schedulePreviewEmitter.emit(p)
-        }, _ => {
-            this.previewIsLoading = false
-        })
-
+        const s = subscribe(preview$, p => this.schedulePreviewEmitter.emit(p))
         this.subs.push(s)
     }
 
@@ -105,8 +99,6 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     private fetchPreview = (config: SchedulePreviewConfig): Observable<SchedulePreview> => {
         this.preview = undefined
-        this.previewIsLoading = true
-
         return fetchPreview(this.scheduleService, this.labwork)(config)
     }
 }

@@ -6,6 +6,10 @@ interface ConfirmationPayload {
     body: string
 }
 
+export enum ConfirmationResult {
+    ok, ko
+}
+
 @Component({
     selector: 'lwm-confirm-dialog',
     templateUrl: './confirm-dialog.component.html',
@@ -14,7 +18,7 @@ interface ConfirmationPayload {
 export class ConfirmDialogComponent {
 
     constructor(
-        private dialogRef: MatDialogRef<ConfirmDialogComponent, boolean>,
+        private dialogRef: MatDialogRef<ConfirmDialogComponent, ConfirmationResult>,
         @Inject(MAT_DIALOG_DATA) private payload: ConfirmationPayload
     ) {
     }
@@ -23,14 +27,14 @@ export class ConfirmDialogComponent {
         dialog: MatDialog,
         title: string,
         body: string
-    ): MatDialogRef<ConfirmDialogComponent, boolean> {
-        return dialog.open<ConfirmDialogComponent, ConfirmationPayload, boolean>(ConfirmDialogComponent, {
+    ): MatDialogRef<ConfirmDialogComponent, ConfirmationResult> {
+        return dialog.open<ConfirmDialogComponent, ConfirmationPayload, ConfirmationResult>(ConfirmDialogComponent, {
             data: {title: title, body: body},
             panelClass: 'lwmConfirmationDialog'
         })
     }
 
-    private cancel = () => this.dialogRef.close(false)
+    private cancel = () => this.dialogRef.close(ConfirmationResult.ko)
 
-    private submit = () => this.dialogRef.close(true)
+    private submit = () => this.dialogRef.close(ConfirmationResult.ok)
 }

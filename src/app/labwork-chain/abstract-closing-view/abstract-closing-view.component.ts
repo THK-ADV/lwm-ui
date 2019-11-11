@@ -35,7 +35,7 @@ export class AbstractClosingViewComponent implements OnInit {
 
     private reportCardPublished = () => this.labwork.published
 
-    private publishReportCards = () => { // TODO test
+    private publishReportCards = () => {
         this.subs.push(
             subscribe(
                 updateLabwork$(

@@ -70,6 +70,7 @@ import {TimetableBlacklistViewComponent} from './labwork-chain/timetable-blackli
 import {AbstractClosingViewComponent} from './labwork-chain/abstract-closing-view/abstract-closing-view.component'
 import {ClosingComponent} from './labwork-chain/report-cards/closing/closing.component'
 import {UserAuthorityResolver} from './security/user-authority-resolver'
+import {ProgressBarComponent} from './progress-bar/progress-bar.component'
 
 @NgModule({
     declarations: [
@@ -121,7 +122,8 @@ import {UserAuthorityResolver} from './security/user-authority-resolver'
         AbstractBlacklistTimetableViewComponent,
         TimetableBlacklistViewComponent,
         AbstractClosingViewComponent,
-        ClosingComponent
+        ClosingComponent,
+        ProgressBarComponent
     ],
     imports: [
         BrowserModule,

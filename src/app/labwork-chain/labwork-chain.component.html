@@ -92,7 +92,7 @@
                         <lwm-schedule [labwork]="labwork" [timetable]="timetable"
                             [hasReportCards]="hasReportCardEntries()" [scheduleEntries]="scheduleEntries"
                             [hasPermission]="hasPermission()" (deleteScheduleEmitter)="deleteScheduleEntries()"
-                            (deleteReportCardsEmitter)="deleteReportCards()">
+                            (deleteReportCardsEmitter)="deleteReportCards()" (updateLabworkEmitter)="updateLabwork($event)">
                         </lwm-schedule>
                     </ng-template>
                     <ng-template #elseBlock>

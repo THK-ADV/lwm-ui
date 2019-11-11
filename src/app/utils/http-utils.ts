@@ -5,6 +5,7 @@ import {TimetableAtom, TimetableAtomJSON, TimetableEntryAtom, TimetableEntryAtom
 import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {ScheduleEntryGen, ScheduleEntryGenJSON} from '../services/schedule-entry.service'
 import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
+import {ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 

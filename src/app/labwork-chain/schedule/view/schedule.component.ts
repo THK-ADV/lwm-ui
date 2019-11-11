@@ -8,9 +8,14 @@ import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialo
 import {MatDialog} from '@angular/material'
 import {ReportCardEntryService} from '../../../services/report-card-entry.service'
 import {ScheduleEntryService} from '../../../services/schedule-entry.service'
-import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
-import {of, Subscription} from 'rxjs'
-import {subscribe} from '../../../utils/functions'
+import {subscribeDeleteDialog} from '../../../shared-dialogs/dialog-open-combinator'
+import {Observable, Subscription} from 'rxjs'
+import {deleteReportCardEntries, deleteSchedule} from '../preview/schedule-preview-view-model'
+import {switchMap} from 'rxjs/operators'
+import {updateLabwork$} from '../../../labworks/labwork-view-model'
+import {LabworkService} from '../../../services/labwork.service'
+import {LoadingService, withSpinning} from '../../../services/loading.service'
+import {compose} from '../../../utils/functions'
 
 @Component({
     selector: 'lwm-schedule',
@@ -27,6 +32,7 @@ export class ScheduleComponent implements OnInit {
 
     @Output() deleteScheduleEmitter: EventEmitter<void>
     @Output() deleteReportCardsEmitter: EventEmitter<void>
+    @Output() updateLabworkEmitter: EventEmitter<LabworkAtom>
 
     private dates: ScheduleEntryEvent[]
     private headerTitle: string
@@ -35,10 +41,13 @@ export class ScheduleComponent implements OnInit {
     constructor(
         private readonly dialog: MatDialog,
         private readonly scheduleService: ScheduleEntryService,
-        private readonly reportCardService: ReportCardEntryService
+        private readonly reportCardService: ReportCardEntryService,
+        private readonly labworkService: LabworkService,
+        private readonly loadingService: LoadingService
     ) {
         this.deleteScheduleEmitter = new EventEmitter<void>()
         this.deleteReportCardsEmitter = new EventEmitter<void>()
+        this.updateLabworkEmitter = new EventEmitter<LabworkAtom>()
         this.subs = []
     }
 
@@ -67,11 +76,28 @@ export class ScheduleComponent implements OnInit {
             }
         )
 
-        this.subs.push(subscribe(openDialog(dialogRef, of), this.delete0)) // TODO perform delete
+        const s = subscribeDeleteDialog(
+            dialogRef,
+            compose(this.delete$, withSpinning(this.loadingService)),
+            this.emitAfterDelete,
+            console.log
+        )
+
+        this.subs.push(s)
     }
 
-    private delete0 = () => {
+    private emitAfterDelete = () => {
         this.deleteScheduleEmitter.emit()
         this.deleteReportCardsEmitter.emit()
+    }
+
+    private delete$ = (): Observable<unknown> => {
+        const resetSchedule$ = () => deleteSchedule(this.labwork.course.id, this.labwork.id, this.scheduleService)
+        const resetAll$ = () => resetSchedule$().pipe(
+            switchMap(_ => deleteReportCardEntries(this.labwork.course.id, this.labwork.id, this.reportCardService)),
+            switchMap(_ => updateLabwork$(this.labworkService, this.labwork, u => ({...u, published: false})))
+        )
+
+        return this.hasReportCards ? resetAll$() : resetSchedule$()
     }
 }

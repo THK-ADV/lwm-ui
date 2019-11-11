@@ -86,6 +86,15 @@ export class HttpService {
             tap(this.logResp('delete', url))
         )
 
+    delete_ = (
+        url: string,
+    ): Observable<unknown> => this.http
+        .delete(url)
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('delete', url))
+        )
+
     create = <I, O>(
         url: string,
         element: I,

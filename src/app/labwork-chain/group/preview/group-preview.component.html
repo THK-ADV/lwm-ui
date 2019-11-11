@@ -4,10 +4,6 @@
         (performAction)="onPreview()">
 </lwm-abstract-header>
 
-<ng-container *ngIf="previewIsLoading">
-    <mat-spinner color="primary"></mat-spinner>
-</ng-container>
-
 <ng-container *ngIf="previewResult">
     <p>
         Staffelplan wurde in {{previewResult.fitness + 1}} Durchläufen mit {{previewResult.conflicts.length}} Konflikten

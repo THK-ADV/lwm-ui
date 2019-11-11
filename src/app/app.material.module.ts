@@ -21,7 +21,8 @@ import {
     MatTooltipModule,
     MatStepperModule,
     MatSelectModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatProgressBarModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -52,7 +53,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatMenuModule,
         MatStepperModule,
         MatSelectModule,
-        MatProgressSpinnerModule
+        MatProgressSpinnerModule,
+        MatProgressBarModule
     ]
 })
 export class LWMMaterialModule {

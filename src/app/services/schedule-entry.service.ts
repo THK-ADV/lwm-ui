@@ -23,10 +23,24 @@ export interface ScheduleGen {
     entries: ScheduleEntryGen[]
 }
 
+export interface ScheduleGenProtocol {
+    labwork: string
+    entries: ScheduleEntryGenProtocol[]
+}
+
 export interface ScheduleEntryGen {
     start: Time
     end: Time
     date: Date
+    room: string
+    supervisor: string[]
+    group: Group
+}
+
+export interface ScheduleEntryGenProtocol {
+    start: string
+    end: string
+    date: string
     room: string
     supervisor: string[]
     group: Group
@@ -55,7 +69,7 @@ export class ScheduleEntryService {
     constructor(private readonly http: HttpService) {
     }
 
-    private readonly path = (course: string, labwork: string) => makePath('scheduleEntries', course, labwork)
+    private readonly path = (course: string, labwork?: string) => makePath('scheduleEntries', course, labwork)
 
     getAllWithFilter = (
         courseId: string,
@@ -77,6 +91,19 @@ export class ScheduleEntryService {
                 value: parseUnsafeString(considerSemesterIndex)
             }))
         ).pipe(map(this.mapDateTime))
+
+    create = (
+        courseId: string,
+        protocol: ScheduleGenProtocol
+    ): Observable<ScheduleEntryAtom[]> => this.http
+        .create<ScheduleGenProtocol, ScheduleEntryAtomJSON[]>(this.path(courseId), protocol, atomicParams)
+        .pipe(map(convertManyScheduleEntries))
+
+    delete = (
+        courseId: string,
+        labworkId: string
+    ): Observable<unknown> => this.http
+        .delete_(this.path(courseId, labworkId))
 
     private groupStrategy = (strategy: GroupStrategy): ParamFilter[] => {
         switch (strategy.kind) {
