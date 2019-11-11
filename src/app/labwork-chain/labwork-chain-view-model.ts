@@ -40,13 +40,6 @@ export const fetchReportCardEntryCount = (
     return service.count(labwork.course.id, labwork.id)
 }
 
-// export const fetchOrCreateAssignmentPlan = (
-//     service: AssignmentEntriesService,
-//     labwork: LabworkAtom
-// ): Observable<AssignmentPlan> => fetchAssignmentPlan(service, labwork).pipe(
-//     switchMap(ap => ap ? of(ap) : createAssignmentPlanSkeleton(service, labwork))
-// )
-
 export const fetchOrCreateTimetable = (
     timetableService: TimetableService,
     blacklistService: BlacklistService,
@@ -60,7 +53,7 @@ export const fetchOrCreateTimetable = (
 export const fetchApplicationCount = (
     service: LabworkApplicationService,
     labwork: LabworkAtom
-): Observable<number> => service.getApplicationCount(labwork.id)
+): Observable<number> => service.count(labwork.course.id, labwork.id)
 
 export const fetchAssignmentEntries = (
     service: AssignmentEntriesService,
@@ -68,13 +61,6 @@ export const fetchAssignmentEntries = (
 ): Observable<AssignmentEntry[]> => {
     return service.getAllWithFilter(labwork.course.id, {attribute: 'labwork', value: labwork.id})
 }
-
-// const createAssignmentPlanSkeleton = (
-//     service: AssignmentEntriesService,
-//     labwork: LabworkAtom
-// ): Observable<AssignmentPlan> => {
-//     return service.create(labwork.course.id, {labwork: labwork.id, entries: [], attendance: 0, mandatory: 0})
-// }
 
 const fetchTimetable = (
     service: TimetableService,

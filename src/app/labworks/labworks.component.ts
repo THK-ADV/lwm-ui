@@ -116,7 +116,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
 
                 const labworksWithApps$ = this.labworkService.getAll(course.id).pipe(
                     switchMap(ls => {
-                        return ls.map(l => zip(this.labworkApplicationService.getApplicationCount(l.id), of(l)))
+                        return ls.map(l => zip(this.labworkApplicationService.count(l.course.id, l.id), of(l)))
                     }),
                     mergeAll(),
                     map(x => ({labwork: x[1], apps: x[0]})),
