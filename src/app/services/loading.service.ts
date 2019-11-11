@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core'
-import {Observable, Subscription} from 'rxjs'
+import {Observable} from 'rxjs'
 import {tap} from 'rxjs/operators'
-import {subscribe} from '../utils/functions'
 
 @Injectable({
     providedIn: 'root'
@@ -24,6 +23,6 @@ export class LoadingService {
 export const withSpinning = <A>(service: LoadingService): ($: Observable<A>) => Observable<A> => {
     return $ => {
         service.startSpinning()
-        return $.pipe(tap(undefined, undefined, () => service.stopSpinning()))
+        return $.pipe(tap(() => service.stopSpinning(), () => service.stopSpinning()))
     }
 }
