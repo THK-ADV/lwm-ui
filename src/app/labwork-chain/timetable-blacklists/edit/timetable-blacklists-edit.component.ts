@@ -77,7 +77,7 @@ export class TimetableBlacklistsEditComponent {
             openDialogFromPayload(
                 this.dialog,
                 payload,
-                addBlacklistToTimetable$(this.timetableService, this.blacklistService, this.timetable)
+                addBlacklistToTimetable$(this.timetableService, this.blacklistService, this.timetable) // TODO this should be handled by the backend (see delete)
             )
         )
     }
@@ -101,10 +101,6 @@ export class TimetableBlacklistsEditComponent {
     }
 
     private onDelete = (blacklist: Blacklist) => {
-        // TODO delete on global blacklists removes n:m relationship x
-        // TODO delete on local blacklists removes both ✓
-        // TODO maybe this should be handled by the backend
-
         const deleteRef = DeleteDialogComponent.instance(
             this.dialog,
             {label: fullBlacklistLabel(blacklist), id: blacklist.id}
@@ -113,7 +109,7 @@ export class TimetableBlacklistsEditComponent {
         this.updateDataSource$(
             openDialog(
                 deleteRef,
-                removeBlacklistFromTimetable$(this.timetableService, this.blacklistService, this.timetable)
+                removeBlacklistFromTimetable$(this.timetableService, this.timetable)
             )
         )
     }

@@ -1,7 +1,7 @@
 import {Blacklist, BlacklistProtocol} from '../../models/blacklist.model'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
 import {Time} from '../../models/time.model'
-import {Observable, of, zip} from 'rxjs'
+import {Observable} from 'rxjs'
 import {TimetableService} from '../../services/timetable.service'
 import {TimetableAtom} from '../../models/timetable'
 import {updateTimetable$} from '../timetable/timetable-view-model'
@@ -31,23 +31,10 @@ export const isFullDay = (blacklist: Blacklist): boolean => {
 }
 
 export const removeBlacklistFromTimetable$ = (
-    timetableService: TimetableService,
-    blacklistService: BlacklistService,
+    service: TimetableService,
     timetable: Readonly<TimetableAtom>
-): (id: string) => Observable<TimetableAtom> => id => removeBlacklistFromTimetable$0(timetableService, timetable, id).pipe(
-    switchMap(t => zip(blacklistService.delete(id), of(t))),
-    map(xs => xs[1])
-)
-
-const removeBlacklistFromTimetable$0 = (
-    timetableService: TimetableService,
-    timetable: Readonly<TimetableAtom>,
-    id: string
-): Observable<TimetableAtom> => updateTimetable$(timetableService, timetable, u => {
-    const copy = {...u}
-    copy.localBlacklist = copy.localBlacklist.filter(x => x.id !== id)
-    return copy
-})
+): (id: string) => Observable<TimetableAtom> => blacklistId => service
+    .removeBlacklist(timetable.labwork.course, timetable.id, blacklistId)
 
 export const addBlacklistToTimetable$ = (
     timetableService: TimetableService,

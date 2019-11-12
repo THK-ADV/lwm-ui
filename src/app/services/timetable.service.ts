@@ -43,4 +43,12 @@ export class TimetableService {
     ): Observable<TimetableAtom> => this.http
         .create<TimetableProtocol, TimetableAtomJSON>(this.path(courseId), body, atomicParams)
         .pipe(map(mapTimetableAtomJSON))
+
+    removeBlacklist = (
+        courseId: string,
+        timetableId: string,
+        blacklistId: string
+    ): Observable<TimetableAtom> => this.http
+        .delete<TimetableAtomJSON>(this.path(courseId), `${timetableId}/blacklists/${blacklistId}`)
+        .pipe(map(mapTimetableAtomJSON))
 }

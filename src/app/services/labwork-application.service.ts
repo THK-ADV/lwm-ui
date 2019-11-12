@@ -19,7 +19,7 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
         courseId: string,
         labworkId: string
     ): Observable<number> => this.http
-        .get_(makePath(`${this.path}/count`, courseId, labworkId))
+        .get_(`${makePath(this.path, courseId, labworkId)}/count`)
 
     getAllByLabworkAtom = (labwork: string): Observable<LabworkApplicationAtom[]> => this.http
         .getAll(this.path, atomicParams.set('labwork', labwork))
