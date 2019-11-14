@@ -42,8 +42,6 @@ type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPre
 })
 export class LabworkChainComponent implements OnInit, OnDestroy {
 
-    // TODO copy assignment plan for other degree within same semester
-
     private subs: Subscription[]
 
     private labwork: Readonly<LabworkAtom>
