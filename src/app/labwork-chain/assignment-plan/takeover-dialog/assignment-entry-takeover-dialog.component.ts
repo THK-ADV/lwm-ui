@@ -1,18 +1,19 @@
-import {Component, Inject, OnInit} from '@angular/core'
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
 import {AssignmentEntry} from '../../../models/assignment-plan.model'
 import {AssignmentEntriesService} from '../../../services/assignment-entries.service'
 import {LabworkService} from '../../../services/labwork.service'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {map} from 'rxjs/operators'
-import {Observable} from 'rxjs'
+import {Observable, Subscription} from 'rxjs'
+import {subscribe} from '../../../utils/functions'
 
 @Component({
     selector: 'lwm-assignment-entry-takeover-dialog',
     templateUrl: './assignment-entry-takeover-dialog.component.html',
     styleUrls: ['./assignment-entry-takeover-dialog.component.scss']
 })
-export class AssignmentEntryTakeoverDialogComponent implements OnInit {
+export class AssignmentEntryTakeoverDialogComponent implements OnInit, OnDestroy {
 
     constructor(
         private dialogRef: MatDialogRef<AssignmentEntryTakeoverDialogComponent, Readonly<string>>,
@@ -20,17 +21,24 @@ export class AssignmentEntryTakeoverDialogComponent implements OnInit {
         private readonly assignmentEntryService: AssignmentEntriesService,
         private readonly labworkService: LabworkService
     ) {
+        this.entries = []
+        this.subs = []
     }
 
     private labworks$: Observable<LabworkAtom[]>
-    private entries$: Observable<AssignmentEntry[]>
+    private entries: AssignmentEntry[]
+    private subs: Subscription[]
     private selected_: LabworkAtom
 
     private set selected(labwork: LabworkAtom) {
         this.selected_ = labwork
-        this.entries$ = this.assignmentEntryService
+        this.entries = []
+
+        const entries$ = this.assignmentEntryService
             .getAllWithFilter(labwork.course.id, {attribute: 'labwork', value: labwork.id})
             .pipe(map(xs => xs.sort((lhs, rhs) => lhs.index - rhs.index)))
+
+        subscribe(entries$, xs => this.entries = xs)
     }
 
     static instance(
@@ -52,6 +60,10 @@ export class AssignmentEntryTakeoverDialogComponent implements OnInit {
                 .sort((lhs, rhs) => lhs.label.localeCompare(rhs.label))
             )
         )
+    }
+
+    ngOnDestroy(): void {
+        this.subs.forEach(s => s.unsubscribe())
     }
 
     private cancel = () => this.dialogRef.close(undefined)

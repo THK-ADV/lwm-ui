@@ -15,16 +15,22 @@
         </mat-card-content>
 
         <div *ngIf="selected_">
-            <p mat-dialog-content>Einträge</p>
-
-            <ol *ngIf="entries$">
-                <li *ngFor="let e of entries$ | async">{{display(e)}}</li>
-            </ol>
+            <ng-container *ngIf="entries.length; then thenBlock else elseBlock">
+            </ng-container>
+            <ng-template #thenBlock>
+                <p mat-dialog-content>Einträge</p>
+                <ol>
+                    <li *ngFor="let e of entries">{{display(e)}}</li>
+                </ol>
+            </ng-template>
+            <ng-template #elseBlock>
+                <p mat-dialog-content>Keine Einträge vorhanden</p>
+            </ng-template>
         </div>
     </mat-card>
 
     <mat-dialog-actions>
         <button mat-flat-button (click)="cancel()" cdkFocusInitial>Schließen</button>
-        <button mat-flat-button color="primary" [disabled]="!selected_" (click)="takeOver()">Übernehmen</button>
+        <button mat-flat-button color="primary" [disabled]="!selected_ || !entries.length" (click)="takeOver()">Übernehmen</button>
     </mat-dialog-actions>
 </div>
