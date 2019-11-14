@@ -5,6 +5,7 @@ import {CreateUpdateDialogComponent, FormPayload} from './create-update/create-u
 import {ConfirmationResult, ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {foldUndefined} from '../utils/functions'
 import {DeleteDialogComponent} from './delete/delete-dialog.component'
+import {Decision, DecisionDialogComponent} from './decision-dialog/decision-dialog.component'
 
 // TODO use this abstraction everywhere
 export const openDialog = <T, R, U>(dialogRef: MatDialogRef<T, R>, andThen: (e: R) => Observable<U>) => {

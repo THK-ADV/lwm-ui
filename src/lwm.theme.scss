@@ -50,7 +50,7 @@
     margin: $low-spacing 0 $med-spacing 0;
     padding: 0 !important;
     -webkit-box-shadow: none !important;
-            box-shadow: none !important;
+    box-shadow: none !important;
 
     //background-color: red;
 
@@ -60,14 +60,14 @@
       display: flex;
       -webkit-box-orient: horizontal;
       -webkit-box-direction: normal;
-          -ms-flex-direction: row;
-              flex-direction: row;
+      -ms-flex-direction: row;
+      flex-direction: row;
       -webkit-box-align: start;
-          -ms-flex-align: start;
-              align-items: flex-start;
+      -ms-flex-align: start;
+      align-items: flex-start;
       -webkit-box-pack: justify;
-          -ms-flex-pack: justify;
-              justify-content: space-between;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
       margin: 0;
       padding: 0;
 
@@ -149,17 +149,19 @@
     lwm-course-authority-dialog .mat-dialog-actions,
     lwm-timetable-entry .mat-dialog-actions,
     lwm-group-preview-modal .mat-dialog-actions,
-    lwm-confirm-dialog .mat-dialog-actions {
+    lwm-confirm-dialog .mat-dialog-actions,
+    lwm-decision-dialog .mat-dialog-actions,
+    lwm-assignment-entry-takeover-dialog .mat-dialog-actions {
       background-color: $ivory;
       display: -webkit-box;
       display: -ms-flexbox;
       display: flex;
       -webkit-box-align: end;
-          -ms-flex-align: end;
-              align-items: flex-end;
+      -ms-flex-align: end;
+      align-items: flex-end;
       -webkit-box-pack: end;
-          -ms-flex-pack: end;
-              justify-content: flex-end;
+      -ms-flex-pack: end;
+      justify-content: flex-end;
       margin: $med-spacing $med-spacing * (-1);
       margin-bottom: $med-spacing * (-1);
       padding-right: $med-spacing;
@@ -178,6 +180,7 @@
 @mixin lwm-form-field-theme($theme) {
   @include mat-form-field-theme(map-get($theme, main));
 }
+
 @mixin lwm-grid-list-theme($theme) {
   @include mat-grid-list-theme(map-get($theme, main));
 }
@@ -317,12 +320,12 @@
 
 @function lwm-light-theme($primary, $accent, $warn, $foreground: (), $background: ()) {
   @return (
-    primary: mat-palette(palette-from($primary)),
-    accent: mat-palette(palette-from($accent)),
-    warn: mat-palette(palette-from($warn)),
-    is-dark: false,
-    foreground: map-merge($mat-light-theme-foreground, $foreground),
-    background: map-merge($mat-light-theme-background, $background)
+          primary: mat-palette(palette-from($primary)),
+          accent: mat-palette(palette-from($accent)),
+          warn: mat-palette(palette-from($warn)),
+          is-dark: false,
+          foreground: map-merge($mat-light-theme-foreground, $foreground),
+          background: map-merge($mat-light-theme-background, $background)
   );
 }
 
@@ -343,20 +346,20 @@
   $input: mat-typography-level(inherit, 1.125, 400)
 ) {
   @return mat-typography-config(
-    $font-family,
-    $display-4,
-    $display-3,
-    $display-2,
-    $display-1,
-    $headline,
-    $title,
-    $subheading-2,
-    $subheading-1,
-    $body-2,
-    $body-1,
-    $caption,
-    $button,
-    $input
+                  $font-family,
+                  $display-4,
+                  $display-3,
+                  $display-2,
+                  $display-1,
+                  $headline,
+                  $title,
+                  $subheading-2,
+                  $subheading-1,
+                  $body-2,
+                  $body-1,
+                  $caption,
+                  $button,
+                  $input
   );
 }
 
@@ -368,10 +371,10 @@
   $typography: lwm-typography-config()
 ) {
   $theme: (
-    main: $main-theme,
-    overlay: $overlay-theme,
-    app-bg-1: $app-bg-1,
-    app-bg-2: $app-bg-2
+          main: $main-theme,
+          overlay: $overlay-theme,
+          app-bg-1: $app-bg-1,
+          app-bg-2: $app-bg-2
   );
   @include mat-core($typography);
 
@@ -413,9 +416,9 @@
 
 //.lwm-base-theme {
 @include lwm-theme(
-  lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
-  lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
-  $ivory,
-  $ivory,
-  lwm-typography-config()
+                lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
+                lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
+                $ivory,
+                $ivory,
+                lwm-typography-config()
 );

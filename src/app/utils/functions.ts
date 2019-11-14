@@ -28,6 +28,12 @@ export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
     })
 }
 
+export const mapJoin = <A>(
+    xs: Array<A>,
+    separator: string,
+    f: (a: A) => string
+) => xs.reduce((acc, t) => `${acc}${separator}${f(t)}`, '')
+
 export function _groupBy<T>(array: Readonly<T[]>, key: (t: T) => string): { key: string, value: T[] } {
     // @ts-ignore
     return array.reduce((acc, x) => {

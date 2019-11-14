@@ -12,9 +12,9 @@ import {FormInputBoolean} from '../../../shared-dialogs/forms/form.input.boolean
 import {FormInputNumber} from '../../../shared-dialogs/forms/form.input.number'
 import {exists, parseUnsafeBoolean} from '../../../utils/functions'
 import {AssignmentEntriesService} from '../../../services/assignment-entries.service'
-import {Observable} from 'rxjs'
+import {EMPTY, Observable, of} from 'rxjs'
 import {FormDataType} from '../../../shared-dialogs/forms/form.input'
-import {switchMap} from 'rxjs/operators'
+import {concatAll, mergeAll, switchMap, tap, toArray} from 'rxjs/operators'
 import {fetchAssignmentEntries} from '../../labwork-chain-view-model'
 import {LabworkAtom} from '../../../models/labwork.model'
 
@@ -145,6 +145,14 @@ export const createAssignmentEntry$ = (
     service: AssignmentEntriesService
 ): (entry: Readonly<AssignmentEntryProtocol>) => Observable<AssignmentEntry> => {
     return entry => service.create(courseId, entry)
+}
+
+export const takeoverAssignmentEntries$ = (
+    courseId: string,
+    service: AssignmentEntriesService,
+    destLabworkId: Readonly<string>
+): (src: Readonly<string>) => Observable<AssignmentEntry[]> => {
+    return srcLabworkId => service.takeover(courseId, srcLabworkId, destLabworkId)
 }
 
 export const updateAssignmentEntry$ = (

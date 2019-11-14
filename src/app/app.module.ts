@@ -71,6 +71,8 @@ import {AbstractClosingViewComponent} from './labwork-chain/abstract-closing-vie
 import {ClosingComponent} from './labwork-chain/report-cards/closing/closing.component'
 import {UserAuthorityResolver} from './security/user-authority-resolver'
 import {ProgressBarComponent} from './progress-bar/progress-bar.component'
+import {DecisionDialogComponent} from './shared-dialogs/decision-dialog/decision-dialog.component'
+import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment-plan/takeover-dialog/assignment-entry-takeover-dialog.component'
 
 @NgModule({
     declarations: [
@@ -123,7 +125,9 @@ import {ProgressBarComponent} from './progress-bar/progress-bar.component'
         TimetableBlacklistViewComponent,
         AbstractClosingViewComponent,
         ClosingComponent,
-        ProgressBarComponent
+        ProgressBarComponent,
+        DecisionDialogComponent,
+        AssignmentEntryTakeoverDialogComponent
     ],
     imports: [
         BrowserModule,
@@ -162,7 +166,9 @@ import {ProgressBarComponent} from './progress-bar/progress-bar.component'
         CourseAuthorityUpdateDialogComponent,
         TimetableEntryComponent,
         GroupPreviewModalComponent,
-        ConfirmDialogComponent
+        ConfirmDialogComponent,
+        DecisionDialogComponent,
+        AssignmentEntryTakeoverDialogComponent
     ]
 })
 export class AppModule {

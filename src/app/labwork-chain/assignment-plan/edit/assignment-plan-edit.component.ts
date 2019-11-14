@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {AssignmentEntry} from '../../../models/assignment-plan.model'
-import {Subscription} from 'rxjs'
+import {of, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
 import {AssignmentEntriesService} from '../../../services/assignment-entries.service'
 import {DialogMode} from '../../../shared-dialogs/dialog.mode'
@@ -9,13 +9,16 @@ import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {
     assignmentEntryFormPayload,
     assignmentEntryProtocol,
+    takeoverAssignmentEntries$,
     createAssignmentEntry$,
     deleteAndFetchAssignmentEntry$,
     updateAssignmentEntry$
 } from './assignment-entry-view-model'
-import {compose, subscribe} from '../../../utils/functions'
+import {compose, isEmpty, subscribe} from '../../../utils/functions'
 import {openDialog, openDialogFromPayload} from '../../../shared-dialogs/dialog-open-combinator'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
+import {Decision, DecisionDialogComponent} from '../../../shared-dialogs/decision-dialog/decision-dialog.component'
+import {AssignmentEntryTakeoverDialogComponent} from '../takeover-dialog/assignment-entry-takeover-dialog.component'
 
 @Component({
     selector: 'lwm-assignment-plan-edit',
@@ -47,13 +50,53 @@ export class AssignmentPlanEditComponent implements OnDestroy {
     private emit = (xs: Readonly<AssignmentEntry[]>) => this.assignmentEntriesUpdate.emit(xs)
 
     private onCreate = () => {
-        const protocol = assignmentEntryProtocol(this.labwork.id)
-        const payload = assignmentEntryFormPayload(DialogMode.create, protocol, this.nextAssignmentIndex())
-        const create$ = createAssignmentEntry$(this.labwork.course.id, this.assignmentPlanService)
-        const mergeEntries = (e: Readonly<AssignmentEntry>) => this.assignmentEntries.concat(e)
-        const sub = subscribe(openDialogFromPayload(this.dialog, payload, create$), compose(mergeEntries, this.emit))
+        const addEntry = (): Subscription => {
+            const protocol = assignmentEntryProtocol(this.labwork.id)
+            const payload = assignmentEntryFormPayload(DialogMode.create, protocol, this.nextAssignmentIndex())
+            const create$ = createAssignmentEntry$(this.labwork.course.id, this.assignmentPlanService)
+            const mergeEntries = (e: Readonly<AssignmentEntry>) => this.assignmentEntries.concat(e)
+            return subscribe(openDialogFromPayload(this.dialog, payload, create$), compose(mergeEntries, this.emit))
+        }
 
-        this.subs.push(sub)
+        const copyExisting = (): Subscription => {
+            const dialog = AssignmentEntryTakeoverDialogComponent.instance(
+                this.dialog,
+                this.labwork
+            )
+
+            const takeover = takeoverAssignmentEntries$(this.labwork.course.id, this.assignmentPlanService, this.labwork.id)
+            return subscribe(openDialog(dialog, takeover), this.emit)
+        }
+
+        const applyCreationStrategy = (d: Decision) => {
+            const go = (): Subscription => {
+                switch (d.kind) {
+                    case 'first':
+                        return addEntry()
+                    case 'second':
+                        return copyExisting()
+                }
+            }
+
+            this.subs.push(go())
+        }
+
+        const choseCreationStrategy = (): Subscription => {
+            const dialog = DecisionDialogComponent.instance(
+                this.dialog, 'Einträge selbst hinzufügen', 'Aufgabenplan eines Praktikums kopieren'
+            )
+            return subscribe(openDialog(dialog, of), applyCreationStrategy)
+        }
+
+        const onCreate0 = (): Subscription => {
+            if (isEmpty(this.assignmentEntries)) {
+                return choseCreationStrategy()
+            } else {
+                return addEntry()
+            }
+        }
+
+        this.subs.push(onCreate0())
     }
 
     private onEdit = (entry: AssignmentEntry) => {

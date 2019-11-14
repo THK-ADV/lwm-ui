@@ -40,4 +40,13 @@ export class AssignmentEntriesService {
         courseId: string,
         id: string
     ): Observable<AssignmentEntry> => this.http.delete(this.path(courseId), id)
+
+    takeover = (
+        courseId: string,
+        srcLabworkId: string,
+        destLabworkId: string
+    ): Observable<AssignmentEntry[]> => {
+        const body = {srcLabwork: srcLabworkId, destLabwork: destLabworkId}
+        return this.http.put_(`${this.path(courseId)}/takeover`, body)
+    }
 }

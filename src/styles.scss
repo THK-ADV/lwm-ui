@@ -23,7 +23,9 @@ body {
 .lwmCourseAuthorityUpdateDialog .mat-dialog-container,
 .lwmTimetableEntryDialog .mat-dialog-container,
 .lwmGroupPreviewDialog .mat-dialog-container,
-.lwmConfirmationDialog .mat-dialog-container {
+.lwmConfirmationDialog .mat-dialog-container,
+.lwmDecisionDialog .mat-dialog-container,
+.lwmAssignmentEntryTakeoverDialog .mat-dialog-container {
     overflow: hidden;
 }
 
