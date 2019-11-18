@@ -73,6 +73,7 @@ import {UserAuthorityResolver} from './security/user-authority-resolver'
 import {ProgressBarComponent} from './progress-bar/progress-bar.component'
 import {DecisionDialogComponent} from './shared-dialogs/decision-dialog/decision-dialog.component'
 import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment-plan/takeover-dialog/assignment-entry-takeover-dialog.component'
+import {SearchComponent} from './search/search.component'
 
 @NgModule({
     declarations: [
@@ -127,7 +128,8 @@ import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment
         ClosingComponent,
         ProgressBarComponent,
         DecisionDialogComponent,
-        AssignmentEntryTakeoverDialogComponent
+        AssignmentEntryTakeoverDialogComponent,
+        SearchComponent
     ],
     imports: [
         BrowserModule,
