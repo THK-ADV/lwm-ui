@@ -14,7 +14,7 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {LabworkService} from '../services/labwork.service'
 import {Labwork, LabworkAtom, LabworkProtocol} from '../models/labwork.model'
 import {AlertService} from '../services/alert.service'
-import {_groupBy, subscribe} from '../utils/functions'
+import {_groupBy, dateOrderingDESC, isEmpty, subscribe} from '../utils/functions'
 import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
 import {CreateUpdateDialogComponent, FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isUniqueEntity} from '../models/unique.entity.model'
@@ -28,15 +28,18 @@ import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {Degree} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
 import {
+    chainAction,
     deleteAction,
     editAction,
     graduatesAction,
     groupAction,
     labworkApplicationAction,
     LWMAction,
-    LWMActionType,
-    scheduleAction
-} from '../utils/component.utils'
+    LWMActionType
+} from '../table-action-button/lwm-actions'
+import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {userAuths} from '../security/user-authority-resolver'
+import {hasAdminStatus, isCourseManager} from '../utils/role-checker'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -63,14 +66,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         {attr: 'labwork.published', title: 'Veröffentlicht'}
     ]
 
-    private readonly labworkActions: LWMAction[] = [ // TODO permissions?
-        scheduleAction(),
-        labworkApplicationAction(),
-        groupAction(),
-        graduatesAction(),
-        editAction(),
-        deleteAction()
-    ]
+    private labworkActions: LWMAction[]
+    private hasPermission: Readonly<boolean>
 
     private course$: Observable<CourseAtom>
     private currentSemester$: Observable<Semester>
@@ -85,7 +82,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return {label: '', description: '', semester: '', course: '', degree: '', subscribable: false, published: false}
     }
 
-    @ViewChild(MatSort, {static: false}) set matSort(ms: MatSort) { // MatSort is undefined if data is loaded asynchronously
+    @ViewChild(MatSort, {static: false}) set matSort(ms: MatSort) { // MatSort hasStatus undefined if data hasStatus loaded asynchronously
         this.dataSource.sort = ms
     }
 
@@ -100,20 +97,26 @@ export class LabworksComponent implements OnInit, OnDestroy {
         private readonly degreeService: DegreeService,
         private readonly router: Router
     ) {
-        this.displayedColumns = this.columns.map(c => c.attr).concat('action') // TODO add permission check
+        this.hasPermission = false
+        this.displayedColumns = this.columns.map(c => c.attr).concat('action')
         this.subs = []
+        this.labworkActions = []
         this.dataSource.sortingDataAccessor = nestedObjectSortingDataAccessor
     }
 
+    // TODO a) group results in backend
+    // TODO b) fetch applications on demand via $lapps | async
     ngOnInit() {
         this.currentSemester$ = this.semesterService.current()
 
         this.course$ = this.route.paramMap.pipe(
             switchMap(params => this.courseService.get(params.get('cid') || '')),
             tap(course => {
+                this.setupPermissionChecks(course.id)
+
                 const labworksWithApps$ = this.labworkService.getAll(course.id).pipe(
                     switchMap(ls => {
-                        return ls.map(l => zip(this.labworkApplicationService.getApplicationCount(l.id), of(l)))
+                        return ls.map(l => zip(this.labworkApplicationService.count(l.course.id, l.id), of(l)))
                     }),
                     mergeAll(),
                     map(x => ({labwork: x[1], apps: x[0]})),
@@ -134,9 +137,36 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    // TODO this will break if abbreviation do not match the actual dates (e.g. CGA)
+    private setupPermissionChecks = (courseId: string) => {
+        this.labworkActions = []
+        const mandatory = [
+            chainAction(),
+            labworkApplicationAction(),
+            groupAction(),
+            graduatesAction()
+        ]
+
+        const auths = userAuths(this.route)
+        const isCM = isCourseManager(courseId, auths)
+        const isA = hasAdminStatus(auths)
+
+        this.hasPermission = isCM || isA
+
+        if (isA) {
+            this.labworkActions = mandatory.concat(editAction(), deleteAction())
+        } else if (isCM) {
+            this.labworkActions = mandatory.concat(editAction())
+        } else {
+            this.labworkActions = mandatory
+        }
+    }
+
     private semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => {
-        return rhs.value[0].semester.abbreviation.localeCompare(lhs.value[0].semester.abbreviation)
+        if (isEmpty(lhs.value) && isEmpty(rhs.value)) {
+            return 0
+        }
+
+        return dateOrderingDESC(lhs.value[0].semester.start, rhs.value[0].semester.start)
     }
 
     private sumApplications = (lwas: LabworkWithApplications[]): number => {
@@ -148,7 +178,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     onSelect(lwa: LabworkWithApplications) {
-        console.log(lwa)
+        this.onAction('chain', lwa.labwork)
     }
 
     onAction(action: LWMActionType, labwork: LabworkAtom) {
@@ -159,11 +189,12 @@ export class LabworksComponent implements OnInit, OnDestroy {
             case 'delete':
                 this.delete(labwork)
                 break
-            case 'schedule':
+            case 'chain':
             case 'groups':
             case 'graduates':
             case 'applications':
                 this.routeTo(action, labwork)
+                break
             default:
                 break
         }
@@ -177,22 +208,14 @@ export class LabworksComponent implements OnInit, OnDestroy {
         const dialogRef = DeleteDialogComponent
             .instance(this.dialog, {label: `${labwork.label} - ${labwork.semester.abbreviation}`, id: labwork.id})
 
-        const s3 = subscribe(
-            dialogRef.afterClosed(), id => {
-                const s4 = subscribe(
-                    this.labworkService.delete(labwork.course.id, id),
-                    this.afterDelete.bind(this)
-                )
-
-                this.subs.push(s4)
-            }
-        )
-
-        this.subs.push(s3)
+        this.subs.push(subscribe(
+            openDialog(dialogRef, id => this.labworkService.delete(labwork.course.id, id)),
+            this.afterDelete.bind(this)
+        ))
     }
 
     private edit(labwork: LabworkAtom) {
-        const s1 = this.openDialog(DialogMode.edit, labwork, updated => {
+        const s1 = this.openDialog_(DialogMode.edit, labwork, updated => {
             const s2 = subscribe(
                 this.labworkService.update(labwork.course.id, updated, labwork.id),
                 this.afterUpdate.bind(this)
@@ -205,7 +228,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private afterDelete(labwork: Labwork) {
-        removeFromDataSource(this.dataSource, this.alertService)(labwork, (lwa, l) => lwa.labwork.id === l.id)
+        removeFromDataSource(this.dataSource, this.alertService)(lwa => lwa.labwork.id === labwork.id)
     }
 
     private afterUpdate(labwork: LabworkAtom) {
@@ -221,8 +244,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(labwork))
     }
 
-    // TODO this is copied. build an abstraction?
-    private openDialog(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
+    // TODO this hasStatus copied. build an abstraction?
+    private openDialog_(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
         const inputData: FormInput[] = this.makeFormInputData(data)
 
         const payload: FormPayload<LabworkProtocol> = {
@@ -270,14 +293,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 isDisabled: isModel,
                 data: isUniqueEntity(labwork) ?
                     new FormInputString(labwork.semester.label) :
-                    new FormInputOption<Semester>(
-                        labwork.semester,
-                        'semester',
-                        invalidChoiceKey,
-                        true,
-                        semester => semester.label,
-                        this.semesterService.getAll()
-                    )
+                    new FormInputOption<Semester>('semester', invalidChoiceKey, true, semester => semester.label, this.semesterService.getAll())
             },
             {
                 formControlName: 'course',
@@ -293,14 +309,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 isDisabled: isModel,
                 data: isUniqueEntity(labwork) ?
                     new FormInputString(labwork.degree.label) :
-                    new FormInputOption<Degree>(
-                        labwork.degree,
-                        'degree',
-                        invalidChoiceKey,
-                        true,
-                        degree => degree.label,
-                        this.degreeService.getAll()
-                    )
+                    new FormInputOption<Degree>('degree', invalidChoiceKey, true, degree => degree.label, this.degreeService.getAll())
             },
             {
                 formControlName: 'subscribable',
@@ -319,12 +328,12 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    private canCreate(): boolean {
-        return true // TODO add permission check
+    private canCreate = (): LWMActionType[] => {
+        return this.hasPermission ? ['create'] : []
     }
 
     private onCreate(course: CourseAtom) {
-        const s1 = this.openDialog(DialogMode.create, LabworksComponent.empty(), procotol => {
+        const s1 = this.openDialog_(DialogMode.create, LabworksComponent.empty(), procotol => {
             procotol.course = course.id
             const s2 = subscribe(
                 this.labworkService.create(course.id, procotol),

@@ -1,7 +1,7 @@
-<lwm-create-header [headerTitle]="headerTitle"
-                     [canCreate]="canCreate()"
-                     (create)="onCreate()">
-</lwm-create-header>
+<lwm-abstract-header [headerTitle]="headerTitle"
+                     [actionTypes]="canCreate()"
+                     (performAction)="onCreate()">
+</lwm-abstract-header>
 
 <mat-form-field>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">

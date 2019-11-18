@@ -5,7 +5,7 @@ export interface AbstractCRUDService<Protocol, Model> {
 
     delete(id: string): Observable<Model>
 
-    createMany(protocol: Protocol): Observable<Model[]>
+    create(protocol: Protocol): Observable<Model>
 
     update(protocol: Protocol, id: string): Observable<Model>
 }

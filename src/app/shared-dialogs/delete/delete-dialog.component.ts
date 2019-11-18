@@ -12,11 +12,11 @@ interface DialogData extends UniqueEntity {
     templateUrl: './delete-dialog.component.html',
     styleUrls: ['./delete-dialog.component.scss']
 })
-export class DeleteDialogComponent implements OnInit {
-    constructor(public dialogRef: MatDialogRef<DeleteDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+export class DeleteDialogComponent {
+    constructor(public dialogRef: MatDialogRef<DeleteDialogComponent, string>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
     }
 
-    static instance(dialog: MatDialog, data: DialogData): MatDialogRef<DeleteDialogComponent, any> {
+    static instance(dialog: MatDialog, data: DialogData): MatDialogRef<DeleteDialogComponent, string> {
         return dialog.open(DeleteDialogComponent, {
             width: DIALOG_WIDTH,
             data: data,
@@ -27,8 +27,4 @@ export class DeleteDialogComponent implements OnInit {
     onNoClick(): void {
         this.dialogRef.close()
     }
-
-    ngOnInit() {
-    }
-
 }

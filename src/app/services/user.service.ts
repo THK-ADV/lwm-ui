@@ -21,24 +21,14 @@ export class UserService implements AbstractCRUDService<User, User> {
 
     private path = 'users'
 
-    getAllWithFilter(...filter: UserFilter[]): Observable<User[]> {
-        return this.http.getAll<User[]>(this.path, applyFilter(filter, nonAtomicParams))
-    }
+    getAllWithFilter = (...filter: UserFilter[]): Observable<User[]> => this.http
+        .getAll(this.path, applyFilter(filter, nonAtomicParams))
 
-    getAll(): Observable<User[]> {
-        return this.http.getAll<User[]>(this.path, nonAtomicParams)
-    }
+    getAll = (): Observable<User[]> => this.http.getAll(this.path, nonAtomicParams)
 
-    delete(id: string): Observable<User> {
-        return NotImplementedError()
-    }
+    delete = (id: string): Observable<User> => NotImplementedError()
 
-    createMany(protocol: User): Observable<User[]> {
-        throw new Error('Method not implemented.')
-    }
+    create = (protocol: User): Observable<User> => NotImplementedError()
 
-    update(protocol: User, id: string): Observable<User> {
-        return NotImplementedError()
-    }
-
+    update = (protocol: User, id: string): Observable<User> => NotImplementedError()
 }

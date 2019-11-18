@@ -10,6 +10,7 @@ export class EntryPageComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+    console.log('entry page')
   }
 
 }

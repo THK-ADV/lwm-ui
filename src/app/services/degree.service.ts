@@ -14,19 +14,11 @@ export class DegreeService implements AbstractCRUDService<DegreeProtocol, Degree
 
     private path = 'degrees'
 
-    getAll(): Observable<Degree[]> {
-        return this.http.getAll(this.path)
-    }
+    getAll = (): Observable<Degree[]> => this.http.getAll(this.path)
 
-    delete(id: string): Observable<Degree> {
-        return this.http.delete(this.path, id)
-    }
+    delete = (id: string): Observable<Degree> => this.http.delete(this.path, id)
 
-    createMany(degree: DegreeProtocol): Observable<Degree[]> {
-        return this.http.createMany(this.path, [degree])
-    }
+    create = (degree: DegreeProtocol): Observable<Degree> => this.http.create(this.path, degree)
 
-    update(degree: DegreeProtocol, id: string): Observable<Degree> {
-        return this.http.put(this.path, id, degree)
-    }
+    update = (degree: DegreeProtocol, id: string): Observable<Degree> => this.http.put(this.path, id, degree)
 }

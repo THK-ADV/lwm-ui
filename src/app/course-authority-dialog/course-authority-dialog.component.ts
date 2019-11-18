@@ -14,10 +14,11 @@ import {Role, UserRole} from '../models/role.model'
 import {invalidChoiceKey} from '../utils/form.validator'
 import {count, subscribe} from '../utils/functions'
 import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
-import {emptyAuthorityProtocol, foreachOption, formatUser, isOption, resetControl} from '../utils/component.utils'
+import {emptyAuthorityProtocol, formatUser} from '../utils/component.utils'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {isRole, isUser} from '../utils/type.check.utils'
+import {foreachOption, isOption, resetControl} from '../utils/form-control-utils'
 
 @Component({
     selector: 'lwm-course-authority-dialog',
@@ -73,14 +74,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             formControlName: fcn,
             displayTitle: 'Nutzer',
             isDisabled: false,
-            data: new FormInputOption<User>(
-                '',
-                fcn,
-                invalidChoiceKey,
-                true,
-                formatUser,
-                this.userService.getAll()
-            )
+            data: new FormInputOption<User>(fcn, invalidChoiceKey, true, formatUser, this.userService.getAll())
         }
     }
 
@@ -90,14 +84,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
             formControlName: fcn,
             displayTitle: 'Rolle',
             isDisabled: false,
-            data: new FormInputOption<Role>(
-                '',
-                fcn,
-                invalidChoiceKey,
-                true,
-                r => r.label,
-                this.roleService.getCourseRoles()
-            )
+            data: new FormInputOption<Role>(fcn, invalidChoiceKey, true, r => r.label, this.roleService.getCourseRoles())
         }
     }
 
@@ -158,14 +145,14 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private createAuthority(auth: AuthorityProtocol) {
         this.subs.push(
             subscribe(
-                this.authorityService.createMany(auth),
+                this.authorityService.create(auth),
                 this.afterCreate.bind(this)
             )
         )
     }
 
-    private afterCreate(auths: AuthorityAtom[]) {
-        addToDataSource(this.dataSource, this.alertService)(auths)
+    private afterCreate(auth: AuthorityAtom) {
+        addToDataSource(this.dataSource, this.alertService)(auth)
         foreachOption(this.inputs, o => resetControl(o.control))
     }
 
@@ -179,7 +166,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     }
 
     private afterDelete(auth: AuthorityAtom) {
-        removeFromDataSource(this.dataSource, this.alertService)(auth, (lhs, rhs) => lhs.id === rhs.id)
+        removeFromDataSource(this.dataSource, this.alertService)(a => a.id === auth.id)
     }
 
     private headerTitle(): string {

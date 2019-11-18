@@ -18,7 +18,8 @@ import { CourseAuthorityUpdateDialogComponent } from '../course-authority-dialog
 })
 export class CourseDetailComponent implements OnDestroy {
 
-    @Input() course: CourseAtom
+    @Input() course: Readonly<CourseAtom>
+    @Input() hasPermission: Readonly<boolean>
 
     private readonly subs: Subscription[]
 

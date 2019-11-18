@@ -1,15 +1,19 @@
 import {MediaMatcher} from '@angular/cdk/layout'
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core'
-import {Subscription} from 'rxjs'
+import {forkJoin, from, identity, Subscription} from 'rxjs'
 import {AuthorityAtom} from '../models/authority.model'
-import {AuthorityService} from '../services/authority.service'
-import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
 import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
 import {KeycloakService} from 'keycloak-angular'
 import {AlertService} from '../services/alert.service'
 import {getInitials} from '../utils/component.utils'
+import {fetchCurrentUserAuthorities$, hasAdminStatus} from '../utils/role-checker'
+import {ActivatedRoute, Router} from '@angular/router'
+import {KeycloakTokenService} from '../services/keycloak-token.service'
+import {AuthorityService} from '../services/authority.service'
+import {isEmpty, subscribe} from '../utils/functions'
+import {map, switchMap} from 'rxjs/operators'
 
 @Component({
     selector: 'app-nav',
@@ -18,7 +22,7 @@ import {getInitials} from '../utils/component.utils'
 })
 export class NavComponent implements OnInit, OnDestroy {
 
-    private authoritySub: Subscription
+    private subs: Subscription[]
     private moduleAuthorities: AuthorityAtom[]
     private roleAuthorities: AuthorityAtom[]
     private configs: Config[]
@@ -27,11 +31,14 @@ export class NavComponent implements OnInit, OnDestroy {
     constructor(
         changeDetectorRef: ChangeDetectorRef,
         media: MediaMatcher,
-        private authorityService: AuthorityService,
-        private tokenService: KeycloakTokenService,
+        private route: ActivatedRoute,
+        private router: Router,
         private keycloakService: KeycloakService,
-        private alertService: AlertService
+        private alertService: AlertService,
+        private readonly tokenService: KeycloakTokenService,
+        private readonly authorityService: AuthorityService
     ) {
+        this.subs = []
         this.moduleAuthorities = []
         this.roleAuthorities = []
         this.configs = Config.All()
@@ -62,8 +69,10 @@ export class NavComponent implements OnInit, OnDestroy {
             .sort((a, b) => (a.course as CourseAtom).abbreviation < (b.course as CourseAtom).abbreviation ? -1 : 1)
     }
 
+    hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
+
     isAdmin(): boolean {
-        return this.authorityService.isAdmin(this.roleAuthorities)
+        return hasAdminStatus(this.roleAuthorities)
     }
 
     getInitials_(): string {
@@ -71,20 +80,23 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        const systemId = this.tokenService.get(KeycloakTokenKey.SYSTEMID)
-
-        if (systemId) {
-            this.authoritySub = this.authorityService.getAuthorities(systemId)
-                .subscribe(this.unzipAuthorities.bind(this))
-        }
+        this.subs.push(subscribe(
+            fetchCurrentUserAuthorities$(this.authorityService, this.tokenService),
+            this.unzipAuthorities.bind(this)
+        ))
     }
 
     ngOnDestroy(): void {
         this.mobileQuery.removeListener(this._mobileQueryListener)
+        this.subs.forEach(v => v.unsubscribe())
     }
 
     logout(): void {
-        this.keycloakService.logout().then() // TODO move to service
+        const $ = from(this.router.navigate(['/'])).pipe(
+            switchMap(x => from(this.keycloakService.logout()))
+        )
+
+        this.subs.push(subscribe($, identity))
     }
 
     linkClicked() {

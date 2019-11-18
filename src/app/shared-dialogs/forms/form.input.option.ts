@@ -3,7 +3,7 @@ import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {debounceTime, map, startWith} from 'rxjs/operators'
 import {FormDataStringType, FormInputData} from './form.input'
 import {mandatoryOptionsValidator, optionalOptionsValidator} from '../../utils/form.validator'
-import {subscribe} from '../../utils/functions'
+import {foldUndefined, subscribe, voidF} from '../../utils/functions'
 
 export class FormInputOption<Option> implements FormInputData<string> {
     readonly type: FormDataStringType
@@ -17,26 +17,36 @@ export class FormInputOption<Option> implements FormInputData<string> {
     control: Readonly<AbstractControl>
 
     constructor(
-        private readonly value_: string,
         readonly controlName: string,
         private readonly errorKey: string,
         private readonly required: boolean,
         private readonly display: (value: Option) => string,
-        private readonly options$: Observable<Option[]>
+        private readonly options$: Observable<Option[]>,
+        private readonly selected?: (options: Option[]) => Option | undefined
     ) {
+        this.value = ''
         this.type = 'options'
         this.validator = required ? mandatoryOptionsValidator() : optionalOptionsValidator()
-        this.value = value_
         this.subs = []
     }
 
-    onInit(group: FormGroup) {
+    onInit = (group: FormGroup) => {
         this.control = group.controls[this.controlName]
-        this.bindOptions(this.options$)
+        this.bindOptions0(this.options$, os => {
+            foldUndefined(this.selected, f => foldUndefined(f(os), v => this.control.setValue(v), voidF), voidF)
+        })
     }
 
-    bindOptions(options$: Observable<Option[]>) {
-        this.subs.push(subscribe(options$, os => this.options = os))
+    bindOptions = (options$: Observable<Option[]>) => {
+        this.bindOptions0(options$, voidF)
+    }
+
+    private bindOptions0 = (options$: Observable<Option[]>, completion: (os: Option[]) => void) => {
+        this.subs.push(subscribe(options$, os => {
+            this.options = os
+            completion(os)
+        }))
+
         this.filteredOptions = this.control.valueChanges
             .pipe(
                 debounceTime(200),
@@ -46,11 +56,11 @@ export class FormInputOption<Option> implements FormInputData<string> {
             )
     }
 
-    onDestroy() {
+    onDestroy = () => {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private filter(input: string): Option[] {
+    private filter = (input: string): Option[] => {
         const filterValue = input.toLowerCase()
         return this.options.filter(t => this.display(t).toLowerCase().indexOf(filterValue) >= 0)
     }
@@ -63,11 +73,11 @@ export class FormInputOption<Option> implements FormInputData<string> {
         return this.display(object)
     }
 
-    hasError(): boolean {
+    hasError = (): boolean => {
         return !this.control.untouched && this.control.hasError(this.errorKey)
     }
 
-    getErrorMessage(): string {
+    getErrorMessage = (): string => {
         return this.control.getError(this.errorKey)
     }
 }

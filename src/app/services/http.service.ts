@@ -1,23 +1,12 @@
 import {Injectable} from '@angular/core'
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
-import {catchError, map, tap} from 'rxjs/operators'
+import {catchError, tap} from 'rxjs/operators'
 import {AlertService} from './alert.service'
 
 export interface LWMError {
     status: number
     message: string
-}
-
-export interface CreationResponse<T> {
-    status: string
-    attempted: T[]
-    created: T[]
-    failed: T[]
-}
-
-export interface UpdatedResponse<T> {
-    updated: T
 }
 
 export const nonAtomicParams = new HttpParams().set('atomic', 'false')
@@ -54,57 +43,88 @@ export class HttpService {
         return lwmError
     }
 
-    getAll<T>(url: string, params?: HttpParams): Observable<T> {
-        return this.http.get<T>(url, {params})
-            .pipe(catchError(this.handleError))
-    }
+    private logResp = <T>(action: string, url: string) => (t: T) => console.log(action, url, t)
 
-    get<T>(url: string, id: string, params?: HttpParams): Observable<T> {
-        return this.http.get<T>(`${url}/${id}`, {params})
-            .pipe(catchError(this.handleError))
-    }
+    getAll = <T>(
+        url: string,
+        params?: HttpParams
+    ): Observable<T[]> => this.http
+        .get<T[]>(url, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('getAll', url))
+        )
 
-    delete<T>(url: string, id: string): Observable<T> {
-        return this.http.delete<T>(`${url}/${id}`)
-            .pipe(catchError(this.handleError))
-    }
+    get = <T>(
+        url: string,
+        id: string,
+        params?: HttpParams
+    ): Observable<T> => this.http
+        .get<T>(`${url}/${id}`, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('get', url))
+        )
 
-    createMany<I, O>(url: string, element: I[], params?: HttpParams): Observable<O[]> { // TODO change to single creation
-        return this.http.post<CreationResponse<O>>(url, element, {params})
-            .pipe(
-                catchError(this.handleError),
-                tap(r => {
-                    console.log('status: ', r.status)
-                    console.log('attempted: ', r.attempted)
-                    console.log('created: ', r.created)
-                    console.log('failed: ', r.failed)
-                }),
-                map(r => r.created as O[])
-            )
-    }
+    get_ = <T>(
+        url: string,
+        params?: HttpParams
+    ): Observable<T> => this.http
+        .get<T>(url, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('get_', url))
+        )
 
-    create<I, O>(url: string, element: I, params?: HttpParams): Observable<O> { // TODO change to single creation
-        return this.http.post<O>(url, element, {params})
-            .pipe(
-                catchError(this.handleError),
-                tap(r => console.log('created', r))
-            )
-    }
+    delete = <T>(
+        url: string,
+        id: string
+    ): Observable<T> => this.http
+        .delete<T>(`${url}/${id}`)
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('delete', url))
+        )
 
-    put<I, O>(url: string, id: string, element: I, params?: HttpParams): Observable<O> { // TODO response has nested updated object. remove it
-        return this.http.put<UpdatedResponse<O>>(`${url}/${id}`, element, {params})
-            .pipe(
-                catchError(this.handleError),
-                map(r => r.updated),
-                tap(r => console.log('put resp: ', r))
-            )
-    }
+    delete_ = (
+        url: string,
+    ): Observable<unknown> => this.http
+        .delete(url)
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('delete', url))
+        )
 
-    put_<I, O>(url: string, body: I): Observable<O> {
-        return this.http.put<O>(url, body)
-            .pipe(
-                catchError(this.handleError),
-                tap(r => console.log('put resp: ', r))
-            )
-    }
+    create = <I, O>(
+        url: string,
+        element: I,
+        params?: HttpParams
+    ): Observable<O> => this.http
+        .post<O>(url, element, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('create', url))
+        )
+
+    put = <I, O>(
+        url: string,
+        id: string,
+        element: I,
+        params?: HttpParams
+    ): Observable<O> => this.http
+        .put<O>(`${url}/${id}`, element, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('put', url))
+        )
+
+    put_ = <I, O>(
+        url: string,
+        body: I
+    ): Observable<O> => this.http
+        .put<O>(url, body)
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('put_', url))
+        )
 }

@@ -20,10 +20,6 @@ export class GroupService {
 
     private readonly path = 'groups'
 
-    getAllWithFilter(courseId: string, labworkId: string, ...filter: GroupFiler[]): Observable<GroupAtom[]> {
-        return this.http.getAll(
-            makePath(this.path, courseId, labworkId),
-            applyFilter(filter, atomicParams)
-        )
-    }
+    getAllWithFilter = (courseId: string, labworkId: string, ...filter: GroupFiler[]): Observable<GroupAtom[]> => this.http
+        .getAll(makePath(this.path, courseId, labworkId), applyFilter(filter, atomicParams))
 }

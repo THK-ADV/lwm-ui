@@ -1,28 +1,38 @@
-import {UniqueEntity} from '../models/unique.entity.model'
 import {AlertService} from '../services/alert.service'
 import {MatTableDataSource} from '@angular/material'
 
-export function removeFromDataSource<D, M extends UniqueEntity>
-(dataSource: MatTableDataSource<D>, alertService?: AlertService): (model: M, match: (d: D, m: M) => boolean) => void {
-    return (m, p) => {
-        dataSource.data = dataSource.data.filter(d => !p(d, m))
-        if (alertService) {
-            alertService.reportAlert('success', 'deleted: ' + JSON.stringify(m))
+export function removeFromDataSource<M>
+(dataSource: MatTableDataSource<M>, alertService?: AlertService): (removeIf: (m: M) => boolean) => void {
+    return p => {
+        let removed
+
+        dataSource.data = dataSource.data.filter(m => {
+            const shouldRemove = p(m)
+
+            if (shouldRemove) {
+                removed = m
+            }
+
+            return !shouldRemove
+        })
+
+        if (alertService && removed) {
+            alertService.reportAlert('success', 'deleted: ' + JSON.stringify(removed))
         }
     }
 }
 
-export function addToDataSource<M extends UniqueEntity>
-(dataSource: MatTableDataSource<M>, alertService?: AlertService): (m: M[]) => void {
-    return models => {
-        dataSource.data = dataSource.data.concat(models)
+export function addToDataSource<M>
+(dataSource: MatTableDataSource<M>, alertService?: AlertService): (m: M) => void {
+    return model => {
+        dataSource.data = dataSource.data.concat(model)
         if (alertService) {
-            alertService.reportAlert('success', 'created: ' + models.map(JSON.stringify.bind(this)).join(', '))
+            alertService.reportAlert('success', 'created: ' + JSON.stringify(model))
         }
     }
 }
 
-export function updateDataSource<M extends UniqueEntity>
+export function updateDataSource<M>
 (dataSource: MatTableDataSource<M>, alertService?: AlertService): (model: M, match: (lhs: M, rhs: M) => boolean) => void {
     return (m, p) => {
         dataSource.data = dataSource.data.map(d => {

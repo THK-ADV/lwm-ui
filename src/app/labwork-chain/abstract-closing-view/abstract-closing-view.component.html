@@ -1,0 +1,25 @@
+<lwm-abstract-header
+        [headerTitle]="headerTitle">
+</lwm-abstract-header>
+
+<ng-content></ng-content>
+
+<div>
+    <ng-container
+            *ngIf="reportCardsAvailable && !reportCardPublished(); then thenBlock else elseBlock"></ng-container>
+    <ng-template #thenBlock>
+        <ng-container *ngIf="hasPermission; then thenBlock2 else elseBlock2"></ng-container>
+        <ng-template #thenBlock2>
+            <button mat-flat-button
+                    color="primary"
+                    (click)="publishReportCards()">Notenhefte veröffentlichen
+            </button>
+        </ng-template>
+        <ng-template #elseBlock2>
+            <p>Notenhefte noch nicht veröffentlicht</p>
+        </ng-template>
+    </ng-template>
+    <ng-template #elseBlock>
+        <p>Notenhefte veröffentlicht</p>
+    </ng-template>
+</div>

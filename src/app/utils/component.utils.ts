@@ -6,21 +6,19 @@ import {map, switchMap} from 'rxjs/operators'
 import {User} from '../models/user.model'
 import {UserService} from '../services/user.service'
 import {LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
-import {FormInput, FormInputData} from '../shared-dialogs/forms/form.input'
+import {FormInput} from '../shared-dialogs/forms/form.input'
 import {isUniqueEntity} from '../models/unique.entity.model'
 import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from './form.validator'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {withCreateProtocol} from '../models/protocol.model'
-import {TooltipPosition} from '@angular/material'
-import {AbstractControl} from '@angular/forms'
 import {CourseProtocol} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
 import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
 import {AuthorityProtocol} from '../models/authority.model'
 
-export const fetchLabwork = (route: ActivatedRoute, labworkService: LabworkService): Observable<LabworkAtom> => {
+export const fetchLabwork$ = (route: ActivatedRoute, labworkService: LabworkService): Observable<LabworkAtom> => {
     return route.paramMap.pipe(
         map(paramMap => ({lid: paramMap.get('lid') || '', cid: paramMap.get('cid') || ''})),
         switchMap(({lid, cid}) => labworkService.get(cid, lid))
@@ -69,7 +67,7 @@ export const labworkApplicationFormInputData =
             return isUniqueEntity(s) ? s.systemId : s
         }
 
-        const fellowStudents = fetchLabwork(route, labworkService).pipe(
+        const fellowStudents = fetchLabwork$(route, labworkService).pipe(
             switchMap(l => userService.getAllWithFilter(
                 {attribute: 'status', value: 'student'},
                 {attribute: 'degree', value: l.degree.id}
@@ -84,40 +82,19 @@ export const labworkApplicationFormInputData =
                     isDisabled: isModel,
                     data: isUniqueEntity(model) ?
                         new FormInputString(model.applicant.systemId) :
-                        new FormInputOption<User>(
-                            model.applicant,
-                            'applicant',
-                            invalidChoiceKey,
-                            true,
-                            formatUser,
-                            fellowStudents
-                        )
+                        new FormInputOption<User>('applicant', invalidChoiceKey, true, formatUser, fellowStudents)
                 },
                 {
                     formControlName: 'friends1',
                     displayTitle: 'Partnerwunsch 1 (Optional)',
                     isDisabled: isModel,
-                    data: new FormInputOption<User>(
-                        getFriend(model.friends),
-                        'friends1',
-                        invalidChoiceKey,
-                        false,
-                        formatUser,
-                        fellowStudents
-                    )
+                    data: new FormInputOption<User>('friends1', invalidChoiceKey, false, formatUser, fellowStudents)
                 },
                 {
                     formControlName: 'friends2',
                     displayTitle: 'Partnerwunsch 2 (Optional)',
                     isDisabled: isModel,
-                    data: new FormInputOption<User>(
-                        getFriend(model.friends),
-                        'friends2',
-                        invalidChoiceKey,
-                        false,
-                        formatUser,
-                        fellowStudents
-                    )
+                    data: new FormInputOption<User>('friends2', invalidChoiceKey, false, formatUser, fellowStudents)
                 }
             ]
         }
@@ -132,78 +109,6 @@ export const createLabworkApplicationProtocol = (output: FormOutputData[], labwo
         p.labwork = labworkId
         p.friends = [p['friends1'], p['friends2']].filter(f => f !== '' && f !== 'undefined')
     })
-}
-
-export type LWMActionType = 'edit' | 'delete' | 'schedule' | 'groups' | 'graduates' | 'applications' | 'create' | 'swap'
-
-export interface LWMAction {
-    type: LWMActionType
-    color: LWMColor
-    iconName: string
-    tooltipName: string
-    tooltipPosition: TooltipPosition
-}
-
-export const scheduleAction = (): LWMAction => {
-    return {type: 'schedule', color: 'primary', iconName: 'schedule', tooltipName: 'Staffelplan', tooltipPosition: 'above'}
-}
-
-export const labworkApplicationAction = (): LWMAction => {
-    return {type: 'applications', color: 'accent', iconName: 'assignment_ind', tooltipName: 'Anmeldungen', tooltipPosition: 'above'}
-}
-
-export const groupAction = (): LWMAction => {
-    return {type: 'groups', color: 'accent', iconName: 'group', tooltipName: 'Gruppen', tooltipPosition: 'above'}
-}
-
-export const graduatesAction = (): LWMAction => {
-    return {type: 'graduates', color: 'accent', iconName: 'school', tooltipName: 'Absolventen', tooltipPosition: 'above'}
-}
-
-export const editAction = (): LWMAction => {
-    return {type: 'edit', color: 'accent', iconName: 'edit', tooltipName: 'Bearbeiten', tooltipPosition: 'above'}
-}
-
-export const deleteAction = (): LWMAction => {
-    return {type: 'delete', color: 'warn', iconName: 'delete', tooltipName: 'Löschen', tooltipPosition: 'above'}
-}
-
-export const createAction = (): LWMAction => {
-    return {type: 'create', color: 'primary', iconName: 'add', tooltipName: 'Hinzufügen', tooltipPosition: 'above'}
-}
-
-export const swapAction = (): LWMAction => {
-    return {type: 'swap', color: 'accent', iconName: 'swap_horiz', tooltipName: 'Wechseln', tooltipPosition: 'above'}
-}
-
-export const isOption = (d: FormInputData<any>): d is FormInputOption<any> => {
-    return (d as FormInputOption<any>).bindOptions !== undefined
-}
-
-export const foreachOption = (inputs: FormInput[], f: (o: FormInputOption<any>) => void) => {
-    inputs.forEach(d => {
-        if (isOption(d.data)) {
-            // @ts-ignore
-            f(d.data)
-        }
-    })
-}
-
-export const hasOptionError = (formInputData: FormInputData<any>): boolean => {
-    return isOption(formInputData) ? formInputData.hasError() : false
-}
-
-export const getOptionErrorMessage = (formInputData: FormInputData<any>): string => {
-    return isOption(formInputData) ? formInputData.getErrorMessage() : ''
-}
-
-export const resetControls = (controls: Readonly<AbstractControl>[]) => {
-    controls.forEach(resetControl)
-}
-
-export const resetControl = (control: Readonly<AbstractControl>) => {
-    control.setValue('', {emitEvent: true})
-    control.markAsUntouched()
 }
 
 export const courseFormInputData = (userService: UserService): (m: Readonly<CourseProtocol | CourseAtom>, im: boolean) => FormInput[] => {
@@ -233,14 +138,10 @@ export const courseFormInputData = (userService: UserService): (m: Readonly<Cour
                 isDisabled: isModel,
                 data: isUniqueEntity(model) ?
                     new FormInputString(`${model.lecturer.lastname}, ${model.lecturer.firstname}`) :
-                    new FormInputOption<User>(
-                        model.lecturer,
-                        'lecturer',
-                        invalidChoiceKey,
-                        true,
-                        value => `${value.lastname}, ${value.firstname}`,
-                        userService.getAllWithFilter({attribute: 'status', value: 'employee'})
-                    )
+                    new FormInputOption<User>('lecturer', invalidChoiceKey, true, value => `${value.lastname}, ${value.firstname}`, userService.getAllWithFilter({
+                        attribute: 'status',
+                        value: 'employee'
+                    }))
             },
             {
                 formControlName: 'semesterIndex',

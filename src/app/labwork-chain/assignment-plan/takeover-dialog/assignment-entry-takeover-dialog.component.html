@@ -1,0 +1,36 @@
+<h1 mat-dialog-title>Ablaufplan zum Kopieren auswählen</h1>
+
+<div class="modalContainer">
+    <mat-card>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>Ablaufplan</mat-label>
+                <mat-select [(value)]="selected">
+                    <mat-option *ngFor="let labwork of labworks$ | async"
+                                [value]="labwork">
+                        {{labwork.label}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card-content>
+
+        <div *ngIf="selected_">
+            <ng-container *ngIf="entries.length; then thenBlock else elseBlock">
+            </ng-container>
+            <ng-template #thenBlock>
+                <p mat-dialog-content>Einträge</p>
+                <ol>
+                    <li *ngFor="let e of entries">{{display(e)}}</li>
+                </ol>
+            </ng-template>
+            <ng-template #elseBlock>
+                <p mat-dialog-content>Keine Einträge vorhanden</p>
+            </ng-template>
+        </div>
+    </mat-card>
+
+    <mat-dialog-actions>
+        <button mat-flat-button (click)="cancel()" cdkFocusInitial>Schließen</button>
+        <button mat-flat-button color="primary" [disabled]="!selected_ || !entries.length" (click)="takeOver()">Übernehmen</button>
+    </mat-dialog-actions>
+</div>

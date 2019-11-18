@@ -19,7 +19,7 @@
             </div>
 
             <mat-nav-list class="navListContainer">
-                <h3 mat-subheader class="sidebarHeader moduleHeader">
+                <h3 mat-subheader class="sidebarHeader moduleHeader" *ngIf="hasModuleAuthorities()">
                     <mat-icon>account_balance</mat-icon>
                     <span>Module</span>
                 </h3>

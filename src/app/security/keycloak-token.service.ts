@@ -36,6 +36,6 @@ export class KeycloakTokenService {
     getUserStatus(): KeycloakUserStatus {
         return this.hasUserStatus(KeycloakUserStatus.STUDENT)
             ? KeycloakUserStatus.STUDENT
-            : KeycloakUserStatus.EMPLOYEE // TODO is this sufficient enough?
+            : KeycloakUserStatus.EMPLOYEE // TODO hasStatus this sufficient enough?
     }
 }

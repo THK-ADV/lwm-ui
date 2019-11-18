@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>{{payload.title}}</h1>
+
+<mat-dialog-content>
+    <p>{{payload.body}}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button
+            mat-flat-button
+            cdkFocusInitial
+            (click)="cancel()">
+        Abbrechen
+    </button>
+    <button mat-flat-button
+            color="primary"
+            (click)="submit()">
+        Bestätigen
+    </button>
+</mat-dialog-actions>

@@ -8,7 +8,6 @@ import {AlertService} from '../services/alert.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {UserService} from '../services/user.service'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {withCreateProtocol} from '../models/protocol.model'
 import {switchMap, tap} from 'rxjs/operators'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {LabworkService} from '../services/labwork.service'
@@ -17,10 +16,11 @@ import {format} from '../utils/lwmdate-adapter'
 import {
     createLabworkApplicationProtocol,
     emptyLabworkApplicationProtocol,
-    fetchLabwork,
+    fetchLabwork$,
     formatUser,
     labworkApplicationFormInputData
 } from '../utils/component.utils'
+import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 
 @Component({
     selector: 'app-labwork-applications',
@@ -31,7 +31,8 @@ export class LabworkApplicationsComponent
     extends AbstractCRUDComponent<LabworkApplicationProtocol, LabworkApplicationAtom>
     implements OnInit, OnDestroy {
 
-    private labwork: LabworkAtom
+    private labwork: Readonly<LabworkAtom>
+    private hasPermission: Readonly<boolean>
 
     static columns = (): TableHeaderColumn[] => {
         return [
@@ -67,7 +68,7 @@ export class LabworkApplicationsComponent
             dialog,
             alertService,
             LabworkApplicationsComponent.columns(),
-            ['create', 'delete'],
+            [],
             'applicant.lastname',
             'Anmeldung',
             'Anmeldungen',
@@ -77,6 +78,8 @@ export class LabworkApplicationsComponent
             emptyLabworkApplicationProtocol,
             () => undefined
         )
+
+        this.hasPermission = false
     }
 
     ngOnInit() {
@@ -86,10 +89,12 @@ export class LabworkApplicationsComponent
     }
 
     private fetchApplications() {
-        const apps$ = fetchLabwork(this.route, this.labworkService).pipe(
+        const apps$ = fetchLabwork$(this.route, this.labworkService).pipe(
             tap(l => {
                 this.headerTitle += ` für ${l.label}`
                 this.labwork = l
+
+                this.setupPermissionChecks(l.course.id)
             }),
             switchMap(l => this.service.getAllByLabworkAtom(l.id))
         )
@@ -106,6 +111,13 @@ export class LabworkApplicationsComponent
                 app.friends.some(f => f.systemId.toLowerCase().includes(filter)) ||
                 format(app.lastModified, 'dd.MM.yyyy - HH:mm').includes(filter)
         }
+    }
+
+    private setupPermissionChecks = (courseId: string) => {
+        this.hasPermission = hasCourseManagerPermission(this.route, courseId)
+        // if (!this.hasPermission) {
+        //     this.updateActions(['create', 'delete']) // TODO
+        // }
     }
 
     ngOnDestroy(): void {

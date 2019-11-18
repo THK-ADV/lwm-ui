@@ -1,16 +1,21 @@
 <ng-container *ngIf="course$ | async as course">
-    <lwm-course-detail [course]="course"></lwm-course-detail>
-
+    <lwm-course-detail
+            [course]="course"
+            [hasPermission]="hasPermission">
+    </lwm-course-detail>
 
     <ng-container *ngIf="currentSemester$ | async as currentSemester">
-        <lwm-create-header headerTitle="Praktika" [canCreate]="canCreate()" (create)="onCreate(course)">
-        </lwm-create-header>
+        <lwm-abstract-header
+                headerTitle="Praktika"
+                [actionTypes]="canCreate()"
+                (performAction)="onCreate(course)">
+        </lwm-abstract-header>
 
         <ng-container *ngIf="groupedLabworks$ | async as xs">
             <mat-accordion>
                 <mat-expansion-panel *ngFor="let x of xs | keyvalue: semesterSortingFn"
-                    [expanded]="x.key === currentSemester.id" [toggle]="x.key === currentSemester.id"
-                    (appNgInit)="reloadDataSource(x.value)">
+                                     [expanded]="x.key === currentSemester.id" [toggle]="x.key === currentSemester.id"
+                                     (appNgInit)="reloadDataSource(x.value)">
                     <mat-expansion-panel-header (click)="reloadDataSource(x.value)">
                         <mat-panel-title>
                             {{x.value[0].semester.abbreviation}}
@@ -30,7 +35,7 @@
                                         <span *ngSwitchCase="'applications'">{{lwa.applications}}</span>
                                         <span *ngSwitchCase="'labwork.subscribable'">
                                             <ng-container
-                                                *ngIf="lwa.labwork.subscribable; then thenBlock else elseBlock">
+                                                    *ngIf="lwa.labwork.subscribable; then thenBlock else elseBlock">
                                             </ng-container>
                                             <ng-template #thenBlock>
                                                 <mat-icon>done</mat-icon>
@@ -56,12 +61,10 @@
                                 <ng-container matColumnDef="action">
                                     <th mat-header-cell *matHeaderCellDef mat-sort-header></th>
                                     <td mat-cell *matCellDef="let lwa" (click)="$event.stopPropagation()">
-                                        <button *ngFor="let action of labworkActions" mat-stroked-button
-                                            [color]="action.color" (click)="onAction(action.type, lwa.labwork)"
-                                            [matTooltip]="action.tooltipName"
-                                            [matTooltipPosition]="action.tooltipPosition">
-                                            <mat-icon>{{action.iconName}}</mat-icon>
-                                        </button>
+                                        <lwm-table-action-button
+                                                [actions]="labworkActions"
+                                                (performAction)="onAction($event, lwa.labwork)">
+                                        </lwm-table-action-button>
                                     </td>
                                 </ng-container>
 

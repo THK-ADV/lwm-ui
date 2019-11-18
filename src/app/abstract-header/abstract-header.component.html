@@ -1,0 +1,13 @@
+<div class="abstractTableMainTitle">
+    <h1>{{headerTitle}}</h1>
+    <span>
+        <button *ngFor="let action of actions_"
+                mat-flat-button
+                [color]="action.color"
+                (click)="performAction.emit(action.type)"
+                [matTooltip]="action.tooltipName"
+                matTooltipPosition="left">
+            <mat-icon>{{action.iconName}}</mat-icon>
+        </button>
+    </span>
+</div>

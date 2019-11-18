@@ -22,7 +22,7 @@ describe('A Time Object', () => {
         expect(time.seconds).toEqual(0)
     })
 
-    it('should be filled with zeros if seconds is missing', () => {
+    it('should be filled with zeros if seconds hasStatus missing', () => {
         const time = Time.fromTimeString('13:37')
 
         expect(time.hour).toEqual(13)
@@ -30,7 +30,7 @@ describe('A Time Object', () => {
         expect(time.seconds).toEqual(0)
     })
 
-    it('should be filled with zeros if minutes is missing', () => {
+    it('should be filled with zeros if minutes hasStatus missing', () => {
         const time = Time.fromTimeString('13')
 
         expect(time.hour).toEqual(13)
@@ -38,7 +38,7 @@ describe('A Time Object', () => {
         expect(time.seconds).toEqual(0)
     })
 
-    it('should be filled with zeros if entire time string is missing', () => {
+    it('should be filled with zeros if entire time string hasStatus missing', () => {
         const time = Time.fromTimeString('')
 
         expect(time.hour).toEqual(0)
@@ -46,7 +46,7 @@ describe('A Time Object', () => {
         expect(time.seconds).toEqual(0)
     })
 
-    it('should be filled with zeros even if time string is bad', () => {
+    it('should be filled with zeros even if time string hasStatus bad', () => {
         const time = Time.fromTimeString('bad')
 
         expect(time.hour).toEqual(0)

@@ -1,28 +1,12 @@
-<lwm-create-header [headerTitle]="headerTitle" [canCreate]="false" (create)="voidF()">
-</lwm-create-header>
+<lwm-abstract-header
+        [headerTitle]="headerTitle">
+</lwm-abstract-header>
 
-<div class="group-list">
-    <div *ngFor="let group of groups" class="group-container">
-
-        <div class="group-header">
-            <div class="group-title">
-                <span>{{cardTitle(group)}} Teilnehmer</span>
-                <button mat-flat-button color="primary" (click)="onEdit(group)" *ngIf="canEdit()"
-                    matTooltip="Bearbeiten" matTooltipPosition="left">
-                    <mat-icon>edit</mat-icon>
-                </button>
-            </div>
-        </div>
-
-        <div class="group-content">
-            <mat-list>
-                <mat-list-item *ngFor="let member of group.members">
-                    <p mat-line>
-                        <span>{{displayUser(member)}}</span>
-                        <span>{{member.systemId}}</span>
-                    </p>
-                </mat-list-item>
-            </mat-list>
-        </div>
-    </div>
-</div>
+<lwm-card-list
+        [cards]="groups"
+        [cardTitle]="cardTitle"
+        [canEdit]="canEdit"
+        [onEdit]="onEdit"
+        [leftEntryLabel]="displayUser"
+        [rightEntryLabel]="displaySystemId">
+</lwm-card-list>

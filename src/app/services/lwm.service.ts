@@ -69,15 +69,21 @@ export class LwmService {
     constructor(private readonly http: HttpService) {
     }
 
-    insertStudentIntoGroup(courseId: string, request: GroupChangeRequest): Observable<GroupInsertionResult> {
-        return this.http.put_(makePath('insertIntoGroup', courseId), request)
-    }
+    insertStudentIntoGroup = (
+        courseId: string,
+        request: GroupChangeRequest
+    ): Observable<GroupInsertionResult> => this.http
+        .put_(makePath('insertIntoGroup', courseId), request)
 
-    removeStudentFromGroup(courseId: string, request: GroupChangeRequest): Observable<GroupDeletionResult> {
-        return this.http.put_(makePath('removeFromGroup', courseId), request)
-    }
+    removeStudentFromGroup = (
+        courseId: string,
+        request: GroupChangeRequest
+    ): Observable<GroupDeletionResult> => this.http
+        .put_(makePath('removeFromGroup', courseId), request)
 
-    moveStudentToGroup(courseId: string, request: GroupMovingRequest): Observable<GroupMovementResult> {
-        return this.http.put_(makePath('moveToGroup', courseId), request)
-    }
+    moveStudentToGroup = (
+        courseId: string,
+        request: GroupMovingRequest
+    ): Observable<GroupMovementResult> => this.http
+        .put_(makePath('moveToGroup', courseId), request)
 }

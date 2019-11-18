@@ -22,7 +22,7 @@
         <div class="descContent">{{course.description}}</div>
         <div class="descFooter">
             <span>Fachsemester {{course.semesterIndex}}</span>
-            <div>
+            <div *ngIf="hasPermission">
                 <button mat-stroked-button color="accent" (click)="editAuthorites()">Kursberechtigungen
                 </button>
                 <button mat-stroked-button color="primary" (click)="onEdit()">Bearbeiten

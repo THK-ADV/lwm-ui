@@ -5,33 +5,24 @@ import {GroupAtom} from '../../models/group.model'
 import {Observable, Subscription} from 'rxjs'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {User} from '../../models/user.model'
-import {
-    createAction,
-    deleteAction,
-    foreachOption,
-    formatUser,
-    getOptionErrorMessage,
-    hasOptionError,
-    isOption,
-    LWMAction,
-    resetControl,
-    swapAction
-} from '../../utils/component.utils'
 import {AlertService} from '../../services/alert.service'
 import {addToDataSource, removeFromDataSource} from '../../shared-dialogs/dataSource.update'
 import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from '../../utils/form.validator'
 import {exists, subscribe} from '../../utils/functions'
-import {FormInput, FormInputData} from '../../shared-dialogs/forms/form.input'
+import {FormInput} from '../../shared-dialogs/forms/form.input'
 import {GroupDeletionResult, GroupInsertionResult, GroupMovementResult, LwmService} from '../../services/lwm.service'
 import {map, tap} from 'rxjs/operators'
+import {createAction, deleteAction, LWMAction, swapAction} from '../../table-action-button/lwm-actions'
+import {formatUser} from '../../utils/component.utils'
+import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetControl} from '../../utils/form-control-utils'
 
 @Component({
     selector: 'lwm-group-edit',
     templateUrl: './group-edit.component.html',
     styleUrls: ['./group-edit.component.scss']
 })
-export class GroupEditComponent implements OnInit, OnDestroy {
+export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply assignment index changes
 
     private subs: Subscription[]
     private dataSource = new MatTableDataSource<User>()
@@ -47,6 +38,9 @@ export class GroupEditComponent implements OnInit, OnDestroy {
     private readonly addStudentForm: FormInput
 
     readonly groupChanged: EventEmitter<void>
+
+    private readonly hasOptionError_ = hasOptionError
+    private readonly getOptionErrorMessage_ = getOptionErrorMessage
 
     static instance(
         dialog: MatDialog,
@@ -94,14 +88,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
             formControlName: addStudentFcName,
             displayTitle: 'Student hinzufügen',
             isDisabled: false,
-            data: new FormInputOption<User>(
-                '',
-                addStudentFcName,
-                invalidChoiceKey,
-                true,
-                formatUser,
-                payload.fellowStudents$
-            )
+            data: new FormInputOption<User>(addStudentFcName, invalidChoiceKey, true, formatUser, payload.fellowStudents$)
         }
 
         this.setupFormGroups()
@@ -121,14 +108,6 @@ export class GroupEditComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         foreachOption([this.addStudentForm], o => o.onDestroy())
         this.onCancel()
-    }
-
-    private hasOptionError_(formInputData: FormInputData<any>): boolean {
-        return hasOptionError(formInputData)
-    }
-
-    private getOptionErrorMessage_(formInputData: FormInputData<any>): string {
-        return getOptionErrorMessage(formInputData)
     }
 
     private prepareTableContent = (user: User, attr: string): string => {
@@ -173,7 +152,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
         )
 
         const s = subscribe(result$, result => {
-            removeFromDataSource(this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+            removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
             this.groupChanged.emit()
             this.alertService.reportAlert('success', movementMsg(result))
@@ -203,7 +182,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
         )
 
         const s = subscribe(result$, result => {
-            removeFromDataSource(this.dataSource)(member, (lhs, rhs) => lhs.id === rhs.id)
+            removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
             this.updateStudentsByAdding(member)
 
@@ -234,7 +213,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
         )
 
         const s = subscribe(result$, result => {
-            addToDataSource(this.dataSource)([member])
+            addToDataSource(this.dataSource)(member)
             resetControl(this.userFormControl())
 
             this.updateStudentsByRemoving(member)

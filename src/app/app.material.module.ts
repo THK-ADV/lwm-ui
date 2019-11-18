@@ -19,6 +19,10 @@ import {
     MatTableModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatStepperModule,
+    MatSelectModule,
+    MatProgressSpinnerModule,
+    MatProgressBarModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -46,7 +50,11 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatCardModule,
         MatPaginatorModule,
         MatSlideToggleModule,
-        MatMenuModule
+        MatMenuModule,
+        MatStepperModule,
+        MatSelectModule,
+        MatProgressSpinnerModule,
+        MatProgressBarModule
     ]
 })
 export class LWMMaterialModule {
@@ -54,5 +62,5 @@ export class LWMMaterialModule {
 
 
 /**  Copyright 2019 Google Inc. All Rights Reserved.
- Use of this source code is governed by an MIT-style license that
+ Use of this source code hasStatus governed by an MIT-style license that
  can be found in the LICENSE file at http://angular.io/license */

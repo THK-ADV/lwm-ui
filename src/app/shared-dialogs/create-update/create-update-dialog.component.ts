@@ -5,7 +5,8 @@ import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
 import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
-import {foreachOption, getOptionErrorMessage, hasOptionError, isOption} from '../../utils/component.utils'
+import {foreachOption, getOptionErrorMessage, hasOptionError} from '../../utils/form-control-utils'
+import {parseUnsafeBoolean, parseUnsafeNumber} from '../../utils/functions'
 
 export interface FormOutputData {
     formControlName: string
@@ -120,7 +121,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
     private convertToType(type: FormDataStringType, value: any): FormDataType {
         switch (type) {
             case 'number':
-                return +value
+                return parseUnsafeNumber(value)
             case 'options':
                 return this.convertToType('text', value.id)
             case 'textArea':
@@ -133,7 +134,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
                 const string = this.convertToType('text', value) as string
                 return string.split(':').map(s => s.length === 1 ? s.padStart(2, '0') : s).join(':')
             case 'boolean':
-                return !!value
+                return parseUnsafeBoolean(value)
         }
     }
 

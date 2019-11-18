@@ -1,4 +1,4 @@
-import {Semester} from './semester.model'
+import {Semester, SemesterJSON} from './semester.model'
 import {CourseAtom} from './course.model'
 import {Degree} from './degree.model'
 
@@ -17,6 +17,17 @@ export interface LabworkAtom {
     label: string
     description: string
     semester: Semester
+    course: CourseAtom
+    degree: Degree
+    subscribable: boolean
+    published: boolean
+    id: string
+}
+
+export interface LabworkAtomJSON {
+    label: string
+    description: string
+    semester: SemesterJSON
     course: CourseAtom
     degree: Degree
     subscribable: boolean

@@ -6,7 +6,7 @@ import {MatDialog} from '@angular/material'
 import {AlertService} from '../services/alert.service'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {UserService} from '../services/user.service'
-import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {createProtocol} from '../models/protocol.model'
 import {courseFormInputData, emptyCourseProtocol, updateCourse} from '../utils/component.utils'
 
 @Component({

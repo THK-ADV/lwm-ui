@@ -1,0 +1,20 @@
+<h1 mat-dialog-title>Bitte auswählen</h1>
+
+<mat-dialog-actions>
+    <button
+            mat-flat-button
+            cdkFocusInitial
+            (click)="cancel()">
+        Abbrechen
+    </button>
+    <button mat-flat-button
+            color="primary"
+            (click)="first()">
+        {{payload.first}}
+    </button>
+    <button mat-flat-button
+            color="accent"
+            (click)="second()">
+        {{payload.second}}
+    </button>
+</mat-dialog-actions>

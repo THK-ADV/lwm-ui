@@ -1,0 +1,25 @@
+<div class="lwm-card-list">
+    <div *ngFor="let card of cards" class="lwm-card-container">
+
+        <div class="lwm-card-header">
+            <div class="lwm-card-title">
+                <span>{{cardTitle(card.value)}}</span>
+                <button mat-flat-button color="primary" (click)="onEdit(card.value)" *ngIf="canEdit()"
+                        matTooltip="Bearbeiten" matTooltipPosition="left">
+                    <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <div class="lwm-card-content">
+            <mat-list>
+                <mat-list-item *ngFor="let entry of card.entries">
+                    <p mat-line>
+                        <span>{{leftEntryLabel(entry)}}</span>
+                        <span>{{rightEntryLabel(entry)}}</span>
+                    </p>
+                </mat-list-item>
+            </mat-list>
+        </div>
+    </div>
+</div>
