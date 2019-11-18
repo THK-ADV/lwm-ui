@@ -1,6 +1,6 @@
 import {MediaMatcher} from '@angular/cdk/layout'
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core'
-import {forkJoin, from, identity, Subscription} from 'rxjs'
+import {from, identity, Subscription} from 'rxjs'
 import {AuthorityAtom} from '../models/authority.model'
 import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
@@ -13,7 +13,7 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {KeycloakTokenService} from '../services/keycloak-token.service'
 import {AuthorityService} from '../services/authority.service'
 import {isEmpty, subscribe} from '../utils/functions'
-import {map, switchMap} from 'rxjs/operators'
+import {switchMap} from 'rxjs/operators'
 
 @Component({
     selector: 'app-nav',
@@ -29,12 +29,12 @@ export class NavComponent implements OnInit, OnDestroy {
     private user: User
 
     constructor(
-        changeDetectorRef: ChangeDetectorRef,
-        media: MediaMatcher,
-        private route: ActivatedRoute,
-        private router: Router,
-        private keycloakService: KeycloakService,
-        private alertService: AlertService,
+        private readonly changeDetectorRef: ChangeDetectorRef,
+        private readonly media: MediaMatcher,
+        private readonly  route: ActivatedRoute,
+        private readonly  router: Router,
+        private readonly  keycloakService: KeycloakService,
+        private readonly  alertService: AlertService,
         private readonly tokenService: KeycloakTokenService,
         private readonly authorityService: AuthorityService
     ) {
@@ -48,10 +48,22 @@ export class NavComponent implements OnInit, OnDestroy {
         this.mobileQuery.addListener(this._mobileQueryListener)
     }
 
-    mobileQuery: MediaQueryList
-    private _mobileQueryListener: () => void
+    private readonly mobileQuery: MediaQueryList
+    private readonly _mobileQueryListener: () => void
 
-    private unzipAuthorities(authorities: AuthorityAtom[]) {
+    ngOnInit(): void {
+        this.subs.push(subscribe(
+            fetchCurrentUserAuthorities$(this.authorityService, this.tokenService),
+            this.unzipAuthorities
+        ))
+    }
+
+    ngOnDestroy(): void {
+        this.mobileQuery.removeListener(this._mobileQueryListener)
+        this.subs.forEach(v => v.unsubscribe())
+    }
+
+    private unzipAuthorities = (authorities: AuthorityAtom[]) => {
         authorities.forEach(auth => {
             if (auth.course === undefined) {
                 this.roleAuthorities.push(auth)
@@ -69,29 +81,13 @@ export class NavComponent implements OnInit, OnDestroy {
             .sort((a, b) => (a.course as CourseAtom).abbreviation < (b.course as CourseAtom).abbreviation ? -1 : 1)
     }
 
-    hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
+    private hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
 
-    isAdmin(): boolean {
-        return hasAdminStatus(this.roleAuthorities)
-    }
+    private isAdmin = (): boolean => hasAdminStatus(this.roleAuthorities)
 
-    getInitials_(): string {
-        return getInitials(this.user)
-    }
+    private getInitials_ = (): string => getInitials(this.user)
 
-    ngOnInit(): void {
-        this.subs.push(subscribe(
-            fetchCurrentUserAuthorities$(this.authorityService, this.tokenService),
-            this.unzipAuthorities.bind(this)
-        ))
-    }
-
-    ngOnDestroy(): void {
-        this.mobileQuery.removeListener(this._mobileQueryListener)
-        this.subs.forEach(v => v.unsubscribe())
-    }
-
-    logout(): void {
+    private logout = (): void => {
         const $ = from(this.router.navigate(['/'])).pipe(
             switchMap(x => from(this.keycloakService.logout()))
         )
@@ -99,7 +95,7 @@ export class NavComponent implements OnInit, OnDestroy {
         this.subs.push(subscribe($, identity))
     }
 
-    linkClicked() {
+    private linkClicked = () => {
         this.alertService.reset()
     }
 }
