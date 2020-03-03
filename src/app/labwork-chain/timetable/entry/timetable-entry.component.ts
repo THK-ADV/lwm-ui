@@ -136,9 +136,10 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
                 true,
                 r => r.label,
                 this.possibleRooms$,
+                undefined,
                 rooms => foldUndefined(
                     this.payload.currentRoom,
-                    c => rooms.find(r => r.id === c.id),
+                    c =>  rooms.find(r => r.id === c.id),
                     () => undefined
                 )
             )

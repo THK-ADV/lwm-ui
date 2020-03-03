@@ -18,6 +18,7 @@ import {LabworkApplicationsComponent} from './labwork-applications/labwork-appli
 import {GroupsComponent} from './groups/groups.component'
 import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
 import {UserAuthorityResolver} from './security/user-authority-resolver'
+import { StudentsComponent } from './students/students.component'
 
 const routes: Routes = [
     {
@@ -53,6 +54,10 @@ const routes: Routes = [
             {
                 path: 'blacklists',
                 component: BlacklistsComponent
+            },
+            {
+                path: 'students/:sid',
+                component: StudentsComponent
             },
             {
                 path: '',

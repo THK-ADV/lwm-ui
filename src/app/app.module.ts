@@ -74,6 +74,7 @@ import {ProgressBarComponent} from './progress-bar/progress-bar.component'
 import {DecisionDialogComponent} from './shared-dialogs/decision-dialog/decision-dialog.component'
 import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment-plan/takeover-dialog/assignment-entry-takeover-dialog.component'
 import {SearchComponent} from './search/search.component'
+import {StudentsComponent} from './students/students.component'
 
 @NgModule({
     declarations: [
@@ -129,7 +130,8 @@ import {SearchComponent} from './search/search.component'
         ProgressBarComponent,
         DecisionDialogComponent,
         AssignmentEntryTakeoverDialogComponent,
-        SearchComponent
+        SearchComponent,
+        StudentsComponent
     ],
     imports: [
         BrowserModule,

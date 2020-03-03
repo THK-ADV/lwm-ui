@@ -1,3 +1,5 @@
+import { identity } from 'rxjs';
+import { Router, ActivatedRoute } from '@angular/router'
 import {Component, Input, OnInit} from '@angular/core'
 import {FormControl} from '@angular/forms'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
@@ -18,7 +20,9 @@ export class SearchComponent implements OnInit {
     private control: FormControl
 
     constructor(
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly route: ActivatedRoute,
+        private readonly router: Router
     ) {
     }
 
@@ -36,8 +40,9 @@ export class SearchComponent implements OnInit {
     }
 
     private userSelected = (student: User) => {
-        console.log(student)
+        console.log(student, this.route)
         this.control.setValue('')
+        this.router.navigate(['e/students', student.id]).then(identity)
     }
 
     private inputClicked = () => this.formInputOption.bindOptionsIfNeeded()
