@@ -35,7 +35,7 @@
                     <a mat-list-item routerLink="e/{{config.path}}" *ngFor="let config of configs" routerLinkActive
                        routerLinkActive="list-item-active" (click)="linkClicked()">{{config.label}}</a>
                 </div>
-
+                
                 <h3 mat-subheader class="sidebarHeader logoutHeader">
                     <mat-icon>power_settings_new</mat-icon>
                     <span (click)="logout()">Ausloggen</span>

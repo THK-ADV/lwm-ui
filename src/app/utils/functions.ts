@@ -104,3 +104,5 @@ export const assertNotUndefined = (...values: Array<any>) => {
 export const dateOrderingASC = (lhs: Date, rhs: Date): number => lhs.getTime() - rhs.getTime()
 
 export const dateOrderingDESC = (lhs: Date, rhs: Date): number => rhs.getTime() - lhs.getTime()
+
+export const first = <T>(xs: Array<T>): T | undefined => isEmpty(xs) ? undefined : xs[0]

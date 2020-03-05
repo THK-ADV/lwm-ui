@@ -1,12 +1,11 @@
-import { identity } from 'rxjs';
-import { Router, ActivatedRoute } from '@angular/router'
-import {Component, Input, OnInit} from '@angular/core'
-import {FormControl} from '@angular/forms'
-import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
-import {UserService} from '../services/user.service'
-import {formatUser} from '../utils/component.utils'
-import {User} from '../models/user.model'
-import {AuthorityAtom} from '../models/authority.model'
+import { Component, Input, OnInit } from '@angular/core'
+import { FormControl } from '@angular/forms'
+import { FormInputOption } from '../shared-dialogs/forms/form.input.option'
+import { UserService } from '../services/user.service'
+import { formatUser } from '../utils/component.utils'
+import { User } from '../models/user.model'
+import { AuthorityAtom } from '../models/authority.model'
+import { Router } from '@angular/router'
 
 @Component({
     selector: 'lwm-search',
@@ -21,7 +20,6 @@ export class SearchComponent implements OnInit {
 
     constructor(
         private readonly userService: UserService,
-        private readonly route: ActivatedRoute,
         private readonly router: Router
     ) {
     }
@@ -40,9 +38,8 @@ export class SearchComponent implements OnInit {
     }
 
     private userSelected = (student: User) => {
-        console.log(student, this.route)
         this.control.setValue('')
-        this.router.navigate(['e/students', student.id]).then(identity)
+        this.router.navigate(['e/students', student.id])
     }
 
     private inputClicked = () => this.formInputOption.bindOptionsIfNeeded()

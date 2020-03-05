@@ -57,6 +57,7 @@ const routes: Routes = [
             },
             {
                 path: 'students/:sid',
+                resolve: {userAuths: UserAuthorityResolver},
                 component: StudentsComponent
             },
             {

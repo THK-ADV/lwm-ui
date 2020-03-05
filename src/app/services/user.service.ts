@@ -28,6 +28,8 @@ export class UserService implements AbstractCRUDService<User, User> {
 
     getAll = (): Observable<User[]> => this.http.getAll(this.path, nonAtomicParams)
 
+    get = (id: string): Observable<User> => this.http.get(this.path, id)
+
     delete = (id: string): Observable<User> => NotImplementedError()
 
     create = (protocol: User): Observable<User> => NotImplementedError()

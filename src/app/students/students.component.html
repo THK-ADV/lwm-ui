@@ -1,1 +1,2 @@
-<p>students works!</p>
+<h1 *ngIf="student$ | async as student">Notenhefte für {{formatUser_(student)}}</h1>
+<p *ngFor="let e of entries$ | async">{{e | json }}</p>
