@@ -1,11 +1,10 @@
 import {Injectable} from '@angular/core'
 import {HttpService} from './http.service'
 import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
-import {Role} from '../models/role.model'
+import {Role, userStatusRoles} from '../models/role.model'
 import {Observable} from 'rxjs'
 import {exists, NotImplementedError} from '../utils/functions'
 import {map} from 'rxjs/operators'
-import {AllUserStatus} from '../models/userStatus.model'
 
 @Injectable({
     providedIn: 'root'
@@ -29,7 +28,7 @@ export class RoleService implements AbstractCRUDService<Role, Role> {
         .getAll<Role>(this.path)
         .pipe(
             map(roles => {
-                const userRoles = AllUserStatus()
+                const userRoles = userStatusRoles()
                 return roles.filter(r => !exists(userRoles, u => r.label === u) && r.label !== 'Rechteverantwortlicher') // TODO move to backend
             })
         )

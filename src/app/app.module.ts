@@ -75,6 +75,7 @@ import {DecisionDialogComponent} from './shared-dialogs/decision-dialog/decision
 import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment-plan/takeover-dialog/assignment-entry-takeover-dialog.component'
 import {SearchComponent} from './search/search.component'
 import {StudentsComponent} from './students/students.component'
+import {SortPipe} from './pipe/sort.pipe'
 
 @NgModule({
     declarations: [
@@ -131,7 +132,8 @@ import {StudentsComponent} from './students/students.component'
         DecisionDialogComponent,
         AssignmentEntryTakeoverDialogComponent,
         SearchComponent,
-        StudentsComponent
+        StudentsComponent,
+        SortPipe
     ],
     imports: [
         BrowserModule,

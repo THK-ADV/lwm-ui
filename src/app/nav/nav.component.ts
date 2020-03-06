@@ -8,7 +8,7 @@ import {CourseAtom} from '../models/course.model'
 import {KeycloakService} from 'keycloak-angular'
 import {AlertService} from '../services/alert.service'
 import {getInitials} from '../utils/component.utils'
-import {fetchCurrentUserAuthorities$, hasAdminStatus} from '../utils/role-checker'
+import {fetchCurrentUserAuthorities$, isAdmin} from '../utils/role-checker'
 import {ActivatedRoute, Router} from '@angular/router'
 import {KeycloakTokenService} from '../services/keycloak-token.service'
 import {AuthorityService} from '../services/authority.service'
@@ -83,7 +83,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
     private hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
 
-    private isAdmin = (): boolean => hasAdminStatus(this.roleAuthorities)
+    private isAdmin = (): boolean => isAdmin(this.roleAuthorities)
 
     private getInitials_ = (): string => getInitials(this.user)
 

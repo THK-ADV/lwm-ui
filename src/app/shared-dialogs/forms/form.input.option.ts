@@ -1,4 +1,4 @@
-import {Observable, Subscription} from 'rxjs'
+import {EMPTY, Observable, Subscription} from 'rxjs'
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {debounceTime, map, startWith} from 'rxjs/operators'
 import {FormDataStringType, FormInputData} from './form.input'
@@ -48,6 +48,11 @@ export class FormInputOption<Option> implements FormInputData<string> {
 
     bindOptions = (options$: Observable<Option[]>) => {
         this.bindOptions0(options$, voidF)
+    }
+
+    reset = () => {
+        this.bindOptions(EMPTY)
+        this.onDestroy()
     }
 
     private bindOptions0 = (options$: Observable<Option[]>, completion: (os: Option[]) => void) => {

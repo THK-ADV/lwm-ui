@@ -39,7 +39,7 @@ import {
 } from '../table-action-button/lwm-actions'
 import {openDialog} from '../shared-dialogs/dialog-open-combinator'
 import {userAuths} from '../security/user-authority-resolver'
-import {hasAdminStatus, isCourseManager} from '../utils/role-checker'
+import {isAdmin, isCourseManager} from '../utils/role-checker'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -147,8 +147,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         ]
 
         const auths = userAuths(this.route)
-        const isCM = isCourseManager(courseId, auths)
-        const isA = hasAdminStatus(auths)
+        const isCM = isCourseManager(auths, courseId)
+        const isA = isAdmin(auths)
 
         this.hasPermission = isCM || isA
 

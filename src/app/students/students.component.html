@@ -1,2 +1,115 @@
 <h1 *ngIf="student$ | async as student">Notenhefte für {{formatUser_(student)}}</h1>
-<p *ngFor="let e of entries$ | async">{{e | json }}</p>
+
+<ng-container *ngFor="let byCourse of cardsByCourse$ | async | sort: sortByCourse()">
+    <h2>{{byCourse.course.abbreviation}}</h2>
+
+    <mat-accordion [multi]="true">
+        <mat-expansion-panel *ngFor="let entry of byCourse.reportCardEntries | sort: sortBySemester()">
+            <mat-expansion-panel-header (click)="bindDataSource(entry)">
+                <mat-panel-title>
+                    {{accordionTitle(entry.labwork)}}
+                </mat-panel-title>
+                <!--                <mat-panel-description>-->
+                <!--                display if passed or not-->
+                <!--                    {{x.value.length}} Praktia mit {{sumApplications(x.value)}} Anmeldungen-->
+                <!--                </mat-panel-description>-->
+            </mat-expansion-panel-header>
+
+            <ng-template matExpansionPanelContent>
+                <div>
+                    <table mat-table [dataSource]="tableModelFor(entry).dataSource">
+                        <ng-container *ngFor="let column of tableModelFor(entry).columns" [matColumnDef]="column.attr">
+                            <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
+                            <td mat-cell *matCellDef="let e" [ngSwitch]="column.attr">
+                                <ng-container *ngSwitchCase="'Anwesenheitspflichtig'">
+                                    <ng-container *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
+                                        <ng-container [ngSwitch]="reportCardEntryTypeValue(e, column.attr)">
+                                            <mat-slide-toggle *ngSwitchCase="0"
+                                                              color="primary"
+                                                              [checked]="false"
+                                                              [disabled]="true">
+                                            </mat-slide-toggle>
+
+                                            <mat-slide-toggle *ngSwitchCase="1"
+                                                              color="primary"
+                                                              [checked]="true"
+                                                              [disabled]="true">
+                                            </mat-slide-toggle>
+
+                                            <span *ngSwitchDefault>{{reportCardEntryTypeValue(e, column.attr)}}</span>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+
+                                <ng-container *ngSwitchCase="'Testat'">
+                                    <ng-container *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
+                                        <ng-container [ngSwitch]="reportCardEntryTypeValue(e, column.attr)">
+                                            <mat-slide-toggle *ngSwitchCase="0"
+                                                              color="primary"
+                                                              [checked]="false"
+                                                              [disabled]="true">
+                                            </mat-slide-toggle>
+
+                                            <mat-slide-toggle *ngSwitchCase="1"
+                                                              color="primary"
+                                                              [checked]="true"
+                                                              [disabled]="true">
+                                            </mat-slide-toggle>
+
+                                            <span *ngSwitchDefault>{{reportCardEntryTypeValue(e, column.attr)}}</span>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+
+                                <ng-container *ngSwitchCase="'Zusatzleistung'">
+                                    <ng-container *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
+                                        <ng-container [ngSwitch]="reportCardEntryTypeValue(e, column.attr)">
+                                            <mat-slide-toggle *ngSwitchCase="0"
+                                                              color="primary"
+                                                              [checked]="false"
+                                                              [disabled]="true">
+                                            </mat-slide-toggle>
+
+                                            <mat-slide-toggle *ngSwitchCase="1"
+                                                              color="primary"
+                                                              [checked]="true"
+                                                              [disabled]="true">
+                                            </mat-slide-toggle>
+
+                                            <span *ngSwitchDefault>{{reportCardEntryTypeValue(e, column.attr)}}</span>
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+
+                                <ng-container *ngSwitchCase="'Bonus'">
+                                    <mat-form-field *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
+                                        <label>
+                                            <input matInput type="number"
+                                                   [value]="reportCardEntryTypeValue(e, column.attr)" [disabled]="true">
+                                        </label>
+                                    </mat-form-field>
+                                </ng-container>
+
+                                <span *ngSwitchDefault>{{tableContentFor(e, column.attr)}}</span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="action">
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+                                <lwm-table-action-button
+                                        [actions]="rescheduleAction()"
+                                        (performAction)="performAction($event, element)">
+                                </lwm-table-action-button>
+                            </td>
+                        </ng-container>
+
+                        <tr mat-header-row *matHeaderRowDef="displayedColumnsFor(entry)"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumnsFor(entry);">
+                        </tr>
+                    </table>
+                </div>
+            </ng-template>
+        </mat-expansion-panel>
+    </mat-accordion>
+</ng-container>

@@ -25,7 +25,7 @@ export enum AssignmentEntryTypeValue {
     supplement = 'Zusatzleistung'
 }
 
-const orderingOfEntryTypeValue = (value: Readonly<AssignmentEntryTypeValue>): number => {
+export const orderingOfEntryTypeValue = (value: Readonly<AssignmentEntryTypeValue>): number => {
     switch (value) {
         case AssignmentEntryTypeValue.attendance:
             return 0
@@ -38,12 +38,26 @@ const orderingOfEntryTypeValue = (value: Readonly<AssignmentEntryTypeValue>): nu
 
     }
 }
+export const stringToAssignmentEntryTypeValue = (s: string): AssignmentEntryTypeValue | undefined => {
+    switch (s) {
+        case AssignmentEntryTypeValue.attendance:
+            return AssignmentEntryTypeValue.attendance
+        case AssignmentEntryTypeValue.certificate:
+            return AssignmentEntryTypeValue.certificate
+        case AssignmentEntryTypeValue.bonus:
+            return AssignmentEntryTypeValue.bonus
+        case AssignmentEntryTypeValue.supplement:
+            return AssignmentEntryTypeValue.supplement
+        default:
+            return undefined
+    }
+}
 
-export const sortedAssignmentPlanEntryTypes = (e: Readonly<AssignmentEntry>): AssignmentEntry => {
-    const sorted = e.types.sort((lhs, rhs) => {
-        return orderingOfEntryTypeValue(lhs.entryType) - orderingOfEntryTypeValue(rhs.entryType)
-    })
+export const assignmentEntryTypeSortingF = (a: AssignmentEntryTypeValue, b: AssignmentEntryTypeValue): number =>
+    orderingOfEntryTypeValue(a) - orderingOfEntryTypeValue(b)
 
+export const sortedAssignmentPlanEntryTypes = (e: Readonly<AssignmentEntry>): AssignmentEntry => { // TODO test
+    const sorted = e.types.sort((lhs, rhs) => assignmentEntryTypeSortingF(lhs.entryType, rhs.entryType))
     return {...e, types: sorted}
 }
 

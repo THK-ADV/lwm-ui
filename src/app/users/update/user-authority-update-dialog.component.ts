@@ -11,17 +11,16 @@ import {CourseService} from '../../services/course.service'
 import {subscribe} from '../../utils/functions'
 import {map, startWith} from 'rxjs/operators'
 import {RoleService} from '../../services/role.service'
-import {UserStatus} from '../../models/userStatus.model'
-import {Role} from '../../models/role.model'
+import {Role, UserRole} from '../../models/role.model'
 import {AlertService} from '../../services/alert.service'
 import {invalidChoiceKey, isUserInput, mandatoryOptionsValidator} from '../../utils/form.validator'
 import {addToDataSource} from '../../shared-dialogs/dataSource.update'
 import {resetControls} from '../../utils/form-control-utils'
 import {LWMColor} from '../../utils/colors'
-import {hasStatus} from '../../utils/role-checker'
+import {hasRole} from '../../utils/role-checker'
 
 export interface StandardRole {
-    label: UserStatus
+    label: UserRole
     color: LWMColor
 }
 
@@ -114,16 +113,16 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { /
             this.authorityService.getAuthorities(this.user.systemId),
             auths => {
                 auths.forEach(auth => {
-                    if (hasStatus(UserStatus.admin, auth)) {
-                        this.standardRoles.push({label: UserStatus.admin, color: 'accent'})
+                    if (hasRole(UserRole.admin, auth)) {
+                        this.standardRoles.push({label: UserRole.admin, color: 'accent'})
                     }
 
-                    if (hasStatus(UserStatus.employee, auth)) {
-                        this.standardRoles.push({label: UserStatus.employee, color: 'primary'})
+                    if (hasRole(UserRole.employee, auth)) {
+                        this.standardRoles.push({label: UserRole.employee, color: 'primary'})
                     }
 
-                    if (hasStatus(UserStatus.student, auth)) {
-                        this.standardRoles.push({label: UserStatus.student, color: 'primary'})
+                    if (hasRole(UserRole.student, auth)) {
+                        this.standardRoles.push({label: UserRole.student, color: 'primary'})
                     }
 
                     if (auth.course !== undefined) {
@@ -132,6 +131,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { /
                 })
 
                 if (this.dataSource.data.length !== 0) {
+                    // tslint:disable-next-line:no-non-null-assertion
                     this.dataSource.data.sort((lhs, rhs) => lhs.course!.abbreviation.localeCompare(rhs.course!.abbreviation))
                 }
             }
@@ -238,7 +238,8 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { /
     private fold(attr: string, auth: AuthorityAtom, mapCourse: (CourseAtom) => string, mapRole: (Role) => string): string {
         switch (attr) {
             case 'course':
-                return mapCourse(auth.course!!)
+                // tslint:disable-next-line:no-non-null-assertion
+                return mapCourse(auth!.course)
             case 'role':
                 return mapRole(auth.role)
             default:
