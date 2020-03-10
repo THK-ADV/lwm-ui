@@ -9,7 +9,7 @@ import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {UserService} from '../services/user.service'
 import {formatUser} from '../utils/component.utils'
 import {reportCardEntriesByCourseAndStudent$} from './students-view-model'
-import {_groupBy, compose, dateOrderingDESC, exists, foldUndefined, nonEmpty} from '../utils/functions'
+import {_groupBy, compose, dateOrderingDESC, nonEmpty} from '../utils/functions'
 import {LabworkService} from '../services/labwork.service'
 import {CourseAtom} from '../models/course.model'
 import {LabworkAtom} from '../models/labwork.model'
@@ -19,7 +19,6 @@ import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
 import {LWMActionType, rescheduleAction} from '../table-action-button/lwm-actions'
-import {format, formatTime} from '../utils/lwmdate-adapter'
 import {assignmentEntryTypeSortingF, AssignmentEntryTypeValue, stringToAssignmentEntryTypeValue} from '../models/assignment-plan.model'
 
 interface ReportCardsByLabwork {
@@ -158,54 +157,9 @@ export class StudentsComponent implements OnInit {
     private tableModelFor = (entry: ReportCardsByLabwork): TableModel =>
         this.dataSources[entry.labwork.id]
 
-    private displayedColumnsFor = (entry: ReportCardsByLabwork) => {
-        const columns = this.tableModelFor(entry).columns.map(_ => _.attr)
-
-        if (this.canReschedule) {
-            columns.push('action')
-        }
-
-        return columns
-    }
 
     private accordionTitle = (labwork: LabworkAtom) =>
         `${labwork.label} - ${labwork.semester.abbreviation}`
-
-    private tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
-        switch (attr) {
-            case 'date':
-                return format(e.date, 'dd.MM.yyyy')
-            case 'start':
-                return formatTime(e.start, 'HH:mm')
-            case 'end':
-                return formatTime(e.end, 'HH:mm')
-            case 'assignmentIndex':
-                return e.assignmentIndex + 1
-            case 'room.label':
-                return e.room.label
-            default:
-                return e[attr]
-        }
-    }
-
-    private hasReportCardEntryTypeValue = (e: ReportCardEntryAtom, type: string): boolean =>
-        exists(e.entryTypes, _ => _.entryType === type)
-
-    private reportCardEntryTypeValue = (e: ReportCardEntryAtom, type: string): number => {
-        // tslint:disable-next-line:no-non-null-assertion
-        const type0 = stringToAssignmentEntryTypeValue(type)!
-        // tslint:disable-next-line:no-non-null-assertion
-        const entryType = e.entryTypes.find(_ => _.entryType === type0)!
-
-        switch (type0) {
-            case AssignmentEntryTypeValue.attendance:
-            case AssignmentEntryTypeValue.certificate:
-            case AssignmentEntryTypeValue.supplement:
-                return foldUndefined(entryType.bool, b => b ? 1 : 0, () => -1)
-            case AssignmentEntryTypeValue.bonus:
-                return entryType.int
-        }
-    }
 
     private sortByCourse = () => (a: ReportCardsByCourse, b: ReportCardsByCourse) =>
         a.course.abbreviation.localeCompare(b.course.abbreviation)
@@ -215,14 +169,7 @@ export class StudentsComponent implements OnInit {
 
     private rescheduleAction = () => [rescheduleAction()]
 
-    private performAction = (type: LWMActionType, e: ReportCardEntryAtom) => {
-        console.log('perform action')
-        switch (type) {
-            case 'reschedule':
-                console.log(e)
-                break
-            default:
-                break
-        }
+    private reschedule = (args: { actionType: LWMActionType; e: ReportCardEntryAtom }) => {
+        console.log(args.actionType, args.e)
     }
 }

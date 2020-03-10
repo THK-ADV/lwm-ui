@@ -76,6 +76,7 @@ import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment
 import {SearchComponent} from './search/search.component'
 import {StudentsComponent} from './students/students.component'
 import {SortPipe} from './pipe/sort.pipe'
+import {ReportCardTableComponent} from './report-card-table/report-card-table.component'
 
 @NgModule({
     declarations: [
@@ -133,7 +134,8 @@ import {SortPipe} from './pipe/sort.pipe'
         AssignmentEntryTakeoverDialogComponent,
         SearchComponent,
         StudentsComponent,
-        SortPipe
+        SortPipe,
+        ReportCardTableComponent
     ],
     imports: [
         BrowserModule,
