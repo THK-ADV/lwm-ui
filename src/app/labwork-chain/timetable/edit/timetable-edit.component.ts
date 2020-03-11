@@ -39,7 +39,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
 
     @Output() timetableUpdate: EventEmitter<TimetableAtom>
 
-    @ViewChild(AbstractTimetableViewComponent, {static: false}) timetableComponent: AbstractTimetableViewComponent
+    @ViewChild(AbstractTimetableViewComponent) timetableComponent: AbstractTimetableViewComponent
 
     private subs: Subscription[]
 

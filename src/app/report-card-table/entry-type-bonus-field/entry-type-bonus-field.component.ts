@@ -64,8 +64,6 @@ export class EntryTypeBonusFieldComponent implements OnInit, OnDestroy {
 
     private focusOut = (value: any, fc: FormControl) => {
         if (isString(value)) {
-            const x = reportCardEntryTypeValue(this.entry, this.attr)?.value
-            x
             fc.setValue(reportCardEntryTypeValue(this.entry, this.attr)?.value, {emitEvent: false})
         }
     }

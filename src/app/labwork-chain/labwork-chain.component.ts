@@ -54,7 +54,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private steps: Step[]
 
-    @ViewChild('stepper', {static: false}) stepper: MatHorizontalStepper
+    @ViewChild('stepper') stepper: MatHorizontalStepper
 
     constructor(
         private readonly route: ActivatedRoute,

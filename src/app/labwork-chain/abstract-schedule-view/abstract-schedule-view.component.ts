@@ -19,7 +19,7 @@ export class AbstractScheduleViewComponent {
     private allDates: ScheduleEntryEvent[]
     private readonly calendarPlugins = [dayGridPlugin, listPlugin]
 
-    @ViewChild('calendar', {static: false}) calendar: FullCalendarComponent
+    @ViewChild('calendar') calendar: FullCalendarComponent
 
     @Input() set dates(dates: ScheduleEntryEvent[]) {
         this.allDates = dates.concat(makeBlacklistEvents(this.timetable.localBlacklist))

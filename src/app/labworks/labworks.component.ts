@@ -82,7 +82,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return {label: '', description: '', semester: '', course: '', degree: '', subscribable: false, published: false}
     }
 
-    @ViewChild(MatSort, {static: false}) set matSort(ms: MatSort) { // MatSort hasStatus undefined if data hasStatus loaded asynchronously
+    @ViewChild(MatSort) set matSort(ms: MatSort) { // MatSort hasStatus undefined if data hasStatus loaded asynchronously
         this.dataSource.sort = ms
     }
 
