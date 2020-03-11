@@ -2,75 +2,25 @@
     <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
         <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
         <td mat-cell *matCellDef="let e" [ngSwitch]="column.attr">
-            <ng-container *ngSwitchCase="'Anwesenheitspflichtig'">
-                <ng-container *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
-                    <ng-container [ngSwitch]="reportCardEntryTypeValue(e, column.attr)">
-                        <mat-slide-toggle *ngSwitchCase="0"
-                                          color="primary"
-                                          [checked]="false"
-                                          [disabled]="true">
-                        </mat-slide-toggle>
+            <lwm-ternary-entry-type-toggle *ngSwitchCase="'Anwesenheitspflichtig'"
+                                           [entry]="e"
+                                           [attr]="column.attr">
+            </lwm-ternary-entry-type-toggle>
 
-                        <mat-slide-toggle *ngSwitchCase="1"
-                                          color="primary"
-                                          [checked]="true"
-                                          [disabled]="true">
-                        </mat-slide-toggle>
+            <lwm-ternary-entry-type-toggle *ngSwitchCase="'Testat'"
+                                           [entry]="e"
+                                           [attr]="column.attr">
+            </lwm-ternary-entry-type-toggle>
 
-                        <span *ngSwitchDefault>{{reportCardEntryTypeValue(e, column.attr)}}</span>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
+            <lwm-ternary-entry-type-toggle *ngSwitchCase="'Zusatzleistung'"
+                                           [entry]="e"
+                                           [attr]="column.attr">
+            </lwm-ternary-entry-type-toggle>
 
-            <ng-container *ngSwitchCase="'Testat'">
-                <ng-container *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
-                    <ng-container [ngSwitch]="reportCardEntryTypeValue(e, column.attr)">
-                        <mat-slide-toggle *ngSwitchCase="0"
-                                          color="primary"
-                                          [checked]="false"
-                                          [disabled]="true">
-                        </mat-slide-toggle>
-
-                        <mat-slide-toggle *ngSwitchCase="1"
-                                          color="primary"
-                                          [checked]="true"
-                                          [disabled]="true">
-                        </mat-slide-toggle>
-
-                        <span *ngSwitchDefault>{{reportCardEntryTypeValue(e, column.attr)}}</span>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'Zusatzleistung'">
-                <ng-container *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
-                    <ng-container [ngSwitch]="reportCardEntryTypeValue(e, column.attr)">
-                        <mat-slide-toggle *ngSwitchCase="0"
-                                          color="primary"
-                                          [checked]="false"
-                                          [disabled]="true">
-                        </mat-slide-toggle>
-
-                        <mat-slide-toggle *ngSwitchCase="1"
-                                          color="primary"
-                                          [checked]="true"
-                                          [disabled]="true">
-                        </mat-slide-toggle>
-
-                        <span *ngSwitchDefault>{{reportCardEntryTypeValue(e, column.attr)}}</span>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'Bonus'">
-                <mat-form-field *ngIf="hasReportCardEntryTypeValue(e, column.attr)">
-                    <label>
-                        <input matInput type="number"
-                               [value]="reportCardEntryTypeValue(e, column.attr)" [disabled]="true">
-                    </label>
-                </mat-form-field>
-            </ng-container>
-
+            <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
+                                        [entry]="e"
+                                        [attr]="column.attr">
+            </lwm-entry-type-bonus-field>
             <span *ngSwitchDefault>{{tableContentFor(e, column.attr)}}</span>
         </td>
 

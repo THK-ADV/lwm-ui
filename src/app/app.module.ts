@@ -77,6 +77,8 @@ import {SearchComponent} from './search/search.component'
 import {StudentsComponent} from './students/students.component'
 import {SortPipe} from './pipe/sort.pipe'
 import {ReportCardTableComponent} from './report-card-table/report-card-table.component'
+import {TernaryEntryTypeToggleComponent} from './report-card-table/ternary-entry-type-toggle/ternary-entry-type-toggle.component'
+import {EntryTypeBonusFieldComponent} from './report-card-table/entry-type-bonus-field/entry-type-bonus-field.component'
 
 @NgModule({
     declarations: [
@@ -135,7 +137,9 @@ import {ReportCardTableComponent} from './report-card-table/report-card-table.co
         SearchComponent,
         StudentsComponent,
         SortPipe,
-        ReportCardTableComponent
+        ReportCardTableComponent,
+        TernaryEntryTypeToggleComponent,
+        EntryTypeBonusFieldComponent
     ],
     imports: [
         BrowserModule,

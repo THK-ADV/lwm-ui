@@ -28,26 +28,7 @@ export class ReportCardTableComponent implements OnInit {
 
     }
 
-    private hasReportCardEntryTypeValue = (e: ReportCardEntryAtom, type: string): boolean =>
-        exists(e.entryTypes, _ => _.entryType === type)
 
-    private reportCardEntryTypeValue = (e: ReportCardEntryAtom, type: string): number => {
-        // force unwrapping is only allowed if hasReportCardEntryTypeValue is checked before.
-        // this is a bad design, but there is no other way due to html restrictions
-        // tslint:disable-next-line:no-non-null-assertion
-        const lifedType = stringToAssignmentEntryTypeValue(type)!
-        // tslint:disable-next-line:no-non-null-assertion
-        const entryType = e.entryTypes.find(_ => _.entryType === lifedType)!
-
-        switch (lifedType) {
-            case AssignmentEntryTypeValue.attendance:
-            case AssignmentEntryTypeValue.certificate:
-            case AssignmentEntryTypeValue.supplement:
-                return foldUndefined(entryType.bool, b => b ? 1 : 0, () => -1)
-            case AssignmentEntryTypeValue.bonus:
-                return entryType.int
-        }
-    }
 
     private tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
         switch (attr) {

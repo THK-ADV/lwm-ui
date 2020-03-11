@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core'
 import {
     MatAutocompleteModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatCardModule,
     MatChipsModule,
     MatDatepickerModule,
@@ -13,16 +14,16 @@ import {
     MatMenuModule,
     MatNativeDateModule,
     MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
     MatSidenavModule,
     MatSlideToggleModule,
     MatSortModule,
+    MatStepperModule,
     MatTableModule,
     MatToolbarModule,
-    MatTooltipModule,
-    MatStepperModule,
-    MatSelectModule,
-    MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatTooltipModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -54,7 +55,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatStepperModule,
         MatSelectModule,
         MatProgressSpinnerModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatButtonToggleModule
     ]
 })
 export class LWMMaterialModule {
