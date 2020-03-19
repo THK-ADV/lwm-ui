@@ -29,7 +29,7 @@ export interface FormPayload<Protocol> {
 })
 export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup
+    formGroup: FormGroup
 
     static instance<Protocol, Model>(
         dialog: MatDialog,
@@ -44,7 +44,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
 
     constructor(
         private dialogRef: MatDialogRef<CreateUpdateDialogComponent<Protocol, Model>, Protocol>,
-        @Inject(MAT_DIALOG_DATA) private payload: FormPayload<Protocol>
+        @Inject(MAT_DIALOG_DATA) public payload: FormPayload<Protocol>
     ) {
         this.formGroup = new FormGroup({})
 

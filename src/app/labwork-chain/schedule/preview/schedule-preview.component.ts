@@ -35,8 +35,8 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
     @Output() createScheduleEmitter: EventEmitter<ScheduleEntryAtom[]>
     @Output() deleteSchedulePreviewEmitter: EventEmitter<void>
 
-    private dates: ScheduleEntryEvent[]
-    private headerTitle: string
+    dates: ScheduleEntryEvent[]
+    headerTitle: string
     private subs: Subscription[]
 
     constructor(
@@ -64,9 +64,9 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
         this.dates = makeScheduleEntryEvents(scheduleEntries)
     }
 
-    private canDeleteAndCommit = (): LWMActionType[] => this.hasPermission ? ['delete', 'upload'] : []
+    canDeleteAndCommit = (): LWMActionType[] => this.hasPermission ? ['delete', 'upload'] : []
 
-    private performAction = (action: LWMActionType) => {
+    performAction = (action: LWMActionType) => {
         switch (action) {
             case 'delete':
                 this.delete()

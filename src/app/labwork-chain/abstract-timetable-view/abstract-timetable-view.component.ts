@@ -33,11 +33,11 @@ export class AbstractTimetableViewComponent implements OnInit {
             .sort((lhs, rhs) => lhs.workload - rhs.workload)
     }
 
-    private readonly calendarPlugins = [timeGridPlugin, interactionPlugin]
-    private dates: CalendarEvent[]
-    private headerTitle: string
-    private readonly formGroup: FormGroup
-    private workloads: SupervisorWorkload[]
+    readonly calendarPlugins = [timeGridPlugin, interactionPlugin]
+    dates: CalendarEvent[]
+    headerTitle: string
+    readonly formGroup: FormGroup
+    workloads: SupervisorWorkload[]
 
     constructor() {
         this.dates = []
@@ -61,25 +61,25 @@ export class AbstractTimetableViewComponent implements OnInit {
 
     startDateControl = () => this.formGroup.controls.start
 
-    private onDateSelection = (event: CalendarEvent) => {
+    onDateSelection = (event: CalendarEvent) => {
         if (this.canEdit) {
             this.selectDate(event)
         }
     }
 
-    private onEventClick = (event: CalendarEvent) => {
+    onEventClick = (event: CalendarEvent) => {
         if (this.canEdit) {
             this.clickEvent(event)
         }
     }
 
-    private onEventDrop = (event: CalendarEvent) => {
+    onEventDrop = (event: CalendarEvent) => {
         if (this.canEdit) {
             this.dropEvent(event)
         }
     }
 
-    private onEventResize = (eventResizeInfo) => {
+    onEventResize = (eventResizeInfo) => {
         if (!this.canEdit || !this.isValidRange(eventResizeInfo.event)) {
             eventResizeInfo.revert()
             return
@@ -88,15 +88,15 @@ export class AbstractTimetableViewComponent implements OnInit {
         this.resizeEvent(eventResizeInfo.event)
     }
 
-    private allowSelect = (event: CalendarEvent): boolean => {
+    allowSelect = (event: CalendarEvent): boolean => {
         return this.canEdit && this.isValidRange(event)
     }
 
-    private isValidRange = (event: CalendarEvent) => isValidTimetableEntry(event.start, event.end)
+    isValidRange = (event: CalendarEvent) => isValidTimetableEntry(event.start, event.end)
 
-    private primaryColor = () => color('primary')
+    primaryColor = () => color('primary')
 
-    private displayWorkload = ({user, workload}: SupervisorWorkload) => {
+    displayWorkload = ({user, workload}: SupervisorWorkload) => {
         return `${user.lastname}, ${user.firstname} (${workload}h)`
     }
 }

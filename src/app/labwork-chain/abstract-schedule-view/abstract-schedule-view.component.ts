@@ -16,8 +16,8 @@ export class AbstractScheduleViewComponent {
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
 
-    private allDates: ScheduleEntryEvent[]
-    private readonly calendarPlugins = [dayGridPlugin, listPlugin]
+    allDates: ScheduleEntryEvent[]
+    readonly calendarPlugins = [dayGridPlugin, listPlugin]
 
     @ViewChild('calendar') calendar: FullCalendarComponent
 
@@ -29,23 +29,23 @@ export class AbstractScheduleViewComponent {
         this.allDates = []
     }
 
-    private earliestDate = () => this.timetable.start
+    earliestDate = () =>
+        this.timetable.start
 
-    private semesterBoundaries = () => ({
+    semesterBoundaries = () => ({
         start: this.labwork.semester.start,
         end: this.labwork.semester.end
     })
 
-    private showLabworkStartDate = () => {
+    showLabworkStartDate = () =>
         this.calendar.getApi().gotoDate(this.timetable.start)
-    }
 
-    private showMonthView = () => {
+    showMonthView = () => {
         this.allDates = eventEntriesForMonth(this.allDates)
         this.calendar.getApi().changeView('dayGridMonth')
     }
 
-    private showListView = () => {
+    showListView = () => {
         this.allDates = eventEntriesForList(this.allDates)
         this.calendar.getApi().changeView('listWeek')
     }

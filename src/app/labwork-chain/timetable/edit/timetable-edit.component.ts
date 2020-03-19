@@ -79,7 +79,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         this.subs.push(subscribe(o, this.updateCalendar))
     }
 
-    private onDateSelection = (event: CalendarEvent) => {
+    onDateSelection = (event: CalendarEvent) => {
         const dialogRef = this.timetableEntryDialog(DialogMode.create, [])
 
         this.updateCalendar$(openDialog(
@@ -88,7 +88,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         ))
     }
 
-    private onEventClick = (event: CalendarEvent) => {
+    onEventClick = (event: CalendarEvent) => {
         const dialogRef = this.timetableEntryDialog(
             DialogMode.edit,
             this.timetable.entries[event.id].supervisor,
@@ -101,7 +101,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         ))
     }
 
-    private onEventDrop = (event: CalendarEvent) => {
+    onEventDrop = (event: CalendarEvent) => {
         this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
@@ -110,7 +110,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         ))
     }
 
-    private onEventResize = (event: CalendarEvent) => {
+    onEventResize = (event: CalendarEvent) => {
         this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,

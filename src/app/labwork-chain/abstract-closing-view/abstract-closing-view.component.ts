@@ -18,7 +18,7 @@ export class AbstractClosingViewComponent implements OnInit {
     @Input() labworkUpdate: EventEmitter<LabworkAtom>
     @Input() hasPermission: Readonly<boolean>
 
-    private headerTitle: string
+    headerTitle: string
     private subs: Subscription[]
 
     constructor(
@@ -33,9 +33,10 @@ export class AbstractClosingViewComponent implements OnInit {
         this.headerTitle = `${this.titlePrefix} für ${this.labwork.label}`
     }
 
-    private reportCardPublished = () => this.labwork.published
+    reportCardPublished = () =>
+        this.labwork.published
 
-    private publishReportCards = () => {
+    publishReportCards = () => {
         this.subs.push(
             subscribe(
                 updateLabwork$(

@@ -15,7 +15,7 @@ import {Subscription} from 'rxjs'
 })
 export class EntryTypeBonusFieldComponent implements OnInit, OnDestroy {
 
-    private fc: FormControl | undefined
+    fc: FormControl | undefined
     private subs: Subscription[]
 
     constructor(private readonly service: ReportCardEntryTypeService) {

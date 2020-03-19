@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {Conflict, ScheduleEntryService, SchedulePreview} from '../../../services/schedule-entry.service'
-import {compose, foldUndefined, isEmpty, maxBy, minBy, subscribe} from '../../../utils/functions'
+import {compose, foldUndefined, isEmpty, maxBy, minBy, nonEmpty, subscribe} from '../../../utils/functions'
 import {MatDialog} from '@angular/material'
 import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
@@ -54,9 +54,9 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     @Output() schedulePreviewEmitter: EventEmitter<SchedulePreview>
 
-    private headerTitle: string
-    private scheduleEntries: ScheduleEntryLike[]
-    private previewResult: SchedulePreviewResult | undefined
+    headerTitle: string
+    scheduleEntries: ScheduleEntryLike[]
+    previewResult: SchedulePreviewResult | undefined
     private subs: Subscription[]
 
     ngOnInit() {
@@ -67,11 +67,10 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())
 
-    private canPreview = (): LWMActionType[] => {
-        return this.hasPermission ? ['preview'] : []
-    }
+    canPreview = (): LWMActionType[] =>
+        this.hasPermission ? ['preview'] : []
 
-    private onPreview = () => {
+    onPreview = () => {
         const preview$ = openDialog(
             GroupPreviewModalComponent.instance(this.dialog, this.applications),
             compose(this.fetchPreview, withSpinning(this.loadingService))
@@ -81,16 +80,18 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
         this.subs.push(s)
     }
 
-    private hasConflicts = () => foldUndefined(this.previewResult, r => !isEmpty(r.conflicts), () => false)
+    hasConflicts = () =>
+        foldUndefined(this.previewResult, r => !isEmpty(r.conflicts), () => false)
 
-    private hasScheduleEntries = () => !isEmpty(this.scheduleEntries)
+    hasScheduleEntries = () =>
+        nonEmpty(this.scheduleEntries)
 
-    private firstDate = () => {
+    firstDate = () => {
         const min = minBy(this.scheduleEntries, (lhs, rhs) => lhs.date.getTime() < rhs.date.getTime())
         return this.getFormattedDate(min)
     }
 
-    private lastDate = () => {
+    lastDate = () => {
         const max = maxBy(this.scheduleEntries, (lhs, rhs) => lhs.date.getTime() > rhs.date.getTime())
         return this.getFormattedDate(max)
     }

@@ -19,7 +19,7 @@ export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {
     @Input() entry: ReportCardEntryAtom
     @Input() attr: string
 
-    private value: ReportCardEntryTypeValue | undefined
+    value: ReportCardEntryTypeValue | undefined
 
     private onChange = (value: number, e: ReportCardEntryAtom, attr: string) => {
         console.log(liftedTernaryState(value), attr, e.id)

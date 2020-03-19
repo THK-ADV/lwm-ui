@@ -13,7 +13,7 @@ import {_groupBy, compose, dateOrderingDESC, nonEmpty} from '../utils/functions'
 import {LabworkService} from '../services/labwork.service'
 import {CourseAtom} from '../models/course.model'
 import {LabworkAtom} from '../models/labwork.model'
-import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
@@ -43,8 +43,8 @@ interface TableModel {
 })
 export class StudentsComponent implements OnInit {
 
-    private cardsByCourse$: Observable<ReportCardsByCourse[]>
-    private student$: Observable<User>
+    cardsByCourse$: Observable<ReportCardsByCourse[]>
+    student$: Observable<User>
     private canReschedule: boolean
 
     constructor(
@@ -57,7 +57,7 @@ export class StudentsComponent implements OnInit {
         this.canReschedule = false
     }
 
-    private formatUser_ = formatUser
+    formatUser = formatUser
 
     private dataSources: {
         [id: string]: TableModel
@@ -116,7 +116,7 @@ export class StudentsComponent implements OnInit {
     private hasReschedulePermission = (auths: AuthorityAtom[]) =>
         hasAnyRole(auths, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
-    private bindDataSource = (entry: ReportCardsByLabwork) => {
+    bindDataSource = (entry: ReportCardsByLabwork) => {
         const basicColumns = (): TableHeaderColumn[] => [
             {attr: 'assignmentIndex', title: '#'},
             {attr: 'date', title: 'Datum'},
@@ -154,22 +154,22 @@ export class StudentsComponent implements OnInit {
         }
     }
 
-    private tableModelFor = (entry: ReportCardsByLabwork): TableModel =>
+    tableModelFor = (entry: ReportCardsByLabwork): TableModel =>
         this.dataSources[entry.labwork.id]
 
 
-    private accordionTitle = (labwork: LabworkAtom) =>
+    accordionTitle = (labwork: LabworkAtom) =>
         `${labwork.label} - ${labwork.semester.abbreviation}`
 
-    private sortByCourse = () => (a: ReportCardsByCourse, b: ReportCardsByCourse) =>
+    sortByCourse = () => (a: ReportCardsByCourse, b: ReportCardsByCourse) =>
         a.course.abbreviation.localeCompare(b.course.abbreviation)
 
-    private sortBySemester = () => (a: ReportCardsByLabwork, b: ReportCardsByLabwork) =>
+    sortBySemester = () => (a: ReportCardsByLabwork, b: ReportCardsByLabwork) =>
         dateOrderingDESC(a.labwork.semester.start, b.labwork.semester.start)
 
-    private rescheduleAction = () => [rescheduleAction()]
+    rescheduleAction = () => [rescheduleAction()]
 
-    private reschedule = (args: { actionType: LWMActionType; e: ReportCardEntryAtom }) => {
+    reschedule = (args: { actionType: LWMActionType; e: ReportCardEntryAtom }) => {
         console.log(args.actionType, args.e)
     }
 }

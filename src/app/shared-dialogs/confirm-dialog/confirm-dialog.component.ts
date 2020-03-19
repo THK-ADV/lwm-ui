@@ -19,22 +19,25 @@ export class ConfirmDialogComponent {
 
     constructor(
         private dialogRef: MatDialogRef<ConfirmDialogComponent, ConfirmationResult>,
-        @Inject(MAT_DIALOG_DATA) private payload: ConfirmationPayload
+        @Inject(MAT_DIALOG_DATA) readonly payload: ConfirmationPayload
     ) {
     }
 
-    static instance(
+    static instance = (
         dialog: MatDialog,
         title: string,
         body: string
-    ): MatDialogRef<ConfirmDialogComponent, ConfirmationResult> {
-        return dialog.open<ConfirmDialogComponent, ConfirmationPayload, ConfirmationResult>(ConfirmDialogComponent, {
-            data: {title: title, body: body},
-            panelClass: 'lwmConfirmationDialog'
-        })
-    }
+    ): MatDialogRef<ConfirmDialogComponent, ConfirmationResult> =>
+        dialog.open<ConfirmDialogComponent, ConfirmationPayload, ConfirmationResult>(
+            ConfirmDialogComponent, {
+                data: {title: title, body: body},
+                panelClass: 'lwmConfirmationDialog'
+            }
+        )
 
-    private cancel = () => this.dialogRef.close(ConfirmationResult.ko)
+    cancel = () =>
+        this.dialogRef.close(ConfirmationResult.ko)
 
-    private submit = () => this.dialogRef.close(ConfirmationResult.ok)
+    submit = () =>
+        this.dialogRef.close(ConfirmationResult.ok)
 }

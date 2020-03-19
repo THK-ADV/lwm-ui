@@ -3,7 +3,7 @@ import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
 import {MatTableDataSource} from '@angular/material'
 import {Blacklist} from '../../models/blacklist.model'
-import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
+import {TableHeaderColumn} from '../../abstract-crud/old/old-abstract-crud.component'
 import {deleteAction, editAction, LWMAction, LWMActionType} from '../../table-action-button/lwm-actions'
 import {formatBlacklistTableEntry, localBlacklistsColumns} from '../../blacklists/blacklist-view-model'
 import {dateOrderingASC, foldUndefined} from '../../utils/functions'
@@ -29,12 +29,12 @@ export class AbstractBlacklistTimetableViewComponent implements OnInit {
     @Output() deleteEmitter: EventEmitter<Blacklist>
     @Output() updateEmitter: EventEmitter<Blacklist>
 
-    private headerTitle: string
-    private dataSource = new MatTableDataSource<Blacklist>()
+    headerTitle: string
+    dataSource = new MatTableDataSource<Blacklist>()
 
-    private readonly displayedColumns: string[]
-    private readonly columns: TableHeaderColumn[]
-    private readonly actions: LWMAction[]
+    readonly displayedColumns: string[]
+    readonly columns: TableHeaderColumn[]
+    readonly actions: LWMAction[]
     private readonly prepareTableContent = formatBlacklistTableEntry // TODO apply this pattern everywhere
 
     constructor() {
@@ -61,17 +61,17 @@ export class AbstractBlacklistTimetableViewComponent implements OnInit {
         }
     }
 
-    private canCreateF = () => foldUndefined(this.canCreate, x => [x], () => [])
+    canCreateF = () => foldUndefined(this.canCreate, x => [x], () => [])
 
-    private onCreate = () => this.createEmitter.emit()
+    onCreate = () => this.createEmitter.emit()
 
-    private onSelect = (blacklist: Blacklist) => {
+    onSelect = (blacklist: Blacklist) => {
         if (this.canEdit) {
             this.updateEmitter.emit(blacklist)
         }
     }
 
-    private performAction = (action: LWMActionType, blacklist: Blacklist) => {
+    performAction = (action: LWMActionType, blacklist: Blacklist) => {
         switch (action) {
             case 'edit':
                 this.updateEmitter.emit(blacklist)

@@ -5,11 +5,11 @@
         <mat-form-field class="mat-form-field-modal unselectable" color="primary">
             <input aria-label="" class="unselectable" type="text" [placeholder]="supervisorInput.displayTitle" matInput
                    [formControlName]="supervisorInput.formControlName" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="supervisorInput.data.displayFn"
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="supervisorInputOption.displayFn"
                               class="unselectable">
-                <mat-option *ngFor="let option of supervisorInput.data.filteredOptions | async"
+                <mat-option *ngFor="let option of supervisorInputOption.filteredOptions | async"
                             [value]="option" class="unselectable">
-                    {{supervisorInput.data.displayFn(option)}}
+                    {{supervisorInputOption.displayFn(option)}}
                 </mat-option>
             </mat-autocomplete>
             <button matSuffix mat-flat-button mat-icon-button aria-label="add"
@@ -20,20 +20,20 @@
                 <mat-icon>add</mat-icon>
             </button>
             <mat-error class="unselectable"
-                       *ngIf="hasOptionError_(supervisorInput.data)">{{getOptionErrorMessage_(supervisorInput.data)}}
+                       *ngIf="supervisorInputOption.hasError()">{{supervisorInputOption.getErrorMessage()}}
             </mat-error>
         </mat-form-field>
         <mat-form-field class="mat-form-field-modal unselectable" color="primary">
             <input aria-label="" class="unselectable" type="text" [placeholder]="roomInput.displayTitle" matInput
                    [formControlName]="roomInput.formControlName" [matAutocomplete]="auto2">
-            <mat-autocomplete #auto2="matAutocomplete" [displayWith]="roomInput.data.displayFn" class="unselectable">
-                <mat-option *ngFor="let option of roomInput.data.filteredOptions | async"
+            <mat-autocomplete #auto2="matAutocomplete" [displayWith]="roomInputOption.displayFn" class="unselectable">
+                <mat-option *ngFor="let option of roomInputOption.filteredOptions | async"
                             [value]="option" class="unselectable">
-                    {{roomInput.data.displayFn(option)}}
+                    {{roomInputOption.displayFn(option)}}
                 </mat-option>
             </mat-autocomplete>
             <mat-error class="unselectable"
-                       *ngIf="hasOptionError_(roomInput.data)">{{getOptionErrorMessage_(roomInput.data)}}
+                       *ngIf="roomInputOption.hasError()">{{roomInputOption.getErrorMessage()}}}
             </mat-error>
         </mat-form-field>
     </mat-dialog-content>

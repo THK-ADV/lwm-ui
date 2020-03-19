@@ -12,7 +12,8 @@ export class FormInputOption<Option> implements FormInputData<string> {
 
     private readonly subs: Subscription[]
     private options: Option[] = []
-    private filteredOptions: Observable<Option[]>
+
+    filteredOptions: Observable<Option[]>
 
     control: Readonly<AbstractControl>
 

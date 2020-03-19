@@ -60,11 +60,11 @@ export class TimetableBlacklistsEditComponent {
         this.subs.push(subscribe(ot, this.updateDataSource))
     }
 
-    private canCreate = (): LWMActionType | undefined => {
+    canCreate = (): LWMActionType | undefined => {
         return this.hasPermission ? 'create' : undefined
     }
 
-    private onCreate = () => {
+    onCreate = () => {
         const mode = DialogMode.create
         const payload: FormPayload<BlacklistProtocol> = {
             headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
@@ -82,7 +82,7 @@ export class TimetableBlacklistsEditComponent {
         )
     }
 
-    private onEdit = (blacklist: Blacklist) => {
+    onEdit = (blacklist: Blacklist) => {
         const mode = DialogMode.edit
         const payload: FormPayload<BlacklistProtocol> = {
             headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
@@ -100,7 +100,7 @@ export class TimetableBlacklistsEditComponent {
         )
     }
 
-    private onDelete = (blacklist: Blacklist) => {
+    onDelete = (blacklist: Blacklist) => {
         const deleteRef = DeleteDialogComponent.instance(
             this.dialog,
             {label: fullBlacklistLabel(blacklist), id: blacklist.id}

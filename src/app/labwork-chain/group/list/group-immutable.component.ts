@@ -12,7 +12,7 @@ export class GroupImmutableComponent implements OnInit {
     @Input() labwork: Readonly<LabworkAtom>
     @Input() scheduleEntries: Readonly<ScheduleEntryAtom[]>
 
-    private headerTitle: string
+    headerTitle: string
 
     constructor() {
         this.scheduleEntries = []

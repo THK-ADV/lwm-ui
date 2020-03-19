@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core'
-import { FormControl } from '@angular/forms'
-import { FormInputOption } from '../shared-dialogs/forms/form.input.option'
-import { UserService } from '../services/user.service'
-import { formatUser } from '../utils/component.utils'
-import { User } from '../models/user.model'
-import { AuthorityAtom } from '../models/authority.model'
-import { Router } from '@angular/router'
+import {Component, Input, OnInit} from '@angular/core'
+import {FormControl} from '@angular/forms'
+import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
+import {UserService} from '../services/user.service'
+import {formatUser} from '../utils/component.utils'
+import {User} from '../models/user.model'
+import {AuthorityAtom} from '../models/authority.model'
+import {Router} from '@angular/router'
 
 @Component({
     selector: 'lwm-search',
@@ -15,8 +15,8 @@ import { Router } from '@angular/router'
 export class SearchComponent implements OnInit {
 
     @Input() auths: AuthorityAtom[]
-    private formInputOption: FormInputOption<User>
-    private control: FormControl
+    formInputOption: FormInputOption<User>
+    control: FormControl
 
     constructor(
         private readonly userService: UserService,
@@ -36,11 +36,12 @@ export class SearchComponent implements OnInit {
         this.formInputOption.bindControl(this.control)
     }
 
-    private userSelected = (student: User) => {
+    userSelected = (student: User) => {
         this.router.navigate(['e/students', student.id])
         this.control.setValue('')
         this.formInputOption.reset()
     }
 
-    private inputClicked = () => this.formInputOption.bindOptionsIfNeeded()
+    inputClicked = () =>
+        this.formInputOption.bindOptionsIfNeeded()
 }

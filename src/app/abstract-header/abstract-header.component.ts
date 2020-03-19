@@ -12,7 +12,7 @@ export class AbstractHeaderComponent implements OnInit {
 
     @Output() performAction: EventEmitter<LWMActionType>
 
-    private actions_: LWMAction[]
+    actions_: LWMAction[]
 
     constructor() {
         this.performAction = new EventEmitter<LWMActionType>()

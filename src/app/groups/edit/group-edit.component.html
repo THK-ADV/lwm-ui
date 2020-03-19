@@ -52,12 +52,12 @@
             <mat-form-field class="mat-form-field-modal" color="primary">
                 <input aria-label="" type="text" [placeholder]="addStudentForm.displayTitle" matInput
                        [formControlName]="addStudentForm.formControlName" [matAutocomplete]="auto">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="addStudentForm.data.displayFn">
-                    <mat-option *ngFor="let option of addStudentForm.data.filteredOptions | async" [value]="option">
-                        {{addStudentForm.data.displayFn(option)}}
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="studentOption.displayFn">
+                    <mat-option *ngFor="let option of studentOption.filteredOptions | async" [value]="option">
+                        {{studentOption.displayFn(option)}}
                     </mat-option>
                 </mat-autocomplete>
-                <mat-error *ngIf="hasOptionError_(addStudentForm.data)">{{getOptionErrorMessage_(addStudentForm.data)}}
+                <mat-error *ngIf="studentOption.hasError()">{{studentOption.getErrorMessage()}}
                 </mat-error>
             </mat-form-field>
         </mat-card-content>

@@ -1,10 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {exists, foldUndefined, nonEmpty} from '../utils/functions'
-import {AssignmentEntryTypeValue, stringToAssignmentEntryTypeValue} from '../models/assignment-plan.model'
+import {nonEmpty} from '../utils/functions'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {MatTableDataSource} from '@angular/material'
-import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {LWMAction, LWMActionType} from '../table-action-button/lwm-actions'
 
 @Component({
@@ -28,9 +27,7 @@ export class ReportCardTableComponent implements OnInit {
 
     }
 
-
-
-    private tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
+    tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
         switch (attr) {
             case 'date':
                 return format(e.date, 'dd.MM.yyyy')
@@ -47,11 +44,11 @@ export class ReportCardTableComponent implements OnInit {
         }
     }
 
-    private performAction = (actionType: LWMActionType, e: ReportCardEntryAtom) =>
+    performAction = (actionType: LWMActionType, e: ReportCardEntryAtom) =>
         this.actionEmitter.emit({actionType: actionType, e: e})
 
 
-    private displayedColumnsFor = () => {
+    displayedColumnsFor = () => {
         const c = this.columns.map(_ => _.attr)
 
         if (nonEmpty(this.actions)) {

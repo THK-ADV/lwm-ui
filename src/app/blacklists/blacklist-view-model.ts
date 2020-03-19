@@ -1,4 +1,4 @@
-import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {Blacklist, BlacklistProtocol} from '../models/blacklist.model'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {Time} from '../models/time.model'

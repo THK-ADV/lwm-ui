@@ -8,7 +8,7 @@ import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {MatDialog, MatSort, MatTableDataSource} from '@angular/material'
-import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {LabworkService} from '../services/labwork.service'
@@ -59,22 +59,22 @@ interface GroupedLabwork {
 })
 export class LabworksComponent implements OnInit, OnDestroy {
 
-    private readonly columns: TableHeaderColumn[] = [
+    readonly columns: TableHeaderColumn[] = [
         {attr: 'labwork.label', title: 'Bezeichnung'},
         {attr: 'applications', title: 'Anmeldungen'},
         {attr: 'labwork.subscribable', title: 'Anmeldbar'},
         {attr: 'labwork.published', title: 'Veröffentlicht'}
     ]
 
-    private labworkActions: LWMAction[]
-    private hasPermission: Readonly<boolean>
+    labworkActions: LWMAction[]
+    hasPermission: Readonly<boolean>
 
-    private course$: Observable<CourseAtom>
-    private currentSemester$: Observable<Semester>
-    private groupedLabworks$: Observable<GroupedLabwork>
+    course$: Observable<CourseAtom>
+    currentSemester$: Observable<Semester>
+    groupedLabworks$: Observable<GroupedLabwork>
 
-    private readonly displayedColumns: string[]
-    private readonly dataSource = new MatTableDataSource<LabworkWithApplications>()
+    readonly displayedColumns: string[]
+    readonly dataSource = new MatTableDataSource<LabworkWithApplications>()
 
     private subs: Subscription[]
 
@@ -200,11 +200,11 @@ export class LabworksComponent implements OnInit, OnDestroy {
         }
     }
 
-    private routeTo(action: LWMActionType, labwork: LabworkAtom) {
+    private routeTo = (action: LWMActionType, labwork: LabworkAtom) => {
         this.router.navigate(['labworks', labwork.id, action], {relativeTo: this.route})
     }
 
-    private delete(labwork: LabworkAtom) {
+    private delete = (labwork: LabworkAtom) => {
         const dialogRef = DeleteDialogComponent
             .instance(this.dialog, {label: `${labwork.label} - ${labwork.semester.abbreviation}`, id: labwork.id})
 
@@ -214,7 +214,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         ))
     }
 
-    private edit(labwork: LabworkAtom) {
+    private edit = (labwork: LabworkAtom) => {
         const s1 = this.openDialog_(DialogMode.edit, labwork, updated => {
             const s2 = subscribe(
                 this.labworkService.update(labwork.course.id, updated, labwork.id),
@@ -227,11 +227,11 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.subs.push(s1)
     }
 
-    private afterDelete(labwork: Labwork) {
+    private afterDelete = (labwork: Labwork) => {
         removeFromDataSource(this.dataSource, this.alertService)(lwa => lwa.labwork.id === labwork.id)
     }
 
-    private afterUpdate(labwork: LabworkAtom) {
+    private afterUpdate = (labwork: LabworkAtom) => {
         this.dataSource.data = this.dataSource.data.map(d => {
             if (d.labwork.id === labwork.id) {
                 d.labwork = labwork
@@ -245,7 +245,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     // TODO this hasStatus copied. build an abstraction?
-    private openDialog_(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
+    private openDialog_ = (mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription => {
         const inputData: FormInput[] = this.makeFormInputData(data)
 
         const payload: FormPayload<LabworkProtocol> = {
@@ -259,17 +259,13 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return subscribe(dialogRef.afterClosed(), next)
     }
 
-    private update(labwork: LabworkAtom, updatedOutput: FormOutputData[]): LabworkProtocol {
-        return withCreateProtocol(updatedOutput, LabworksComponent.empty(), p => {
-            p.semester = labwork.semester.id
-            p.course = labwork.course.id
-            p.degree = labwork.degree.id
-        })
-    }
+    private update = (labwork: LabworkAtom, updatedOutput: FormOutputData[]): LabworkProtocol => withCreateProtocol(updatedOutput, LabworksComponent.empty(), p => {
+        p.semester = labwork.semester.id
+        p.course = labwork.course.id
+        p.degree = labwork.degree.id
+    })
 
-    private create(updatedValues: FormOutputData[]): LabworkProtocol {
-        return createProtocol(updatedValues, LabworksComponent.empty())
-    }
+    private create = (updatedValues: FormOutputData[]): LabworkProtocol => createProtocol(updatedValues, LabworksComponent.empty())
 
     private makeFormInputData(labwork: LabworkAtom | LabworkProtocol): FormInput[] {
         const isModel = isUniqueEntity(labwork)
@@ -328,11 +324,11 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    private canCreate = (): LWMActionType[] => {
+    canCreate = (): LWMActionType[] => {
         return this.hasPermission ? ['create'] : []
     }
 
-    private onCreate(course: CourseAtom) {
+    onCreate = (course: CourseAtom) => {
         const s1 = this.openDialog_(DialogMode.create, LabworksComponent.empty(), procotol => {
             procotol.course = course.id
             const s2 = subscribe(

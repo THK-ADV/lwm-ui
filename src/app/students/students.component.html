@@ -1,4 +1,4 @@
-<h1 *ngIf="student$ | async as student">Notenhefte für {{formatUser_(student)}}</h1>
+<h1 *ngIf="student$ | async as student">Notenhefte für {{formatUser(student)}}</h1>
 
 <ng-container *ngFor="let byCourse of cardsByCourse$ | async | sort: sortByCourse()">
     <h2>{{byCourse.course.abbreviation}}</h2>

@@ -23,10 +23,11 @@ import {switchMap} from 'rxjs/operators'
 export class NavComponent implements OnInit, OnDestroy {
 
     private subs: Subscription[]
-    private moduleAuthorities: AuthorityAtom[]
-    private roleAuthorities: AuthorityAtom[]
-    private configs: Config[]
-    private user: User
+
+    moduleAuthorities: AuthorityAtom[]
+    roleAuthorities: AuthorityAtom[]
+    configs: Config[]
+    user: User
 
     constructor(
         private readonly changeDetectorRef: ChangeDetectorRef,
@@ -48,7 +49,7 @@ export class NavComponent implements OnInit, OnDestroy {
         this.mobileQuery.addListener(this._mobileQueryListener)
     }
 
-    private readonly mobileQuery: MediaQueryList
+    readonly mobileQuery: MediaQueryList
     private readonly _mobileQueryListener: () => void
 
     ngOnInit(): void {
@@ -81,13 +82,13 @@ export class NavComponent implements OnInit, OnDestroy {
             .sort((a, b) => (a.course as CourseAtom).abbreviation < (b.course as CourseAtom).abbreviation ? -1 : 1)
     }
 
-    private hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
+    hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
 
-    private isAdmin = (): boolean => isAdmin(this.roleAuthorities)
+    isAdmin = (): boolean => isAdmin(this.roleAuthorities)
 
-    private getInitials_ = (): string => getInitials(this.user)
+    getInitials = (): string => getInitials(this.user)
 
-    private logout = (): void => {
+    logout = (): void => {
         const $ = from(this.router.navigate(['/'])).pipe(
             switchMap(x => from(this.keycloakService.logout()))
         )
@@ -95,7 +96,7 @@ export class NavComponent implements OnInit, OnDestroy {
         this.subs.push(subscribe($, identity))
     }
 
-    private linkClicked = () => {
+    linkClicked = () => {
         this.alertService.reset()
     }
 }

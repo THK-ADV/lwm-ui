@@ -9,9 +9,9 @@ import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {
     assignmentEntryFormPayload,
     assignmentEntryProtocol,
-    takeoverAssignmentEntries$,
     createAssignmentEntry$,
     deleteAndFetchAssignmentEntry$,
+    takeoverAssignmentEntries$,
     updateAssignmentEntry$
 } from './assignment-entry-view-model'
 import {compose, isEmpty, subscribe} from '../../../utils/functions'
@@ -47,9 +47,10 @@ export class AssignmentPlanEditComponent implements OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private emit = (xs: Readonly<AssignmentEntry[]>) => this.assignmentEntriesUpdate.emit(xs)
+    private emit = (xs: Readonly<AssignmentEntry[]>) =>
+        this.assignmentEntriesUpdate.emit(xs)
 
-    private onCreate = () => {
+    onCreate = () => {
         const addEntry = (): Subscription => {
             const protocol = assignmentEntryProtocol(this.labwork.id)
             const payload = assignmentEntryFormPayload(DialogMode.create, protocol, this.nextAssignmentIndex())
@@ -99,7 +100,7 @@ export class AssignmentPlanEditComponent implements OnDestroy {
         this.subs.push(onCreate0())
     }
 
-    private onEdit = (entry: AssignmentEntry) => {
+    onEdit = (entry: AssignmentEntry) => {
         const payload = assignmentEntryFormPayload(DialogMode.edit, {...entry}, entry.index)
         const update$ = updateAssignmentEntry$(this.labwork.course.id, this.assignmentPlanService)
         const updateEntries = (e: Readonly<AssignmentEntry>) => this.assignmentEntries.map(x => x.id === e.id ? e : x)
@@ -108,7 +109,7 @@ export class AssignmentPlanEditComponent implements OnDestroy {
         this.subs.push(sub)
     }
 
-    private onDelete = (entry: AssignmentEntry) => {
+    onDelete = (entry: AssignmentEntry) => {
         const dialogData = {label: `Termin ${entry.index + 1}. ${entry.label}`, id: entry.id}
         const dialogRef = DeleteDialogComponent.instance(this.dialog, dialogData)
         const delete$ = deleteAndFetchAssignmentEntry$(this.labwork, this.assignmentPlanService)
@@ -117,9 +118,10 @@ export class AssignmentPlanEditComponent implements OnDestroy {
         this.subs.push(sub)
     }
 
-    private canCreate = (): LWMActionType | undefined => {
+    canCreate = (): LWMActionType | undefined => {
         return this.hasPermission ? 'create' : undefined
     }
 
-    private nextAssignmentIndex = (): number => this.assignmentEntries.length
+    private nextAssignmentIndex = (): number =>
+        this.assignmentEntries.length
 }

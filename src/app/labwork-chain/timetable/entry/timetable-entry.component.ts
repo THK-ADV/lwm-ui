@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
+import {TableHeaderColumn} from '../../../abstract-crud/old/old-abstract-crud.component'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {Observable} from 'rxjs'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
@@ -14,7 +14,7 @@ import {Room} from '../../../models/room.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {isRoom, isUser} from '../../../utils/type.check.utils'
 import {createAction, deleteAction, LWMAction} from '../../../table-action-button/lwm-actions'
-import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetControl} from '../../../utils/form-control-utils'
+import {foreachOption, isOption, resetControl} from '../../../utils/form-control-utils'
 
 export interface Delete {
     readonly kind: 'delete'
@@ -41,7 +41,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
 
     constructor(
         private dialogRef: MatDialogRef<TimetableEntryComponent, TimetableEntryDialogResult>,
-        @Inject(MAT_DIALOG_DATA) private payload: {
+        @Inject(MAT_DIALOG_DATA) public payload: {
             currentRoom?: Room,
             allRooms$: Readonly<Observable<Room[]>>,
             currentSupervisors: User[],
@@ -63,29 +63,34 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         this.calcPossibleRooms()
 
         this.formGroup = new FormGroup({})
-        this.supervisorInput = this.createAndAddSupervisorInput()
-        this.roomInput = this.createAndAddRoomInput()
+
+        const [supervisorInput, supervisorInputOption] = this.createAndAddSupervisorInput()
+        this.supervisorInput = supervisorInput
+        this.supervisorInputOption = supervisorInputOption
+
+        const [roomInput, roomInputOption] = this.createAndAddRoomInput()
+        this.roomInput = roomInput
+        this.roomInputOption = roomInputOption
     }
 
-    protected readonly displayedColumns: string[]
-    protected readonly columns: TableHeaderColumn[]
-    private readonly headerTitle: string
-    private readonly submitTitle: string
-    private readonly deleteTitle: string
-    private readonly dataSource = new MatTableDataSource<User>()
+    readonly displayedColumns: string[]
+    readonly columns: TableHeaderColumn[]
+    readonly headerTitle: string
+    readonly submitTitle: string
+    readonly deleteTitle: string
+    readonly dataSource = new MatTableDataSource<User>()
 
-    private readonly formGroup: FormGroup
-    private readonly supervisorInput: FormInput
-    private readonly roomInput: FormInput
+    readonly formGroup: FormGroup
+    readonly supervisorInput: FormInput
+    supervisorInputOption: FormInputOption<User>
+    readonly roomInput: FormInput
+    readonly roomInputOption: FormInputOption<Room>
 
-    private readonly addAction: LWMAction
-    private readonly deleteAction: LWMAction
+    readonly addAction: LWMAction
+    readonly deleteAction: LWMAction
 
-    private possibleSupervisors$: Observable<User[]>
-    private possibleRooms$: Observable<Room[]>
-
-    private readonly hasOptionError_ = hasOptionError
-    private readonly getOptionErrorMessage_ = getOptionErrorMessage
+    possibleSupervisors$: Observable<User[]>
+    possibleRooms$: Observable<Room[]>
 
     static instance(
         dialog: MatDialog,
@@ -107,13 +112,14 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         })
     }
 
-    private createAndAddSupervisorInput = (): FormInput => {
+    private createAndAddSupervisorInput = (): [FormInput, FormInputOption<User>] => {
         const fcName = 'supervisor'
+        const supervisorInputOption = new FormInputOption<User>(fcName, invalidChoiceKey, false, formatUser, this.possibleSupervisors$)
         const supervisorInput = {
             formControlName: fcName,
             displayTitle: 'Mitarbeiter',
             isDisabled: false,
-            data: new FormInputOption<User>(fcName, invalidChoiceKey, false, formatUser, this.possibleSupervisors$)
+            data: supervisorInputOption
         }
 
         this.formGroup.addControl(
@@ -121,28 +127,29 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
             new FormControl(supervisorInput.data.value, supervisorInput.data.validator)
         )
 
-        return supervisorInput
+        return [supervisorInput, supervisorInputOption]
     }
 
-    private createAndAddRoomInput = (): FormInput => {
+    private createAndAddRoomInput = (): [FormInput, FormInputOption<Room>] => {
         const fcName = 'room'
+        const roomInputOption = new FormInputOption<Room>(
+            fcName,
+            invalidChoiceKey,
+            true,
+            r => r.label,
+            this.possibleRooms$,
+            undefined,
+            rooms => foldUndefined(
+                this.payload.currentRoom,
+                c => rooms.find(r => r.id === c.id),
+                () => undefined
+            )
+        )
         const roomInput = {
             formControlName: fcName,
             displayTitle: 'Raum',
             isDisabled: false,
-            data: new FormInputOption<Room>(
-                fcName,
-                invalidChoiceKey,
-                true,
-                r => r.label,
-                this.possibleRooms$,
-                undefined,
-                rooms => foldUndefined(
-                    this.payload.currentRoom,
-                    c =>  rooms.find(r => r.id === c.id),
-                    () => undefined
-                )
-            )
+            data: roomInputOption
         }
 
         this.formGroup.addControl(
@@ -150,7 +157,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
             new FormControl(roomInput.data.value, roomInput.data.validator)
         )
 
-        return roomInput
+        return [roomInput, roomInputOption]
     }
 
     private calcPossibleSupervisors = () => {
@@ -175,7 +182,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         foreachOption(this.inputs(), i => i.onDestroy())
     }
 
-    private prepareTableContent = (user: User, attr: string): string => {
+    prepareTableContent = (user: User, attr: string): string => {
         switch (attr) {
             case 'name':
                 return `${user.lastname}, ${user.firstname}`
@@ -184,23 +191,19 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         }
     }
 
-    private userIsEmpty = (): boolean => {
-        return typeof this.userFormControl().value === 'string' && this.userFormControl().value === ''
-    }
-
-    private userFormControl = (): AbstractControl => {
+    userFormControl = (): AbstractControl => {
         return this.formGroup.controls[this.supervisorInput.formControlName]
     }
 
-    private roomFormControl = (): AbstractControl => {
+    roomFormControl = (): AbstractControl => {
         return this.formGroup.controls[this.roomInput.formControlName]
     }
 
-    private validUserInControl = (): boolean => {
+    validUserInControl = (): boolean => {
         return isUser(this.userFormControl().value)
     }
 
-    private add = () => {
+    add = () => {
         const supervisor = this.userFormControl().value
 
         if (!isUser(supervisor)) {
@@ -211,20 +214,19 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         this.updateEverything()
     }
 
-    private remove = (supervisor: User) => {
+    remove = (supervisor: User) => {
         this.payload.currentSupervisors = this.payload.currentSupervisors.filter(x => x.id !== supervisor.id)
         this.updateEverything()
     }
 
-    private cancel = () => {
-        this.dialogRef.close({kind: 'cancel'})
-    }
+    cancel = () => this.dialogRef.close({kind: 'cancel'})
 
     private updateDataSource = () => this.dataSource.data = this.payload.currentSupervisors
 
     private updateSupervisorInput = () => {
         if (isOption(this.supervisorInput.data)) {
             this.supervisorInput.data.bindOptions(this.possibleSupervisors$)
+            this.supervisorInputOption = this.supervisorInput.data
         }
     }
 
@@ -235,7 +237,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         this.updateSupervisorInput()
     }
 
-    private submit = () => {
+    submit = () => {
         const room = this.roomFormControl().value
 
         if (this.formGroup.valid && isRoom(room)) {
@@ -245,9 +247,7 @@ export class TimetableEntryComponent implements OnInit, OnDestroy {
         }
     }
 
-    private canDelete = () => this.payload.mode === DialogMode.edit
+    canDelete = () => this.payload.mode === DialogMode.edit
 
-    private delete = () => {
-        this.dialogRef.close({kind: 'delete'})
-    }
+    delete = () => this.dialogRef.close({kind: 'delete'})
 }

@@ -27,7 +27,7 @@ export class DecisionDialogComponent {
 
     constructor(
         private dialogRef: MatDialogRef<DecisionDialogComponent, Decision>,
-        @Inject(MAT_DIALOG_DATA) private payload: DecisionPayload
+        @Inject(MAT_DIALOG_DATA) readonly payload: DecisionPayload
     ) {
     }
 
@@ -42,9 +42,9 @@ export class DecisionDialogComponent {
         })
     }
 
-    private cancel = () => this.dialogRef.close(undefined)
+    cancel = () => this.dialogRef.close(undefined)
 
-    private first = () => this.dialogRef.close({kind: 'first', text: this.payload.first})
+    first = () => this.dialogRef.close({kind: 'first', text: this.payload.first})
 
-    private second = () => this.dialogRef.close({kind: 'second', text: this.payload.second})
+    second = () => this.dialogRef.close({kind: 'second', text: this.payload.second})
 }
