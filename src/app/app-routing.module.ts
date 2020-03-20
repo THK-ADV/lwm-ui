@@ -15,6 +15,7 @@ import {SemesterComponent} from './semester/semester.component'
 import {RoomComponent} from './room/room.component'
 import {UserComponent} from './user/user.component'
 import {CourseComponent} from './course/course.component'
+import {DegreeComponent} from './degree/degree.component'
 
 const routes: Routes = [
     {
@@ -39,10 +40,10 @@ const routes: Routes = [
                 path: 'rooms',
                 component: RoomComponent
             },
-            // {
-            //     path: 'degrees',
-            //     component: DegreeComponent
-            // },
+            {
+                path: 'degrees',
+                component: DegreeComponent
+            },
             {
                 path: 'semesters',
                 component: SemesterComponent

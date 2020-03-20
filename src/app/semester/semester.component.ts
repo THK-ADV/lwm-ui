@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core'
+import {Component} from '@angular/core'
 import {Semester, SemesterProtocol} from '../models/semester.model'
 import {Observable} from 'rxjs'
 import {SemesterService} from '../services/semester.service'

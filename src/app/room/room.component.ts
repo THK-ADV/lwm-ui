@@ -42,8 +42,7 @@ export class RoomComponent {
             },
             commitProtocol: (p, s) => ({...p, label: s?.label ?? p.label}),
             create: service.create,
-            update: service.update,
-            compoundFromGroupValidator: () => undefined
+            update: service.update
         }
         this.deletable = {
             titleForDialog: _ => _.label,

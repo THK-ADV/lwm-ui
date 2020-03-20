@@ -24,7 +24,7 @@ export interface Creatable<Protocol, Model extends UniqueEntity> {
     emptyProtocol: () => Protocol
     makeInput: (attr: string, entity: Protocol | Model) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined
     commitProtocol: (protocol: Protocol, existing?: Model) => Protocol
-    compoundFromGroupValidator: (data: FormInput[]) => ValidatorFn | undefined
+    compoundFromGroupValidator?: (data: FormInput[]) => ValidatorFn | undefined
     create?: (protocol: Protocol) => Observable<Model>
     update?: (protocol: Protocol, id: string) => Observable<Model>
 }
@@ -127,7 +127,7 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> impleme
             headerTitle: dialogTitle(mode, this.creatable.dialogTitle),
             submitTitle: dialogSubmitTitle(mode),
             data: input,
-            composedFromGroupValidator: this.creatable.compoundFromGroupValidator(input),
+            composedFromGroupValidator: mapUndefined(this.creatable.compoundFromGroupValidator, f => f(input)),
             makeProtocol: output => this.creatable.commitProtocol( // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
                 createProtocol(output, emptyProtocol),
                 isUniqueEntity(entity) ? entity : undefined

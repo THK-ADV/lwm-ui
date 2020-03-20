@@ -78,6 +78,7 @@ import {RoomComponent} from './room/room.component'
 import {UserComponent} from './user/user.component'
 import {AbstractTableComponent} from './abstract-table/abstract-table.component'
 import {CourseComponent} from './course/course.component'
+import {DegreeComponent} from './degree/degree.component'
 
 @NgModule({
     declarations: [
@@ -137,7 +138,8 @@ import {CourseComponent} from './course/course.component'
         RoomComponent,
         UserComponent,
         AbstractTableComponent,
-        CourseComponent
+        CourseComponent,
+        DegreeComponent
     ],
     imports: [
         BrowserModule,

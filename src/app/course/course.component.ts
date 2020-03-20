@@ -50,8 +50,7 @@ export class CourseComponent {
                 lecturer: s?.lecturer?.id ?? p.lecturer
             }),
             create: courseService.create,
-            update: courseService.update,
-            compoundFromGroupValidator: () => undefined
+            update: courseService.update
         }
     }
 }
