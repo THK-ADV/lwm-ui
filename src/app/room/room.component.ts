@@ -15,7 +15,6 @@ import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
 export class RoomComponent {
 
     columns: TableHeaderColumn[]
-    tableContent: (model: Readonly<Room>, attr: string) => string
     rooms$: Observable<Room[]>
     creatable: Creatable<RoomProtocol, Room>
     deletable: Deletable<Room>
@@ -27,7 +26,6 @@ export class RoomComponent {
             {attr: 'capacity', title: 'Kapazität'}
         ]
 
-        this.tableContent = (r, attr) => r[attr]
         this.rooms$ = service.getAll()
         this.creatable = {
             dialogTitle: 'Raum',

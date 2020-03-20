@@ -1,46 +1,46 @@
 import {AlertService} from '../services/alert.service'
 import {MatTableDataSource} from '@angular/material'
 
-export function removeFromDataSource<M>
-(dataSource: MatTableDataSource<M>, alertService?: AlertService): (removeIf: (m: M) => boolean) => void {
-    return p => {
-        let removed
+export const removeFromDataSource = <M>(
+    ds: MatTableDataSource<M>,
+    alert?: AlertService
+): (removeIf: (m: M) => boolean) => void => p => {
+    let removed
 
-        dataSource.data = dataSource.data.filter(m => {
-            const shouldRemove = p(m)
+    ds.data = ds.data.filter(m => {
+        const shouldRemove = p(m)
 
-            if (shouldRemove) {
-                removed = m
-            }
-
-            return !shouldRemove
-        })
-
-        if (alertService && removed) {
-            alertService.reportAlert('success', 'deleted: ' + JSON.stringify(removed))
+        if (shouldRemove) {
+            removed = m
         }
+
+        return !shouldRemove
+    })
+
+    if (alert && removed) {
+        alert.reportAlert('success', 'deleted: ' + JSON.stringify(removed))
     }
 }
 
-export function addToDataSource<M>
-(dataSource: MatTableDataSource<M>, alertService?: AlertService): (m: M) => void {
-    return model => {
-        dataSource.data = dataSource.data.concat(model)
-        if (alertService) {
-            alertService.reportAlert('success', 'created: ' + JSON.stringify(model))
-        }
+export const addToDataSource = <M>(
+    ds: MatTableDataSource<M>,
+    alert?: AlertService
+): (m: M) => void => model => {
+    ds.data = ds.data.concat(model)
+    if (alert) {
+        alert.reportAlert('success', 'created: ' + JSON.stringify(model))
     }
 }
 
-export function updateDataSource<M>
-(dataSource: MatTableDataSource<M>, alertService?: AlertService): (model: M, match: (lhs: M, rhs: M) => boolean) => void {
-    return (m, p) => {
-        dataSource.data = dataSource.data.map(d => {
-            return p(d, m) ? m : d
-        })
+export const updateDataSource = <M>(
+    ds: MatTableDataSource<M>,
+    alert?: AlertService
+): (model: M, match: (lhs: M, rhs: M) => boolean) => void => (m, p) => {
+    ds.data = ds.data.map(d => {
+        return p(d, m) ? m : d
+    })
 
-        if (alertService) {
-            alertService.reportAlert('success', 'updated: ' + JSON.stringify(m))
-        }
+    if (alert) {
+        alert.reportAlert('success', 'updated: ' + JSON.stringify(m))
     }
 }

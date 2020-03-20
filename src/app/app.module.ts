@@ -75,6 +75,8 @@ import {EntryTypeBonusFieldComponent} from './report-card-table/entry-type-bonus
 import {SemesterComponent} from './semester/semester.component'
 import {AbstractCrudComponent} from './abstract-crud/abstract-crud.component'
 import {RoomComponent} from './room/room.component'
+import {UserComponent} from './user/user.component'
+import {AbstractTableComponent} from './abstract-table/abstract-table.component'
 
 @NgModule({
     declarations: [
@@ -131,7 +133,9 @@ import {RoomComponent} from './room/room.component'
         EntryTypeBonusFieldComponent,
         SemesterComponent,
         AbstractCrudComponent,
-        RoomComponent
+        RoomComponent,
+        UserComponent,
+        AbstractTableComponent
     ],
     imports: [
         BrowserModule,

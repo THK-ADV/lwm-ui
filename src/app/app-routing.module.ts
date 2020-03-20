@@ -13,6 +13,7 @@ import {UserAuthorityResolver} from './security/user-authority-resolver'
 import {StudentsComponent} from './students/students.component'
 import {SemesterComponent} from './semester/semester.component'
 import {RoomComponent} from './room/room.component'
+import {UserComponent} from './user/user.component'
 
 const routes: Routes = [
     {
@@ -25,10 +26,10 @@ const routes: Routes = [
         path: 'e',
         canActivate: [EmployeeStatusGuard],
         children: [
-            // {
-            //     path: 'authorities',
-            //     component: UsersComponent
-            // },
+            {
+                path: 'authorities',
+                component: UserComponent
+            },
             // {
             //     path: 'modules',
             //     component: CoursesComponent
