@@ -74,6 +74,7 @@ import {TernaryEntryTypeToggleComponent} from './report-card-table/ternary-entry
 import {EntryTypeBonusFieldComponent} from './report-card-table/entry-type-bonus-field/entry-type-bonus-field.component'
 import {SemesterComponent} from './semester/semester.component'
 import {AbstractCrudComponent} from './abstract-crud/abstract-crud.component'
+import {RoomComponent} from './room/room.component'
 
 @NgModule({
     declarations: [
@@ -129,7 +130,8 @@ import {AbstractCrudComponent} from './abstract-crud/abstract-crud.component'
         TernaryEntryTypeToggleComponent,
         EntryTypeBonusFieldComponent,
         SemesterComponent,
-        AbstractCrudComponent
+        AbstractCrudComponent,
+        RoomComponent
     ],
     imports: [
         BrowserModule,

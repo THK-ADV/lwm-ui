@@ -12,6 +12,7 @@ import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
 import {UserAuthorityResolver} from './security/user-authority-resolver'
 import {StudentsComponent} from './students/students.component'
 import {SemesterComponent} from './semester/semester.component'
+import {RoomComponent} from './room/room.component'
 
 const routes: Routes = [
     {
@@ -32,10 +33,10 @@ const routes: Routes = [
             //     path: 'modules',
             //     component: CoursesComponent
             // },
-            // {
-            //     path: 'rooms',
-            //     component: RoomComponent
-            // },
+            {
+                path: 'rooms',
+                component: RoomComponent
+            },
             // {
             //     path: 'degrees',
             //     component: DegreeComponent

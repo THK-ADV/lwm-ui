@@ -21,6 +21,7 @@ export interface TableHeaderColumn {
 }
 
 export interface Creatable<Protocol, Model extends UniqueEntity> {
+    dialogTitle: string
     emptyProtocol: () => Protocol
     makeInput: (attr: string, entity: Protocol | Model) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined
     commitProtocol: (protocol: Protocol, existing?: Model) => Protocol
@@ -141,7 +142,7 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> impleme
         }))
 
         const formPayload: FormPayload<Protocol> = {
-            headerTitle: dialogTitle(mode, this.headerTitle),
+            headerTitle: dialogTitle(mode, this.creatable.dialogTitle),
             submitTitle: dialogSubmitTitle(mode),
             data: input,
             composedFromGroupValidator: this.creatable.compoundFromGroupValidator(input),

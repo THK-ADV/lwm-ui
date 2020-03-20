@@ -15,7 +15,7 @@ import {isUniqueEntity} from '../models/unique.entity.model'
     templateUrl: './semester.component.html',
     styleUrls: ['./semester.component.scss']
 })
-export class SemesterComponent implements OnInit {
+export class SemesterComponent {
 
     columns: TableHeaderColumn[]
     tableContent: (model: Readonly<Semester>, attr: string) => string
@@ -73,6 +73,7 @@ export class SemesterComponent implements OnInit {
         }
         this.semesters$ = service.getAll()
         this.creatable = {
+            dialogTitle: 'Semester',
             emptyProtocol: () => ({abbreviation: '', end: '', examStart: '', label: '', start: ''}),
             makeInput: (attr, e) => {
                 switch (attr) {
@@ -108,8 +109,5 @@ export class SemesterComponent implements OnInit {
             titleForDialog: _ => _.label,
             delete: service.delete
         }
-    }
-
-    ngOnInit(): void {
     }
 }
