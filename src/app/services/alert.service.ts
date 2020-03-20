@@ -1,7 +1,15 @@
 import {Injectable} from '@angular/core'
 import {LWMError} from './http.service'
 
-type AlertType = 'success' | 'info' | 'warning' | 'danger'
+type AlertType =
+    'success' |
+    'info' |
+    'warning' |
+    'danger' |
+    'primary' |
+    'secondary' |
+    'light' |
+    'dark'
 
 export interface Alert {
     type: AlertType
@@ -11,7 +19,7 @@ export interface Alert {
 @Injectable({
     providedIn: 'root'
 })
-export class AlertService { // TODO dismiss after a few seconds
+export class AlertService { // TODO dismiss after a few seconds https://ng-bootstrap.github.io/#/components/alert/examples
 
     private alerts: Alert[]
 
@@ -19,23 +27,21 @@ export class AlertService { // TODO dismiss after a few seconds
         this.reset()
     }
 
-    reportAlert(type: AlertType, message: string) {
+    reportAlert = (type: AlertType, message: string) =>
         this.alerts.push({type: type, message: message})
-    }
 
-    reportError(error: LWMError) {
+    reportLWMError = (error: LWMError) =>
         this.reportAlert('danger', `${error.message} (status: ${error.status})`)
-    }
 
-    getAlerts(): Alert[] {
-        return this.alerts
-    }
+    reportError = (error: Error) =>
+        this.reportAlert('danger', error.message)
 
-    close(alert: Alert) {
+    getAlerts = (): Alert[] =>
+        this.alerts
+
+    close = (alert: Alert) =>
         this.alerts.splice(this.alerts.indexOf(alert), 1)
-    }
 
-    reset() {
+    reset = () =>
         this.alerts = []
-    }
 }

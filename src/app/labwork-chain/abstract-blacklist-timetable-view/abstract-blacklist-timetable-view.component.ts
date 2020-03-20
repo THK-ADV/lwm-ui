@@ -3,10 +3,10 @@ import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
 import {MatTableDataSource} from '@angular/material'
 import {Blacklist} from '../../models/blacklist.model'
-import {TableHeaderColumn} from '../../abstract-crud/old/old-abstract-crud.component'
 import {deleteAction, editAction, LWMAction, LWMActionType} from '../../table-action-button/lwm-actions'
 import {formatBlacklistTableEntry, localBlacklistsColumns} from '../../blacklists/blacklist-view-model'
 import {dateOrderingASC, foldUndefined} from '../../utils/functions'
+import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-abstract-blacklist-timetable-view',

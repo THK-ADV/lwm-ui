@@ -6,7 +6,6 @@ import {AuthorityService} from '../services/authority.service'
 import {UserService} from '../services/user.service'
 import {RoleService} from '../services/role.service'
 import {AlertService} from '../services/alert.service'
-import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {AuthorityAtom, AuthorityProtocol} from '../models/authority.model'
 import {Subscription} from 'rxjs'
 import {User} from '../models/user.model'
@@ -19,6 +18,7 @@ import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {isRole, isUser} from '../utils/type.check.utils'
 import {foreachOption, isOption, resetControl} from '../utils/form-control-utils'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-course-authority-dialog',

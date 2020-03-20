@@ -3,7 +3,6 @@ import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {GroupAtom} from '../../models/group.model'
 import {Observable, Subscription} from 'rxjs'
-import {TableHeaderColumn} from '../../abstract-crud/old/old-abstract-crud.component'
 import {User} from '../../models/user.model'
 import {AlertService} from '../../services/alert.service'
 import {addToDataSource, removeFromDataSource} from '../../shared-dialogs/dataSource.update'
@@ -16,6 +15,7 @@ import {map, tap} from 'rxjs/operators'
 import {createAction, deleteAction, LWMAction, swapAction} from '../../table-action-button/lwm-actions'
 import {formatUser} from '../../utils/component.utils'
 import {foreachOption, isOption, resetControl} from '../../utils/form-control-utils'
+import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-group-edit',

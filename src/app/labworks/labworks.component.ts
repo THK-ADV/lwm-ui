@@ -8,7 +8,6 @@ import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {MatDialog, MatSort, MatTableDataSource} from '@angular/material'
-import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {LabworkService} from '../services/labwork.service'
@@ -40,6 +39,7 @@ import {
 import {openDialog} from '../shared-dialogs/dialog-open-combinator'
 import {userAuths} from '../security/user-authority-resolver'
 import {isAdmin, isCourseManager} from '../utils/role-checker'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom

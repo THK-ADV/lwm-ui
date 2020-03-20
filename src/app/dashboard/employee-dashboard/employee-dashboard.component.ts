@@ -10,7 +10,7 @@ import {ActivatedRoute} from '@angular/router'
     styleUrls: ['./employee-dashboard.component.scss']
 })
 export class EmployeeDashboardComponent implements OnInit {
-    private dashboard$: Observable<EmployeeDashboard>
+    dashboard$: Observable<EmployeeDashboard>
 
     constructor(
         private readonly dashboardService: DashboardService,

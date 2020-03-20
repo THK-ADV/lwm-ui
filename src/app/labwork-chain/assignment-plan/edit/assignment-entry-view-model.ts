@@ -72,7 +72,7 @@ const updateProtocol = (p: AssignmentEntryProtocol): (data: FormOutputData[]) =>
         const supp = suppFcName()
 
         data.forEach(d => {
-            switch (d.formControlName) {
+            switch (d.attr) {
                 case label:
                     p[label] = d.value
                     break

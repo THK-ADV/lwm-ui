@@ -38,7 +38,7 @@ export class HttpService {
         const msg = error.error.message
         const lwmError = {status: status, message: msg}
 
-        this.alertService.reportError(lwmError)
+        this.alertService.reportLWMError(lwmError)
 
         return lwmError
     }

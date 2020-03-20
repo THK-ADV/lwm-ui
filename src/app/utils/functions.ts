@@ -68,9 +68,11 @@ export function subscribe<T>(observable: Observable<T>, next: (t: T) => void): S
     })
 }
 
-export const foldUndefined = <T, U>(t: T | undefined, f: (t: T) => U, nil: () => U): U => t !== undefined ? f(t) : nil()
+export const foldUndefined = <T, U>(t: T | undefined, f: (t: T) => U, nil: () => U): U =>
+    t !== undefined ? f(t) : nil()
 
-export const mapUndefined = <T, U>(t: T | undefined, f: (t: T) => U): U | undefined => t !== undefined ? f(t) : undefined
+export const mapUndefined = <T, U>(t: T | undefined, f: (t: T) => U): U | undefined =>
+    foldUndefined(t, f, () => undefined)
 
 export const parseUnsafeBoolean = (any: any): boolean => !!any
 

@@ -1,5 +1,4 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {TableHeaderColumn} from '../../../abstract-crud/old/old-abstract-crud.component'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {Observable} from 'rxjs'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
@@ -15,6 +14,7 @@ import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialog
 import {isRoom, isUser} from '../../../utils/type.check.utils'
 import {createAction, deleteAction, LWMAction} from '../../../table-action-button/lwm-actions'
 import {foreachOption, isOption, resetControl} from '../../../utils/form-control-utils'
+import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 
 export interface Delete {
     readonly kind: 'delete'

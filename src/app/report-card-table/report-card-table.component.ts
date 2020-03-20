@@ -3,8 +3,8 @@ import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {nonEmpty} from '../utils/functions'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {MatTableDataSource} from '@angular/material'
-import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {LWMAction, LWMActionType} from '../table-action-button/lwm-actions'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-report-card-table',

@@ -13,13 +13,13 @@ import {_groupBy, compose, dateOrderingDESC, nonEmpty} from '../utils/functions'
 import {LabworkService} from '../services/labwork.service'
 import {CourseAtom} from '../models/course.model'
 import {LabworkAtom} from '../models/labwork.model'
-import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
 import {LWMActionType, rescheduleAction} from '../table-action-button/lwm-actions'
 import {assignmentEntryTypeSortingF, AssignmentEntryTypeValue, stringToAssignmentEntryTypeValue} from '../models/assignment-plan.model'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 interface ReportCardsByLabwork {
     labwork: LabworkAtom,

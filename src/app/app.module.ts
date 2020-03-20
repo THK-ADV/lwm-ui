@@ -72,6 +72,8 @@ import {SortPipe} from './pipe/sort.pipe'
 import {ReportCardTableComponent} from './report-card-table/report-card-table.component'
 import {TernaryEntryTypeToggleComponent} from './report-card-table/ternary-entry-type-toggle/ternary-entry-type-toggle.component'
 import {EntryTypeBonusFieldComponent} from './report-card-table/entry-type-bonus-field/entry-type-bonus-field.component'
+import {SemesterComponent} from './semester/semester.component'
+import {AbstractCrudComponent} from './abstract-crud/abstract-crud.component'
 
 @NgModule({
     declarations: [
@@ -125,7 +127,9 @@ import {EntryTypeBonusFieldComponent} from './report-card-table/entry-type-bonus
         SortPipe,
         ReportCardTableComponent,
         TernaryEntryTypeToggleComponent,
-        EntryTypeBonusFieldComponent
+        EntryTypeBonusFieldComponent,
+        SemesterComponent,
+        AbstractCrudComponent
     ],
     imports: [
         BrowserModule,

@@ -4,7 +4,6 @@ import {User} from '../../models/user.model'
 import {AuthorityService} from '../../services/authority.service'
 import {AuthorityAtom, AuthorityProtocol} from '../../models/authority.model'
 import {Observable, Subscription} from 'rxjs'
-import {TableHeaderColumn} from '../../abstract-crud/old/old-abstract-crud.component'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
 import {CourseAtom} from '../../models/course.model'
 import {CourseService} from '../../services/course.service'
@@ -18,6 +17,7 @@ import {addToDataSource} from '../../shared-dialogs/dataSource.update'
 import {resetControls} from '../../utils/form-control-utils'
 import {LWMColor} from '../../utils/colors'
 import {hasRole} from '../../utils/role-checker'
+import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 
 export interface StandardRole {
     label: UserRole

@@ -2,7 +2,7 @@ import {FormOutputData} from '../shared-dialogs/create-update/create-update-dial
 
 export function createProtocol<Protocol>(output: FormOutputData[], empty: Protocol): Protocol {
     return output.reduce((json, data) => {
-        json[data.formControlName] = data.value
+        json[data.attr] = data.value
         return json
     }, empty)
 }

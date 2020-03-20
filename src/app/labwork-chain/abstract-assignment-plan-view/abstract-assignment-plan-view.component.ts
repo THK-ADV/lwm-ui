@@ -2,9 +2,9 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
 import {AssignmentEntry, sortedAssignmentPlanEntryTypes} from '../../models/assignment-plan.model'
 import {MatTableDataSource} from '@angular/material'
-import {TableHeaderColumn} from '../../abstract-crud/old/old-abstract-crud.component'
 import {LWMActionType} from '../../table-action-button/lwm-actions'
 import {foldUndefined} from '../../utils/functions'
+import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-abstract-assignment-plan-view',

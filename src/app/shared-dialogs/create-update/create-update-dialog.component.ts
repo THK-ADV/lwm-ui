@@ -6,10 +6,10 @@ import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
 import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
 import {foreachOption, getOptionErrorMessage, hasOptionError} from '../../utils/form-control-utils'
-import {parseUnsafeBoolean, parseUnsafeNumber} from '../../utils/functions'
+import {mapUndefined, parseUnsafeBoolean, parseUnsafeNumber} from '../../utils/functions'
 
 export interface FormOutputData {
-    formControlName: string
+    attr: string
     value: FormDataType
 }
 
@@ -58,11 +58,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
             this.formGroup.addControl(d.formControlName, fc)
         })
 
-        const customValidator = payload.composedFromGroupValidator
-
-        if (customValidator) {
-            this.formGroup.setValidators(customValidator)
-        }
+        mapUndefined(payload.composedFromGroupValidator, v => this.formGroup.setValidators(v))
     }
 
     ngOnInit(): void {
@@ -82,7 +78,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
             const updatedValues: FormOutputData[] = this.payload.data
                 .filter(d => !d.isDisabled)
                 .map(d => ({
-                    formControlName: d.formControlName,
+                    attr: d.formControlName,
                     value: this.convertToType(d.data.type, this.formGroup.controls[d.formControlName].value)
                 }))
 

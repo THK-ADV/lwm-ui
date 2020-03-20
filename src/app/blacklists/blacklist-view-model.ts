@@ -1,4 +1,3 @@
-import {TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 import {Blacklist, BlacklistProtocol} from '../models/blacklist.model'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {Time} from '../models/time.model'
@@ -10,6 +9,7 @@ import {isUniqueEntity} from '../models/unique.entity.model'
 import {withCreateProtocol} from '../models/protocol.model'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isFullDay} from '../labwork-chain/timetable-blacklists/timetable-blacklists-view-model'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 export const localBlacklistsColumns = (): TableHeaderColumn[] => {
     return [
