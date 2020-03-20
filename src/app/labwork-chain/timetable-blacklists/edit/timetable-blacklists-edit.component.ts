@@ -70,7 +70,7 @@ export class TimetableBlacklistsEditComponent {
             headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
             submitTitle: dialogSubmitTitle(mode),
             data: localBlacklistCreationInputData(`${this.labwork.label}, ${this.labwork.semester.abbreviation}`),
-            makeProtocol: createLocalBlacklistFromOutputData
+            makeProtocol: createLocalBlacklistFromOutputData  // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
         }
 
         this.updateDataSource$(
@@ -88,7 +88,7 @@ export class TimetableBlacklistsEditComponent {
             headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
             submitTitle: dialogSubmitTitle(mode),
             data: localBlacklistInputData(blacklist, true),
-            makeProtocol: updateLocalBlacklistFromOutputData(blacklist)
+            makeProtocol: updateLocalBlacklistFromOutputData(blacklist) // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
         }
 
         this.updateDataSource$(

@@ -77,6 +77,7 @@ import {AbstractCrudComponent} from './abstract-crud/abstract-crud.component'
 import {RoomComponent} from './room/room.component'
 import {UserComponent} from './user/user.component'
 import {AbstractTableComponent} from './abstract-table/abstract-table.component'
+import {CourseComponent} from './course/course.component'
 
 @NgModule({
     declarations: [
@@ -135,7 +136,8 @@ import {AbstractTableComponent} from './abstract-table/abstract-table.component'
         AbstractCrudComponent,
         RoomComponent,
         UserComponent,
-        AbstractTableComponent
+        AbstractTableComponent,
+        CourseComponent
     ],
     imports: [
         BrowserModule,

@@ -251,7 +251,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         const payload: FormPayload<LabworkProtocol> = {
             headerTitle: dialogTitle(mode, 'Praktikum'),
             submitTitle: dialogSubmitTitle(mode),
-            data: inputData,
+            data: inputData, // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
             makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
         }
 

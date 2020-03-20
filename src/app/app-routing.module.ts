@@ -14,6 +14,7 @@ import {StudentsComponent} from './students/students.component'
 import {SemesterComponent} from './semester/semester.component'
 import {RoomComponent} from './room/room.component'
 import {UserComponent} from './user/user.component'
+import {CourseComponent} from './course/course.component'
 
 const routes: Routes = [
     {
@@ -30,10 +31,10 @@ const routes: Routes = [
                 path: 'authorities',
                 component: UserComponent
             },
-            // {
-            //     path: 'modules',
-            //     component: CoursesComponent
-            // },
+            {
+                path: 'modules',
+                component: CourseComponent
+            },
             {
                 path: 'rooms',
                 component: RoomComponent

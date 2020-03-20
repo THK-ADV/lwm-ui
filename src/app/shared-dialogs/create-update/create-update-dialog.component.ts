@@ -76,7 +76,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
     onSubmit() {
         if (this.formGroup.valid) {
             const updatedValues: FormOutputData[] = this.payload.data
-                .filter(d => !d.isDisabled)
+                .filter(d => !d.isDisabled) // TODO why do we filter them out? as a consequence, one have to manually set all disabled properties, which is a huge source of error
                 .map(d => ({
                     attr: d.formControlName,
                     value: this.convertToType(d.data.type, this.formGroup.controls[d.formControlName].value)

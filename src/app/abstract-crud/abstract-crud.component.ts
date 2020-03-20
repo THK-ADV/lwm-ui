@@ -128,7 +128,7 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> impleme
             submitTitle: dialogSubmitTitle(mode),
             data: input,
             composedFromGroupValidator: this.creatable.compoundFromGroupValidator(input),
-            makeProtocol: output => this.creatable.commitProtocol(
+            makeProtocol: output => this.creatable.commitProtocol( // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
                 createProtocol(output, emptyProtocol),
                 isUniqueEntity(entity) ? entity : undefined
             )

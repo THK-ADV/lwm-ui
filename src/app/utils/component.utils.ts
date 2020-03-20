@@ -111,56 +111,81 @@ export const createLabworkApplicationProtocol = (output: FormOutputData[], labwo
     })
 }
 
-export const courseFormInputData = (userService: UserService): (m: Readonly<CourseProtocol | CourseAtom>, im: boolean) => FormInput[] => {
+export const partialCourseFormInputData = (
+    userService: UserService
+): (attr: string, m: Readonly<CourseProtocol | CourseAtom>) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined => {
+    return (attr, m) => {
+        const isModel = isUniqueEntity(m)
+
+        switch (attr) {
+            case 'label':
+                return {
+                    isDisabled: isModel,
+                    data: new FormInputString(m.label)
+                }
+            case 'description':
+                return {
+                    isDisabled: false,
+                    data: new FormInputTextArea(m.description)
+                }
+            case 'abbreviation':
+                return {
+                    isDisabled: false,
+                    data: new FormInputString(m.abbreviation)
+                }
+            case 'lecturer':
+                return {
+                    isDisabled: isModel,
+                    data: isUniqueEntity(m) ?
+                        new FormInputString(`${m.lecturer.lastname}, ${m.lecturer.firstname}`) :
+                        new FormInputOption<User>('lecturer', invalidChoiceKey, true, value => `${value.lastname}, ${value.firstname}`, userService.getAllWithFilter({
+                            attribute: 'status',
+                            value: 'employee'
+                        }))
+                }
+            case 'semesterIndex':
+                return {
+                    isDisabled: false,
+                    data: new FormInputNumber(m.semesterIndex)
+                }
+        }
+    }
+}
+
+
+export const fullCourseFormInputData = (userService: UserService): (m: Readonly<CourseProtocol | CourseAtom>, im: boolean) => FormInput[] => {
     return (model, isModel) => {
-        return [
+        const fields = [
             {
                 formControlName: 'label',
-                displayTitle: 'Bezeichnung',
-                isDisabled: isModel,
-                data: new FormInputString(model.label)
+                displayTitle: 'Bezeichnung'
             },
             {
                 formControlName: 'description',
-                displayTitle: 'Beschreibung',
-                isDisabled: false,
-                data: new FormInputTextArea(model.description)
+                displayTitle: 'Beschreibung'
             },
             {
                 formControlName: 'abbreviation',
-                displayTitle: 'Abkürzung',
-                isDisabled: false,
-                data: new FormInputString(model.abbreviation)
+                displayTitle: 'Abkürzung'
             },
             {
                 formControlName: 'lecturer',
-                displayTitle: 'Dozent',
-                isDisabled: isModel,
-                data: isUniqueEntity(model) ?
-                    new FormInputString(`${model.lecturer.lastname}, ${model.lecturer.firstname}`) :
-                    new FormInputOption<User>('lecturer', invalidChoiceKey, true, value => `${value.lastname}, ${value.firstname}`, userService.getAllWithFilter({
-                        attribute: 'status',
-                        value: 'employee'
-                    }))
+                displayTitle: 'Dozent'
             },
             {
                 formControlName: 'semesterIndex',
-                displayTitle: 'Fachsemester',
-                isDisabled: false,
-                data: new FormInputNumber(model.semesterIndex)
+                displayTitle: 'Fachsemester'
             }
         ]
+
+        // this is safe here, because we match all fields
+        // tslint:disable-next-line:no-non-null-assertion
+        return fields.map(x => ({...x, ...partialCourseFormInputData(userService)(x.formControlName, model)!!}))
     }
 }
 
 export const emptyCourseProtocol = (): CourseProtocol => {
     return {label: '', description: '', abbreviation: '', lecturer: '', semesterIndex: 0}
-}
-
-export const updateCourse = (model: CourseAtom, output: FormOutputData[]): CourseProtocol => {
-    return withCreateProtocol(output, emptyCourseProtocol(), p => {
-        p.lecturer = model.lecturer.id
-    })
 }
 
 export const getInitials = (user?: User): string => {
