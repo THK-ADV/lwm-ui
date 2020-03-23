@@ -10,6 +10,7 @@ import {withCreateProtocol} from '../models/protocol.model'
 import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isFullDay} from '../labwork-chain/timetable-blacklists/timetable-blacklists-view-model'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {BlacklistRangeProtocol} from '../services/blacklist.service'
 
 export const localBlacklistsColumns = (): TableHeaderColumn[] => {
     return [
@@ -29,12 +30,14 @@ export const globalBlacklistColumns = (): TableHeaderColumn[] => {
 export const formatBlacklistTableEntry = (blacklist: Readonly<Blacklist>, attr: string): string => {
     const value = blacklist[attr]
 
-    if (value instanceof Date) {
-        return format(value, 'dd.MM.yyyy')
-    } else if (value instanceof Time) {
-        return isFullDay(blacklist) ? '-' : formatTime(value)
-    } else {
-        return value
+    switch (attr) {
+        case 'date':
+            return format(value, 'dd.MM.yyyy')
+        case 'start':
+        case 'end':
+            return isFullDay(blacklist) ? '-' : formatTime(value)
+        default:
+            return value
     }
 }
 
@@ -66,6 +69,29 @@ export const globalBlacklistInputData = (model: Readonly<BlacklistProtocol | Bla
             displayTitle: 'Datum',
             isDisabled: isModel,
             data: new FormInputDate(model.date)
+        }
+    ]
+}
+
+export const globalBlacklistRangeInputData = (): FormInput[] => {
+    return [
+        {
+            formControlName: 'label',
+            displayTitle: 'Bezeichnung',
+            isDisabled: false,
+            data: new FormInputString('')
+        },
+        {
+            formControlName: 'start',
+            displayTitle: 'Von',
+            isDisabled: false,
+            data: new FormInputDate('')
+        },
+        {
+            formControlName: 'end',
+            displayTitle: 'Bis',
+            isDisabled: false,
+            data: new FormInputDate('')
         }
     ]
 }
@@ -103,13 +129,21 @@ export const localBlacklistCreationInputData = (labelValue: string) => {
     return localBlacklistInputData(protocol, false)
 }
 
-export const createGlobalBlacklistFromOutputData = (output: FormOutputData[]): BlacklistProtocol => {
-    return withCreateProtocol(output, emptyGlobalBlacklistProtocol(), p => {
-        p.date = format(new Date(p.date), 'yyyy-MM-dd')
-
+export const createGlobalBlacklistFromOutputData = (existing: Blacklist | undefined): (output: FormOutputData[]) => BlacklistProtocol => {
+    return output => withCreateProtocol(output, emptyGlobalBlacklistProtocol(), p => {
+        const date = existing?.date ?? p.date
+        
+        p.date = format(new Date(date), 'yyyy-MM-dd')
         p.start = formatTime(Time.startOfTheDay())
         p.end = formatTime(Time.endOfTheDay())
         p.global = true
+    })
+}
+
+export const createGlobalBlacklistRangeFromOutputData = (output: FormOutputData[]): BlacklistRangeProtocol => {
+    return withCreateProtocol(output, {label: '', start: '', end: ''}, p => {
+        p.start = format(new Date(p.start), 'yyyy-MM-dd')
+        p.end = format(new Date(p.end), 'yyyy-MM-dd')
     })
 }
 

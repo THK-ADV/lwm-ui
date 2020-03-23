@@ -1,9 +1,17 @@
 import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {Html} from '../../html-builder/html-builder'
+
+interface Text {
+    kind: 'text'
+    value: string
+}
+
+type ConfirmationBody = Html | Text
 
 interface ConfirmationPayload {
     title: string
-    body: string
+    body: ConfirmationBody
 }
 
 export enum ConfirmationResult {
@@ -25,12 +33,11 @@ export class ConfirmDialogComponent {
 
     static instance = (
         dialog: MatDialog,
-        title: string,
-        body: string
+        payload: ConfirmationPayload
     ): MatDialogRef<ConfirmDialogComponent, ConfirmationResult> =>
         dialog.open<ConfirmDialogComponent, ConfirmationPayload, ConfirmationResult>(
             ConfirmDialogComponent, {
-                data: {title: title, body: body},
+                data: payload,
                 panelClass: 'lwmConfirmationDialog'
             }
         )

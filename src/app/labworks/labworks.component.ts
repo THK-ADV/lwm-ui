@@ -241,7 +241,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
             return d
         })
 
-        this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(labwork))
+        this.alertService.reportSuccess( 'updated: ' + JSON.stringify(labwork))
     }
 
     // TODO this hasStatus copied. build an abstraction?
@@ -344,6 +344,6 @@ export class LabworksComponent implements OnInit, OnDestroy {
     protected afterCreate(labworks: LabworkAtom[]) {
         const lwas = labworks.map(l => ({labwork: l, semester: l.semester, applications: 0}))
         this.dataSource.data = this.dataSource.data.concat(lwas)
-        this.alertService.reportAlert('success', 'created: ' + labworks.map(JSON.stringify.bind(this)))
+        this.alertService.reportSuccess( 'created: ' + labworks.map(JSON.stringify.bind(this)))
     }
 }

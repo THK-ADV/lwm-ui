@@ -101,8 +101,7 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
     private commit = () => {
         const dialogRef = ConfirmDialogComponent.instance(
             this.dialog,
-            'Staffelplan erstellen',
-            'Möchten Sie den Staffelplan erstellen?'
+            {title: 'Staffelplan erstellen', body: {kind: 'text', value: 'Möchten Sie den Staffelplan erstellen?'}},
         )
 
         const spinning = withSpinning<ScheduleEntryAtom[]>(this.loadingService)

@@ -3,12 +3,6 @@ import {LabworkAtom} from '../../../models/labwork.model'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
 import {Blacklist, BlacklistProtocol} from '../../../models/blacklist.model'
-import {
-    createLocalBlacklistFromOutputData,
-    localBlacklistCreationInputData,
-    localBlacklistInputData,
-    updateLocalBlacklistFromOutputData
-} from '../../../blacklists/blacklist-view-model'
 import {BlacklistService} from '../../../services/blacklist.service'
 import {TimetableAtom} from '../../../models/timetable'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
@@ -24,6 +18,12 @@ import {FormPayload} from '../../../shared-dialogs/create-update/create-update-d
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {openDialog, openDialogFromPayload} from '../../../shared-dialogs/dialog-open-combinator'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
+import {
+    createLocalBlacklistFromOutputData,
+    localBlacklistCreationInputData,
+    localBlacklistInputData,
+    updateLocalBlacklistFromOutputData
+} from '../../../blacklist/blacklist-view-model'
 
 @Component({
     selector: 'lwm-timetable-blacklists-edit',

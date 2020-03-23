@@ -21,7 +21,7 @@ export const openDialogFromPayload = <T, U>(
     return openDialog(dialogRef, andThen)
 }
 
-const openConfirmationDialog = <A>(
+export const openConfirmationDialog = <A>(
     dialog: MatDialogRef<ConfirmDialogComponent, ConfirmationResult>,
     andThen: () => Observable<A>
 ): Observable<A> => dialog

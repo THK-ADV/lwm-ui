@@ -69,7 +69,7 @@ export class CourseDetailComponent implements OnDestroy {
 
     afterEdit(updatedCourse: CourseAtom) {
         this.course = updatedCourse
-        this.alertService.reportAlert('success', `updated ${JSON.stringify(updatedCourse)}`)
+        this.alertService.reportSuccess(`updated ${JSON.stringify(updatedCourse)}`)
     }
 
     ngOnDestroy(): void {

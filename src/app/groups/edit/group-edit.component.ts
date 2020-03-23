@@ -154,7 +154,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
             this.groupChanged.emit()
-            this.alertService.reportAlert('success', movementMsg(result))
+            this.alertService.reportSuccess(movementMsg(result))
         })
 
         this.subs.push(s)
@@ -186,7 +186,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             this.updateStudentsByAdding(member)
 
             this.groupChanged.emit()
-            this.alertService.reportAlert('success', deletionMsg(result))
+            this.alertService.reportSuccess(deletionMsg(result))
         })
 
         this.subs.push(s)
@@ -218,7 +218,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             this.updateStudentsByRemoving(member)
 
             this.groupChanged.emit()
-            this.alertService.reportAlert('success', creationMsg(result))
+            this.alertService.reportSuccess(creationMsg(result))
         })
 
         this.subs.push(s)

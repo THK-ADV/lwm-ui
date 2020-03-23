@@ -16,6 +16,7 @@ import {RoomComponent} from './room/room.component'
 import {UserComponent} from './user/user.component'
 import {CourseComponent} from './course/course.component'
 import {DegreeComponent} from './degree/degree.component'
+import {BlacklistComponent} from './blacklist/blacklist.component'
 
 const routes: Routes = [
     {
@@ -48,10 +49,10 @@ const routes: Routes = [
                 path: 'semesters',
                 component: SemesterComponent
             },
-            // {
-            //     path: 'blacklists',
-            //     component: BlacklistsComponent
-            // },
+            {
+                path: 'blacklists',
+                component: BlacklistComponent
+            },
             {
                 path: 'students/:sid',
                 resolve: {userAuths: UserAuthorityResolver},

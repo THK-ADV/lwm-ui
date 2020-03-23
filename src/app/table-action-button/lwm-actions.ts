@@ -13,7 +13,8 @@ export type LWMActionType =
     'preview' |
     'upload' |
     'reschedule' |
-    'sync'
+    'sync' |
+    'download'
 
 export interface LWMAction {
     type: LWMActionType
@@ -63,6 +64,10 @@ export const uploadAction = (): LWMAction => {
     return {type: 'upload', color: 'accent', iconName: 'cloud_upload', tooltipName: 'Übernehmen', tooltipPosition: 'above'}
 }
 
+export const downloadAction = (): LWMAction => {
+    return {type: 'download', color: 'accent', iconName: 'cloud_download', tooltipName: 'Herunterladen', tooltipPosition: 'above'}
+}
+
 export const rescheduleAction = (): LWMAction => {
     return {type: 'reschedule', color: 'primary', iconName: 'update', tooltipName: 'Termin verschieben', tooltipPosition: 'above'}
 }
@@ -97,5 +102,7 @@ export const action = (type: LWMActionType): LWMAction => {
             return rescheduleAction()
         case 'sync':
             return syncAction()
+        case 'download':
+            return downloadAction()
     }
 }

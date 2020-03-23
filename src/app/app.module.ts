@@ -79,6 +79,8 @@ import {UserComponent} from './user/user.component'
 import {AbstractTableComponent} from './abstract-table/abstract-table.component'
 import {CourseComponent} from './course/course.component'
 import {DegreeComponent} from './degree/degree.component'
+import {BlacklistComponent} from './blacklist/blacklist.component'
+import {SafeHtmlPipe} from './pipe/safe-html.pipe'
 
 @NgModule({
     declarations: [
@@ -139,7 +141,9 @@ import {DegreeComponent} from './degree/degree.component'
         UserComponent,
         AbstractTableComponent,
         CourseComponent,
-        DegreeComponent
+        DegreeComponent,
+        BlacklistComponent,
+        SafeHtmlPipe
     ],
     imports: [
         BrowserModule,

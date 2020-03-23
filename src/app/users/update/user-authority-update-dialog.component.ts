@@ -228,7 +228,7 @@ export class UserAuthorityUpdateDialogComponent implements OnInit, OnDestroy { /
 
     private afterDelete = (auth: AuthorityAtom) => {
         this.dataSource.data = this.dataSource.data.filter(a => a.id !== auth.id)
-        this.alertService.reportAlert('success', 'deleted: ' + JSON.stringify(auth))
+        this.alertService.reportSuccess('deleted: ' + JSON.stringify(auth))
     }
 
     headerTitle = (): string =>

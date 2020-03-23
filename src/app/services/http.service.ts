@@ -9,6 +9,11 @@ export interface LWMError {
     message: string
 }
 
+export interface PartialResult<A> {
+    created: A[]
+    failed: string[]
+}
+
 export const nonAtomicParams = new HttpParams().set('atomic', 'false')
 export const atomicParams = new HttpParams().set('atomic', 'true')
 
@@ -101,6 +106,16 @@ export class HttpService {
         params?: HttpParams
     ): Observable<O> => this.http
         .post<O>(url, element, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('create', url))
+        )
+
+    create_ = <O>(
+        url: string,
+        params?: HttpParams
+    ): Observable<O> => this.http
+        .post<O>(url, {params})
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('create', url))
