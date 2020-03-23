@@ -137,6 +137,9 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
+    updateCourse = (c: Readonly<CourseAtom>) =>
+        this.course$ = of(c)
+
     private setupPermissionChecks = (courseId: string) => {
         this.labworkActions = []
         const mandatory = [
@@ -241,7 +244,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
             return d
         })
 
-        this.alertService.reportSuccess( 'updated: ' + JSON.stringify(labwork))
+        this.alertService.reportSuccess('updated: ' + JSON.stringify(labwork))
     }
 
     // TODO this hasStatus copied. build an abstraction?
@@ -344,6 +347,6 @@ export class LabworksComponent implements OnInit, OnDestroy {
     protected afterCreate(labworks: LabworkAtom[]) {
         const lwas = labworks.map(l => ({labwork: l, semester: l.semester, applications: 0}))
         this.dataSource.data = this.dataSource.data.concat(lwas)
-        this.alertService.reportSuccess( 'created: ' + labworks.map(JSON.stringify.bind(this)))
+        this.alertService.reportSuccess('created: ' + labworks.map(JSON.stringify.bind(this)))
     }
 }

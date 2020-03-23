@@ -1,8 +1,8 @@
-import {Component, Input, OnDestroy} from '@angular/core'
+import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
 import {CourseAtom} from '../models/course.model'
 import {MatDialog} from '@angular/material'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
-import {CreateUpdateDialogComponent} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {emptyCourseProtocol, fullCourseFormInputData, getInitials} from '../utils/component.utils'
 import {UserService} from '../services/user.service'
 import {Subscription} from 'rxjs'
@@ -11,6 +11,7 @@ import {CourseProtocol, CourseService} from '../services/course.service'
 import {AlertService} from '../services/alert.service'
 import {CourseAuthorityUpdateDialogComponent} from '../course-authority-dialog/course-authority-dialog.component'
 import {withCreateProtocol} from '../models/protocol.model'
+import {openDialogFromPayload} from '../shared-dialogs/dialog-open-combinator'
 
 @Component({
     selector: 'lwm-course-detail',
@@ -22,6 +23,8 @@ export class CourseDetailComponent implements OnDestroy {
     @Input() course: Readonly<CourseAtom>
     @Input() hasPermission: Readonly<boolean>
 
+    @Output() courseUpdateEmitter: EventEmitter<Readonly<CourseAtom>>
+
     private readonly subs: Subscription[]
 
     constructor(
@@ -31,6 +34,7 @@ export class CourseDetailComponent implements OnDestroy {
         private readonly alertService: AlertService
     ) {
         this.subs = []
+        this.courseUpdateEmitter = new EventEmitter<Readonly<CourseAtom>>()
     }
 
     getInitials_(): string {
@@ -45,31 +49,26 @@ export class CourseDetailComponent implements OnDestroy {
         const inputData = fullCourseFormInputData(this.userService)(this.course, true)
         const mode = DialogMode.edit
 
-        const payload = {
+        const payload: FormPayload<CourseProtocol> = {
             headerTitle: dialogTitle(mode, 'Modul'),
             submitTitle: dialogSubmitTitle(mode),
             data: inputData,
             makeProtocol: output => { // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
-                withCreateProtocol(output, emptyCourseProtocol(), p => {
+                return withCreateProtocol(output, emptyCourseProtocol(), p => {
                     p.lecturer = this.course.lecturer.id
                     p.label = this.course.label
                 })
             }
         }
 
-        const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-        const s = subscribe(dialogRef.afterClosed(), this.edit.bind(this))
-        this.subs.push(s)
-    }
+        const dialog$ = openDialogFromPayload(
+            this.dialog,
+            payload,
+            p => this.courseService.update(p, this.course.id)
+        )
 
-    edit(courseProtocol: CourseProtocol) {
-        const s = subscribe(this.courseService.update(courseProtocol, this.course.id), this.afterEdit.bind(this))
+        const s = subscribe(dialog$, c => this.courseUpdateEmitter.emit(c))
         this.subs.push(s)
-    }
-
-    afterEdit(updatedCourse: CourseAtom) {
-        this.course = updatedCourse
-        this.alertService.reportSuccess(`updated ${JSON.stringify(updatedCourse)}`)
     }
 
     ngOnDestroy(): void {
