@@ -14,12 +14,12 @@ import {LabworkService} from '../services/labwork.service'
 import {Labwork, LabworkAtom, LabworkProtocol} from '../models/labwork.model'
 import {AlertService} from '../services/alert.service'
 import {_groupBy, dateOrderingDESC, isEmpty, subscribe} from '../utils/functions'
-import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
-import {CreateUpdateDialogComponent, FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
+import {FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isUniqueEntity} from '../models/unique.entity.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {invalidChoiceKey} from '../utils/form.validator'
-import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {withCreateProtocol} from '../models/protocol.model'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
 import {FormInputBoolean} from '../shared-dialogs/forms/form.input.boolean'
@@ -36,7 +36,7 @@ import {
     LWMAction,
     LWMActionType
 } from '../table-action-button/lwm-actions'
-import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {openDialog, openDialogFromPayload} from '../shared-dialogs/dialog-open-combinator'
 import {userAuths} from '../security/user-authority-resolver'
 import {isAdmin, isCourseManager} from '../utils/role-checker'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
@@ -218,57 +218,48 @@ export class LabworksComponent implements OnInit, OnDestroy {
     }
 
     private edit = (labwork: LabworkAtom) => {
-        const s1 = this.openDialog_(DialogMode.edit, labwork, updated => {
-            const s2 = subscribe(
-                this.labworkService.update(labwork.course.id, updated, labwork.id),
-                this.afterUpdate.bind(this)
-            )
-
-            this.subs.push(s2)
-        })
-
-        this.subs.push(s1)
+        this.openUpdateDialog(
+            labwork,
+            labwork.course.id,
+            p => this.labworkService.update(labwork.course.id, p, labwork.id)
+        )
     }
 
     private afterDelete = (labwork: Labwork) => {
         removeFromDataSource(this.dataSource, this.alertService)(lwa => lwa.labwork.id === labwork.id)
     }
 
-    private afterUpdate = (labwork: LabworkAtom) => {
-        this.dataSource.data = this.dataSource.data.map(d => {
-            if (d.labwork.id === labwork.id) {
-                d.labwork = labwork
-                return d
-            }
-
-            return d
-        })
-
-        this.alertService.reportSuccess('updated: ' + JSON.stringify(labwork))
-    }
-
-    // TODO this hasStatus copied. build an abstraction?
-    private openDialog_ = (mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription => {
+    private openUpdateDialog = (data: LabworkAtom | LabworkProtocol, courseId: string, performUpdate: (p: LabworkProtocol) => Observable<LabworkAtom>) => {
+        const isModel = isUniqueEntity(data)
+        const mode = isModel ? DialogMode.edit : DialogMode.create
         const inputData: FormInput[] = this.makeFormInputData(data)
 
         const payload: FormPayload<LabworkProtocol> = {
             headerTitle: dialogTitle(mode, 'Praktikum'),
             submitTitle: dialogSubmitTitle(mode),
             data: inputData, // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
-            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
+            makeProtocol: output => this.commitProtocol(output, courseId, isUniqueEntity(data) ? data : undefined),
         }
 
-        const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-        return subscribe(dialogRef.afterClosed(), next)
+        const s = subscribe(
+            openDialogFromPayload(this.dialog, payload, performUpdate),
+            l => {
+                const lwa = {labwork: l, semester: l.semester, applications: 0}
+                return isModel ?
+                    updateDataSource(this.dataSource, this.alertService)(lwa, (lhs, rhs) => lhs.labwork.id === rhs.labwork.id) :
+                    addToDataSource(this.dataSource, this.alertService)(lwa)
+            }
+        )
+
+        this.subs.push(s)
     }
 
-    private update = (labwork: LabworkAtom, updatedOutput: FormOutputData[]): LabworkProtocol => withCreateProtocol(updatedOutput, LabworksComponent.empty(), p => {
-        p.semester = labwork.semester.id
-        p.course = labwork.course.id
-        p.degree = labwork.degree.id
-    })
-
-    private create = (updatedValues: FormOutputData[]): LabworkProtocol => createProtocol(updatedValues, LabworksComponent.empty())
+    private commitProtocol = (updatedOutput: FormOutputData[], courseId: string, existing?: LabworkAtom) =>
+        withCreateProtocol(updatedOutput, LabworksComponent.empty(), p => {
+            p.course = courseId
+            p.semester = existing?.semester?.id ?? p.semester
+            p.degree = existing?.degree?.id ?? p.degree
+        })
 
     private makeFormInputData(labwork: LabworkAtom | LabworkProtocol): FormInput[] {
         const isModel = isUniqueEntity(labwork)
@@ -293,14 +284,6 @@ export class LabworksComponent implements OnInit, OnDestroy {
                 data: isUniqueEntity(labwork) ?
                     new FormInputString(labwork.semester.label) :
                     new FormInputOption<Semester>('semester', invalidChoiceKey, true, semester => semester.label, this.semesterService.getAll())
-            },
-            {
-                formControlName: 'course',
-                displayTitle: 'Modul',
-                isDisabled: true,
-                data: isUniqueEntity(labwork) ?
-                    new FormInputString(labwork.course.label) :
-                    new FormInputString(labwork.course)
             },
             {
                 formControlName: 'degree',
@@ -331,22 +314,13 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return this.hasPermission ? ['create'] : []
     }
 
+    // TODO labworks are currently always added to the selected data source regardless of their semester.
+    //  this is a wrong behaviour due to a single data source.
     onCreate = (course: CourseAtom) => {
-        const s1 = this.openDialog_(DialogMode.create, LabworksComponent.empty(), procotol => {
-            procotol.course = course.id
-            const s2 = subscribe(
-                this.labworkService.create(course.id, procotol),
-                this.afterCreate.bind(this)
-            )
-            this.subs.push(s2)
-        })
-
-        this.subs.push(s1)
-    }
-
-    protected afterCreate(labworks: LabworkAtom[]) {
-        const lwas = labworks.map(l => ({labwork: l, semester: l.semester, applications: 0}))
-        this.dataSource.data = this.dataSource.data.concat(lwas)
-        this.alertService.reportSuccess('created: ' + labworks.map(JSON.stringify.bind(this)))
+        this.openUpdateDialog(
+            LabworksComponent.empty(),
+            course.id,
+            p => this.labworkService.create(course.id, p)
+        )
     }
 }
