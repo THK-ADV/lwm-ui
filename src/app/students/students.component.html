@@ -19,8 +19,7 @@
                 <ng-container>
                     <lwm-report-card-table [dataSource]="tableModelFor(entry).dataSource"
                                            [columns]="tableModelFor(entry).columns"
-                                           [actions]="rescheduleAction()"
-                                           (actionEmitter)="reschedule($event)">
+                                           [auths]="auths()">
                     </lwm-report-card-table>
                 </ng-container>
             </ng-template>

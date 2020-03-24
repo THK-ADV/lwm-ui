@@ -1,10 +1,12 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
+import {Component, Input, OnInit} from '@angular/core'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {nonEmpty} from '../utils/functions'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {MatTableDataSource} from '@angular/material'
-import {LWMAction, LWMActionType} from '../table-action-button/lwm-actions'
+import {LWMAction, rescheduleAction} from '../table-action-button/lwm-actions'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {AuthorityAtom} from '../models/authority.model'
+import {hasAnyRole} from '../utils/role-checker'
+import {UserRole} from '../models/role.model'
 
 @Component({
     selector: 'lwm-report-card-table',
@@ -15,17 +17,29 @@ export class ReportCardTableComponent implements OnInit {
 
     @Input() dataSource: MatTableDataSource<ReportCardEntryAtom>
     @Input() columns: TableHeaderColumn[]
-    @Input() actions: LWMAction[]
+    @Input() auths: AuthorityAtom[]
 
-    @Output() actionEmitter: EventEmitter<{ actionType: LWMActionType, e: ReportCardEntryAtom }>
+    private canReschedule: boolean
+    displayedColumns: string []
 
     constructor() {
-        this.actionEmitter = new EventEmitter<{ actionType: LWMActionType, e: ReportCardEntryAtom }>()
+        this.displayedColumns = []
     }
 
     ngOnInit() {
+        this.canReschedule = this.hasReschedulePermission(this.auths)
 
+        const c = this.columns.map(_ => _.attr)
+
+        if (this.canReschedule) {
+            c.push('action')
+        }
+
+        this.displayedColumns = c
     }
+
+    private hasReschedulePermission = (auths: AuthorityAtom[]) =>
+        hasAnyRole(auths, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
     tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
         switch (attr) {
@@ -44,18 +58,7 @@ export class ReportCardTableComponent implements OnInit {
         }
     }
 
-    performAction = (actionType: LWMActionType, e: ReportCardEntryAtom) =>
-        this.actionEmitter.emit({actionType: actionType, e: e})
+    actions = (): LWMAction[] => this.canReschedule ? [rescheduleAction()] : []
 
-
-    displayedColumnsFor = () => {
-        const c = this.columns.map(_ => _.attr)
-
-        if (nonEmpty(this.actions)) {
-            c.push('action')
-        }
-
-        return c
-    }
-
+    reschedule = (e: ReportCardEntryAtom) => console.log('reschedule')
 }
