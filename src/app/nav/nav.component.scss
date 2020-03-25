@@ -115,6 +115,13 @@ $sidebarColor: #262429;
 
   }
 
+  .mat-toolbar {
+    button {
+      margin-top: -4px;
+      margin-left: -10px;
+    }
+  }
+
 }
 
 .lwm-is-mobile .lwm-toolbar {
