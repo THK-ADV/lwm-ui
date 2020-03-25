@@ -1,18 +1,19 @@
 import {Injectable} from '@angular/core'
-import {Dashboard} from '../models/dashboard.model'
+import {Dashboard, StudentDashboard} from '../models/dashboard.model'
 import {HttpClient} from '@angular/common/http'
 import {Observable} from 'rxjs'
+import {HttpService} from './http.service'
 
 @Injectable({
     providedIn: 'root'
 })
 export class DashboardService {
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpService) {
     }
 
-    getDashboard<T extends Dashboard>(): Observable<T> {
-        return this.http.get<T>('dashboard')
+    getStudentDashboard(): Observable<StudentDashboard> {
+        return this.http.get_<StudentDashboard>('dashboard')
     }
 
     // getDashboardForCurrentSession(): Promise<StudentDashboard | EmployeeDashboard> {

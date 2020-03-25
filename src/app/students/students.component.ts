@@ -112,10 +112,10 @@ export class StudentsComponent implements OnInit {
     bindDataSource = (entry: ReportCardsByLabwork) => {
         const basicColumns = (): TableHeaderColumn[] => [
             {attr: 'assignmentIndex', title: '#'},
-            // {attr: 'date', title: 'Datum'},
-            // {attr: 'start', title: 'Start'},
-            // {attr: 'end', title: 'Ende'},
-            // {attr: 'room.label', title: 'Raum'},
+            {attr: 'date', title: 'Datum'},
+            {attr: 'start', title: 'Start'},
+            {attr: 'end', title: 'Ende'},
+            {attr: 'room.label', title: 'Raum'},
             {attr: 'label', title: 'Bezeichnung'},
         ]
 

@@ -19,7 +19,7 @@ export class EmployeeDashboardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.dashboard$ = this.dashboardService.getDashboard<EmployeeDashboard>()
+        // this.dashboard$ = this.dashboardService.getDashboard<EmployeeDashboard>()
     }
 
 }
