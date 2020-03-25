@@ -1,16 +1,16 @@
-<ng-container *ngIf="value">
+<ng-container *ngIf="state">
     <mat-button-toggle-group class="toggle-group"
-                            [value]="value.value"
-                             (change)="onChange($event.value, entry, attr)">
-        <mat-button-toggle class="failed" [value]="0">
+                             [value]="state"
+                             (change)="onChange($event.value)">
+        <mat-button-toggle class="failed" [value]="failed">
             <i class="material-icons">block</i>
         </mat-button-toggle>
 
-        <mat-button-toggle class="neutral" [value]="-1">
+        <mat-button-toggle class="neutral" [value]="neutral">
             <i class="material-icons">remove_circle_outline</i>
         </mat-button-toggle>
 
-        <mat-button-toggle class="passed" [value]="1">
+        <mat-button-toggle class="passed" [value]="passed">
             <i class="material-icons">check_circle_outline</i>
         </mat-button-toggle>
     </mat-button-toggle-group>

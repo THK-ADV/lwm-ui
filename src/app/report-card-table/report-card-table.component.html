@@ -17,28 +17,26 @@
                                             [entry]="e"
                                             [attr]="column.attr">
                 </lwm-ternary-entry-type-toggle>
+              
+            <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
+                                        [entry]="e"
+                                        [attr]="column.attr">
+            </lwm-entry-type-bonus-field>
+            <span *ngSwitchDefault>{{tableContentFor(e, column.attr)}}</span>
+        </td>
+    </ng-container>
 
-                <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
-                                            [entry]="e"
-                                            [attr]="column.attr">
-                </lwm-entry-type-bonus-field>
-                <span *ngSwitchDefault>{{tableContentFor(e, column.attr)}}</span>
-            </td>
+    <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+            <lwm-table-action-button
+                    [actions]="actions()"
+                    (performAction)="reschedule(element)">
+            </lwm-table-action-button>
+        </td>
+    </ng-container>
 
-        </ng-container>
-
-        <ng-container matColumnDef="action">
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
-                <lwm-table-action-button
-                        [actions]="actions"
-                        (performAction)="performAction($event, element)">
-                </lwm-table-action-button>
-            </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsFor()"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumnsFor();">
-        </tr>
-    </table>
-</div>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
+    </tr>
+</table>

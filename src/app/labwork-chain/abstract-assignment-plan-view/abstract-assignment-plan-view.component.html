@@ -13,7 +13,7 @@
                 <span *ngSwitchCase="'entryTypes'">
                     <mat-chip-list selectable="false">
                         <mat-chip *ngFor="let type of displayedEntryTypes(element)">
-                            {{type}}
+                            {{type.entryType}}
                         </mat-chip>
                     </mat-chip-list>
                 </span>

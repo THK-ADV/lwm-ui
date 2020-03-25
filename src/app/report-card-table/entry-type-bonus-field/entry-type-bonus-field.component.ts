@@ -1,12 +1,12 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
-import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
-import {reportCardEntryType, reportCardEntryTypeValue, updateReportCardEntryType} from '../report-card-table-functions'
+import {ReportCardEntryAtom, ReportCardEntryType} from '../../models/report-card-entry.model'
 import {FormControl} from '@angular/forms'
+import {ReportCardEntryTypeService} from '../../services/report-card-entry-type.service'
+import {Subscription} from 'rxjs'
 import {isNumber} from '../../models/time.model'
 import {mapUndefined, subscribe} from '../../utils/functions'
 import {isString} from '../../utils/type.check.utils'
-import {ReportCardEntryTypeService} from '../../services/report-card-entry-type.service'
-import {Subscription} from 'rxjs'
+import {distinctUntilChanged} from 'rxjs/operators'
 
 @Component({
     selector: 'lwm-entry-type-bonus-field',
@@ -15,56 +15,55 @@ import {Subscription} from 'rxjs'
 })
 export class EntryTypeBonusFieldComponent implements OnInit, OnDestroy {
 
-    fc: FormControl | undefined
+    fc?: FormControl
     private subs: Subscription[]
-
-    constructor(private readonly service: ReportCardEntryTypeService) {
-        this.subs = []
-    }
 
     @Input() entry: ReportCardEntryAtom
     @Input() attr: string
+
+    constructor(
+        private readonly service: ReportCardEntryTypeService
+    ) {
+        this.subs = []
+    }
 
     ngOnInit(): void {
         this.createFormControl()
     }
 
     ngOnDestroy(): void {
-        this.subs.forEach(s => s.unsubscribe())
+        this.subs.forEach(_ => _.unsubscribe())
     }
 
     private createFormControl = () => {
-        const updateChanges = (fc: FormControl): (v: any) => void => v => {
-            if (v !== null && v !== undefined && isNumber(v)) {
-                fc.setValue(v, {emitEvent: false})
-                const elem = reportCardEntryType(this.entry, this.attr)!
-                const $ = updateReportCardEntryType(this.service, this.entry.labwork.course, {...elem, int: v})
-                const s = subscribe($, t => {
-                    this.entry.entryTypes = this.entry.entryTypes.map(x => x.id === t.id ? t : x)
-                })
-
-                this.subs.push(s)
-            }
+        const updateChanges = (entry: Readonly<ReportCardEntryType>, v: number) => {
+            const update$ = this.service.update(this.entry.labwork.course, entry.id, {...entry, int: v})
+            const updateUI = (u: ReportCardEntryType) => this.entry.entryTypes = this.entry.entryTypes.map(x => x.id === u.id ? u : x)
+            this.subs.push(subscribe(update$, updateUI))
         }
 
-        this.fc = mapUndefined(reportCardEntryTypeValue(this.entry, this.attr), v => {
-            const fc = new FormControl(v.value)
-            const s = subscribe(fc.valueChanges, updateChanges(fc))
-            this.subs.push(s)
+        const isValidNumber = (v: any): v is number =>
+            v !== null && v !== undefined && isNumber(v)
 
-            return fc
-        })
-
-        // if (hasReportCardEntryTypeValue(this.entry, this.attr)) {
-        //     this.fc = new FormControl(reportCardEntryTypeValue(this.entry, this.attr).value)
-        //     const s = subscribe(this.fc.valueChanges, updateChanges(this.fc))
-        //     this.subs.push(s)
-        // }
+        mapUndefined(
+            this.maybeBonus(),
+            entry => {
+                this.fc = new FormControl(entry.int)
+                const s = subscribe(this.fc.valueChanges.pipe(distinctUntilChanged()), v => {
+                    if (isValidNumber(v)) {
+                        updateChanges(entry, v)
+                    }
+                })
+                this.subs.push(s)
+            })
     }
 
-    private focusOut = (value: any, fc: FormControl) => {
+    private maybeBonus = (): ReportCardEntryType | undefined =>
+        this.entry.entryTypes.find(_ => _.entryType === this.attr)
+
+    focusOut = (value: any, fc: FormControl) => {
         if (isString(value)) {
-            fc.setValue(reportCardEntryTypeValue(this.entry, this.attr)?.value, {emitEvent: false})
+            fc.setValue(this.maybeBonus()?.int, {emitEvent: false})
         }
     }
 

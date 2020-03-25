@@ -1,8 +1,14 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
-import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
-import {liftedTernaryState, ReportCardEntryTypeValue, reportCardEntryTypeValue} from '../report-card-table-functions'
+import {ReportCardEntryAtom, ReportCardEntryType} from '../../models/report-card-entry.model'
 import {ReportCardEntryTypeService} from '../../services/report-card-entry-type.service'
-import {Subscription} from 'rxjs'
+import {identity, Subscription} from 'rxjs'
+import {foldUndefined, mapUndefined, subscribe} from '../../utils/functions'
+
+enum TernaryState {
+    passed = 3201,
+    failed = 3202,
+    neutral = 42
+}
 
 @Component({
     selector: 'lwm-ternary-entry-type-toggle',
@@ -19,28 +25,48 @@ export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {
     @Input() entry: ReportCardEntryAtom
     @Input() attr: string
 
-    value: ReportCardEntryTypeValue | undefined
+    state?: TernaryState
 
-    private onChange = (value: number, e: ReportCardEntryAtom, attr: string) => {
-        console.log(liftedTernaryState(value), attr, e.id)
-        // // force unwrapping is safe here, because the entryType is about to be changed right now
-        // // tslint:disable-next-line:no-non-null-assertion
-        // const entryType = reportCardEntryType(e, attr)!
-        // const bool = liftedReportCardEntryTypeValue(value)
-        // const $ = updateReportCardEntryType(this.service, this.entry.labwork.course, {...entryType, bool: bool})
-        //
-        // const s = subscribe($, t => {
-        //     this.entry.entryTypes = this.entry.entryTypes.map(x => x.id === t.id ? t : x)
-        // })
-        //
-        // this.subs.push(s)
+    private passed = TernaryState.passed
+    private failed = TernaryState.failed
+    private neutral = TernaryState.neutral
+
+    private onChange = (value: number) => {
+        const update$ = (t: ReportCardEntryType) =>
+            this.service.update(this.entry.labwork.course, t.id, {...t, bool: this.fromNumber(value)})
+
+        mapUndefined(
+            this.currentType(),
+            t => this.subs.push(subscribe(update$(t), identity))
+        )
     }
 
     ngOnInit(): void {
-        this.value = reportCardEntryTypeValue(this.entry, this.attr)
+        this.state = mapUndefined(
+            this.currentType(),
+            this.fromReportCardEntryType
+        )
     }
 
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
+    }
+
+    private currentType = (): ReportCardEntryType | undefined =>
+        this.entry.entryTypes.find(_ => _.entryType === this.attr)
+
+    private fromReportCardEntryType = (t: ReportCardEntryType): TernaryState =>
+        foldUndefined(t.bool, b => b ? TernaryState.passed : TernaryState.failed, () => TernaryState.neutral)
+
+    private fromNumber = (n: number): boolean | undefined => {
+        switch (n) {
+            case this.passed:
+                return true
+            case this.failed:
+                return false
+            case this.neutral:
+            default:
+                return undefined
+        }
     }
 }

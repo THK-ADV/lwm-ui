@@ -15,11 +15,8 @@ import {CourseAtom} from '../models/course.model'
 import {LabworkAtom} from '../models/labwork.model'
 import {MatTableDataSource} from '@angular/material'
 import {AuthorityAtom} from '../models/authority.model'
-import {hasAnyRole} from '../utils/role-checker'
-import {UserRole} from '../models/role.model'
-import {LWMActionType, rescheduleAction} from '../table-action-button/lwm-actions'
-import {assignmentEntryTypeSortingF, AssignmentEntryTypeValue, stringToAssignmentEntryTypeValue} from '../models/assignment-plan.model'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {EntryType, entryTypeSortingF} from '../models/assignment-plan.model'
 
 interface ReportCardsByLabwork {
     labwork: LabworkAtom,
@@ -64,11 +61,10 @@ export class StudentsComponent implements OnInit {
     }
 
     ngOnInit() {
-        const auths = userAuths(this.route)
-
-        this.canReschedule = this.hasReschedulePermission(auths)
-        this.fetchReportCardEntries(auths.filter(x => x.course !== undefined))
+        this.fetchReportCardEntries(this.auths().filter(x => x.course !== undefined))
     }
+
+    auths = () => userAuths(this.route)
 
     private fetchReportCardEntries = (courseRelatedAuths: Readonly<AuthorityAtom[]>) => {
         const groupByCourse = (xs: [ReportCardEntryAtom[], LabworkAtom[]][]): ReportCardsByCourse[] =>
@@ -113,36 +109,20 @@ export class StudentsComponent implements OnInit {
         )
     }
 
-    private hasReschedulePermission = (auths: AuthorityAtom[]) =>
-        hasAnyRole(auths, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
-
     bindDataSource = (entry: ReportCardsByLabwork) => {
         const basicColumns = (): TableHeaderColumn[] => [
             {attr: 'assignmentIndex', title: '#'},
-            {attr: 'date', title: 'Datum'},
-            {attr: 'start', title: 'Start'},
-            {attr: 'end', title: 'Ende'},
-            {attr: 'room.label', title: 'Raum'},
+            // {attr: 'date', title: 'Datum'},
+            // {attr: 'start', title: 'Start'},
+            // {attr: 'end', title: 'Ende'},
+            // {attr: 'room.label', title: 'Raum'},
             {attr: 'label', title: 'Bezeichnung'},
         ]
 
         const entryTypeColumns = (types: ReportCardEntryType[]): TableHeaderColumn[] => {
-            const distinctEntryTypes = () => {
-                const entryTypes = new Set<AssignmentEntryTypeValue>()
-
-                types.forEach(t => {
-                    const x = stringToAssignmentEntryTypeValue(t.entryType)
-                    if (x) {
-                        entryTypes.add(x)
-                    }
-                })
-
-                return entryTypes
-            }
-
             return Array
-                .from(distinctEntryTypes())
-                .sort(assignmentEntryTypeSortingF)
+                .from(new Set<EntryType>(types.map(_ => _.entryType)))
+                .sort(entryTypeSortingF)
                 .map(x => ({attr: x, title: x}))
         }
 
@@ -157,7 +137,6 @@ export class StudentsComponent implements OnInit {
     tableModelFor = (entry: ReportCardsByLabwork): TableModel =>
         this.dataSources[entry.labwork.id]
 
-
     accordionTitle = (labwork: LabworkAtom) =>
         `${labwork.label} - ${labwork.semester.abbreviation}`
 
@@ -166,10 +145,4 @@ export class StudentsComponent implements OnInit {
 
     sortBySemester = () => (a: ReportCardsByLabwork, b: ReportCardsByLabwork) =>
         dateOrderingDESC(a.labwork.semester.start, b.labwork.semester.start)
-
-    rescheduleAction = () => [rescheduleAction()]
-
-    reschedule = (args: { actionType: LWMActionType; e: ReportCardEntryAtom }) => {
-        console.log(args.actionType, args.e)
-    }
 }

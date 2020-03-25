@@ -1,10 +1,4 @@
-import {
-    AssignmentEntry,
-    AssignmentEntryProtocol,
-    AssignmentEntryType,
-    AssignmentEntryTypeValue,
-    findEntryTypeValue
-} from '../../../models/assignment-plan.model'
+import {AssignmentEntry, AssignmentEntryProtocol, EntryType} from '../../../models/assignment-plan.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {FormOutputData, FormPayload} from '../../../shared-dialogs/create-update/create-update-dialog.component'
 import {FormInputString} from '../../../shared-dialogs/forms/form.input.string'
@@ -12,9 +6,9 @@ import {FormInputBoolean} from '../../../shared-dialogs/forms/form.input.boolean
 import {FormInputNumber} from '../../../shared-dialogs/forms/form.input.number'
 import {exists, parseUnsafeBoolean} from '../../../utils/functions'
 import {AssignmentEntriesService} from '../../../services/assignment-entries.service'
-import {EMPTY, Observable, of} from 'rxjs'
+import {Observable} from 'rxjs'
 import {FormDataType} from '../../../shared-dialogs/forms/form.input'
-import {concatAll, mergeAll, switchMap, tap, toArray} from 'rxjs/operators'
+import {switchMap} from 'rxjs/operators'
 import {fetchAssignmentEntries} from '../../labwork-chain-view-model'
 import {LabworkAtom} from '../../../models/labwork.model'
 
@@ -22,24 +16,8 @@ export const assignmentEntryProtocol = (labwork: string): AssignmentEntryProtoco
     labwork: labwork,
     label: '',
     duration: 1,
-    types: [attendanceType()]
+    types: [{entryType: 'Anwesenheitspflichtig'}]
 })
-
-export const attendanceType = (): AssignmentEntryType => {
-    return {entryType: AssignmentEntryTypeValue.attendance}
-}
-
-export const certType = (): AssignmentEntryType => {
-    return {entryType: AssignmentEntryTypeValue.certificate}
-}
-
-export const suppType = (): AssignmentEntryType => {
-    return {entryType: AssignmentEntryTypeValue.supplement}
-}
-
-export const bonusType = (): AssignmentEntryType => {
-    return {entryType: AssignmentEntryTypeValue.bonus}
-}
 
 export const assignmentEntryFormPayload = (
     mode: DialogMode,
@@ -54,13 +32,13 @@ export const assignmentEntryFormPayload = (
 
 const updateProtocol = (p: AssignmentEntryProtocol): (data: FormOutputData[]) => AssignmentEntryProtocol => {
     // tslint:disable-next-line:no-shadowed-variable
-    const updateEntryTypeIfNeeded = (t: AssignmentEntryType, p: AssignmentEntryProtocol, data: FormDataType) => {
+    const updateEntryTypeIfNeeded = (t: EntryType, p: AssignmentEntryProtocol, data: FormDataType) => {
         if (parseUnsafeBoolean(data)) {
-            if (!exists(p.types, x => x.entryType === t.entryType)) {
-                p.types.push(t)
+            if (!exists(p.types, x => x.entryType === t)) {
+                p.types.push({entryType: t})
             }
         } else {
-            p.types = p.types.filter(x => x.entryType !== t.entryType)
+            p.types = p.types.filter(x => x.entryType !== t)
         }
     }
 
@@ -80,13 +58,13 @@ const updateProtocol = (p: AssignmentEntryProtocol): (data: FormOutputData[]) =>
                     p[duration] = d.value
                     break
                 case cert:
-                    updateEntryTypeIfNeeded(certType(), p, d.value)
+                    updateEntryTypeIfNeeded('Testat', p, d.value)
                     break
                 case bonus:
-                    updateEntryTypeIfNeeded(bonusType(), p, d.value)
+                    updateEntryTypeIfNeeded('Bonus', p, d.value)
                     break
                 case supp:
-                    updateEntryTypeIfNeeded(suppType(), p, d.value)
+                    updateEntryTypeIfNeeded('Zusatzleistung', p, d.value)
                     break
                 default:
                     break
@@ -107,38 +85,43 @@ const suppFcName = () => 'supplement'
 
 const bonusFcName = () => 'bonus'
 
-const formInputData = (p: AssignmentEntryProtocol) => [
-    {
-        formControlName: labelFcName(),
-        displayTitle: 'Bezeichnung',
-        isDisabled: false,
-        data: new FormInputString(p.label)
-    },
-    {
-        formControlName: certFcName(),
-        displayTitle: 'Testat',
-        isDisabled: false,
-        data: new FormInputBoolean(!!findEntryTypeValue(p.types, AssignmentEntryTypeValue.certificate))
-    },
-    {
-        formControlName: bonusFcName(),
-        displayTitle: 'Bonusleistung',
-        isDisabled: false,
-        data: new FormInputBoolean(!!findEntryTypeValue(p.types, AssignmentEntryTypeValue.bonus))
-    },
-    {
-        formControlName: suppFcName(),
-        displayTitle: 'Zusatzleistung',
-        isDisabled: false,
-        data: new FormInputBoolean(!!findEntryTypeValue(p.types, AssignmentEntryTypeValue.supplement))
-    },
-    {
-        formControlName: durationFcName(),
-        displayTitle: 'Gruppenrotation',
-        isDisabled: false,
-        data: new FormInputNumber(p.duration)
-    }
-]
+const formInputData = (p: AssignmentEntryProtocol) => {
+    const hasEntryType = (e: EntryType): boolean =>
+        exists(p.types, _ => _.entryType === e)
+
+    return [
+        {
+            formControlName: labelFcName(),
+            displayTitle: 'Bezeichnung',
+            isDisabled: false,
+            data: new FormInputString(p.label)
+        },
+        {
+            formControlName: certFcName(),
+            displayTitle: 'Testat',
+            isDisabled: false,
+            data: new FormInputBoolean(hasEntryType('Testat'))
+        },
+        {
+            formControlName: bonusFcName(),
+            displayTitle: 'Bonusleistung',
+            isDisabled: false,
+            data: new FormInputBoolean(hasEntryType('Bonus'))
+        },
+        {
+            formControlName: suppFcName(),
+            displayTitle: 'Zusatzleistung',
+            isDisabled: false,
+            data: new FormInputBoolean(hasEntryType('Zusatzleistung'))
+        },
+        {
+            formControlName: durationFcName(),
+            displayTitle: 'Gruppenrotation',
+            isDisabled: false,
+            data: new FormInputNumber(p.duration)
+        }
+    ]
+}
 
 export const createAssignmentEntry$ = (
     courseId: string,

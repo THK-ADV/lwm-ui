@@ -41,7 +41,7 @@ export class SearchComponent implements OnInit {
         this.control.setValue('')
         this.formInputOption.reset()
     }
-
+    
     inputClicked = () =>
         this.formInputOption.bindOptionsIfNeeded()
 }

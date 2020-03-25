@@ -2,6 +2,7 @@ import {Time} from './time.model'
 import {Room} from './room.model'
 import {User} from './user.model'
 import {Labwork} from './labwork.model'
+import {EntryType} from './assignment-plan.model'
 
 export interface ReportCardEntryAtom {
     student: User
@@ -49,7 +50,7 @@ export interface ReportCardEntryAtomJSON {
 }
 
 export interface ReportCardEntryType {
-    entryType: string
+    entryType: EntryType
     bool?: boolean
     int: number
     id: string

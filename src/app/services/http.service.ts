@@ -48,8 +48,9 @@ export class HttpService {
         return lwmError
     }
 
-    private logResp = <T>(action: string, url: string) => (t: T) => console.log(action, url, t)
-
+    // tslint:disable-next-line:no-console
+    private logResp = <T>(action: string, url: string) => (t: T) => console.debug('HTTP SERVICE', action, url, t)
+l
     getAll = <T>(
         url: string,
         params?: HttpParams

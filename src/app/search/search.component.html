@@ -9,7 +9,7 @@
                       [displayWith]="formInputOption.displayFn">
         <mat-option *ngFor="let option of formInputOption.filteredOptions | async"
                     [value]="option"
-                    (click)="userSelected(option)"> <!-- react on enter press -->
+                    (onSelectionChange)="userSelected(option)">
             {{formInputOption.displayFn(option)}}
         </mat-option>
     </mat-autocomplete>

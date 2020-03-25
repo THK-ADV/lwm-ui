@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
-import {AssignmentEntry, sortedAssignmentPlanEntryTypes} from '../../models/assignment-plan.model'
+import {AssignmentEntry, AssignmentEntryType, sortedByEntryTypes} from '../../models/assignment-plan.model'
 import {MatTableDataSource} from '@angular/material'
 import {LWMActionType} from '../../table-action-button/lwm-actions'
 import {foldUndefined} from '../../utils/functions'
@@ -54,9 +54,8 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
 
     canCreateF = (): LWMActionType[] => foldUndefined(this.canCreate, x => [x], () => [])
 
-    displayedEntryTypes = (entry: AssignmentEntry): string[] => {
-        return sortedAssignmentPlanEntryTypes(entry).types.map(t => t.entryType)
-    }
+    displayedEntryTypes = (entry: AssignmentEntry): AssignmentEntryType[] =>
+        sortedByEntryTypes(entry).types
 
     onSelect = (entry: AssignmentEntry) => {
         if (this.canEdit) {
