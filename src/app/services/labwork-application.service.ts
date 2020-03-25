@@ -31,5 +31,6 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
 
     getAll = (): Observable<LabworkApplicationAtom[]> => NotImplementedError()
 
-    update = (protocol: LabworkApplicationProtocol, id: string): Observable<LabworkApplicationAtom> => NotImplementedError()
+    update = (protocol: LabworkApplicationProtocol, id: string): Observable<LabworkApplicationAtom> => this.http
+        .put(this.path, id, protocol, atomicParams)
 }

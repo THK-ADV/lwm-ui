@@ -46,6 +46,7 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> impleme
     @Input() tableContent: (model: Readonly<Model>, attr: string) => string
     @Input() data$: Observable<Model[]>
     @Input() sort: Sort
+    @Input() filterPredicate: (data: Model, filter: string) => boolean
 
     @Input() creatable: Creatable<Protocol, Model>
     @Input() deletable: Deletable<Model>
