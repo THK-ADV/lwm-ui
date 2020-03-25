@@ -1,4 +1,4 @@
-$ft-color: #757575;
+$ft-color: #c0c0c0;
 $bg-color: #333333;
 $boder-color: #b43092;
 
@@ -18,6 +18,20 @@ $boder-color: #b43092;
     input:focus {
         outline: none;
     }
+
+    ::placeholder {
+        /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: darken($ft-color, 10);
+        opacity: 1; /* Firefox */
+    }
+
+    :-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        color: darken($ft-color, 10);
+    }
+
+    ::-ms-input-placeholder {
+        /* Microsoft Edge */
+        color: darken($ft-color, 10);
+    }
 }
-
-

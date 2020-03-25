@@ -43,7 +43,7 @@
 @mixin lwm-button-toggle-theme($theme) {
     @include mat-button-toggle-theme(map-get($theme, main));
     $failed-col: #ff4500;
-    $neutral-col: #aaa;
+    $neutral-col: #888;
     $passed-col: #32cd32;
     $bg-col: #c0c0c0;
     .toggle-group.mat-button-toggle-group-appearance-standard {
