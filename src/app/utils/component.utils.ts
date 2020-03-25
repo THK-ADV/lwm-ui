@@ -54,63 +54,6 @@ export const toLabwork = (atom: LabworkAtom): Labwork => {
     }
 }
 
-export const labworkApplicationFormInputData =
-    (userService: UserService, route: ActivatedRoute, labworkService: LabworkService)
-        : (m: Readonly<LabworkApplicationProtocol | LabworkApplicationAtom>, im: boolean) => FormInput[] => {
-        const getFriend = (friends: User[] | string[]): string => {
-            const s = friends.shift()
-
-            if (!s) {
-                return ''
-            }
-
-            return isUniqueEntity(s) ? s.systemId : s
-        }
-
-        const fellowStudents = fetchLabwork$(route, labworkService).pipe(
-            switchMap(l => userService.getAllWithFilter(
-                {attribute: 'status', value: 'student'},
-                {attribute: 'degree', value: l.degree.id}
-            ))
-        )
-
-        return (model, isModel) => {
-            return [
-                {
-                    formControlName: 'applicant',
-                    displayTitle: 'Student',
-                    isDisabled: isModel,
-                    data: isUniqueEntity(model) ?
-                        new FormInputString(model.applicant.systemId) :
-                        new FormInputOption<User>('applicant', invalidChoiceKey, true, formatUser, fellowStudents)
-                },
-                {
-                    formControlName: 'friends1',
-                    displayTitle: 'Partnerwunsch 1 (Optional)',
-                    isDisabled: isModel,
-                    data: new FormInputOption<User>('friends1', invalidChoiceKey, false, formatUser, fellowStudents)
-                },
-                {
-                    formControlName: 'friends2',
-                    displayTitle: 'Partnerwunsch 2 (Optional)',
-                    isDisabled: isModel,
-                    data: new FormInputOption<User>('friends2', invalidChoiceKey, false, formatUser, fellowStudents)
-                }
-            ]
-        }
-    }
-
-export const emptyLabworkApplicationProtocol = (): LabworkApplicationProtocol => {
-    return {applicant: '', labwork: '', friends: []}
-}
-
-export const createLabworkApplicationProtocol = (output: FormOutputData[], labworkId: string): LabworkApplicationProtocol => {
-    return withCreateProtocol(output, emptyLabworkApplicationProtocol(), p => {
-        p.labwork = labworkId
-        p.friends = [p['friends1'], p['friends2']].filter(f => f !== '' && f !== 'undefined')
-    })
-}
-
 export const partialCourseFormInputData = (
     userService: UserService
 ): (attr: string, m: Readonly<CourseProtocol | CourseAtom>) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined => {

@@ -74,7 +74,6 @@ export class BlacklistComponent implements OnDestroy {
         }
     }
 
-
     private download = () => {
         const year = new Date().getFullYear()
         const $ = this.service.preview(year).pipe(
