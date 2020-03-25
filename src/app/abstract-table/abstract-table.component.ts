@@ -19,6 +19,7 @@ export class AbstractTableComponent<Model> implements OnInit, OnDestroy {
     @Input() pageSizeOptions: number[]
     @Input() canEdit: boolean
     @Input() canDelete: boolean
+    @Input() filterPredicate: (data: Model, filter: string) => boolean
 
     @ViewChild(MatSort, {static: true}) matSort: MatSort
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
@@ -61,6 +62,7 @@ export class AbstractTableComponent<Model> implements OnInit, OnDestroy {
         this.dataSource.paginator = this.paginator
         this.dataSource.sort = this.matSort
         this.dataSource.sortingDataAccessor = nestedObjectSortingDataAccessor
+        mapUndefined(this.filterPredicate, p => this.dataSource.filterPredicate = p)
 
         this.subscribeAndPush(
             this.data$,

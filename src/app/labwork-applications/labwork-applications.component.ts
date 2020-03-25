@@ -1,5 +1,4 @@
 // import {Component, OnDestroy, OnInit} from '@angular/core'
-// import {OldAbstractCrudComponent, TableHeaderColumn} from '../abstract-crud/old/old-abstract-crud.component'
 // import {LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
 // import {NotImplementedError} from '../utils/functions'
 // import {ActivatedRoute} from '@angular/router'
@@ -27,9 +26,7 @@
 //     templateUrl: '../abstract-crud/old/old-abstract-crud.component.html',
 //     styleUrls: ['../abstract-crud/old/old-abstract-crud.component.scss']
 // })
-// export class LabworkApplicationsComponent
-//     extends OldAbstractCrudComponent<LabworkApplicationProtocol, LabworkApplicationAtom>
-//     implements OnInit, OnDestroy {
+// export class LabworkApplicationsComponent implements OnInit, OnDestroy {
 //
 //     private labwork: Readonly<LabworkAtom>
 //     private hasPermission: Readonly<boolean>

@@ -17,6 +17,7 @@ import {UserComponent} from './user/user.component'
 import {CourseComponent} from './course/course.component'
 import {DegreeComponent} from './degree/degree.component'
 import {BlacklistComponent} from './blacklist/blacklist.component'
+import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
 
 const routes: Routes = [
     {
@@ -66,11 +67,11 @@ const routes: Routes = [
                 path: 'courses/:cid',
                 resolve: {userAuths: UserAuthorityResolver},
                 children: [
-                    // {
-                    //     path: 'labworks/:lid/applications',
-                    //     resolve: {userAuths: UserAuthorityResolver},
-                    //     component: LabworkApplicationsComponent
-                    // },
+                    {
+                        path: 'labworks/:lid/applications',
+                        resolve: {userAuths: UserAuthorityResolver},
+                        component: LabworkApplicationComponent
+                    },
                     {
                         path: 'labworks/:lid/groups',
                         resolve: {userAuths: UserAuthorityResolver},
