@@ -42,9 +42,9 @@ export class LabworkApplicationComponent implements OnDestroy {
     tableContent: (model: Readonly<LabworkApplicationAtom>, attr: string) => string
     applications$: Observable<LabworkApplicationAtom[]>
     filterPredicate: (data: LabworkApplicationAtom, filter: string) => boolean
+    canCreateOrUpdate: boolean
 
     private labwork: LabworkAtom
-    private canCreateOrUpdate: boolean
     private dataSource: MatTableDataSource<LabworkApplicationAtom>
     private subs: Subscription[]
 
