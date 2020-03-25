@@ -1,8 +1,24 @@
 import {Injectable} from '@angular/core'
-import {Dashboard, StudentDashboard} from '../models/dashboard.model'
-import {HttpClient} from '@angular/common/http'
+import {EmployeeDashboard, StudentDashboard} from '../models/dashboard.model'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
+import {SemesterJSON} from '../models/semester.model'
+import {Employee} from '../models/user.model'
+import {CourseAtom} from '../models/course.model'
+import {ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
+import {convertManyScheduleEntries, mapSemesterJSON} from '../utils/http-utils'
+import {map} from 'rxjs/operators'
+
+interface DashboardJSON {
+    status: 'student' | 'employee'
+    semester: SemesterJSON
+}
+
+interface EmployeeDashboardJSON extends DashboardJSON {
+    user: Employee
+    courses: CourseAtom[]
+    scheduleEntries: ScheduleEntryAtomJSON[]
+}
 
 @Injectable({
     providedIn: 'root'
@@ -12,24 +28,18 @@ export class DashboardService {
     constructor(private http: HttpService) {
     }
 
-    getStudentDashboard(): Observable<StudentDashboard> {
-        return this.http.get_<StudentDashboard>('dashboard')
-    }
+    private readonly path = 'dashboard'
 
-    // getDashboardForCurrentSession(): Promise<StudentDashboard | EmployeeDashboard> {
-    //   return this.http.getAll<Dashboard>('dashboard').pipe(
-    //     map(dashboard => {
-    //       switch (dashboard.status) {
-    //         case 'student': return <StudentDashboard>dashboard;
-    //         case 'employee': return <EmployeeDashboard>dashboard;
-    //       }
-    //     }
-    //     ),
-    //     map(dashboard => {
-    //       console.log(dashboard);
-    //       return dashboard;
-    //     })
-    //   ).toPromise();
+    getStudentDashboard = (): Observable<StudentDashboard> =>
+        this.http.get_<StudentDashboard>(this.path)
 
-    // }
+    getEmployeeDashboard = (): Observable<EmployeeDashboard> =>
+        this.http.get_<EmployeeDashboardJSON>(this.path)
+            .pipe(map(this.fromJSON))
+
+    private fromJSON = (x: EmployeeDashboardJSON): EmployeeDashboard => ({
+        ...x,
+        semester: mapSemesterJSON(x.semester),
+        scheduleEntries: convertManyScheduleEntries(x.scheduleEntries)
+    })
 }

@@ -6,6 +6,8 @@ import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry
 import {ScheduleEntryGen, ScheduleEntryGenJSON} from '../services/schedule-entry.service'
 import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
 import {ReportCardEntryAtomJSON, ReportCardEntryAtom} from '../models/report-card-entry.model'
+import {Employee} from '../models/user.model'
+import {EmployeeDashboard} from '../models/dashboard.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 

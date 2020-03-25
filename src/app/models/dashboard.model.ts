@@ -1,11 +1,13 @@
-import {User, StudentAtom, Employee} from './user.model';
+import {Employee, StudentAtom} from './user.model'
 import {LabworkAtom} from './labwork.model'
 import {LabworkApplicationAtom} from './labwork.application.model'
 import {Semester} from './semester.model'
+import {CourseAtom} from './course.model'
+import {ScheduleEntryAtom} from './schedule-entry.model'
 
 export interface Dashboard {
-  status: string;
-  semester: string; // Semester;
+  status: 'student' | 'employee'
+  semester: Semester
 }
 
 // case class StudentDashboard(
@@ -33,8 +35,8 @@ export interface StudentDashboard {
 }
 
 export interface EmployeeDashboard extends Dashboard {
-  user?: Employee;
-  courses?: string; // Traversable[CourseAtom],
-  scheduleEntries?: string; // Traversable[ScheduleEntryLike]
+  user: Employee
+  courses: CourseAtom[]
+  scheduleEntries: ScheduleEntryAtom[]
 }
 

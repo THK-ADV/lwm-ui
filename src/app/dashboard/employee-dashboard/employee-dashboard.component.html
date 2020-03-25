@@ -1,3 +1,3 @@
-<p>
-  {{dashboard$ | async | json}}
-</p>
+<ng-container *ngIf="dashboard$ | async as dashboard">
+    <p>{{dashboard | json }}</p>
+</ng-container>
