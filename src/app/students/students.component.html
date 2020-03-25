@@ -1,0 +1,28 @@
+<h1 *ngIf="student$ | async as student">Notenhefte für {{formatUser(student)}}</h1>
+
+<ng-container *ngFor="let byCourse of cardsByCourse$ | async | sort: sortByCourse()">
+    <h2>{{byCourse.course.abbreviation}}</h2>
+
+    <mat-accordion [multi]="true">
+        <mat-expansion-panel *ngFor="let entry of byCourse.reportCardEntries | sort: sortBySemester()">
+            <mat-expansion-panel-header (click)="bindDataSource(entry)">
+                <mat-panel-title>
+                    {{accordionTitle(entry.labwork)}}
+                </mat-panel-title>
+                <!--                <mat-panel-description>-->
+                <!--                display if passed or not-->
+                <!--                    {{x.value.length}} Praktia mit {{sumApplications(x.value)}} Anmeldungen-->
+                <!--                </mat-panel-description>-->
+            </mat-expansion-panel-header>
+
+            <ng-template matExpansionPanelContent>
+                <ng-container>
+                    <lwm-report-card-table [dataSource]="tableModelFor(entry).dataSource"
+                                           [columns]="tableModelFor(entry).columns"
+                                           [auths]="auths()">
+                    </lwm-report-card-table>
+                </ng-container>
+            </ng-template>
+        </mat-expansion-panel>
+    </mat-accordion>
+</ng-container>

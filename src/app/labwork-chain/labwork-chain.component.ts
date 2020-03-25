@@ -44,17 +44,17 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     private subs: Subscription[]
 
-    private labwork: Readonly<LabworkAtom>
-    private timetable: Readonly<TimetableAtom>
-    private assignmentEntries: Readonly<AssignmentEntry[]>
-    private schedulePreview: Readonly<SchedulePreview> | undefined
-    private scheduleEntries: Readonly<ScheduleEntryAtom[]>
-    private applications: Readonly<number>
-    private reportCards: Readonly<number>
+    labwork: Readonly<LabworkAtom>
+    timetable: Readonly<TimetableAtom>
+    assignmentEntries: Readonly<AssignmentEntry[]>
+    schedulePreview: Readonly<SchedulePreview> | undefined
+    scheduleEntries: Readonly<ScheduleEntryAtom[]>
+    applications: Readonly<number>
+    reportCards: Readonly<number>
 
-    private steps: Step[]
+    steps: Step[]
 
-    @ViewChild('stepper', {static: false}) stepper: MatHorizontalStepper
+    @ViewChild('stepper') stepper: MatHorizontalStepper
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -87,41 +87,41 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private updateLabwork = (l: LabworkAtom) => {
+    updateLabwork = (l: LabworkAtom) => {
         this.labwork = l
     }
 
-    private updateTimetable = (t: TimetableAtom) => {
+    updateTimetable = (t: TimetableAtom) => {
         this.timetable = t
     }
 
-    private updateAssignmentEntries = (xs: AssignmentEntry[]) => {
+    updateAssignmentEntries = (xs: AssignmentEntry[]) => {
         this.assignmentEntries = xs
     }
 
-    private updateSchedulePreview = (p: SchedulePreview) => {
+    updateSchedulePreview = (p: SchedulePreview) => {
         this.schedulePreview = p
     }
 
-    private deleteScheduleEntries = () => {
+    deleteScheduleEntries = () => {
         this.scheduleEntries = []
         this.jumpToGroups()
     }
 
-    private deleteReportCards = () => {
+    deleteReportCards = () => {
         this.reportCards = 0
     }
 
-    private createScheduleEntries = (es: ScheduleEntryAtom[]) => {
+    createScheduleEntries = (es: ScheduleEntryAtom[]) => {
         this.scheduleEntries = es
         this.schedulePreview = undefined
     }
 
-    private createReportCards = (n: number) => {
+    createReportCards = (n: number) => {
         this.reportCards = n
     }
 
-    private deleteSchedulePreview = () => {
+    deleteSchedulePreview = () => {
         this.schedulePreview = undefined
         this.jumpToGroups()
     }
@@ -146,7 +146,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         this.subs.push(subscribe(o, f))
     }
 
-    private label = (step: Step): string => {
+    label = (step: Step): string => {
         switch (step) {
             case Step.application:
                 return 'Ablaufplan'
@@ -171,15 +171,15 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         return this.steps[step.valueOf() - 1]
     }
 
-    private hasNextButton = (step: Step): boolean => {
+    hasNextButton = (step: Step): boolean => {
         return this.next(step) !== undefined
     }
 
-    private hasPrevButton = (step: Step): boolean => {
+    hasPrevButton = (step: Step): boolean => {
         return this.prev(step) !== undefined
     }
 
-    private isStepCompleted = (step: Step): boolean => {
+    isStepCompleted = (step: Step): boolean => {
         switch (step) {
             case Step.application:
             case Step.timetable:
@@ -194,9 +194,9 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         }
     }
 
-    private hasPermission = (): boolean => hasCourseManagerPermission(this.route, this.labwork.course.id)
+    hasPermission = (): boolean => hasCourseManagerPermission(this.route, this.labwork.course.id)
 
-    private isStepLocked = (step: Step): boolean => {
+    isStepLocked = (step: Step): boolean => {
         if (!this.hasPermission()) {
             return true
         }
@@ -215,13 +215,13 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         }
     }
 
-    private hasReportCardEntries = () => this.reportCards > 0
+    hasReportCardEntries = () => this.reportCards > 0
 
     private hasScheduleEntries = () => foldUndefined(this.scheduleEntries, xs => xs.length > 0, () => false)
 
     private hasSchedulePreview = () => foldUndefined(this.schedulePreview, () => true, () => false)
 
-    private groupViewMode = (): GroupViewMode => {
+    groupViewMode = (): GroupViewMode => {
         if (this.applications > 0) {
             if (this.hasScheduleEntries()) {
                 return this.groupsPresent()
@@ -233,9 +233,9 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
         }
     }
 
-    private waitingForApplications = (): GroupViewMode => 'waitingForApplications'
+    waitingForApplications = (): GroupViewMode => 'waitingForApplications'
 
-    private waitingForPreview = (): GroupViewMode => 'waitingForPreview'
+    waitingForPreview = (): GroupViewMode => 'waitingForPreview'
 
-    private groupsPresent = (): GroupViewMode => 'groupsPresent'
+    groupsPresent = (): GroupViewMode => 'groupsPresent'
 }

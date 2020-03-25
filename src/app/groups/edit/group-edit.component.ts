@@ -3,7 +3,6 @@ import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
 import {GroupAtom} from '../../models/group.model'
 import {Observable, Subscription} from 'rxjs'
-import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {User} from '../../models/user.model'
 import {AlertService} from '../../services/alert.service'
 import {addToDataSource, removeFromDataSource} from '../../shared-dialogs/dataSource.update'
@@ -15,7 +14,8 @@ import {GroupDeletionResult, GroupInsertionResult, GroupMovementResult, LwmServi
 import {map, tap} from 'rxjs/operators'
 import {createAction, deleteAction, LWMAction, swapAction} from '../../table-action-button/lwm-actions'
 import {formatUser} from '../../utils/component.utils'
-import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetControl} from '../../utils/form-control-utils'
+import {foreachOption, isOption, resetControl} from '../../utils/form-control-utils'
+import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-group-edit',
@@ -25,22 +25,20 @@ import {foreachOption, getOptionErrorMessage, hasOptionError, isOption, resetCon
 export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply assignment index changes
 
     private subs: Subscription[]
-    private dataSource = new MatTableDataSource<User>()
+    dataSource = new MatTableDataSource<User>()
 
-    private readonly displayedColumns: string[]
-    private readonly columns: TableHeaderColumn[]
+    readonly displayedColumns: string[]
+    readonly columns: TableHeaderColumn[]
 
-    private readonly addAction: LWMAction
-    private readonly deleteAction: LWMAction
-    private readonly swapAction: LWMAction
+    readonly addAction: LWMAction
+    readonly deleteAction: LWMAction
+    readonly swapAction: LWMAction
 
-    private readonly addStudentFormGroup: FormGroup
-    private readonly addStudentForm: FormInput
+    readonly addStudentFormGroup: FormGroup
+    readonly addStudentForm: FormInput
+    readonly studentOption: FormInputOption<User>
 
     readonly groupChanged: EventEmitter<void>
-
-    private readonly hasOptionError_ = hasOptionError
-    private readonly getOptionErrorMessage_ = getOptionErrorMessage
 
     static instance(
         dialog: MatDialog,
@@ -70,7 +68,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         private readonly alertService: AlertService,
         private readonly dialog: MatDialog,
         private readonly service: LwmService,
-        @Inject(MAT_DIALOG_DATA) private payload: { group: GroupAtom, otherGroups: GroupAtom[], fellowStudents$: Observable<User[]> }
+        @Inject(MAT_DIALOG_DATA) public payload: { group: GroupAtom, otherGroups: GroupAtom[], fellowStudents$: Observable<User[]> }
     ) {
         this.groupChanged = new EventEmitter<void>()
         this.subs = []
@@ -84,11 +82,12 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         this.addStudentFormGroup = new FormGroup({})
 
         const addStudentFcName = 'member'
+        this.studentOption = new FormInputOption<User>(addStudentFcName, invalidChoiceKey, true, formatUser, payload.fellowStudents$)
         this.addStudentForm = {
             formControlName: addStudentFcName,
             displayTitle: 'Student hinzufügen',
             isDisabled: false,
-            data: new FormInputOption<User>(addStudentFcName, invalidChoiceKey, true, formatUser, payload.fellowStudents$)
+            data: this.studentOption
         }
 
         this.setupFormGroups()
@@ -110,7 +109,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         this.onCancel()
     }
 
-    private prepareTableContent = (user: User, attr: string): string => {
+    prepareTableContent = (user: User, attr: string): string => {
         switch (attr) {
             case 'name':
                 return `${user.lastname}, ${user.firstname}`
@@ -119,19 +118,19 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         }
     }
 
-    private userFormControl = (): AbstractControl => {
+    userFormControl = (): AbstractControl => {
         return this.addStudentFormGroup.controls[this.addStudentForm.formControlName]
     }
 
-    private userFromControl = (): User => {
+    userFromControl = (): User => {
         return this.userFormControl().value as User
     }
 
-    private onCancel = () => {
+    onCancel = () => {
         this.dialogRef.close()
     }
 
-    private move = (member: User, dest: GroupAtom) => {
+    move = (member: User, dest: GroupAtom) => {
         const movementMsg = (result: GroupMovementResult): string => {
             const cardsUpdated = result.updatedReportCardEntries.length !== 0
             let msg = result.changedMembership ? `moved into group ${result.newMembership.group}` : 'failed to move into dest group'
@@ -155,13 +154,13 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
             this.groupChanged.emit()
-            this.alertService.reportAlert('success', movementMsg(result))
+            this.alertService.reportSuccess(movementMsg(result))
         })
 
         this.subs.push(s)
     }
 
-    private delete = (member: User) => {
+    delete = (member: User) => {
         const deletionMsg = (result: GroupDeletionResult): string => {
             const cardsCreated = result.reportCardEntries.length !== 0
             let msg = result.changedMembership ? 'removed group membership' : 'not removed group membership'
@@ -187,13 +186,13 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             this.updateStudentsByAdding(member)
 
             this.groupChanged.emit()
-            this.alertService.reportAlert('success', deletionMsg(result))
+            this.alertService.reportSuccess(deletionMsg(result))
         })
 
         this.subs.push(s)
     }
 
-    private create = (member: User) => {
+    create = (member: User) => {
         const creationMsg = (result: GroupInsertionResult): string => {
             const cardsCreated = result.reportCardEntries.length !== 0
             let msg = `created group membership ${JSON.stringify(result.membership)}`
@@ -219,7 +218,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             this.updateStudentsByRemoving(member)
 
             this.groupChanged.emit()
-            this.alertService.reportAlert('success', creationMsg(result))
+            this.alertService.reportSuccess(creationMsg(result))
         })
 
         this.subs.push(s)

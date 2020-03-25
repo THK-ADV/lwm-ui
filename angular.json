@@ -10,13 +10,14 @@
       "prefix": "lwm",
       "schematics": {
         "@schematics/angular:component": {
-          "styleext": "scss"
+          "style": "scss"
         }
       },
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "aot": true,
             "outputPath": "dist/lwm-ui",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -54,6 +55,10 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb"
                 }
               ]
             }
@@ -63,7 +68,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "lwm-ui:build",
-            "port": 9001
+            "port": 9002
           },
           "configurations": {
             "production": {
@@ -137,5 +142,8 @@
       }
     }
   },
-  "defaultProject": "lwm-ui"
+  "defaultProject": "lwm-ui",
+  "cli": {
+    "analytics": false
+  }
 }

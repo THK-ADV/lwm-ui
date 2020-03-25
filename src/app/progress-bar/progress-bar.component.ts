@@ -14,5 +14,6 @@ export class ProgressBarComponent implements OnInit {
     ngOnInit() {
     }
 
-    private isLoading = (): boolean => this.service.isSpinning()
+    isLoading = (): boolean =>
+        this.service.isSpinning()
 }

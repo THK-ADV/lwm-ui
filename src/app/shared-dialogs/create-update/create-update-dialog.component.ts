@@ -6,10 +6,10 @@ import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {invalidLocalTimeKey} from '../../utils/form.validator'
 import {FormDataStringType, FormDataType, FormInput, FormInputData} from '../forms/form.input'
 import {foreachOption, getOptionErrorMessage, hasOptionError} from '../../utils/form-control-utils'
-import {parseUnsafeBoolean, parseUnsafeNumber} from '../../utils/functions'
+import {mapUndefined, parseUnsafeBoolean, parseUnsafeNumber} from '../../utils/functions'
 
 export interface FormOutputData {
-    formControlName: string
+    attr: string
     value: FormDataType
 }
 
@@ -29,7 +29,7 @@ export interface FormPayload<Protocol> {
 })
 export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnDestroy {
 
-    private formGroup: FormGroup
+    formGroup: FormGroup
 
     static instance<Protocol, Model>(
         dialog: MatDialog,
@@ -44,7 +44,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
 
     constructor(
         private dialogRef: MatDialogRef<CreateUpdateDialogComponent<Protocol, Model>, Protocol>,
-        @Inject(MAT_DIALOG_DATA) private payload: FormPayload<Protocol>
+        @Inject(MAT_DIALOG_DATA) public payload: FormPayload<Protocol>
     ) {
         this.formGroup = new FormGroup({})
 
@@ -58,11 +58,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
             this.formGroup.addControl(d.formControlName, fc)
         })
 
-        const customValidator = payload.composedFromGroupValidator
-
-        if (customValidator) {
-            this.formGroup.setValidators(customValidator)
-        }
+        mapUndefined(payload.composedFromGroupValidator, v => this.formGroup.setValidators(v))
     }
 
     ngOnInit(): void {
@@ -80,9 +76,9 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
     onSubmit() {
         if (this.formGroup.valid) {
             const updatedValues: FormOutputData[] = this.payload.data
-                .filter(d => !d.isDisabled)
+                .filter(d => !d.isDisabled) // TODO why do we filter them out? as a consequence, one have to manually set all disabled properties, which is a huge source of error
                 .map(d => ({
-                    formControlName: d.formControlName,
+                    attr: d.formControlName,
                     value: this.convertToType(d.data.type, this.formGroup.controls[d.formControlName].value)
                 }))
 

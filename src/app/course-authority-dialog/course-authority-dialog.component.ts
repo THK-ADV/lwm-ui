@@ -6,7 +6,6 @@ import {AuthorityService} from '../services/authority.service'
 import {UserService} from '../services/user.service'
 import {RoleService} from '../services/role.service'
 import {AlertService} from '../services/alert.service'
-import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {AuthorityAtom, AuthorityProtocol} from '../models/authority.model'
 import {Subscription} from 'rxjs'
 import {User} from '../models/user.model'
@@ -19,6 +18,7 @@ import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {isRole, isUser} from '../utils/type.check.utils'
 import {foreachOption, isOption, resetControl} from '../utils/form-control-utils'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 @Component({
     selector: 'lwm-course-authority-dialog',
@@ -27,14 +27,14 @@ import {foreachOption, isOption, resetControl} from '../utils/form-control-utils
 })
 export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
-    protected readonly displayedColumns: string[]
-    protected readonly columns: TableHeaderColumn[]
+    readonly displayedColumns: string[]
+    readonly columns: TableHeaderColumn[]
 
-    private readonly dataSource = new MatTableDataSource<AuthorityAtom>()
+    readonly dataSource = new MatTableDataSource<AuthorityAtom>()
     private readonly subs: Subscription[]
 
-    protected readonly authGroup: FormGroup
-    protected inputs: FormInput[]
+    readonly authGroup: FormGroup
+    inputs: FormInput[]
 
     constructor(
         private dialogRef: MatDialogRef<CourseAuthorityUpdateDialogComponent>,
@@ -115,11 +115,11 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         foreachOption(this.inputs, o => o.onDestroy())
     }
 
-    onCancel(): void {
+    onCancel = (): void => {
         this.dialogRef.close()
     }
 
-    addAuthority() {
+    addAuthority = () => {
         if (!this.authGroup.valid) {
             return
         }
@@ -142,7 +142,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         this.createAuthority(protocol)
     }
 
-    private createAuthority(auth: AuthorityProtocol) {
+    private createAuthority = (auth: AuthorityProtocol) => {
         this.subs.push(
             subscribe(
                 this.authorityService.create(auth),
@@ -151,12 +151,12 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         )
     }
 
-    private afterCreate(auth: AuthorityAtom) {
+    private afterCreate = (auth: AuthorityAtom) => {
         addToDataSource(this.dataSource, this.alertService)(auth)
         foreachOption(this.inputs, o => resetControl(o.control))
     }
 
-    onDelete(auth: AuthorityAtom) {
+    onDelete = (auth: AuthorityAtom) => {
         this.subs.push(
             subscribe(
                 this.authorityService.delete(auth.id),
@@ -165,17 +165,13 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         )
     }
 
-    private afterDelete(auth: AuthorityAtom) {
+    private afterDelete = (auth: AuthorityAtom) => {
         removeFromDataSource(this.dataSource, this.alertService)(a => a.id === auth.id)
     }
 
-    private headerTitle(): string {
-        return `${this.course.abbreviation}`
-    }
+    headerTitle = (): string => `${this.course.abbreviation}`
 
-    private emptyData(): boolean {
-        return this.dataSource.data.length === 0
-    }
+    emptyData = (): boolean => this.dataSource.data.length === 0
 
     private fold(attr: string, auth: AuthorityAtom, mapUser: (User) => string, mapRole: (Role) => string): string {
         switch (attr) {
@@ -188,18 +184,17 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         }
     }
 
-    private prepareTableContent(auth: AuthorityAtom, attr: string): string {
-        return this.fold(attr, auth,
+    prepareTableContent = (auth: AuthorityAtom, attr: string): string =>
+        this.fold(
+            attr,
+            auth,
             user => formatUser(user),
             role => role.label
         )
-    }
 
-    employeeCount(): number {
-        return count(this.dataSource.data, auth => auth.role.label !== UserRole.courseAssistant)
-    }
+    employeeCount = (): number =>
+        count(this.dataSource.data, auth => auth.role.label !== UserRole.courseAssistant)
 
-    studentCount(): number {
-        return count(this.dataSource.data, auth => auth.role.label === UserRole.courseAssistant)
-    }
+    studentCount = (): number =>
+        count(this.dataSource.data, auth => auth.role.label === UserRole.courseAssistant)
 }

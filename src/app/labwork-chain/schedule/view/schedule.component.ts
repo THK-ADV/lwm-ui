@@ -34,8 +34,8 @@ export class ScheduleComponent implements OnInit {
     @Output() deleteReportCardsEmitter: EventEmitter<void>
     @Output() updateLabworkEmitter: EventEmitter<LabworkAtom>
 
-    private dates: ScheduleEntryEvent[]
-    private headerTitle: string
+    dates: ScheduleEntryEvent[]
+    headerTitle: string
     private readonly subs: Subscription[]
 
     constructor(
@@ -63,9 +63,9 @@ export class ScheduleComponent implements OnInit {
         this.dates = makeScheduleEntryEvents(scheduleEntries)
     }
 
-    private canDelete = (): LWMActionType[] => this.hasPermission ? ['delete'] : []
+    canDelete = (): LWMActionType[] => this.hasPermission ? ['delete'] : []
 
-    private onDelete = () => {
+    onDelete = () => {
         const dialogRef = DeleteDialogComponent.instance(
             this.dialog,
             {

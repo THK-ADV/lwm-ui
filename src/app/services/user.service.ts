@@ -24,7 +24,11 @@ export class UserService implements AbstractCRUDService<User, User> {
     getAllWithFilter = (...filter: UserFilter[]): Observable<User[]> => this.http
         .getAll(this.path, applyFilter(filter, nonAtomicParams))
 
+    allStudents = () => this.getAllWithFilter({attribute: 'status', value: 'student'})
+
     getAll = (): Observable<User[]> => this.http.getAll(this.path, nonAtomicParams)
+
+    get = (id: string): Observable<User> => this.http.get(this.path, id)
 
     delete = (id: string): Observable<User> => NotImplementedError()
 

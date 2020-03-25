@@ -1,9 +1,9 @@
-import {Observable, Subscription} from 'rxjs'
+import {EMPTY, Observable, Subscription} from 'rxjs'
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {debounceTime, map, startWith} from 'rxjs/operators'
 import {FormDataStringType, FormInputData} from './form.input'
 import {mandatoryOptionsValidator, optionalOptionsValidator} from '../../utils/form.validator'
-import {foldUndefined, subscribe, voidF} from '../../utils/functions'
+import {foldUndefined, isEmpty, subscribe, voidF} from '../../utils/functions'
 
 export class FormInputOption<Option> implements FormInputData<string> {
     readonly type: FormDataStringType
@@ -12,7 +12,8 @@ export class FormInputOption<Option> implements FormInputData<string> {
 
     private readonly subs: Subscription[]
     private options: Option[] = []
-    private filteredOptions: Observable<Option[]>
+
+    filteredOptions: Observable<Option[]>
 
     control: Readonly<AbstractControl>
 
@@ -22,6 +23,7 @@ export class FormInputOption<Option> implements FormInputData<string> {
         private readonly required: boolean,
         private readonly display: (value: Option) => string,
         private readonly options$: Observable<Option[]>,
+        private readonly debounce: number = 200,
         private readonly selected?: (options: Option[]) => Option | undefined
     ) {
         this.value = ''
@@ -37,8 +39,21 @@ export class FormInputOption<Option> implements FormInputData<string> {
         })
     }
 
+    bindControl = (control: AbstractControl) => this.control = control
+
+    bindOptionsIfNeeded = () => {
+        if (isEmpty(this.options)) {
+            this.bindOptions(this.options$)
+        }
+    }
+
     bindOptions = (options$: Observable<Option[]>) => {
         this.bindOptions0(options$, voidF)
+    }
+
+    reset = () => {
+        this.bindOptions(EMPTY)
+        this.onDestroy()
     }
 
     private bindOptions0 = (options$: Observable<Option[]>, completion: (os: Option[]) => void) => {
@@ -49,7 +64,7 @@ export class FormInputOption<Option> implements FormInputData<string> {
 
         this.filteredOptions = this.control.valueChanges
             .pipe(
-                debounceTime(200),
+                debounceTime(this.debounce),
                 startWith(''),
                 map(value => typeof value === 'string' ? value : this.display(value)),
                 map(value => value ? this.filter(value) : this.options.slice())

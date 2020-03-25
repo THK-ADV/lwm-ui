@@ -1,9 +1,17 @@
 import {Component, Inject} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {Html} from '../../html-builder/html-builder'
+
+interface Text {
+    kind: 'text'
+    value: string
+}
+
+type ConfirmationBody = Html | Text
 
 interface ConfirmationPayload {
     title: string
-    body: string
+    body: ConfirmationBody
 }
 
 export enum ConfirmationResult {
@@ -19,22 +27,24 @@ export class ConfirmDialogComponent {
 
     constructor(
         private dialogRef: MatDialogRef<ConfirmDialogComponent, ConfirmationResult>,
-        @Inject(MAT_DIALOG_DATA) private payload: ConfirmationPayload
+        @Inject(MAT_DIALOG_DATA) readonly payload: ConfirmationPayload
     ) {
     }
 
-    static instance(
+    static instance = (
         dialog: MatDialog,
-        title: string,
-        body: string
-    ): MatDialogRef<ConfirmDialogComponent, ConfirmationResult> {
-        return dialog.open<ConfirmDialogComponent, ConfirmationPayload, ConfirmationResult>(ConfirmDialogComponent, {
-            data: {title: title, body: body},
-            panelClass: 'lwmConfirmationDialog'
-        })
-    }
+        payload: ConfirmationPayload
+    ): MatDialogRef<ConfirmDialogComponent, ConfirmationResult> =>
+        dialog.open<ConfirmDialogComponent, ConfirmationPayload, ConfirmationResult>(
+            ConfirmDialogComponent, {
+                data: payload,
+                panelClass: 'lwmConfirmationDialog'
+            }
+        )
 
-    private cancel = () => this.dialogRef.close(ConfirmationResult.ko)
+    cancel = () =>
+        this.dialogRef.close(ConfirmationResult.ko)
 
-    private submit = () => this.dialogRef.close(ConfirmationResult.ok)
+    submit = () =>
+        this.dialogRef.close(ConfirmationResult.ok)
 }

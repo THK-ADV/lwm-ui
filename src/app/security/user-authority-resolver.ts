@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core'
 import {ActivatedRoute, Resolve} from '@angular/router'
 import {Observable} from 'rxjs'
 import {AuthorityAtom} from '../models/authority.model'
-import {fetchCurrentUserAuthorities$, hasAdminStatus, isCourseManager} from '../utils/role-checker'
+import {fetchCurrentUserAuthorities$, isAdmin, isCourseManager} from '../utils/role-checker'
 import {AuthorityService} from '../services/authority.service'
 import {KeycloakTokenService} from '../services/keycloak-token.service'
 
@@ -10,7 +10,7 @@ export const userAuths = (route: ActivatedRoute): AuthorityAtom[] => route.snaps
 
 export const hasCourseManagerPermission = (route: ActivatedRoute, courseId: string) => {
     const auths = userAuths(route)
-    return isCourseManager(courseId, auths) || hasAdminStatus(auths)
+    return isCourseManager(auths, courseId) || isAdmin(auths)
 }
 
 @Injectable()

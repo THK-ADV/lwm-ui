@@ -1,0 +1,23 @@
+$ft-color: #757575;
+$bg-color: #333333;
+$boder-color: #b43092;
+
+* {
+    margin-left: 10px;
+    input {
+        width: 400px;
+        background-color: $bg-color;
+        color: $ft-color;
+        border: none;
+        border-left: 4px $boder-color solid;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        padding-left: 10px;
+        caret-color: $ft-color;
+    }
+    input:focus {
+        outline: none;
+    }
+}
+
+

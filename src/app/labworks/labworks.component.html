@@ -1,7 +1,8 @@
 <ng-container *ngIf="course$ | async as course">
     <lwm-course-detail
             [course]="course"
-            [hasPermission]="hasPermission">
+            [hasPermission]="hasPermission"
+            (courseUpdateEmitter)="updateCourse($event)">
     </lwm-course-detail>
 
     <ng-container *ngIf="currentSemester$ | async as currentSemester">

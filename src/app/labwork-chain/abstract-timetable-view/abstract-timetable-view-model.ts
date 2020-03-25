@@ -7,6 +7,7 @@ export interface SupervisorWorkload {
     workload: number
 }
 
+// @ts-ignore
 const workload0 = (entries: TimetableEntryAtom[]) => entries.reduce(
     (acc: { user: string, minutes: number }, e) => {
         if (isEmpty(e.supervisor)) {

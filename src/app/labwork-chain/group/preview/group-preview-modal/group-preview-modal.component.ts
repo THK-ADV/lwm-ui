@@ -16,10 +16,10 @@ interface StrategyOption {
 })
 export class GroupPreviewModalComponent {
 
-    private formGroup: FormGroup
-    private readonly title: string
-    private readonly strategies: StrategyOption[]
-    private selectedValue: string
+    formGroup: FormGroup
+    readonly title: string
+    readonly strategies: StrategyOption[]
+    selectedValue: string
 
     private readonly countOption = ({value: 'count', viewValue: 'Gruppenanzahl'})
     private readonly minMaxOption = ({value: 'min-max', viewValue: 'Gruppengröße'})
@@ -50,9 +50,9 @@ export class GroupPreviewModalComponent {
         })
     }
 
-    private cancel = () => this.dialogRef.close(undefined)
+    cancel = () => this.dialogRef.close(undefined)
 
-    private submit = () => {
+    submit = () => {
         if (!this.formGroup.valid) {
             return
         }
@@ -66,11 +66,11 @@ export class GroupPreviewModalComponent {
         this.dialogRef.close(mapUndefined(strategy, s => ({strategy: s, considerSemesterIndex: this.considerSemesterIndexValue()})))
     }
 
-    private hasError = (fcName: string) => !this.formGroup.controls[fcName].untouched && this.formGroup.controls[fcName].hasError(fcName)
+    hasError = (fcName: string) => !this.formGroup.controls[fcName].untouched && this.formGroup.controls[fcName].hasError(fcName)
 
-    private getErrorMsg = (fcName: string) => this.formGroup.controls[fcName].getError(fcName)
+    getErrorMsg = (fcName: string) => this.formGroup.controls[fcName].getError(fcName)
 
-    private considerSemesterIndexValue = () => parseUnsafeBoolean(this.formGroup.controls.considerSemesterIndex.value)
+    considerSemesterIndexValue = () => parseUnsafeBoolean(this.formGroup.controls.considerSemesterIndex.value)
 
     private foldSelectedValue = <T>(count: (count: number) => T, minMax: (min: number, max: number) => T, nil: () => T): T => {
         if (!this.selectedValue) {

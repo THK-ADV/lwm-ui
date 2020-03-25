@@ -24,12 +24,12 @@ import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 })
 export class GroupsComponent implements OnInit {
 
-    private headerTitle: String
+    headerTitle: String
     private subs: Subscription[]
     private labwork: Readonly<LabworkAtom>
     private hasPermission: Readonly<boolean>
 
-    private groups: Card<GroupAtom, User>[]
+    groups: Card<GroupAtom, User>[]
 
     constructor(
         private readonly dialog: MatDialog,
@@ -80,11 +80,11 @@ export class GroupsComponent implements OnInit {
         return this.labworkApplicationService.getAllByLabworkAtom(l.id)
     }
 
-    private displayUser = (user: User): string => `${user.lastname}, ${user.firstname}`
+    displayUser = (user: User): string => `${user.lastname}, ${user.firstname}`
 
-    private displaySystemId = (user: User): string => user.systemId
+    displaySystemId = (user: User): string => user.systemId
 
-    private onEdit = (group: GroupAtom) => {
+    onEdit = (group: GroupAtom) => {
         const fellowStudents$ = this.userService.getAllWithFilter(
             {attribute: 'status', value: 'student'},
             {attribute: 'degree', value: group.labwork.degree}
@@ -101,9 +101,9 @@ export class GroupsComponent implements OnInit {
         this.subs.push(s1)
     }
 
-    private canEdit = (): boolean => {
+    canEdit = (): boolean => {
         return this.hasPermission
     }
 
-    private cardTitle = (group: GroupAtom): string => `${group.label} - ${group.members.length} Teilnehmer`
+    cardTitle = (group: GroupAtom): string => `${group.label} - ${group.members.length} Teilnehmer`
 }

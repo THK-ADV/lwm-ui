@@ -1,7 +1,7 @@
-import {Component, OnDestroy, OnInit} from '@angular/core'
+import {Component, OnInit} from '@angular/core'
 import {DashboardService} from '../../services/dashboard.service'
 import {EmployeeDashboard} from '../../models/dashboard.model'
-import {Subscription} from 'rxjs'
+import {Observable} from 'rxjs'
 import {ActivatedRoute} from '@angular/router'
 
 @Component({
@@ -9,9 +9,8 @@ import {ActivatedRoute} from '@angular/router'
     templateUrl: './employee-dashboard.component.html',
     styleUrls: ['./employee-dashboard.component.scss']
 })
-export class EmployeeDashboardComponent implements OnInit, OnDestroy {
-    private dashboardSubscription: Subscription
-    private dashboard: EmployeeDashboard
+export class EmployeeDashboardComponent implements OnInit {
+    dashboard$: Observable<EmployeeDashboard>
 
     constructor(
         private readonly dashboardService: DashboardService,
@@ -20,12 +19,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        // this.dashboardSubscription = this.dashboardService.getDashboard<EmployeeDashboard>()
-        //   .subscribe(dashboard => this.dashboard = dashboard)
-    }
-
-    ngOnDestroy(): void {
-        // this.dashboardSubscription.unsubscribe()
+        // this.dashboard$ = this.dashboardService.getDashboard<EmployeeDashboard>()
     }
 
 }

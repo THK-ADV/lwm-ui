@@ -8,19 +8,18 @@ import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {MatDialog, MatSort, MatTableDataSource} from '@angular/material'
-import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {LabworkService} from '../services/labwork.service'
 import {Labwork, LabworkAtom, LabworkProtocol} from '../models/labwork.model'
 import {AlertService} from '../services/alert.service'
 import {_groupBy, dateOrderingDESC, isEmpty, subscribe} from '../utils/functions'
-import {removeFromDataSource} from '../shared-dialogs/dataSource.update'
-import {CreateUpdateDialogComponent, FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
+import {FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {isUniqueEntity} from '../models/unique.entity.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {invalidChoiceKey} from '../utils/form.validator'
-import {createProtocol, withCreateProtocol} from '../models/protocol.model'
+import {withCreateProtocol} from '../models/protocol.model'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
 import {FormInputBoolean} from '../shared-dialogs/forms/form.input.boolean'
@@ -37,9 +36,10 @@ import {
     LWMAction,
     LWMActionType
 } from '../table-action-button/lwm-actions'
-import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {openDialog, openDialogFromPayload} from '../shared-dialogs/dialog-open-combinator'
 import {userAuths} from '../security/user-authority-resolver'
-import {hasAdminStatus, isCourseManager} from '../utils/role-checker'
+import {isAdmin, isCourseManager} from '../utils/role-checker'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -59,22 +59,22 @@ interface GroupedLabwork {
 })
 export class LabworksComponent implements OnInit, OnDestroy {
 
-    private readonly columns: TableHeaderColumn[] = [
+    readonly columns: TableHeaderColumn[] = [
         {attr: 'labwork.label', title: 'Bezeichnung'},
         {attr: 'applications', title: 'Anmeldungen'},
         {attr: 'labwork.subscribable', title: 'Anmeldbar'},
         {attr: 'labwork.published', title: 'Veröffentlicht'}
     ]
 
-    private labworkActions: LWMAction[]
-    private hasPermission: Readonly<boolean>
+    labworkActions: LWMAction[]
+    hasPermission: Readonly<boolean>
 
-    private course$: Observable<CourseAtom>
-    private currentSemester$: Observable<Semester>
-    private groupedLabworks$: Observable<GroupedLabwork>
+    course$: Observable<CourseAtom>
+    currentSemester$: Observable<Semester>
+    groupedLabworks$: Observable<GroupedLabwork>
 
-    private readonly displayedColumns: string[]
-    private readonly dataSource = new MatTableDataSource<LabworkWithApplications>()
+    readonly displayedColumns: string[]
+    readonly dataSource = new MatTableDataSource<LabworkWithApplications>()
 
     private subs: Subscription[]
 
@@ -82,7 +82,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return {label: '', description: '', semester: '', course: '', degree: '', subscribable: false, published: false}
     }
 
-    @ViewChild(MatSort, {static: false}) set matSort(ms: MatSort) { // MatSort hasStatus undefined if data hasStatus loaded asynchronously
+    @ViewChild(MatSort) set matSort(ms: MatSort) { // MatSort hasStatus undefined if data hasStatus loaded asynchronously
         this.dataSource.sort = ms
     }
 
@@ -137,6 +137,9 @@ export class LabworksComponent implements OnInit, OnDestroy {
         this.subs.forEach(s => s.unsubscribe())
     }
 
+    updateCourse = (c: Readonly<CourseAtom>) =>
+        this.course$ = of(c)
+
     private setupPermissionChecks = (courseId: string) => {
         this.labworkActions = []
         const mandatory = [
@@ -147,8 +150,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         ]
 
         const auths = userAuths(this.route)
-        const isCM = isCourseManager(courseId, auths)
-        const isA = hasAdminStatus(auths)
+        const isCM = isCourseManager(auths, courseId)
+        const isA = isAdmin(auths)
 
         this.hasPermission = isCM || isA
 
@@ -200,11 +203,11 @@ export class LabworksComponent implements OnInit, OnDestroy {
         }
     }
 
-    private routeTo(action: LWMActionType, labwork: LabworkAtom) {
+    private routeTo = (action: LWMActionType, labwork: LabworkAtom) => {
         this.router.navigate(['labworks', labwork.id, action], {relativeTo: this.route})
     }
 
-    private delete(labwork: LabworkAtom) {
+    private delete = (labwork: LabworkAtom) => {
         const dialogRef = DeleteDialogComponent
             .instance(this.dialog, {label: `${labwork.label} - ${labwork.semester.abbreviation}`, id: labwork.id})
 
@@ -214,62 +217,49 @@ export class LabworksComponent implements OnInit, OnDestroy {
         ))
     }
 
-    private edit(labwork: LabworkAtom) {
-        const s1 = this.openDialog_(DialogMode.edit, labwork, updated => {
-            const s2 = subscribe(
-                this.labworkService.update(labwork.course.id, updated, labwork.id),
-                this.afterUpdate.bind(this)
-            )
-
-            this.subs.push(s2)
-        })
-
-        this.subs.push(s1)
+    private edit = (labwork: LabworkAtom) => {
+        this.openUpdateDialog(
+            labwork,
+            labwork.course.id,
+            p => this.labworkService.update(labwork.course.id, p, labwork.id)
+        )
     }
 
-    private afterDelete(labwork: Labwork) {
+    private afterDelete = (labwork: Labwork) => {
         removeFromDataSource(this.dataSource, this.alertService)(lwa => lwa.labwork.id === labwork.id)
     }
 
-    private afterUpdate(labwork: LabworkAtom) {
-        this.dataSource.data = this.dataSource.data.map(d => {
-            if (d.labwork.id === labwork.id) {
-                d.labwork = labwork
-                return d
-            }
-
-            return d
-        })
-
-        this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(labwork))
-    }
-
-    // TODO this hasStatus copied. build an abstraction?
-    private openDialog_(mode: DialogMode, data: LabworkAtom | LabworkProtocol, next: (p: LabworkProtocol) => void): Subscription {
+    private openUpdateDialog = (data: LabworkAtom | LabworkProtocol, courseId: string, performUpdate: (p: LabworkProtocol) => Observable<LabworkAtom>) => {
+        const isModel = isUniqueEntity(data)
+        const mode = isModel ? DialogMode.edit : DialogMode.create
         const inputData: FormInput[] = this.makeFormInputData(data)
 
         const payload: FormPayload<LabworkProtocol> = {
             headerTitle: dialogTitle(mode, 'Praktikum'),
             submitTitle: dialogSubmitTitle(mode),
-            data: inputData,
-            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
+            data: inputData, // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
+            makeProtocol: output => this.commitProtocol(output, courseId, isUniqueEntity(data) ? data : undefined),
         }
 
-        const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-        return subscribe(dialogRef.afterClosed(), next)
+        const s = subscribe(
+            openDialogFromPayload(this.dialog, payload, performUpdate),
+            l => {
+                const lwa = {labwork: l, semester: l.semester, applications: 0}
+                return isModel ?
+                    updateDataSource(this.dataSource, this.alertService)(lwa, (lhs, rhs) => lhs.labwork.id === rhs.labwork.id) :
+                    addToDataSource(this.dataSource, this.alertService)(lwa)
+            }
+        )
+
+        this.subs.push(s)
     }
 
-    private update(labwork: LabworkAtom, updatedOutput: FormOutputData[]): LabworkProtocol {
-        return withCreateProtocol(updatedOutput, LabworksComponent.empty(), p => {
-            p.semester = labwork.semester.id
-            p.course = labwork.course.id
-            p.degree = labwork.degree.id
+    private commitProtocol = (updatedOutput: FormOutputData[], courseId: string, existing?: LabworkAtom) =>
+        withCreateProtocol(updatedOutput, LabworksComponent.empty(), p => {
+            p.course = courseId
+            p.semester = existing?.semester?.id ?? p.semester
+            p.degree = existing?.degree?.id ?? p.degree
         })
-    }
-
-    private create(updatedValues: FormOutputData[]): LabworkProtocol {
-        return createProtocol(updatedValues, LabworksComponent.empty())
-    }
 
     private makeFormInputData(labwork: LabworkAtom | LabworkProtocol): FormInput[] {
         const isModel = isUniqueEntity(labwork)
@@ -296,14 +286,6 @@ export class LabworksComponent implements OnInit, OnDestroy {
                     new FormInputOption<Semester>('semester', invalidChoiceKey, true, semester => semester.label, this.semesterService.getAll())
             },
             {
-                formControlName: 'course',
-                displayTitle: 'Modul',
-                isDisabled: true,
-                data: isUniqueEntity(labwork) ?
-                    new FormInputString(labwork.course.label) :
-                    new FormInputString(labwork.course)
-            },
-            {
                 formControlName: 'degree',
                 displayTitle: 'Studiengang',
                 isDisabled: isModel,
@@ -328,26 +310,17 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    private canCreate = (): LWMActionType[] => {
+    canCreate = (): LWMActionType[] => {
         return this.hasPermission ? ['create'] : []
     }
 
-    private onCreate(course: CourseAtom) {
-        const s1 = this.openDialog_(DialogMode.create, LabworksComponent.empty(), procotol => {
-            procotol.course = course.id
-            const s2 = subscribe(
-                this.labworkService.create(course.id, procotol),
-                this.afterCreate.bind(this)
-            )
-            this.subs.push(s2)
-        })
-
-        this.subs.push(s1)
-    }
-
-    protected afterCreate(labworks: LabworkAtom[]) {
-        const lwas = labworks.map(l => ({labwork: l, semester: l.semester, applications: 0}))
-        this.dataSource.data = this.dataSource.data.concat(lwas)
-        this.alertService.reportAlert('success', 'created: ' + labworks.map(JSON.stringify.bind(this)))
+    // TODO labworks are currently always added to the selected data source regardless of their semester.
+    //  this is a wrong behaviour due to a single data source.
+    onCreate = (course: CourseAtom) => {
+        this.openUpdateDialog(
+            LabworksComponent.empty(),
+            course.id,
+            p => this.labworkService.create(course.id, p)
+        )
     }
 }

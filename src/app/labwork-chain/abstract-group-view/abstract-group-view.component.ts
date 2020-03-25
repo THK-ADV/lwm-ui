@@ -23,18 +23,18 @@ export class AbstractGroupViewComponent {
         this.groups = this.toCardGroups(entries)
     }
 
-    private groups: Card<Group, ScheduleEntryLike>[]
+    groups: Card<Group, ScheduleEntryLike>[]
 
-    private cardTitle = (group: Group) => `${group.label} - ${group.members.length} Teilnehmer`
+    cardTitle = (group: Group) => `${group.label} - ${group.members.length} Teilnehmer`
 
-    private canEdit = () => false
+    canEdit = () => false
 
-    private onEdit = (group: Group) => {
+    onEdit = (group: Group) => {
     }
 
-    private displayDate = (e: ScheduleEntryLike) => format(e.date, 'dd.MM.yyyy')
+    displayDate = (e: ScheduleEntryLike) => format(e.date, 'dd.MM.yyyy')
 
-    private displayTime = (e: ScheduleEntryLike) => `${formatTime(e.start, 'HH:mm')} - ${formatTime(e.end, 'HH:mm')}`
+    displayTime = (e: ScheduleEntryLike) => `${formatTime(e.start, 'HH:mm')} - ${formatTime(e.end, 'HH:mm')}`
 
     private toCardGroups = (entries: Readonly<ScheduleEntryLike[]>): Card<Group, ScheduleEntryLike>[] => {
         return Object

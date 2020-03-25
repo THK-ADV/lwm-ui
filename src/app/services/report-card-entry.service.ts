@@ -1,10 +1,17 @@
-import {Injectable} from '@angular/core'
-import {HttpService} from './http.service'
-import {Observable} from 'rxjs'
-import {map} from 'rxjs/operators'
-import {ReportCardEntryJSON} from '../models/report-card-entry.model'
-import {makePath} from '../utils/component.utils'
-import {_groupBy} from '../utils/functions'
+import { applyFilter } from './http.filter';
+import { Injectable } from '@angular/core'
+import { HttpService } from './http.service'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { ReportCardEntryJSON, ReportCardEntryAtom, ReportCardEntryAtomJSON } from '../models/report-card-entry.model'
+import { makePath } from '../utils/component.utils'
+import { _groupBy } from '../utils/functions'
+import { convertManyReportCardEntries } from '../utils/http-utils';
+
+interface ReportCardEntryFilter {
+    attribute: 'course' | 'student'
+    value: string
+}
 
 @Injectable({
     providedIn: 'root'
@@ -31,4 +38,8 @@ export class ReportCardEntryService {
     ): Observable<number> => this.http
         .create<{}, ReportCardEntryJSON[]>(makePath(this.path, courseId, labworkId), {})
         .pipe(map(xs => Object.keys(_groupBy(xs, e => e.student)).length))
+
+    getAllWithFilter = (courseId: string, ...filter: ReportCardEntryFilter[]): Observable<ReportCardEntryAtom[]> => this.http
+        .getAll<ReportCardEntryAtomJSON>(makePath(this.path, courseId), applyFilter(filter))
+        .pipe(map(convertManyReportCardEntries))
 }

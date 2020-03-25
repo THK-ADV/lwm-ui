@@ -14,8 +14,13 @@ export const pipe = <T extends any[], R>(
 
 export const compose = <A, B, C>(f: (a: A) => B, g: (b: B) => C): (a: A) => C => a => g(f(a))
 
-export function exists<T>(array: Readonly<T[]>, p: (t: T) => boolean): boolean {
-    return array.find(p) !== undefined
+export const exists = <T>(array: Readonly<T[]>, p: (t: T) => boolean): boolean => {
+    for (const x of array) {
+        if (p(x)) {
+            return true
+        }
+    }
+    return false
 }
 
 export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
@@ -63,9 +68,11 @@ export function subscribe<T>(observable: Observable<T>, next: (t: T) => void): S
     })
 }
 
-export const foldUndefined = <T, U>(t: T | undefined, f: (t: T) => U, nil: () => U): U => t !== undefined ? f(t) : nil()
+export const foldUndefined = <T, U>(t: T | undefined, f: (t: T) => U, nil: () => U): U =>
+    t !== undefined ? f(t) : nil()
 
-export const mapUndefined = <T, U>(t: T | undefined, f: (t: T) => U): U | undefined => foldUndefined(t, f, () => undefined)
+export const mapUndefined = <T, U>(t: T | undefined, f: (t: T) => U): U | undefined =>
+    foldUndefined(t, f, () => undefined)
 
 export const parseUnsafeBoolean = (any: any): boolean => !!any
 
@@ -79,6 +86,8 @@ export const voidF = () => {
 }
 
 export const isEmpty = <T>(xs: Readonly<Array<T>>): boolean => xs.length === 0
+
+export const nonEmpty = <T>(xs: Readonly<Array<T>>): boolean => !isEmpty(xs)
 
 export const maxBy = <T>(xs: Readonly<Array<T>>, higher: (lhs: T, rhs: T) => boolean): T | undefined => {
     if (isEmpty(xs)) {
@@ -104,3 +113,5 @@ export const assertNotUndefined = (...values: Array<any>) => {
 export const dateOrderingASC = (lhs: Date, rhs: Date): number => lhs.getTime() - rhs.getTime()
 
 export const dateOrderingDESC = (lhs: Date, rhs: Date): number => rhs.getTime() - lhs.getTime()
+
+export const first = <T>(xs: Readonly<Array<T>>): T | undefined => isEmpty(xs) ? undefined : xs[0]

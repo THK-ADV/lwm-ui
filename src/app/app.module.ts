@@ -24,21 +24,14 @@ import {EmployeeStatusGuard} from './guards/employee-status.guard'
 
 import {NavComponent} from './nav/nav.component'
 import {LWMMaterialModule} from './app.material.module'
-import {CoursesComponent} from './courses/courses.component'
-import {RoomComponent} from './rooms/room.component'
 import {DeleteDialogComponent} from './shared-dialogs/delete/delete-dialog.component'
 import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
 import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
-import {DegreeComponent} from './degrees/degree.component'
-import {SemestersComponent} from './semesters/semesters.component'
-import {UsersComponent} from './users/users.component'
 import {UserAuthorityUpdateDialogComponent} from './users/update/user-authority-update-dialog.component'
-import {BlacklistsComponent} from './blacklists/blacklists.component'
 import {LabworksComponent} from './labworks/labworks.component'
 import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
-import {LabworkApplicationsComponent} from './labwork-applications/labwork-applications.component'
 import {AbstractHeaderComponent} from './abstract-header/abstract-header.component'
 import {GroupsComponent} from './groups/groups.component'
 import {GroupEditComponent} from './groups/edit/group-edit.component'
@@ -73,6 +66,21 @@ import {UserAuthorityResolver} from './security/user-authority-resolver'
 import {ProgressBarComponent} from './progress-bar/progress-bar.component'
 import {DecisionDialogComponent} from './shared-dialogs/decision-dialog/decision-dialog.component'
 import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment-plan/takeover-dialog/assignment-entry-takeover-dialog.component'
+import {SearchComponent} from './search/search.component'
+import {StudentsComponent} from './students/students.component'
+import {SortPipe} from './pipe/sort.pipe'
+import {ReportCardTableComponent} from './report-card-table/report-card-table.component'
+import {TernaryEntryTypeToggleComponent} from './report-card-table/ternary-entry-type-toggle/ternary-entry-type-toggle.component'
+import {EntryTypeBonusFieldComponent} from './report-card-table/entry-type-bonus-field/entry-type-bonus-field.component'
+import {SemesterComponent} from './semester/semester.component'
+import {AbstractCrudComponent} from './abstract-crud/abstract-crud.component'
+import {RoomComponent} from './room/room.component'
+import {UserComponent} from './user/user.component'
+import {AbstractTableComponent} from './abstract-table/abstract-table.component'
+import {CourseComponent} from './course/course.component'
+import {DegreeComponent} from './degree/degree.component'
+import {BlacklistComponent} from './blacklist/blacklist.component'
+import {SafeHtmlPipe} from './pipe/safe-html.pipe'
 
 @NgModule({
     declarations: [
@@ -81,21 +89,14 @@ import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment
         EmployeeDashboardComponent,
         EntryPageComponent,
         NavComponent,
-        CoursesComponent,
-        RoomComponent,
         DeleteDialogComponent,
         CreateUpdateDialogComponent,
         ListTemplateComponent,
         AlertComponent,
-        DegreeComponent,
-        SemestersComponent,
-        BlacklistsComponent,
-        UsersComponent,
         UserAuthorityUpdateDialogComponent,
         LabworksComponent,
         FilterPipe,
         NgInitDirective,
-        LabworkApplicationsComponent,
         AbstractHeaderComponent,
         GroupsComponent,
         GroupEditComponent,
@@ -127,7 +128,22 @@ import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment
         ClosingComponent,
         ProgressBarComponent,
         DecisionDialogComponent,
-        AssignmentEntryTakeoverDialogComponent
+        AssignmentEntryTakeoverDialogComponent,
+        SearchComponent,
+        StudentsComponent,
+        SortPipe,
+        ReportCardTableComponent,
+        TernaryEntryTypeToggleComponent,
+        EntryTypeBonusFieldComponent,
+        SemesterComponent,
+        AbstractCrudComponent,
+        RoomComponent,
+        UserComponent,
+        AbstractTableComponent,
+        CourseComponent,
+        DegreeComponent,
+        BlacklistComponent,
+        SafeHtmlPipe
     ],
     imports: [
         BrowserModule,

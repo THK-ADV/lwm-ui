@@ -30,7 +30,7 @@ export class ReportCardsComponent {
         this.subs = []
     }
 
-    private createReportCards = () => {
+    createReportCards = () => {
         const create$ = this.reportCardEntryService.create(this.labwork.course.id, this.labwork.id)
         const spinning = withSpinning<number>(this.loadingService)
 
@@ -42,5 +42,5 @@ export class ReportCardsComponent {
         this.subs.push(s)
     }
 
-    private reportCardsAvailable = () => this.reportCards > 0
+    reportCardsAvailable = () => this.reportCards > 0
 }

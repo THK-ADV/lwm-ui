@@ -1,17 +1,33 @@
 import {Injectable} from '@angular/core'
 import {LWMError} from './http.service'
+import {Html} from '../html-builder/html-builder'
 
-type AlertType = 'success' | 'info' | 'warning' | 'danger'
+type AlertType =
+    'success' |
+    'info' |
+    'warning' |
+    'danger' |
+    'primary' |
+    'secondary' |
+    'light' |
+    'dark'
+
+interface Message {
+    kind: 'message'
+    value: string
+}
+
+type AlertBody = Message | Html
 
 export interface Alert {
     type: AlertType
-    message: string
+    body: AlertBody
 }
 
 @Injectable({
     providedIn: 'root'
 })
-export class AlertService { // TODO dismiss after a few seconds
+export class AlertService { // TODO dismiss after a few seconds https://ng-bootstrap.github.io/#/components/alert/examples
 
     private alerts: Alert[]
 
@@ -19,23 +35,24 @@ export class AlertService { // TODO dismiss after a few seconds
         this.reset()
     }
 
-    reportAlert(type: AlertType, message: string) {
-        this.alerts.push({type: type, message: message})
-    }
+    reportAlert = (alert: Alert) =>
+        this.alerts.push(alert)
 
-    reportError(error: LWMError) {
-        this.reportAlert('danger', `${error.message} (status: ${error.status})`)
-    }
+    reportSuccess = (message: string) =>
+        this.reportAlert({type: 'success', body: {kind: 'message', value: message}})
 
-    getAlerts(): Alert[] {
-        return this.alerts
-    }
+    reportLWMError = (error: LWMError) =>
+        this.reportAlert({type: 'danger', body: {kind: 'message', value: `${error.message} (status: ${error.status})`}})
 
-    close(alert: Alert) {
+    reportError = (error: Error) =>
+        this.reportAlert({type: 'danger', body: {kind: 'message', value: error.message}})
+
+    getAlerts = (): Alert[] =>
+        this.alerts
+
+    close = (alert: Alert) =>
         this.alerts.splice(this.alerts.indexOf(alert), 1)
-    }
 
-    reset() {
+    reset = () =>
         this.alerts = []
-    }
 }

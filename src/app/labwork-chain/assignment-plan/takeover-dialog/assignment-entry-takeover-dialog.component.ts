@@ -25,12 +25,12 @@ export class AssignmentEntryTakeoverDialogComponent implements OnInit, OnDestroy
         this.subs = []
     }
 
-    private labworks$: Observable<LabworkAtom[]>
-    private entries: AssignmentEntry[]
+    labworks$: Observable<LabworkAtom[]>
+    entries: AssignmentEntry[]
+    selected_: LabworkAtom
     private subs: Subscription[]
-    private selected_: LabworkAtom
 
-    private set selected(labwork: LabworkAtom) {
+    set selected(labwork: LabworkAtom) {
         this.selected_ = labwork
         this.entries = []
 
@@ -66,9 +66,9 @@ export class AssignmentEntryTakeoverDialogComponent implements OnInit, OnDestroy
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    private cancel = () => this.dialogRef.close(undefined)
+    cancel = () => this.dialogRef.close(undefined)
 
-    private display = (e: AssignmentEntry): string => e.label
+    display = (e: AssignmentEntry): string => e.label
 
-    private takeOver = () => this.dialogRef.close(this.selected_.id)
+    takeOver = () => this.dialogRef.close(this.selected_.id)
 }

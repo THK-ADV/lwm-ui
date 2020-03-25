@@ -3,12 +3,6 @@ import {LabworkAtom} from '../../../models/labwork.model'
 import {Observable, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
 import {Blacklist, BlacklistProtocol} from '../../../models/blacklist.model'
-import {
-    createLocalBlacklistFromOutputData,
-    localBlacklistCreationInputData,
-    localBlacklistInputData,
-    updateLocalBlacklistFromOutputData
-} from '../../../blacklists/blacklist-view-model'
 import {BlacklistService} from '../../../services/blacklist.service'
 import {TimetableAtom} from '../../../models/timetable'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
@@ -24,6 +18,12 @@ import {FormPayload} from '../../../shared-dialogs/create-update/create-update-d
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {openDialog, openDialogFromPayload} from '../../../shared-dialogs/dialog-open-combinator'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
+import {
+    createLocalBlacklistFromOutputData,
+    localBlacklistCreationInputData,
+    localBlacklistInputData,
+    updateLocalBlacklistFromOutputData
+} from '../../../blacklist/blacklist-view-model'
 
 @Component({
     selector: 'lwm-timetable-blacklists-edit',
@@ -60,17 +60,17 @@ export class TimetableBlacklistsEditComponent {
         this.subs.push(subscribe(ot, this.updateDataSource))
     }
 
-    private canCreate = (): LWMActionType | undefined => {
+    canCreate = (): LWMActionType | undefined => {
         return this.hasPermission ? 'create' : undefined
     }
 
-    private onCreate = () => {
+    onCreate = () => {
         const mode = DialogMode.create
         const payload: FormPayload<BlacklistProtocol> = {
             headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
             submitTitle: dialogSubmitTitle(mode),
             data: localBlacklistCreationInputData(`${this.labwork.label}, ${this.labwork.semester.abbreviation}`),
-            makeProtocol: createLocalBlacklistFromOutputData
+            makeProtocol: createLocalBlacklistFromOutputData  // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
         }
 
         this.updateDataSource$(
@@ -82,13 +82,13 @@ export class TimetableBlacklistsEditComponent {
         )
     }
 
-    private onEdit = (blacklist: Blacklist) => {
+    onEdit = (blacklist: Blacklist) => {
         const mode = DialogMode.edit
         const payload: FormPayload<BlacklistProtocol> = {
             headerTitle: dialogTitle(mode, 'Lokale Blacklist'),
             submitTitle: dialogSubmitTitle(mode),
             data: localBlacklistInputData(blacklist, true),
-            makeProtocol: updateLocalBlacklistFromOutputData(blacklist)
+            makeProtocol: updateLocalBlacklistFromOutputData(blacklist) // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
         }
 
         this.updateDataSource$(
@@ -100,7 +100,7 @@ export class TimetableBlacklistsEditComponent {
         )
     }
 
-    private onDelete = (blacklist: Blacklist) => {
+    onDelete = (blacklist: Blacklist) => {
         const deleteRef = DeleteDialogComponent.instance(
             this.dialog,
             {label: fullBlacklistLabel(blacklist), id: blacklist.id}

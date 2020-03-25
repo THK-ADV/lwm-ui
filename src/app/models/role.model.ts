@@ -11,3 +11,5 @@ export enum UserRole {
     courseEmployee = 'Modulmitarbeiter',
     courseAssistant = 'Hilfskraft'
 }
+
+export const userStatusRoles = (): UserRole[] => [UserRole.admin, UserRole.student, UserRole.employee]

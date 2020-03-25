@@ -15,43 +15,32 @@ export interface AssignmentEntryProtocol {
 }
 
 export interface AssignmentEntryType {
-    entryType: AssignmentEntryTypeValue
+    entryType: EntryType
 }
 
-export enum AssignmentEntryTypeValue {
-    attendance = 'Anwesenheitspflichtig',
-    certificate = 'Testat',
-    bonus = 'Bonus',
-    supplement = 'Zusatzleistung'
-}
+export type EntryType =
+    'Anwesenheitspflichtig' |
+    'Testat' |
+    'Bonus' |
+    'Zusatzleistung'
 
-const orderingOfEntryTypeValue = (value: Readonly<AssignmentEntryTypeValue>): number => {
-    switch (value) {
-        case AssignmentEntryTypeValue.attendance:
+export const entryTypeOrdering = (x: EntryType): number => {
+    switch (x) {
+        case 'Anwesenheitspflichtig':
             return 0
-        case AssignmentEntryTypeValue.certificate:
+        case 'Testat':
             return 1
-        case AssignmentEntryTypeValue.bonus:
+        case 'Bonus':
             return 2
-        case AssignmentEntryTypeValue.supplement:
+        case 'Zusatzleistung':
             return 3
-
     }
 }
 
-export const sortedAssignmentPlanEntryTypes = (e: Readonly<AssignmentEntry>): AssignmentEntry => {
-    const sorted = e.types.sort((lhs, rhs) => {
-        return orderingOfEntryTypeValue(lhs.entryType) - orderingOfEntryTypeValue(rhs.entryType)
-    })
+export const entryTypeSortingF = (lhs: EntryType, rhs: EntryType): number =>
+    entryTypeOrdering(lhs) - entryTypeOrdering(rhs)
 
-    return {...e, types: sorted}
-}
-
-export const findEntryTypeValue = (types: Readonly<AssignmentEntryType[]>, value: Readonly<AssignmentEntryTypeValue>)
-    : AssignmentEntryType | undefined => {
-    return types.find(t => t.entryType === value)
-}
-
-export const hasEntryTypeValue = (types: Readonly<AssignmentEntryType[]>, value: Readonly<AssignmentEntryTypeValue>): boolean => {
-    return findEntryTypeValue(types, value) !== undefined
-}
+export const sortedByEntryTypes = (e: Readonly<AssignmentEntry>): AssignmentEntry => ({
+    ...e,
+    types: e.types.sort((lhs, rhs) => entryTypeSortingF(lhs.entryType, rhs.entryType))
+})

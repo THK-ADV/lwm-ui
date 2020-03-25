@@ -1,164 +1,148 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {Observable, Subscription} from 'rxjs'
-import {MatDialog, MatPaginator, MatSort, MatTableDataSource, Sort, SortDirection} from '@angular/material'
-import {AlertService} from '../services/alert.service'
-import {CreateUpdateDialogComponent, FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
-import {AbstractCRUDService} from './abstract-crud.service'
-import {exists, subscribe} from '../utils/functions'
-import {ValidatorFn} from '@angular/forms'
-import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
-import {addToDataSource, removeFromDataSource} from '../shared-dialogs/dataSource.update'
-import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
-import {FormInput} from '../shared-dialogs/forms/form.input'
-import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {Component, Input, OnDestroy} from '@angular/core'
+import {MatDialog, MatTableDataSource, Sort} from '@angular/material'
 import {LWMActionType} from '../table-action-button/lwm-actions'
+import {Observable, Subscription} from 'rxjs'
+import {mapUndefined, subscribe} from '../utils/functions'
+import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
+import {FormInput} from '../shared-dialogs/forms/form.input'
+import {ValidatorFn} from '@angular/forms'
+import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
+import {openDialogFromPayload, subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
+import {createProtocol} from '../models/protocol.model'
+import {AlertService} from '../services/alert.service'
+import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
+import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
+import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
 
 export interface TableHeaderColumn {
     attr: string
     title: string
 }
 
-export type Action = 'create' | 'update' | 'delete'
+export interface Creatable<Protocol, Model extends UniqueEntity> {
+    dialogTitle: string
+    emptyProtocol: () => Protocol
+    makeInput: (attr: string, entity: Protocol | Model) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined
+    commitProtocol: (protocol: Protocol, existing?: Model) => Protocol
+    compoundFromGroupValidator?: (data: FormInput[]) => ValidatorFn | undefined
+    create?: (protocol: Protocol) => Observable<Model>
+    update?: (protocol: Protocol, id: string) => Observable<Model>
+}
+
+export interface Deletable<Model extends UniqueEntity> {
+    titleForDialog: (m: Model) => string
+    delete: (id: string) => Observable<Model>
+}
 
 @Component({
-    selector: 'app-abstract-crud',
+    selector: 'lwm-abstract-crud',
     templateUrl: './abstract-crud.component.html',
     styleUrls: ['./abstract-crud.component.scss']
 })
-export abstract class AbstractCRUDComponent<Protocol, Model extends UniqueEntity> implements OnInit, OnDestroy {
-    protected subs: Subscription[] = []
-    protected dataSource = new MatTableDataSource<Model>()
+export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> implements OnDestroy {
 
-    private readonly displayedColumns: string[]
+    @Input() headerTitle: string
+    @Input() columns: TableHeaderColumn[]
+    @Input() tableContent: (model: Readonly<Model>, attr: string) => string
+    @Input() data$: Observable<Model[]>
+    @Input() sort: Sort
 
-    @ViewChild(MatSort, {static: true}) sort: MatSort
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
+    @Input() creatable: Creatable<Protocol, Model>
+    @Input() deletable: Deletable<Model>
+
+    private subs: Subscription[]
+    private dataSource: MatTableDataSource<Model>
 
     constructor(
-        protected readonly service: AbstractCRUDService<Protocol, Model>,
-        protected readonly dialog: MatDialog,
-        protected readonly alertService: AlertService,
-        protected readonly columns: TableHeaderColumn[],
-        protected readonly actions: Action[],
-        protected readonly sortDescriptor: string, // TODO this should be a keyPath of Model
-        protected readonly modelName: string,
-        protected headerTitle: string,
-        protected readonly inputData: (data: Readonly<Protocol | Model>, isModel: boolean) => FormInput[],
-        protected readonly titleForDeleteDialog: (model: Readonly<Model>) => string,
-        protected readonly prepareTableContent: (model: Readonly<Model>, attr: string) => string,
-        protected readonly empty: () => Readonly<Protocol>,
-        protected readonly composedFromGroupValidator: (data: FormInput[]) => ValidatorFn | undefined,
-        protected readonly pageSizeOptions: number[] = [25, 50, 100]
+        private readonly dialog: MatDialog,
+        private readonly alertService: AlertService,
     ) {
-        this.displayedColumns = columns.map(c => c.attr).concat('action') // TODO add permission check
-    }
-
-    ngOnInit() {
-        this.dataSource.sort = this.sort
-        this.dataSource.paginator = this.paginator
+        this.subs = []
+        this.tableContent = (model, attr) => model[attr]
     }
 
     ngOnDestroy(): void {
-        this.subs.forEach(s => s.unsubscribe())
+        this.subs.forEach(_ => _.unsubscribe())
     }
 
-    fetchData(observable: Observable<Model[]> = this.service.getAll()) {
-        this.subscribeAndPush(observable, data => {
-            this.dataSource.data = data
-            this.sortBy(this.sortDescriptor)
-        })
-    }
+    initDataSource = (ds: MatTableDataSource<Model>) =>
+        this.dataSource = ds
 
-    private canCreate(): LWMActionType[] {
-        return exists(this.actions, a => a === 'create') ? ['create'] : []
-    }
+    canCreate = (): LWMActionType[] =>
+        this.creatable?.create ? ['create'] : []
 
-    private canEdit(): boolean {
-        return exists(this.actions, a => a === 'update')
-    }
+    canEdit = () => this.creatable?.update !== undefined
 
-    private canDelete(): boolean {
-        return exists(this.actions, a => a === 'delete')
-    }
+    canDelete = () => this.deletable !== undefined
 
-    private onSelect(model: Model) {
-        if (this.canEdit()) {
-            this.onEdit(model)
-        }
-    }
+    onCreate = () => mapUndefined(
+        this.creatable.create,
+        f => this.createOrUpdate(this.creatable.emptyProtocol(), f)
+    )
 
-    protected onEdit(model: Model) {
-        model = {...model}
-        this.openDialog_(DialogMode.edit, model, updatedModel => {
-            this.subscribeAndPush(this.service.update(updatedModel, model.id), this.afterUpdate)
-        })
-    }
+    onEdit = (model: Model) => mapUndefined(
+        this.creatable?.update,
+        f => this.createOrUpdate({...model}, p => f(p, model.id))
+    )
 
-    private onDelete(model: Model) {
-        const dialogRef = DeleteDialogComponent.instance(this.dialog, {label: this.titleForDeleteDialog(model), id: model.id})
+    onDelete = (model: Model) => {
+        const updateUI = (m: Model) =>
+            removeFromDataSource(this.dataSource, this.alertService)(_ => _.id === m.id)
 
-        this.subscribeAndPush(
-            openDialog(dialogRef, this.service.delete),
-            this.afterDelete
+        const dialogRef = DeleteDialogComponent.instance(
+            this.dialog,
+            {label: this.deletable.titleForDialog(model), id: model.id}
         )
+
+        this.subs.push(subscribeDeleteDialog(
+            dialogRef,
+            this.deletable.delete,
+            updateUI,
+            this.alertService.reportError
+        ))
     }
 
-    protected onCreate() {
-        this.openDialog_(
-            DialogMode.create,
-            this.empty(),
-            model => this.subscribeAndPush(this.service.create(model), this.afterCreate)
-        )
-    }
+    private createOrUpdate = (
+        entity: Protocol | Model,
+        performRequest: (protocol: Protocol) => Observable<Model>
+    ) => {
+        const isModel = isUniqueEntity(entity)
+        const mode = isModel ? DialogMode.edit : DialogMode.create
 
-    private openDialog_<T extends Protocol>(mode: DialogMode, data: Model | Protocol, next: (T) => void) { // TODO remove soon
-        const inputData = this.inputData(data, isUniqueEntity(data))
+        const updateUI = (m: Model) => isModel ?
+            updateDataSource(this.dataSource, this.alertService)(m, (lhs, rhs) => lhs.id === rhs.id) :
+            addToDataSource(this.dataSource, this.alertService)(m)
 
-        const payload = {
-            headerTitle: dialogTitle(mode, this.modelName),
+
+        const emptyProtocol = this.creatable.emptyProtocol()
+        const input: FormInput[] = this.columns.map(c => ({
+            formControlName: c.attr,
+            displayTitle: c.title,
+            // this is safe here, because every attribute maps to an input
+            // tslint:disable-next-line:no-non-null-assertion
+            ...this.creatable.makeInput(c.attr, entity)!!
+        }))
+
+        const formPayload: FormPayload<Protocol> = {
+            headerTitle: dialogTitle(mode, this.creatable.dialogTitle),
             submitTitle: dialogSubmitTitle(mode),
-            data: inputData,
-            makeProtocol: updatedValues => isUniqueEntity(data) ? this.update(data, updatedValues) : this.create(updatedValues),
-            composedFromGroupValidator: this.composedFromGroupValidator(inputData)
+            data: input,
+            composedFromGroupValidator: mapUndefined(this.creatable.compoundFromGroupValidator, f => f(input)),
+            makeProtocol: output => this.creatable.commitProtocol( // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
+                createProtocol(output, emptyProtocol),
+                isUniqueEntity(entity) ? entity : undefined
+            )
         }
 
-        const dialogRef = CreateUpdateDialogComponent.instance(this.dialog, payload)
-        this.subscribeAndPush(dialogRef.afterClosed(), next)
-    }
+        const s = subscribe(
+            openDialogFromPayload(
+                this.dialog,
+                formPayload,
+                performRequest
+            ),
+            updateUI
+        )
 
-    protected applyFilter(filterValue: string) {
-        this.dataSource.filter = filterValue.trim().toLowerCase() // TODO override this.dataSource.filterPredicate if needed
-    }
-
-    protected sortBy(label: string, ordering: SortDirection = 'asc') {
-        const sortState: Sort = {active: label, direction: ordering}
-        this.sort.active = sortState.active
-        this.sort.direction = sortState.direction
-        this.sort.sortChange.emit(sortState)
-    }
-
-    protected subscribeAndPush<T>(observable: Observable<T>, next: (t: T) => void) {
-        this.subs.push(subscribe(observable, next))
-    }
-
-    abstract create(output: FormOutputData[]): Protocol
-
-    abstract update(model: Model, updatedOutput: FormOutputData[]): Protocol
-
-    private afterUpdate = (model: Model) => {
-        this.dataSource.data = this.dataSource.data.map(d => {
-            return d.id === model.id ? model : d
-        })
-
-        this.alertService.reportAlert('success', 'updated: ' + JSON.stringify(model))
-    }
-
-    private afterCreate = (model: Model) => {
-        addToDataSource(this.dataSource, this.alertService)(model)
-    }
-
-    private afterDelete = (model: Model) => {
-        removeFromDataSource(this.dataSource, this.alertService)(e => e.id === model.id)
+        this.subs.push(s)
     }
 }

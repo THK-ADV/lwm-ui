@@ -1,6 +1,6 @@
 import {MediaMatcher} from '@angular/cdk/layout'
 import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core'
-import {forkJoin, from, identity, Subscription} from 'rxjs'
+import {from, identity, Subscription} from 'rxjs'
 import {AuthorityAtom} from '../models/authority.model'
 import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
@@ -8,12 +8,12 @@ import {CourseAtom} from '../models/course.model'
 import {KeycloakService} from 'keycloak-angular'
 import {AlertService} from '../services/alert.service'
 import {getInitials} from '../utils/component.utils'
-import {fetchCurrentUserAuthorities$, hasAdminStatus} from '../utils/role-checker'
+import {fetchCurrentUserAuthorities$, isAdmin} from '../utils/role-checker'
 import {ActivatedRoute, Router} from '@angular/router'
 import {KeycloakTokenService} from '../services/keycloak-token.service'
 import {AuthorityService} from '../services/authority.service'
 import {isEmpty, subscribe} from '../utils/functions'
-import {map, switchMap} from 'rxjs/operators'
+import {switchMap} from 'rxjs/operators'
 
 @Component({
     selector: 'app-nav',
@@ -23,18 +23,19 @@ import {map, switchMap} from 'rxjs/operators'
 export class NavComponent implements OnInit, OnDestroy {
 
     private subs: Subscription[]
-    private moduleAuthorities: AuthorityAtom[]
-    private roleAuthorities: AuthorityAtom[]
-    private configs: Config[]
-    private user: User
+
+    moduleAuthorities: AuthorityAtom[]
+    roleAuthorities: AuthorityAtom[]
+    configs: Config[]
+    user: User
 
     constructor(
-        changeDetectorRef: ChangeDetectorRef,
-        media: MediaMatcher,
-        private route: ActivatedRoute,
-        private router: Router,
-        private keycloakService: KeycloakService,
-        private alertService: AlertService,
+        private readonly changeDetectorRef: ChangeDetectorRef,
+        private readonly media: MediaMatcher,
+        private readonly  route: ActivatedRoute,
+        private readonly  router: Router,
+        private readonly  keycloakService: KeycloakService,
+        private readonly  alertService: AlertService,
         private readonly tokenService: KeycloakTokenService,
         private readonly authorityService: AuthorityService
     ) {
@@ -48,10 +49,22 @@ export class NavComponent implements OnInit, OnDestroy {
         this.mobileQuery.addListener(this._mobileQueryListener)
     }
 
-    mobileQuery: MediaQueryList
-    private _mobileQueryListener: () => void
+    readonly mobileQuery: MediaQueryList
+    private readonly _mobileQueryListener: () => void
 
-    private unzipAuthorities(authorities: AuthorityAtom[]) {
+    ngOnInit(): void {
+        this.subs.push(subscribe(
+            fetchCurrentUserAuthorities$(this.authorityService, this.tokenService),
+            this.unzipAuthorities
+        ))
+    }
+
+    ngOnDestroy(): void {
+        this.mobileQuery.removeListener(this._mobileQueryListener)
+        this.subs.forEach(v => v.unsubscribe())
+    }
+
+    private unzipAuthorities = (authorities: AuthorityAtom[]) => {
         authorities.forEach(auth => {
             if (auth.course === undefined) {
                 this.roleAuthorities.push(auth)
@@ -71,27 +84,11 @@ export class NavComponent implements OnInit, OnDestroy {
 
     hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
 
-    isAdmin(): boolean {
-        return hasAdminStatus(this.roleAuthorities)
-    }
+    isAdmin = (): boolean => isAdmin(this.roleAuthorities)
 
-    getInitials_(): string {
-        return getInitials(this.user)
-    }
+    getInitials = (): string => getInitials(this.user)
 
-    ngOnInit(): void {
-        this.subs.push(subscribe(
-            fetchCurrentUserAuthorities$(this.authorityService, this.tokenService),
-            this.unzipAuthorities.bind(this)
-        ))
-    }
-
-    ngOnDestroy(): void {
-        this.mobileQuery.removeListener(this._mobileQueryListener)
-        this.subs.forEach(v => v.unsubscribe())
-    }
-
-    logout(): void {
+    logout = (): void => {
         const $ = from(this.router.navigate(['/'])).pipe(
             switchMap(x => from(this.keycloakService.logout()))
         )
@@ -99,7 +96,7 @@ export class NavComponent implements OnInit, OnDestroy {
         this.subs.push(subscribe($, identity))
     }
 
-    linkClicked() {
+    linkClicked = () => {
         this.alertService.reset()
     }
 }

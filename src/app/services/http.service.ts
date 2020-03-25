@@ -9,6 +9,11 @@ export interface LWMError {
     message: string
 }
 
+export interface PartialResult<A> {
+    created: A[]
+    failed: string[]
+}
+
 export const nonAtomicParams = new HttpParams().set('atomic', 'false')
 export const atomicParams = new HttpParams().set('atomic', 'true')
 
@@ -38,13 +43,14 @@ export class HttpService {
         const msg = error.error.message
         const lwmError = {status: status, message: msg}
 
-        this.alertService.reportError(lwmError)
+        this.alertService.reportLWMError(lwmError)
 
         return lwmError
     }
 
-    private logResp = <T>(action: string, url: string) => (t: T) => console.log(action, url, t)
-
+    // tslint:disable-next-line:no-console
+    private logResp = <T>(action: string, url: string) => (t: T) => console.debug('HTTP SERVICE', action, url, t)
+l
     getAll = <T>(
         url: string,
         params?: HttpParams
@@ -101,6 +107,16 @@ export class HttpService {
         params?: HttpParams
     ): Observable<O> => this.http
         .post<O>(url, element, {params})
+        .pipe(
+            catchError(this.handleError),
+            tap(this.logResp('create', url))
+        )
+
+    create_ = <O>(
+        url: string,
+        params?: HttpParams
+    ): Observable<O> => this.http
+        .post<O>(url, {params})
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('create', url))

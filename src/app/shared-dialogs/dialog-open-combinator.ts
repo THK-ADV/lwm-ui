@@ -21,7 +21,7 @@ export const openDialogFromPayload = <T, U>(
     return openDialog(dialogRef, andThen)
 }
 
-const openConfirmationDialog = <A>(
+export const openConfirmationDialog = <A>(
     dialog: MatDialogRef<ConfirmDialogComponent, ConfirmationResult>,
     andThen: () => Observable<A>
 ): Observable<A> => dialog
@@ -42,10 +42,10 @@ export const subscribeConfirmationDialog = <A>(
 ): Subscription => openConfirmationDialog(dialog, andThen)
     .subscribe(a => foldUndefined(a, success, failure), failure)
 
-export const subscribeDeleteDialog = (
+export const subscribeDeleteDialog = <A> (
     dialog: MatDialogRef<DeleteDialogComponent, string>,
-    andThen: (id: string) => Observable<unknown>,
-    success: () => void,
+    andThen: (id: string) => Observable<A>,
+    success: (a: A) => void,
     failure: (e?: Error) => void
 ): Subscription => openDialog(dialog, andThen)
     .subscribe(a => foldUndefined(a, success, failure), failure)

@@ -1,7 +1,8 @@
 <h1 mat-dialog-title>{{payload.title}}</h1>
 
-<mat-dialog-content>
-    <p>{{payload.body}}</p>
+<mat-dialog-content [ngSwitch]="payload.body.kind">
+    <p *ngSwitchCase="'text'">{{payload.body.value}}</p>
+    <div *ngSwitchCase="'html'" [innerHTML]="payload.body.value | safeHtml"></div>
 </mat-dialog-content>
 
 <mat-dialog-actions>
