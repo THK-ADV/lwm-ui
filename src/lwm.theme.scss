@@ -42,12 +42,53 @@
 
 @mixin lwm-button-toggle-theme($theme) {
     @include mat-button-toggle-theme(map-get($theme, main));
+    $failed-col: #ff4500;
+    $neutral-col: #aaa;
+    $passed-col: #32cd32;
+    $bg-col: #c0c0c0;
     .toggle-group.mat-button-toggle-group-appearance-standard {
         border: none;
 
         .mat-button-toggle-label-content {
             line-height: 2.5em !important;
             padding: 0 7px !important;
+        }
+
+        i {
+            font-size: 1.5em;
+        }
+
+        .mat-button-toggle {
+            border: none;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px 0;
+            padding: 0;
+            background-color: $bg-col;
+            color: white;
+        }
+
+        .mat-button-toggle.failed {
+            border-top-left-radius: 50%;
+            border-bottom-left-radius: 50%;
+        }
+
+        .mat-button-toggle.passed {
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
+        }
+
+        .mat-button-toggle-checked.failed {
+            background-color: $failed-col;
+        }
+
+        .mat-button-toggle-checked.neutral {
+            background-color: $neutral-col;
+        }
+
+        .mat-button-toggle-checked.passed {
+            background-color: $passed-col;
         }
     }
 }
@@ -295,7 +336,7 @@
         th.mat-cell,
         td.mat-header-cell,
         th.mat-header-cell {
-            padding: $low-spacing $med-spacing auto;
+            padding: $low-spacing $med-spacing;
             min-width: 60px;
             word-wrap: initial;
         }
@@ -303,7 +344,7 @@
         td.mat-cell,
         th.mat-cell {
             vertical-align: text-top;
-            padding: $low-spacing $med-spacing auto;
+            padding: $low-spacing $med-spacing;
             min-width: 60px;
             word-wrap: initial;
         }
@@ -391,7 +432,7 @@
         main: $main-theme,
         overlay: $overlay-theme,
         app-bg-1: $app-bg-1,
-        app-bg-2: $app-bg-2
+        app-bg-2: $app-bg-2,
     );
     @include mat-core($typography);
 
