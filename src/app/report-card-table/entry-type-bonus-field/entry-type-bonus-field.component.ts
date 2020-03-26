@@ -20,6 +20,7 @@ export class EntryTypeBonusFieldComponent implements OnInit, OnDestroy {
 
     @Input() entry: ReportCardEntryAtom
     @Input() attr: string
+    @Input() canApprove: boolean
 
     constructor(
         private readonly service: ReportCardEntryTypeService

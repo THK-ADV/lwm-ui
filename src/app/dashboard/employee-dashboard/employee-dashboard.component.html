@@ -1,3 +1,14 @@
 <ng-container *ngIf="dashboard$ | async as dashboard">
-    <p>{{dashboard | json }}</p>
+    <ng-container *ngIf="groupByLabworks(dashboard.scheduleEntries) as grouped">
+        <h1>Staffelpläne</h1>
+
+        <ng-container *ngFor="let group of grouped | keyvalue ">
+            <h2>{{labworkBy(group).label}}</h2>
+
+            <p *ngFor="let entry of group.value | sort: sortScheduleEntries()" (click)="onScheduleEntry(entry)">
+                {{format(entry)}}
+            </p>
+        </ng-container>
+    </ng-container>
+
 </ng-container>

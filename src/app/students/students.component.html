@@ -17,9 +17,9 @@
 
             <ng-template matExpansionPanelContent>
                 <ng-container>
-                    <lwm-report-card-table [dataSource]="tableModelFor(entry).dataSource"
-                                           [columns]="tableModelFor(entry).columns"
-                                           [auths]="auths()">
+                    <lwm-report-card-table [tableModel]="tableModelFor(entry)"
+                                           [auths]="auths()"
+                                           [tableContentFor]="tableContentFor">
                     </lwm-report-card-table>
                 </ng-container>
             </ng-template>

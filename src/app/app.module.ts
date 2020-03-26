@@ -82,6 +82,7 @@ import {DegreeComponent} from './degree/degree.component'
 import {BlacklistComponent} from './blacklist/blacklist.component'
 import {SafeHtmlPipe} from './pipe/safe-html.pipe'
 import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
+import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
 
 @NgModule({
     declarations: [
@@ -145,7 +146,8 @@ import {LabworkApplicationComponent} from './labwork-application/labwork-applica
         DegreeComponent,
         BlacklistComponent,
         SafeHtmlPipe,
-        LabworkApplicationComponent
+        LabworkApplicationComponent,
+        ScheduleEntryComponent
     ],
     imports: [
         BrowserModule,

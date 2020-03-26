@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core'
 import {ActivatedRoute} from '@angular/router'
 import {forkJoin, Observable, zip} from 'rxjs'
 import {map, switchMap, tap} from 'rxjs/operators'
-import {ReportCardEntryAtom, ReportCardEntryType} from '../models/report-card-entry.model'
+import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {User} from '../models/user.model'
 import {userAuths} from '../security/user-authority-resolver'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
@@ -16,7 +16,9 @@ import {LabworkAtom} from '../models/labwork.model'
 import {MatTableDataSource} from '@angular/material'
 import {AuthorityAtom} from '../models/authority.model'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {EntryType, entryTypeSortingF} from '../models/assignment-plan.model'
+import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
+import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
+import {format, formatTime} from '../utils/lwmdate-adapter'
 
 interface ReportCardsByLabwork {
     labwork: LabworkAtom,
@@ -26,11 +28,6 @@ interface ReportCardsByLabwork {
 interface ReportCardsByCourse {
     course: CourseAtom,
     reportCardEntries: ReportCardsByLabwork[]
-}
-
-interface TableModel {
-    dataSource: MatTableDataSource<ReportCardEntryAtom>,
-    columns: TableHeaderColumn[]
 }
 
 @Component({
@@ -57,7 +54,7 @@ export class StudentsComponent implements OnInit {
     formatUser = formatUser
 
     private dataSources: {
-        [id: string]: TableModel
+        [id: string]: ReportCardTableModel
     }
 
     ngOnInit() {
@@ -119,22 +116,15 @@ export class StudentsComponent implements OnInit {
             {attr: 'label', title: 'Bezeichnung'},
         ]
 
-        const entryTypeColumns = (types: ReportCardEntryType[]): TableHeaderColumn[] => {
-            return Array
-                .from(new Set<EntryType>(types.map(_ => _.entryType)))
-                .sort(entryTypeSortingF)
-                .map(x => ({attr: x, title: x}))
-        }
-
         if (!this.dataSources[entry.labwork.id]) {
             this.dataSources[entry.labwork.id] = {
                 dataSource: new MatTableDataSource<ReportCardEntryAtom>(entry.reportCardEntries),
-                columns: basicColumns().concat(entryTypeColumns(entry.reportCardEntries.flatMap(_ => _.entryTypes)))
+                columns: basicColumns().concat(distinctEntryTypeColumns(entry.reportCardEntries.flatMap(_ => _.entryTypes)))
             }
         }
     }
 
-    tableModelFor = (entry: ReportCardsByLabwork): TableModel =>
+    tableModelFor = (entry: ReportCardsByLabwork): ReportCardTableModel =>
         this.dataSources[entry.labwork.id]
 
     accordionTitle = (labwork: LabworkAtom) =>
@@ -145,4 +135,21 @@ export class StudentsComponent implements OnInit {
 
     sortBySemester = () => (a: ReportCardsByLabwork, b: ReportCardsByLabwork) =>
         dateOrderingDESC(a.labwork.semester.start, b.labwork.semester.start)
+
+    tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
+        switch (attr) {
+            case 'date':
+                return format(e.date, 'dd.MM.yyyy')
+            case 'start':
+                return formatTime(e.start, 'HH:mm')
+            case 'end':
+                return formatTime(e.end, 'HH:mm')
+            case 'assignmentIndex':
+                return e.assignmentIndex + 1
+            case 'room.label':
+                return e.room.label
+            default:
+                return e[attr]
+        }
+    }
 }
