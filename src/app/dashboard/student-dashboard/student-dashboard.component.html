@@ -1,3 +1,15 @@
-<p *ngIf="dashboard$ | async as dashboard">
-  {{dashboard | json}}
-</p>
+<ng-container *ngIf="dashboard$ | async as dashboard">
+
+  <div class="jumbotron">
+    <h1>{{formatSemester(dashboard.semester)}}</h1>
+  </div>
+
+  <mat-card *ngFor="let lapps of dashboard.labworks">
+    Test
+  </mat-card>
+  <p>
+    {{dashboard | json}}
+  </p>
+
+
+</ng-container>
