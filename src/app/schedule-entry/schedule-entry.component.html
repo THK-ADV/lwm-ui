@@ -1,0 +1,13 @@
+<ng-container *ngIf="data$ | async as data">
+    <lwm-abstract-header [headerTitle]="headerTitle(data[1], data[0])"></lwm-abstract-header>
+    <p>{{supervisors(data[1])}}</p>
+    <p>{{group(data[1])}}</p>
+    <p *ngIf="data[0]">{{assignment(data[0][0])}}</p>
+    <p>{{participants(data[0])}}</p>
+    <mat-divider></mat-divider>
+
+    <lwm-report-card-table [tableModel]="dataSource(data[0])"
+                           [auths]="auths()"
+                           [tableContentFor]="tableContentFor">
+    </lwm-report-card-table>
+</ng-container>

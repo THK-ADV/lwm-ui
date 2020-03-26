@@ -12,7 +12,6 @@ export type LWMActionType =
     'swap' |
     'preview' |
     'upload' |
-    'reschedule' |
     'sync' |
     'download'
 
@@ -68,10 +67,6 @@ export const downloadAction = (): LWMAction => {
     return {type: 'download', color: 'accent', iconName: 'cloud_download', tooltipName: 'Herunterladen', tooltipPosition: 'above'}
 }
 
-export const rescheduleAction = (): LWMAction => {
-    return {type: 'reschedule', color: 'primary', iconName: 'update', tooltipName: 'Termin verschieben', tooltipPosition: 'above'}
-}
-
 export const syncAction = (): LWMAction => {
     return {type: 'sync', color: 'primary', iconName: 'sync', tooltipName: 'Mit LDAP abgleichen', tooltipPosition: 'above'}
 }
@@ -98,8 +93,6 @@ export const action = (type: LWMActionType): LWMAction => {
             return previewAction()
         case 'upload':
             return uploadAction()
-        case 'reschedule':
-            return rescheduleAction()
         case 'sync':
             return syncAction()
         case 'download':

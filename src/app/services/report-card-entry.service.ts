@@ -42,4 +42,9 @@ export class ReportCardEntryService {
     getAllWithFilter = (courseId: string, ...filter: ReportCardEntryFilter[]): Observable<ReportCardEntryAtom[]> => this.http
         .getAll<ReportCardEntryAtomJSON>(makePath(this.path, courseId), applyFilter(filter))
         .pipe(map(convertManyReportCardEntries))
+
+    fromScheduleEntry = (courseId: string, scheduleEntryId: string): Observable<ReportCardEntryAtom[]> => this.http
+        .getAll<ReportCardEntryAtomJSON>(`${makePath('scheduleEntries', courseId)}/${scheduleEntryId}/reportCardEntries`)
+        .pipe(map(convertManyReportCardEntries))
+
 }

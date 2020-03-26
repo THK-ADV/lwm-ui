@@ -18,6 +18,7 @@ import {CourseComponent} from './course/course.component'
 import {DegreeComponent} from './degree/degree.component'
 import {BlacklistComponent} from './blacklist/blacklist.component'
 import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
+import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
 
 const routes: Routes = [
     {
@@ -65,8 +66,12 @@ const routes: Routes = [
             },
             {
                 path: 'courses/:cid',
-                resolve: {userAuths: UserAuthorityResolver},
                 children: [
+                    {
+                        path: 'scheduleEntries/:sid',
+                        resolve: {userAuths: UserAuthorityResolver},
+                        component: ScheduleEntryComponent
+                    },
                     {
                         path: 'labworks/:lid/applications',
                         resolve: {userAuths: UserAuthorityResolver},
@@ -89,6 +94,7 @@ const routes: Routes = [
                     },
                     {
                         path: '',
+                        resolve: {userAuths: UserAuthorityResolver},
                         component: LabworksComponent
                     }
                 ]
