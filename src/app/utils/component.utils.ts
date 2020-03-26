@@ -5,14 +5,11 @@ import {Labwork, LabworkAtom} from '../models/labwork.model'
 import {map, switchMap} from 'rxjs/operators'
 import {User} from '../models/user.model'
 import {UserService} from '../services/user.service'
-import {LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
 import {FormInput} from '../shared-dialogs/forms/form.input'
 import {isUniqueEntity} from '../models/unique.entity.model'
 import {FormInputString, FormInputTextArea} from '../shared-dialogs/forms/form.input.string'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
 import {invalidChoiceKey} from './form.validator'
-import {FormOutputData} from '../shared-dialogs/create-update/create-update-dialog.component'
-import {withCreateProtocol} from '../models/protocol.model'
 import {CourseProtocol} from '../services/course.service'
 import {CourseAtom} from '../models/course.model'
 import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
@@ -40,6 +37,9 @@ export const makePath = (resource: string, courseId: string, labworkId?: string)
 export const formatUser = (user: User): string => {
     return `${user.lastname}, ${user.firstname} (${user.systemId})`
 }
+
+export const fullUserName = (user: User): string =>
+    `${user.lastname}, ${user.firstname}`
 
 export const toLabwork = (atom: LabworkAtom): Labwork => {
     return {

@@ -1,3 +1,19 @@
 <ng-container *ngIf="dashboard$ | async as dashboard">
-    <p>{{dashboard | json }}</p>
+    <lwm-abstract-header [headerTitle]="scheduleEntryHeaderTitle(dashboard)"></lwm-abstract-header>
+
+    <ng-container *ngFor="let group of groupByLabworks(dashboard.scheduleEntries) | keyvalue ">
+        <h2>{{labworkBy(group.value).label}}</h2>
+
+        <p *ngFor="let entry of group.value | sort: sortScheduleEntries()" (click)="onScheduleEntry(entry)">
+            {{displayScheduleEntry(entry)}}
+        </p>
+    </ng-container>
+
+    <ng-container *ngIf="dashboard.courses as courses">
+        <lwm-abstract-header [headerTitle]="courseHeaderTitle()"></lwm-abstract-header>
+
+        <p *ngFor="let c of courses | sort: sortCourses()" (click)="onCourse(c)">
+            {{displayCourse(c)}}
+        </p>
+    </ng-container>
 </ng-container>

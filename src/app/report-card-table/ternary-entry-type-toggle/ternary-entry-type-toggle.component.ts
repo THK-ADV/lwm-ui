@@ -24,6 +24,7 @@ export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {
 
     @Input() entry: ReportCardEntryAtom
     @Input() attr: string
+    @Input() canApprove: boolean
 
     state?: TernaryState
 

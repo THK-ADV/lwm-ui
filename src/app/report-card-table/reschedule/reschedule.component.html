@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>{{title()}}</h1>
+
+<mat-dialog-content>
+    <full-calendar
+            defaultView="dayGridMonth"
+            #calendar
+            [plugins]="calendarPlugins"
+            [locale]="'de'"
+            [nowIndicator]=false
+            [weekends]="false"
+            [firstDay]=1
+            [allDaySlot]=false
+            [columnHeaderFormat]="{ weekday: 'long' }"
+            [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
+            [events]="dates"
+            [weekNumbers]=true
+            [displayEventEnd]="true"
+            [weekNumbersWithinDays]=true
+            [defaultDate]="earliestDate()">
+    </full-calendar>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-flat-button (click)="cancel()">Abbrechen</button>
+    <button mat-flat-button color="primary" cdkFocusInitial (click)="confirm()">Termin verschieben</button>
+</mat-dialog-actions>

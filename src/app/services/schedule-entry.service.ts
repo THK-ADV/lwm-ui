@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core'
 import {atomicParams, HttpService} from './http.service'
 import {Observable} from 'rxjs'
 import {map} from 'rxjs/operators'
-import {convertManyScheduleEntries} from '../utils/http-utils'
+import {convertManyScheduleEntries, mapScheduleEntryAtomJSON} from '../utils/http-utils'
 import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {makePath} from '../utils/component.utils'
 import {Time} from '../models/time.model'
@@ -77,6 +77,13 @@ export class ScheduleEntryService {
     ): Observable<ScheduleEntryAtom[]> => this.http
         .getAll<ScheduleEntryAtomJSON>(this.path(courseId, labworkId), atomicParams)
         .pipe(map(convertManyScheduleEntries))
+
+    get = (
+        courseId: string,
+        id: string
+    ): Observable<ScheduleEntryAtom> => this.http
+        .get<ScheduleEntryAtomJSON>(this.path(courseId), id, atomicParams)
+        .pipe(map(mapScheduleEntryAtomJSON))
 
     preview = (
         courseId: string,

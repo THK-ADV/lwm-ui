@@ -1,5 +1,6 @@
 <ng-container *ngIf="state">
     <mat-button-toggle-group class="toggle-group"
+                             [disabled]="!canApprove"
                              [value]="state"
                              (change)="onChange($event.value)">
         <mat-button-toggle class="failed" [value]="failed">
