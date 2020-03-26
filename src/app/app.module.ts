@@ -83,6 +83,7 @@ import {BlacklistComponent} from './blacklist/blacklist.component'
 import {SafeHtmlPipe} from './pipe/safe-html.pipe'
 import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
 import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
+import {RescheduleComponent} from './report-card-table/reschedule/reschedule.component'
 
 @NgModule({
     declarations: [
@@ -147,7 +148,8 @@ import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
         BlacklistComponent,
         SafeHtmlPipe,
         LabworkApplicationComponent,
-        ScheduleEntryComponent
+        ScheduleEntryComponent,
+        RescheduleComponent
     ],
     imports: [
         BrowserModule,
@@ -188,7 +190,8 @@ import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
         GroupPreviewModalComponent,
         ConfirmDialogComponent,
         DecisionDialogComponent,
-        AssignmentEntryTakeoverDialogComponent
+        AssignmentEntryTakeoverDialogComponent,
+        RescheduleComponent
     ]
 })
 export class AppModule {

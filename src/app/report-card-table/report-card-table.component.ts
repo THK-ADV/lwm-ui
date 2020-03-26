@@ -1,11 +1,14 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component, Input, OnDestroy, OnInit} from '@angular/core'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {MatTableDataSource} from '@angular/material'
-import {LWMAction, rescheduleAction} from '../table-action-button/lwm-actions'
+import {MatDialog, MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
+import {openDialog} from '../shared-dialogs/dialog-open-combinator'
+import {RescheduleComponent} from './reschedule/reschedule.component'
+import {of, Subscription} from 'rxjs'
+import {subscribe} from '../utils/functions'
 
 export interface ReportCardTableModel {
     dataSource: MatTableDataSource<ReportCardEntryAtom>,
@@ -17,20 +20,23 @@ export interface ReportCardTableModel {
     templateUrl: './report-card-table.component.html',
     styleUrls: ['./report-card-table.component.scss']
 })
-export class ReportCardTableComponent implements OnInit {
+export class ReportCardTableComponent implements OnInit, OnDestroy {
 
     @Input() tableModel: ReportCardTableModel
     @Input() auths: Readonly<AuthorityAtom[]>
     @Input() tableContentFor: (e: Readonly<ReportCardEntryAtom>, attr: string) => string
 
-    private canReschedule: boolean
-
+    canReschedule: boolean
     canApprove: boolean
-
     displayedColumns: string []
 
-    constructor() {
+    private subs: Subscription[]
+
+    constructor(
+        private readonly dialog: MatDialog
+    ) {
         this.displayedColumns = []
+        this.subs = []
         this.tableContentFor = (e, attr) => e[attr]
     }
 
@@ -47,13 +53,18 @@ export class ReportCardTableComponent implements OnInit {
         this.displayedColumns = c
     }
 
+    ngOnDestroy(): void {
+        this.subs.forEach(_ => _.unsubscribe())
+    }
+
     private hasReschedulePermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
     private hasApprovalPermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseAssistant, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
-    actions = (): LWMAction[] => this.canReschedule ? [rescheduleAction()] : []
-
-    reschedule = (e: ReportCardEntryAtom) => console.log('reschedule')
+    reschedule = (e: ReportCardEntryAtom) => {
+        const $ = openDialog(RescheduleComponent.instance(this.dialog, e), of)
+        this.subs.push(subscribe($, console.log))
+    }
 }
