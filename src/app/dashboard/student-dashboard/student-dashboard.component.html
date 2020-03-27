@@ -1,4 +1,4 @@
-<ng-container *ngIf="dashboard$ | async as dashboard">
+<ng-container *ngIf="dashboard as dashboard">
     <div class="jumbotron">
         <h1>{{dashboard.semester.label}}</h1>
     </div>
@@ -11,7 +11,7 @@
             <lwm-application-list
                     [labworks]="dashboard.labworks"
                     [apps]="dashboard.labworkApplications"
-                    (applicationUpdate)="updateApplications($event)">
+                    (removeApplicationEmitter)="removeApplication($event)">
             </lwm-application-list>
         </ng-template>
         <ng-template #elseBlockLabwork>
@@ -27,4 +27,3 @@
             </p> -->
     </ng-container>
 </ng-container>
-<!-- TODO ReportcardEntries goes here -->

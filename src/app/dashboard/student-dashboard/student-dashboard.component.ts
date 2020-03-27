@@ -1,10 +1,9 @@
 import {Component, OnInit} from '@angular/core'
 import {DashboardService} from '../../services/dashboard.service'
 import {StudentDashboard} from '../../models/dashboard.model'
-import {Observable} from 'rxjs'
-import {LabworkAtom} from 'src/app/models/labwork.model'
-import {map} from 'rxjs/operators'
-import { LabworkApplication, LabworkApplicationAtom } from 'src/app/models/labwork.application.model'
+import {Subscription} from 'rxjs'
+import {LabworkApplicationAtom} from 'src/app/models/labwork.application.model'
+import {subscribe} from '../../utils/functions'
 
 @Component({
     selector: 'app-student-dashboard',
@@ -13,26 +12,18 @@ import { LabworkApplication, LabworkApplicationAtom } from 'src/app/models/labwo
 })
 export class StudentDashboardComponent implements OnInit {
 
-    dashboard$: Observable<StudentDashboard>
-    labworks: LabworkAtom[]
-    private apps: LabworkApplicationAtom[]
+    dashboard: StudentDashboard
+
+    private subs: Subscription[] = []
 
     constructor(private readonly service: DashboardService) {
     }
 
     ngOnInit() {
-        this.dashboard$ = this.service.getStudentDashboard().pipe(
-          map(x => {
-            this.apps = x.labworkApplications
-            return x
-          })
-        )
+        this.subs.push(subscribe(this.service.getStudentDashboard(), d => this.dashboard = d))
     }
 
-    isApplicant = (id: string) => true
-
-    updateApplications = (xs: LabworkApplicationAtom) => {
-      console.warn("emitted: ", xs)
-      this.apps = this.apps.filter(x => xs.id !== x.id)
-  }
+    removeApplication = (xs: LabworkApplicationAtom) => {
+        this.dashboard.labworkApplications = this.dashboard.labworkApplications.filter(x => xs.id !== x.id)
+    }
 }
