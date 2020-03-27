@@ -2,6 +2,11 @@
     <div *ngFor="let labwork of labworks | filter: shouldShowApplication" class="application-card-container">
         <div class="application-card-header">
             <div class="application-card-title">{{labwork.label}}</div>
+            <div class="application-card-subtitle">
+                <ng-container *ngIf="applicationTimestamp(labwork) !== undefined">
+                    Angemeldet seit: {{applicationTimestamp(labwork)}}
+                </ng-container>
+            </div>
         </div>
         <div class="application-card-content">
             <p>{{labwork.description}}</p>
@@ -11,7 +16,6 @@
             <ng-template #thenBlockLapp>
                 <ng-container *ngIf="isApplicant(labwork.id); then thenBlockLapp else elseBlockLapp"></ng-container>
                 <ng-template #thenBlockLapp>
-                    <p>{{applicationTimestamp(labwork)}}</p>
                     <button mat-flat-button color="accent" (click)="modifyApplication(labwork)">Bearbeiten</button>
                     <button mat-flat-button color="warn" (click)="revokeApplication(labwork)">Abmelden</button>
                 </ng-template>
@@ -20,7 +24,6 @@
                 </ng-template>
             </ng-template>
             <ng-template #elseBlockLapp>
-                <p>{{applicationTimestamp(labwork)}}</p>
                 <p>Warten auf Notenhefte...</p>
             </ng-template>
         </div>

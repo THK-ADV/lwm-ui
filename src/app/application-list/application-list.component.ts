@@ -1,23 +1,28 @@
-import {Component, Input} from '@angular/core'
-import {LabworkAtom} from '../models/labwork.model'
-import {LabworkApplicationAtom} from '../models/labwork.application.model'
-import {mapUndefined} from '../utils/functions'
-import {format} from '../utils/lwmdate-adapter'
-import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
-import {subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
-import {LabworkApplicationService} from '../services/labwork-application.service'
-import {AlertService} from '../services/alert.service'
+import { Component, Input, EventEmitter, Output, OnDestroy } from '@angular/core'
+import { LabworkAtom } from '../models/labwork.model'
+import { LabworkApplicationAtom } from '../models/labwork.application.model'
+import { mapUndefined } from '../utils/functions'
+import { format } from '../utils/lwmdate-adapter'
+import { DeleteDialogComponent } from '../shared-dialogs/delete/delete-dialog.component'
+import { subscribeDeleteDialog } from '../shared-dialogs/dialog-open-combinator'
+import { LabworkApplicationService } from '../services/labwork-application.service'
+import { AlertService } from '../services/alert.service'
+import { Subscription } from 'rxjs'
+import { MatDialog } from '@angular/material'
 
 @Component({
     selector: 'lwm-application-list',
     templateUrl: './application-list.component.html',
     styleUrls: ['./application-list.component.scss']
 })
-export class ApplicationListComponent {
+export class ApplicationListComponent implements OnDestroy  {
 
     @Input() labworks: LabworkAtom[]
     @Input() apps: LabworkApplicationAtom[]
 
+    @Output() applicationUpdate: EventEmitter<Readonly<LabworkApplicationAtom>>
+
+    private subs: Subscription[]
     // subscribable && !published view and modify
     // !subscribable && !published
     //  -> isApplicant: read only view
@@ -25,7 +30,16 @@ export class ApplicationListComponent {
 
     // !subscribable && published no view
 
-    constructor(private readonly labworkApplicationService: LabworkApplicationService, private readonly alert: AlertService) {
+    constructor(
+        private readonly labworkApplicationService: LabworkApplicationService,
+        private readonly alert: AlertService,
+        private readonly dialog: MatDialog
+    ) {
+        this.applicationUpdate = new EventEmitter<Readonly<LabworkApplicationAtom>>()
+        this.subs = []
+    }
+    ngOnDestroy(): void {
+        this.subs.forEach(s => s.unsubscribe())
     }
 
     labworkApplication = (labworkId: string): LabworkApplicationAtom | undefined =>
@@ -53,15 +67,20 @@ export class ApplicationListComponent {
     }
 
     revokeApplication = (labwork: LabworkAtom) => {
-        subscribeDeleteDialog(
-            DeleteDialogComponent.instance(),
+        const application = this.labworkApplication(labwork.id)
+        if(!application) return null
+        const dialogData = {label: `Praktikumsanmeldung für ${labwork.label} vom ${this.applicationTimestamp(labwork)}`, id: application.id}
+        const sub = subscribeDeleteDialog(
+            DeleteDialogComponent.instance(this.dialog, dialogData),
             this.labworkApplicationService.delete,
             app => {
                 this.apps = this.apps.filter(_ => _.labwork.id !== app.labwork.id)
                 this.alert.reportSuccess(JSON.stringify(app))
+                this.applicationUpdate.emit(app)
             },
             err => mapUndefined(err, _ => this.alert.reportError(_))
         )
+        this.subs.push(sub)
     }
 
     apply = (labwork: LabworkAtom) => {

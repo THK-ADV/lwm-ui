@@ -10,7 +10,8 @@
         <ng-template #thenBlockLabwork>
             <lwm-application-list
                     [labworks]="dashboard.labworks"
-                    [apps]="dashboard.labworkApplications">
+                    [apps]="dashboard.labworkApplications"
+                    (applicationUpdate)="updateApplications($event)">
             </lwm-application-list>
         </ng-template>
         <ng-template #elseBlockLabwork>
