@@ -184,7 +184,13 @@
 
     .mat-form-field {
         width: 100%;
+        margin-bottom: 20px;
     }
+
+    .mat-form-field-infix {
+        margin-top: 20px;
+    }
+
 
     mat-dialog-container {
         .mat-form-field-ripple {
