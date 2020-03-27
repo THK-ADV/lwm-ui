@@ -1,20 +1,28 @@
 <div class="application-card-list">
-    <div *ngFor="let labwork of labworks" class="application-card-container">
+    <div *ngFor="let labwork of labworks | filter: shouldShowApplication" class="application-card-container">
         <div class="application-card-header">
             <div class="application-card-title">{{labwork.label}}</div>
         </div>
         <div class="application-card-content">
-            <p>labwork.description</p>
+            <p>{{labwork.description}}</p>
         </div>
         <div class="application-card-actions">
-            <ng-container *ngIf="isApplicant(labwork.id); then thenBlockLapp else elseBlockLapp"></ng-container>
+            <ng-container *ngIf="canModifyApplication(labwork); then thenBlockLapp else elseBlockLapp"></ng-container>
             <ng-template #thenBlockLapp>
-                <button mat-flat-button color="accent">Bearbeiten</button>
-                <button mat-flat-button color="warn">Abmelden</button>
-              </ng-template>
-              <ng-template #elseBlockLapp>
-                <button mat-flat-button color="primary">Anmelden</button>
-              </ng-template>
+                <ng-container *ngIf="isApplicant(labwork.id); then thenBlockLapp else elseBlockLapp"></ng-container>
+                <ng-template #thenBlockLapp>
+                    <p>{{applicationTimestamp(labwork)}}</p>
+                    <button mat-flat-button color="accent" (click)="modifyApplication(labwork)">Bearbeiten</button>
+                    <button mat-flat-button color="warn" (click)="revokeApplication(labwork)">Abmelden</button>
+                </ng-template>
+                <ng-template #elseBlockLapp>
+                    <button mat-flat-button color="primary" (click)="apply(labwork)">Anmelden</button>
+                </ng-template>
+            </ng-template>
+            <ng-template #elseBlockLapp>
+                <p>{{applicationTimestamp(labwork)}}</p>
+                <p>Warten auf Notenhefte...</p>
+            </ng-template>
         </div>
     </div>
 </div>

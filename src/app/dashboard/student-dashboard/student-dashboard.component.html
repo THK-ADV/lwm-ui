@@ -1,51 +1,29 @@
 <ng-container *ngIf="dashboard$ | async as dashboard">
+    <div class="jumbotron">
+        <h1>{{dashboard.semester.label}}</h1>
+    </div>
 
-  <div class="jumbotron">
-    <h1>{{dashboard.semester.label}}</h1>
-  </div>
+    <ng-container>
+        <h2>Praktikumsanmeldungen</h2>
 
-  <ng-container>
-    <h2>Praktikumsanmeldungen</h2>
+        <ng-container *ngIf="dashboard.labworks.length > 0; then thenBlockLabwork else elseBlockLabwork"></ng-container>
+        <ng-template #thenBlockLabwork>
+            <lwm-application-list
+                    [labworks]="dashboard.labworks"
+                    [apps]="dashboard.labworkApplications">
+            </lwm-application-list>
+        </ng-template>
+        <ng-template #elseBlockLabwork>
+            <p>
+                <ngb-alert type="info" [dismissible]="false">
+                    Es stehen aktuell keine Praktika zur Anmeldung bereit!
+                </ngb-alert>
+            </p>
+        </ng-template>
 
-    <ng-container *ngIf="dashboard.labworks.length>0; then thenBlockLabwork else elseBlockLabwork"></ng-container>
-    <ng-template #thenBlockLabwork>
-      <!-- <application-list 
-                [labworks]="dashboard.labworks"
-                [isApplicant]="isApplicant">
-      </application-list> -->
-      <div class="application-card-list">
-        <div *ngFor="let labwork of dashboard.labworks" class="application-card-container">
-          <div class="application-card-header">
-            <div class="application-card-title">{{labwork.label}}</div>
-          </div>
-          <div class="application-card-content">
-            <p>{{labwork.description}}</p>
-
-          </div>
-          <div class="application-card-actions">
-            <ng-container *ngIf="isApplicant(labwork.id); then thenBlockLapp else elseBlockLapp"></ng-container>
-            <ng-template #thenBlockLapp>
-              <button mat-flat-button color="accent">Bearbeiten</button>
-              <button mat-flat-button color="warn">Abmelden</button>
-            </ng-template>
-            <ng-template #elseBlockLapp>
-              <button mat-flat-button color="primary">Anmelden</button>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-    <ng-template #elseBlockLabwork>
-      <p>
-        <ngb-alert type="info" [dismissible]="false">
-          Es stehen aktuell keine Praktika zur Anmeldung bereit!
-        </ngb-alert>
-      </p>
-    </ng-template>
-
-<!--     <p>
-      {{dashboard | json}}
-    </p> -->
-  </ng-container>
-
-  <!-- TODO ReportcardEntries goes here -->
+        <!--     <p>
+              {{dashboard | json}}
+            </p> -->
+    </ng-container>
+</ng-container>
+<!-- TODO ReportcardEntries goes here -->
