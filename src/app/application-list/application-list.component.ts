@@ -1,14 +1,16 @@
 import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
 import {LabworkAtom} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
-import {mapUndefined, voidF} from '../utils/functions'
+import {mapUndefined, subscribe, voidF} from '../utils/functions'
 import {format} from '../utils/lwmdate-adapter'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
-import {subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
+import {openDialog, subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {AlertService} from '../services/alert.service'
-import {Subscription} from 'rxjs'
+import {of, Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
+import {StudentCreateApplicationComponent} from './student-create-application/student-create-application.component'
+import {StudentAtom} from '../models/user.model'
 
 @Component({
     selector: 'lwm-application-list',
@@ -19,6 +21,7 @@ export class ApplicationListComponent implements OnDestroy {
 
     @Input() labworks: LabworkAtom[]
     @Input() apps: LabworkApplicationAtom[]
+    @Input() applicant: StudentAtom
 
     @Output() removeApplicationEmitter: EventEmitter<Readonly<LabworkApplicationAtom>>
 
@@ -85,6 +88,11 @@ export class ApplicationListComponent implements OnDestroy {
     }
 
     apply = (labwork: LabworkAtom) => {
+        const $ = openDialog(
+            StudentCreateApplicationComponent.instance(this.dialog, labwork, this.applicant.id, undefined),
+            this.labworkApplicationService.create
+        )
 
+        this.subs.push(subscribe($, console.log))
     }
 }

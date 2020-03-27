@@ -11,6 +11,12 @@ interface UserFilter {
     value: string
 }
 
+export interface BuddyResult {
+    type: string
+    buddy: User
+    message: string
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -35,4 +41,7 @@ export class UserService implements AbstractCRUDService<User, User> {
     create = (protocol: User): Observable<User> => NotImplementedError()
 
     update = (protocol: User, id: string): Observable<User> => NotImplementedError()
+
+    buddy = (labworkId: string, applicantId: string, buddySystemId: string) => this.http
+        .get_<BuddyResult>(`labworks/${labworkId}/${this.path}/${applicantId}/buddies/${buddySystemId}`)
 }
