@@ -26,4 +26,8 @@ export class StudentDashboardComponent implements OnInit {
     removeApplication = (xs: LabworkApplicationAtom) => {
         this.dashboard.labworkApplications = this.dashboard.labworkApplications.filter(x => xs.id !== x.id)
     }
+
+    addApplication = (xs: LabworkApplicationAtom) => {
+        this.dashboard.labworkApplications.push(xs)
+    }
 }

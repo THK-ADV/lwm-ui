@@ -24,6 +24,7 @@ export class ApplicationListComponent implements OnDestroy {
     @Input() applicant: StudentAtom
 
     @Output() removeApplicationEmitter: EventEmitter<Readonly<LabworkApplicationAtom>>
+    @Output() addApplicationEmitter: EventEmitter<Readonly<LabworkApplicationAtom>>
 
     private subs: Subscription[]
     // subscribable && !published view and modify
@@ -39,6 +40,7 @@ export class ApplicationListComponent implements OnDestroy {
         private readonly dialog: MatDialog
     ) {
         this.removeApplicationEmitter = new EventEmitter<Readonly<LabworkApplicationAtom>>()
+        this.addApplicationEmitter = new EventEmitter<Readonly<LabworkApplicationAtom>>()
         this.subs = []
     }
 
@@ -93,6 +95,6 @@ export class ApplicationListComponent implements OnDestroy {
             this.labworkApplicationService.create
         )
 
-        this.subs.push(subscribe($, console.log))
+        this.subs.push(subscribe($, x => this.addApplicationEmitter.emit(x)))
     }
 }

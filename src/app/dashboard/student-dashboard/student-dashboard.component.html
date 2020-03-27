@@ -12,7 +12,8 @@
                     [labworks]="dashboard.labworks"
                     [apps]="dashboard.labworkApplications"
                     [applicant]="dashboard.user"
-                    (removeApplicationEmitter)="removeApplication($event)">
+                    (removeApplicationEmitter)="removeApplication($event)"
+                    (addApplicationEmitter)="addApplication($event)">
             </lwm-application-list>
         </ng-template>
         <ng-template #elseBlockLabwork>

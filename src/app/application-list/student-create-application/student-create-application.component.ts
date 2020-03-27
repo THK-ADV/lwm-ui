@@ -4,7 +4,7 @@ import {LabworkAtom} from '../../models/labwork.model'
 import {FormControl, FormGroup} from '@angular/forms'
 import {FormInput} from '../../shared-dialogs/forms/form.input'
 import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
-import {User} from '../../models/user.model'
+import {User, Student} from '../../models/user.model'
 import {invalidChoiceKey} from '../../utils/form.validator'
 import {formatUser} from '../../utils/component.utils'
 import {BuddyResult, UserService} from '../../services/user.service'
@@ -73,7 +73,7 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
 
     onSubmit = () => {
         if (this.formGroup.valid) {
-            const users = this.optionControls.map(c => {
+            var users = this.optionControls.map(c => {
                 const user = this.formGroup.controls[c.input.formControlName].value
                 return isUser(user) ? user : undefined
             }).filter(x => x !== undefined)
