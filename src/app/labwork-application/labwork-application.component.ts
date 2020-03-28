@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core'
+import {Component, OnDestroy, OnInit} from '@angular/core'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {Observable, Subscription} from 'rxjs'
 import {LabworkApplicationAtom, LabworkApplicationProtocol} from '../models/labwork.application.model'
@@ -6,7 +6,6 @@ import {LabworkApplicationService} from '../services/labwork-application.service
 import {ActivatedRoute} from '@angular/router'
 import {fetchLabwork$, formatUser} from '../utils/component.utils'
 import {LabworkService} from '../services/labwork.service'
-import {switchMap, tap} from 'rxjs/operators'
 import {format} from '../utils/lwmdate-adapter'
 import {UserService} from '../services/user.service'
 import {hasAnyRole} from '../utils/role-checker'
@@ -35,16 +34,16 @@ import {AlertService} from '../services/alert.service'
     templateUrl: './labwork-application.component.html',
     styleUrls: ['./labwork-application.component.scss']
 })
-export class LabworkApplicationComponent implements OnDestroy {
+export class LabworkApplicationComponent implements OnInit, OnDestroy {
 
     headerTitle: string
     columns: TableHeaderColumn[]
     tableContent: (model: Readonly<LabworkApplicationAtom>, attr: string) => string
     applications$: Observable<LabworkApplicationAtom[]>
     filterPredicate: (data: LabworkApplicationAtom, filter: string) => boolean
-    canCreateOrUpdate: boolean
 
-    private labwork: LabworkAtom
+    private canCreateOrUpdate: boolean
+    labwork: LabworkAtom
     private dataSource: MatTableDataSource<LabworkApplicationAtom>
     private subs: Subscription[]
 
@@ -63,13 +62,6 @@ export class LabworkApplicationComponent implements OnDestroy {
             {attr: 'friends', title: 'Partnerwunsch'},
             {attr: 'lastModified', title: 'Datum'}
         ]
-        this.applications$ = fetchLabwork$(route, labworkService).pipe(
-            tap(x => {
-                this.labwork = x
-                this.headerTitle += ` für ${x.label}`
-            }),
-            switchMap(x => appService.getAllByLabworkAtom(x.id))
-        )
         this.tableContent = (app, attr) => {
             switch (attr) {
                 case 'applicant.lastname':
@@ -88,7 +80,15 @@ export class LabworkApplicationComponent implements OnDestroy {
             app.applicant.firstname.toLowerCase().includes(filter) ||
             app.friends.some(f => f.systemId.toLowerCase().includes(filter)) ||
             format(app.lastModified, 'dd.MM.yyyy - HH:mm').includes(filter)
-        this.canCreateOrUpdate = hasAnyRole(userAuths(this.route), UserRole.courseManager, UserRole.admin)
+    }
+
+    ngOnInit(): void {
+        this.subs.push(subscribe(fetchLabwork$(this.route, this.labworkService), x => {
+            this.labwork = x
+            this.headerTitle += ` für ${x.label}`
+            this.canCreateOrUpdate = !x.published && hasAnyRole(userAuths(this.route), UserRole.courseManager, UserRole.admin)
+            this.applications$ = this.appService.getAllByLabworkAtom(x.id)
+        }))
     }
 
     ngOnDestroy(): void {

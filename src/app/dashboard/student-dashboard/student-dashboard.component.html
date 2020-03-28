@@ -1,3 +1,26 @@
-<p *ngIf="dashboard$ | async as dashboard">
-  {{dashboard | json}}
-</p>
+<ng-container *ngIf="dashboard as dashboard">
+    <div class="jumbotron">
+        <h1>{{dashboard.semester.label}}</h1>
+    </div>
+
+    <ng-container>
+        <h2>Praktikumsanmeldungen</h2>
+
+        <ng-container *ngIf="dashboard.labworks.length > 0; then thenBlockLabwork else elseBlockLabwork"></ng-container>
+        <ng-template #thenBlockLabwork>
+            <lwm-application-list
+                    [labworks]="dashboard.labworks"
+                    [apps]="dashboard.labworkApplications"
+                    [applicant]="dashboard.user"
+                    (applicationEmitter)="onApplicationChange($event)">
+            </lwm-application-list>
+        </ng-template>
+        <ng-template #elseBlockLabwork>
+            <p>
+                <ngb-alert type="info" [dismissible]="false">
+                    Es stehen aktuell keine Praktika zur Anmeldung bereit!
+                </ngb-alert>
+            </p>
+        </ng-template>
+    </ng-container>
+</ng-container>

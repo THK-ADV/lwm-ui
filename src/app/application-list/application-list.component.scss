@@ -1,0 +1,89 @@
+@import "../../lwm.vars";
+$card-color: #e9ecef; 
+
+.application-card-list {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+
+    .application-card-container {
+        -webkit-box-pack: start;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+        margin: 0 $med-spacing $med-spacing 0;
+        width: 400px;
+        //border-radius: $lwm-border-radius;
+        //border: 1px solid $light-bordercolor;
+
+        .application-card-header {
+            background-color: $card-color;
+            padding: $low-spacing;
+            border-top-left-radius: $lwm-border-radius;
+            border-top-right-radius: $lwm-border-radius;
+            //border-bottom: 1px solid $light-bordercolor;
+            font-weight: 600;
+
+            .application-card-title {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                -webkit-box-pack: justify;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+            }
+            .application-card-subtitle {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -webkit-box-align: center;
+                -ms-flex-align: center;
+                align-items: center;
+                -webkit-box-pack: right;
+                -ms-flex-pack: right;
+                justify-content: right;
+                font-weight: 100;
+                height: 1.5em;
+            }
+        }
+
+        .application-card-content {
+            padding: 10px;
+            height: 200px;
+            overflow: auto;
+            text-overflow: ellipsis;
+            border-left: 1px solid $card-color;
+            border-right: 1px solid $card-color;
+            
+        }
+
+        .application-card-actions {
+          background-color: $card-color;
+          border-bottom-left-radius: $lwm-border-radius;
+          border-bottom-right-radius: $lwm-border-radius;
+          width: 100%;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-align: end;
+          -ms-flex-align: end;
+          align-items: flex-end;
+          -webkit-box-pack: end;
+          -ms-flex-pack: end;
+          justify-content: flex-end;
+          padding-right: $med-spacing;
+
+          button {
+              margin: $med-spacing 0 $med-spacing $low-spacing;
+          }
+      }
+    }
+}

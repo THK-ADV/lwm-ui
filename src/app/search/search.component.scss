@@ -1,23 +1,38 @@
-$ft-color: #757575;
+$ft-color: #ababab;
+$border-color: #262429;
 $bg-color: #333333;
 $boder-color: #b43092;
 
 * {
-    margin-left: 10px;
+    margin-left: 4px;
     input {
         width: 400px;
-        background-color: $bg-color;
+        background-color: #0d0c0e;//$bg-color;
         color: $ft-color;
         border: none;
-        border-left: 4px $boder-color solid;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        padding-left: 10px;
+        //border-left: 4px $boder-color solid;
+        border-bottom: 1px $ft-color solid;
+        padding-left: 0px;
         caret-color: $ft-color;
+        font-size: 16px;//1em;
     }
     input:focus {
         outline: none;
     }
+
+    ::placeholder {
+        /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: darken($ft-color, 10);
+        opacity: 1; /* Firefox */
+    }
+
+    :-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        color: darken($ft-color, 10);
+    }
+
+    ::-ms-input-placeholder {
+        /* Microsoft Edge */
+        color: darken($ft-color, 10);
+    }
 }
-
-
