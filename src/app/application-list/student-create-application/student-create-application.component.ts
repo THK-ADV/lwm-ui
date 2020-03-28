@@ -68,8 +68,18 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
     optionControl = (input: FormInput): FormInputOption<User> | undefined =>
         isOption(input.data) ? input.data : undefined
 
-    headerTitle = () =>
-        `Anmeldung für ${this.labwork().label}`
+    headerTitle = () => {
+        const labworkLabel = this.labwork().label
+        return this.isEditDialog() ?
+            `Bearbeitung der Anmeldung für ${labworkLabel}` :
+            `Anmeldung für ${labworkLabel}`
+    }
+
+    buttonTitle = () =>
+        this.isEditDialog() ? 'Aktualisieren' : 'Anmelden'
+
+    isEditDialog = () =>
+        this.existingApplication() !== undefined
 
     onSubmit = () => {
         if (!this.formGroup.valid) {

@@ -12,8 +12,7 @@
                     [labworks]="dashboard.labworks"
                     [apps]="dashboard.labworkApplications"
                     [applicant]="dashboard.user"
-                    (removeApplicationEmitter)="removeApplication($event)"
-                    (addApplicationEmitter)="addApplication($event)">
+                    (applicationEmitter)="onApplicationChange($event)">
             </lwm-application-list>
         </ng-template>
         <ng-template #elseBlockLabwork>
@@ -23,9 +22,5 @@
                 </ngb-alert>
             </p>
         </ng-template>
-
-        <!--     <p>
-              {{dashboard | json}}
-            </p> -->
     </ng-container>
 </ng-container>

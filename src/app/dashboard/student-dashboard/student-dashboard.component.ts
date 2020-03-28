@@ -23,11 +23,19 @@ export class StudentDashboardComponent implements OnInit {
         this.subs.push(subscribe(this.service.getStudentDashboard(), d => this.dashboard = d))
     }
 
-    removeApplication = (xs: LabworkApplicationAtom) => {
-        this.dashboard.labworkApplications = this.dashboard.labworkApplications.filter(x => xs.id !== x.id)
-    }
+    onApplicationChange = (arg: [Readonly<LabworkApplicationAtom>, ('add' | 'delete' | 'update')]) => {
+        const [app, action] = arg
 
-    addApplication = (xs: LabworkApplicationAtom) => {
-        this.dashboard.labworkApplications.push(xs)
+        switch (action) {
+            case 'add':
+                this.dashboard.labworkApplications.push(app)
+                break
+            case 'delete':
+                this.dashboard.labworkApplications = this.dashboard.labworkApplications.filter(x => app.id !== x.id)
+                break
+            case 'update':
+                this.dashboard.labworkApplications = this.dashboard.labworkApplications.map(x => x.id === app.id ? app : x)
+                break
+        }
     }
 }

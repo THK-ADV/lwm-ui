@@ -7,7 +7,7 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {openDialog, subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {AlertService} from '../services/alert.service'
-import {of, Subscription} from 'rxjs'
+import {Subscription} from 'rxjs'
 import {MatDialog} from '@angular/material'
 import {StudentCreateApplicationComponent} from './student-create-application/student-create-application.component'
 import {StudentAtom} from '../models/user.model'
@@ -23,8 +23,7 @@ export class ApplicationListComponent implements OnDestroy {
     @Input() apps: LabworkApplicationAtom[]
     @Input() applicant: StudentAtom
 
-    @Output() removeApplicationEmitter: EventEmitter<Readonly<LabworkApplicationAtom>>
-    @Output() addApplicationEmitter: EventEmitter<Readonly<LabworkApplicationAtom>>
+    @Output() applicationEmitter: EventEmitter<[Readonly<LabworkApplicationAtom>, 'add' | 'delete' | 'update']>
 
     private subs: Subscription[]
     // subscribable && !published view and modify
@@ -39,8 +38,7 @@ export class ApplicationListComponent implements OnDestroy {
         private readonly alert: AlertService,
         private readonly dialog: MatDialog
     ) {
-        this.removeApplicationEmitter = new EventEmitter<Readonly<LabworkApplicationAtom>>()
-        this.addApplicationEmitter = new EventEmitter<Readonly<LabworkApplicationAtom>>()
+        this.applicationEmitter = new EventEmitter()
         this.subs = []
     }
 
@@ -69,7 +67,20 @@ export class ApplicationListComponent implements OnDestroy {
         mapUndefined(this.labworkApplication(labwork.id), app => format(app.lastModified, 'dd.MM.yyyy - HH:mm'))
 
     modifyApplication = (labwork: LabworkAtom) => {
+        const app = this.labworkApplication(labwork.id)
 
+        if (!app) {
+            return
+        }
+
+        const $ = openDialog(
+            StudentCreateApplicationComponent.instance(this.dialog, labwork, app.applicant.id, app),
+            p => this.labworkApplicationService.update(p, app.id)
+        )
+
+        const s = subscribe($, _ => this.applicationEmitter.emit([_, 'update']))
+
+        this.subs.push(s)
     }
 
     revokeApplication = (labwork: LabworkAtom) => {
@@ -82,7 +93,7 @@ export class ApplicationListComponent implements OnDestroy {
         const sub = subscribeDeleteDialog(
             DeleteDialogComponent.instance(this.dialog, dialogData),
             this.labworkApplicationService.delete,
-            app => this.removeApplicationEmitter.emit(app),
+            app => this.applicationEmitter.emit([app, 'delete']),
             voidF
         )
 
@@ -95,6 +106,6 @@ export class ApplicationListComponent implements OnDestroy {
             this.labworkApplicationService.create
         )
 
-        this.subs.push(subscribe($, x => this.addApplicationEmitter.emit(x)))
+        this.subs.push(subscribe($, x => this.applicationEmitter.emit([x, 'add'])))
     }
 }
