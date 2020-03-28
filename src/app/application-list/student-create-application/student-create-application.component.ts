@@ -4,7 +4,7 @@ import {LabworkAtom} from '../../models/labwork.model'
 import {FormControl, FormGroup} from '@angular/forms'
 import {FormInput} from '../../shared-dialogs/forms/form.input'
 import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
-import {User, Student} from '../../models/user.model'
+import {User} from '../../models/user.model'
 import {invalidChoiceKey} from '../../utils/form.validator'
 import {formatUser} from '../../utils/component.utils'
 import {BuddyResult, UserService} from '../../services/user.service'
@@ -31,8 +31,8 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
         labwork: LabworkAtom,
         applicantId: string,
         app: LabworkApplicationAtom | undefined
-    ): MatDialogRef<StudentCreateApplicationComponent> {
-        return dialog.open<StudentCreateApplicationComponent>(StudentCreateApplicationComponent, {
+    ): MatDialogRef<StudentCreateApplicationComponent, LabworkApplicationProtocol> {
+        return dialog.open<StudentCreateApplicationComponent, any, LabworkApplicationProtocol>(StudentCreateApplicationComponent, {
             minWidth: '600px',
             data: [labwork, app, applicantId],
             panelClass: 'lwmCreateUpdateDialog'
@@ -40,7 +40,7 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        private dialogRef: MatDialogRef<StudentCreateApplicationComponent>,
+        private dialogRef: MatDialogRef<StudentCreateApplicationComponent, LabworkApplicationProtocol>,
         private readonly userService: UserService,
         @Inject(MAT_DIALOG_DATA) public payload: [LabworkAtom, LabworkApplicationAtom, string]
     ) {
@@ -72,20 +72,30 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
         `Anmeldung für ${this.labwork().label}`
 
     onSubmit = () => {
-        if (this.formGroup.valid) {
-            var users = this.optionControls.map(c => {
-                const user = this.formGroup.controls[c.input.formControlName].value
-                return isUser(user) ? user : undefined
-            }).filter(x => x !== undefined)
-
-            const p: LabworkApplicationProtocol = {
-                applicant: this.applicantId(),
-                labwork: this.labwork().id,
-                friends: users.map(_ => _!.id)
-            }
-
-            this.dialogRef.close(p)
+        if (!this.formGroup.valid) {
+            return
         }
+
+        const extractFriends = () => {
+            const users: string[] = []
+
+            this.optionControls.forEach(c => {
+                const user = this.formGroup.controls[c.input.formControlName].value
+                if (isUser(user)) {
+                    users.push(user.id)
+                }
+            })
+
+            return users
+        }
+
+        const p: LabworkApplicationProtocol = {
+            applicant: this.applicantId(),
+            labwork: this.labwork().id,
+            friends: extractFriends()
+        }
+
+        this.dialogRef.close(p)
     }
 
     onCancel = () =>
