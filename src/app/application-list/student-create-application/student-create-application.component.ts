@@ -130,13 +130,14 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
         const friendFormInputAt = (i: 0 | 1) => {
             const controlName = i === 0 ? 'friends1' : 'friends2'
             const app = this.existingApplication()
+            const displayUser = (u: User) => u.systemId
 
             if (app && app.friends.length >= i + 1) {
                 return new FormInputOption<User>(
                     controlName,
                     invalidChoiceKey,
                     false,
-                    formatUser,
+                    displayUser,
                     fellowStudents$,
                     0,
                     opts => opts.find(_ => _.id === app.friends[i].id)
@@ -146,7 +147,7 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
                     controlName,
                     invalidChoiceKey,
                     false,
-                    formatUser,
+                    displayUser,
                     fellowStudents$,
                     0
                 )
