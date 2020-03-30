@@ -1,0 +1,25 @@
+.ed-chips {
+    div {
+        display:inline-block;
+        cursor:pointer;
+        vertical-align:middle;
+        max-width: 100px;
+        padding: 5px;
+        margin: 10px;
+        text-align: center;
+        border-radius: 5px;
+        color: white;   
+    
+    }
+
+    .unselected {
+        background-color: #e9ecef;
+        color: #888888;
+    }
+
+    div:first-child {
+        margin-left: 0;
+    }
+
+    
+}

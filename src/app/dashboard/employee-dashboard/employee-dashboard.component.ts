@@ -5,18 +5,14 @@ import {Subscription} from 'rxjs'
 import {ActivatedRoute, Router} from '@angular/router'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
 import {eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
-import {color, whiteColor} from '../../utils/colors'
+import {color, whiteColor, chipColorPalette} from '../../utils/colors'
 import {Time} from '../../models/time.model'
 import {_groupBy, first, mapUndefined, subscribe} from '../../utils/functions'
 import {CourseAtom} from '../../models/course.model'
 
 const getRandomColor = () => {
-    const letters = '0123456789ABCDEF'
-    let c = '#'
-    for (let i = 0; i < 6; i++) {
-        c += letters[Math.floor(Math.random() * 16)]
-    }
-    return c
+    const colorPalette = chipColorPalette;
+    return colorPalette[Math.floor(Math.random() * 8)]
 }
 
 
@@ -31,6 +27,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     courses: { course: CourseAtom, color: string }[]
 
     private subs: Subscription[]
+    private status = true
 
     constructor(
         private readonly dashboardService: DashboardService,
@@ -101,4 +98,5 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         return courses
     }
 
+    selectionChange = () => this.status = !this.status
 }

@@ -4,7 +4,10 @@
     </div>
 
     <ng-container *ngIf="courses.length > 0">
-        <span *ngFor="let c of courses" [style]="{backgroundColor: c.color}">{{c.course.label}}</span>
+        <div class="ed-chips">
+            <div *ngFor="let c of courses" [style]="{backgroundColor: c.color}">{{c.course.label}}</div>
+        </div>
+        
     </ng-container>
 
     <lwm-dashboard-calendar

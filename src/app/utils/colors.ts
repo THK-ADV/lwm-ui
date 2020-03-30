@@ -12,3 +12,16 @@ export const color = (c: LWMColor) => {
 }
 
 export const whiteColor = () => '#ffffff'
+
+export const chipColorPalette = [
+    '#6975A6',
+    '#F28A30',
+    '#F05837',
+    '#0584F2',
+    '#A7414A',
+    '#00743F',
+    '#888C46',
+    '#A3586D',
+    '#0ABDA0',
+    '#8D2F23'
+]
