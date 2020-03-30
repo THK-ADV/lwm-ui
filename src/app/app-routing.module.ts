@@ -19,13 +19,22 @@ import {DegreeComponent} from './degree/degree.component'
 import {BlacklistComponent} from './blacklist/blacklist.component'
 import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
 import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
+import {StudentReportCardComponent} from './dashboard/student-dashboard/student-reportcard/student-report-card.component'
 
 const routes: Routes = [
     {
         path: 's',
-        component: StudentDashboardComponent,
         canActivate: [StudentStatusGuard],
-        children: []
+        children: [
+            {
+                path: 'reportCards/labworks/:lid/students/:sid',
+                component: StudentReportCardComponent
+            },
+            {
+                path: '',
+                component: StudentDashboardComponent,
+            }
+        ]
     },
     {
         path: 'e',

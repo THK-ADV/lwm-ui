@@ -2,6 +2,5 @@
     <input matInput
            type="number"
            [formControl]="fc"
-           [disabled]="!canApprove"
            (focusout)="focusOut($event.target.value, fc)">
 </mat-form-field>

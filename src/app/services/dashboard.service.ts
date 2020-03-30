@@ -27,7 +27,7 @@ interface StudentDashboardJSON extends DashboardJSON {
     user: StudentAtom
     labworks: LabworkAtomJSON[]
     labworkApplications: LabworkApplicationAtom[]
-    groups: [string, LabworkAtom][]
+    groups: {groupLabel: string, labwork: LabworkAtom}[]
     reportCardEntries: ReportCardEntryAtomJSON[]
 }
 

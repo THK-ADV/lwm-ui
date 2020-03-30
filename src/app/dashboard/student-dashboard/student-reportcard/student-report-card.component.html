@@ -1,0 +1,9 @@
+<ng-container *ngIf="cards$ | async as cards">
+    <lwm-abstract-header *ngIf="cards.length > 0" [headerTitle]="headerTitle(cards[0])"></lwm-abstract-header>
+
+    <lwm-report-card-table
+            [tableModel]="tableModelFor(cards)"
+            [tableContentFor]="tableContentFor"
+            [auths]="[]">
+    </lwm-report-card-table>
+</ng-container>

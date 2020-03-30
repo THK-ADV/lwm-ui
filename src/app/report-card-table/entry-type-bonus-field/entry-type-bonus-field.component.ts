@@ -50,6 +50,10 @@ export class EntryTypeBonusFieldComponent implements OnInit, OnDestroy {
             this.maybeBonus(),
             entry => {
                 this.fc = new FormControl(entry.int)
+
+                if (!this.canApprove) {
+                    this.fc.disable()
+                }
                 const s = subscribe(this.fc.valueChanges.pipe(distinctUntilChanged()), v => {
                     if (isValidNumber(v)) {
                         updateChanges(entry, v)

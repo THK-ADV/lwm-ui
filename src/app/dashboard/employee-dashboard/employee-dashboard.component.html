@@ -15,6 +15,7 @@
 
     <lwm-dashboard-calendar
             [makeCalendarEvents]="calendarEvents(dashboard.scheduleEntries)"
+            [eventTitleFor]="eventTitleFor"
             [semester]="dashboard.semester"
             (eventClickEmitter)="onEventClick($event)">
     </lwm-dashboard-calendar>

@@ -15,7 +15,7 @@ export interface StudentDashboard extends Dashboard {
   user: StudentAtom
   labworks: LabworkAtom[]
   labworkApplications: LabworkApplicationAtom[]
-  groups: [string, LabworkAtom][]
+  groups: {groupLabel: string, labwork: LabworkAtom}[]
   reportCardEntries: ReportCardEntryAtom[]
   // allEvaluations: TODO
   // passedEvaluations TODO

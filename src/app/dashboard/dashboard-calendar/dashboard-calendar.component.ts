@@ -1,10 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core'
-import {CalendarView, eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
+import {CalendarView, ScheduleEntryEvent} from '../../labwork-chain/schedule/view/schedule-view-model'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list'
 import {FullCalendarComponent} from '@fullcalendar/angular'
 import {Semester} from '../../models/semester.model'
-import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
 import {dateOrderingASC, first, foldUndefined} from '../../utils/functions'
 
 @Component({
@@ -12,16 +11,17 @@ import {dateOrderingASC, first, foldUndefined} from '../../utils/functions'
     templateUrl: './dashboard-calendar.component.html',
     styleUrls: ['./dashboard-calendar.component.scss']
 })
-export class DashboardCalendarComponent implements OnInit {
+export class DashboardCalendarComponent<A> implements OnInit {
 
-    @Input() makeCalendarEvents: () => ScheduleEntryEvent<ScheduleEntryAtom>[]
+    @Input() makeCalendarEvents: () => ScheduleEntryEvent<A>[]
+    @Input() eventTitleFor: (view: CalendarView, e: Readonly<ScheduleEntryEvent<A>>) => string
     @Input() semester: Semester
 
-    @Output() eventClickEmitter = new EventEmitter<ScheduleEntryEvent<ScheduleEntryAtom>>()
+    @Output() eventClickEmitter = new EventEmitter<ScheduleEntryEvent<A>>()
 
     readonly calendarPlugins = [dayGridPlugin, listPlugin]
 
-    allDates: ScheduleEntryEvent<ScheduleEntryAtom>[] = []
+    allDates: ScheduleEntryEvent<A>[] = []
 
     @ViewChild('calendar') calendar: FullCalendarComponent
 
@@ -57,21 +57,10 @@ export class DashboardCalendarComponent implements OnInit {
         this.calendar.getApi().changeView('listWeek')
     }
 
-    onEventClick = (event: ScheduleEntryEvent<ScheduleEntryAtom>) => {
+    onEventClick = (event: ScheduleEntryEvent<A>) => {
         this.eventClickEmitter.emit(event)
     }
 
     private changeTitle = (view: CalendarView) =>
-        this.allDates.map(d => {
-            const copy = {...d}
-
-            if (copy.extendedProps) {
-                copy.title = eventTitle(
-                    view,
-                    scheduleEntryProps(copy.extendedProps.supervisor, copy.extendedProps.room, copy.extendedProps.group)
-                )
-            }
-
-            return copy
-        })
+        this.allDates.map(d => ({...d, title: this.eventTitleFor(view, d)}))
 }

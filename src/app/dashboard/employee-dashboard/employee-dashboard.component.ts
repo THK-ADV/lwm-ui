@@ -4,10 +4,10 @@ import {EmployeeDashboard} from '../../models/dashboard.model'
 import {Subscription} from 'rxjs'
 import {ActivatedRoute, Router} from '@angular/router'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
-import {eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
+import {CalendarView, eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
 import {whiteColor} from '../../utils/colors'
 import {Time} from '../../models/time.model'
-import {_groupBy, first, mapUndefined, subscribe} from '../../utils/functions'
+import {_groupBy, first, foldUndefined, mapUndefined, subscribe} from '../../utils/functions'
 import {CourseAtom} from '../../models/course.model'
 import {colorForCourse} from '../../utils/course-colors'
 
@@ -59,6 +59,9 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
         return scheduleEntries.map(go)
     }
+
+    eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ScheduleEntryAtom>>) =>
+        foldUndefined(e.extendedProps, p => eventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group)), () => e.title)
 
     onEventClick = (event: ScheduleEntryEvent<ScheduleEntryAtom>) => {
         if (!event.extendedProps) {
