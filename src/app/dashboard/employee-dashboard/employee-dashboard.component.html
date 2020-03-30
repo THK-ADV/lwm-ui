@@ -3,11 +3,14 @@
         <h1>{{dashboard.semester.label}}</h1>
     </div>
 
-    <ng-container *ngIf="courses.length > 0">
+    <ng-container *ngIf="currentCourses(dashboard.scheduleEntries) as courses">
         <div class="ed-chips">
-            <div *ngFor="let c of courses" [style]="{backgroundColor: c.color}">{{c.course.label}}</div>
+            <div *ngFor="let c of courses"
+                 [style]="{backgroundColor: colorForCourse_(c.id)}"
+            >{{c.label}}
+            </div>
         </div>
-        
+
     </ng-container>
 
     <lwm-dashboard-calendar

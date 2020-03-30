@@ -5,16 +5,11 @@ import {Subscription} from 'rxjs'
 import {ActivatedRoute, Router} from '@angular/router'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
 import {eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
-import {color, whiteColor, chipColorPalette} from '../../utils/colors'
+import {whiteColor} from '../../utils/colors'
 import {Time} from '../../models/time.model'
 import {_groupBy, first, mapUndefined, subscribe} from '../../utils/functions'
 import {CourseAtom} from '../../models/course.model'
-
-const getRandomColor = () => {
-    const colorPalette = chipColorPalette;
-    return colorPalette[Math.floor(Math.random() * 8)]
-}
-
+import {colorForCourse} from '../../utils/course-colors'
 
 @Component({
     selector: 'app-employee-dashboard',
@@ -24,10 +19,8 @@ const getRandomColor = () => {
 export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
     dashboard: EmployeeDashboard
-    courses: { course: CourseAtom, color: string }[]
 
     private subs: Subscription[]
-    private status = true
 
     constructor(
         private readonly dashboardService: DashboardService,
@@ -37,12 +30,10 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         this.subs = []
     }
 
+    colorForCourse_ = colorForCourse
+
     ngOnInit() {
-        this.subs.push(subscribe(this.dashboardService.getEmployeeDashboard(), d => {
-            this.dashboard = d
-            this.courses = this.currentCourses(d.scheduleEntries).map(c => ({course: c, color: getRandomColor()}))
-            console.log(this.courses)
-        }))
+        this.subs.push(subscribe(this.dashboardService.getEmployeeDashboard(), d => this.dashboard = d))
     }
 
     ngOnDestroy(): void {
@@ -51,7 +42,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
     calendarEvents = (scheduleEntries: ScheduleEntryAtom[]): () => ScheduleEntryEvent<ScheduleEntryAtom>[] => () => {
         const go = (e: ScheduleEntryAtom): ScheduleEntryEvent<ScheduleEntryAtom> => {
-            const backgroundColor = this.courses.find(_ => _.course.id === e.labwork.course.id)?.color ?? color('primary')
+            const backgroundColor = colorForCourse(e.labwork.course.id)
             const foregroundColor = whiteColor()
 
             return {
@@ -97,6 +88,4 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
         return courses
     }
-
-    selectionChange = () => this.status = !this.status
 }
