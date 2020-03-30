@@ -3,22 +3,23 @@
         #calendar
         [plugins]="calendarPlugins"
         [locale]="'de'"
-        [nowIndicator]=false
+        [nowIndicator]=true
         [weekends]="false"
         [firstDay]=1
         [allDaySlot]=true
-        [header]="{left: 'month, list, labworkStart', center: 'title', right: 'prev,next'}"
+        [header]="{left: 'month, list, today', center: 'title', right: 'prev,next'}"
         [customButtons]="{
-        labworkStart: {text: 'Praktikumsbeginn', click: showLabworkStartDate},
-        month: {text: 'Monat', click: showMonthView},
-        list: {text: 'Liste', click: showListView}
-    }"
+            today: {text: 'Heute', click: goToToday},
+            month: {text: 'Monat', click: showMonthView},
+            list: {text: 'Liste', click: showListView}
+        }"
         [buttonText]="{month: 'Monat', list: 'Liste'}"
         [columnHeaderFormat]="{ weekday: 'long' }"
         [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
         [events]="allDates"
         [weekNumbers]=true
-        [validRange]="semesterBoundaries"
+        [validRange]="semesterBoundaries()"
         [weekNumbersWithinDays]=true
-        [defaultDate]="earliestDate()">
+        [defaultDate]="earliestDate()"
+        (eventClick)="onEventClick($event.event)">
 </full-calendar>

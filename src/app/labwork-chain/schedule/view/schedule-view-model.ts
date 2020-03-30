@@ -5,16 +5,17 @@ import {color, whiteColor} from '../../../utils/colors'
 import {User} from '../../../models/user.model'
 import {Group} from '../../../models/group.model'
 import {shortUserName} from '../../timetable/timetable-view-model'
+import {Room} from '../../../models/room.model'
 
 export type CalendarView = 'month' | 'list'
 
-export interface ExtendedProps {
+export interface ScheduleEntryProps {
     supervisorLabel: string
     roomLabel: string
     group: Group
 }
 
-export interface ScheduleEntryEvent {
+export interface ScheduleEntryEvent<Props> {
     title: string
     start: Date
     end: Date
@@ -22,76 +23,64 @@ export interface ScheduleEntryEvent {
     borderColor: string
     backgroundColor: string
     textColor: string
-    extendedProps?: ExtendedProps
+    extendedProps?: Props
 }
 
-export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryAtom[]>): ScheduleEntryEvent[] => {
-    return entries.map(makeScheduleEntryEvent)
-}
+export const scheduleEntryProps = (supervisors: User[], room: Room, group: Group) => ({
+    supervisorLabel: supervisorLabel(supervisors),
+    roomLabel: room.label,
+    group: group
+})
 
-export const makeBlacklistEvents = (blacklists: Blacklist[]): ScheduleEntryEvent[] => {
-    return blacklists.map(makeBlacklistEvent)
-}
+export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryAtom[]>): ScheduleEntryEvent<ScheduleEntryProps>[] => {
+    const go = (e: ScheduleEntryAtom): ScheduleEntryEvent<ScheduleEntryProps> => {
+        const backgroundColor = color('primary')
+        const foregroundColor = whiteColor()
+        const props = scheduleEntryProps(e.supervisor, e.room, e.group)
 
-const makeScheduleEntryEvent = (e: ScheduleEntryAtom): ScheduleEntryEvent => {
-    const backgroundColor = color('primary')
-    const foregroundColor = whiteColor()
-    const props = {
-        supervisorLabel: supervisorLabel(e.supervisor),
-        roomLabel: e.room.label,
-        group: e.group
-    }
-
-    return {
-        allDay: false,
-        start: Time.withNewDate(e.date, e.start).date,
-        end: Time.withNewDate(e.date, e.end).date,
-        title: eventTitle('month', props),
-        borderColor: backgroundColor,
-        backgroundColor: backgroundColor,
-        textColor: foregroundColor,
-        extendedProps: props
-    }
-}
-
-const makeBlacklistEvent = (b: Blacklist): ScheduleEntryEvent => {
-    const backgroundColor = color('warn')
-    const foregroundColor = whiteColor()
-
-    return {
-        allDay: true,
-        start: Time.withNewDate(b.date, b.start).date,
-        end: Time.withNewDate(b.date, b.end).date,
-        title: b.label,
-        borderColor: backgroundColor,
-        backgroundColor: backgroundColor,
-        textColor: foregroundColor
-    }
-}
-
-export const eventEntriesForMonth = (entries: ScheduleEntryEvent[]) => {
-    return entries.map(d => {
-        const copy = {...d}
-
-        if (copy.extendedProps) {
-            copy.title = eventTitle('month', copy.extendedProps)
+        return {
+            allDay: false,
+            start: Time.withNewDate(e.date, e.start).date,
+            end: Time.withNewDate(e.date, e.end).date,
+            title: eventTitle('month', props),
+            borderColor: backgroundColor,
+            backgroundColor: backgroundColor,
+            textColor: foregroundColor,
+            extendedProps: props
         }
+    }
 
-        return copy
-    })
+    return entries.map(go)
 }
 
-export const eventEntriesForList = (entries: ScheduleEntryEvent[]) => {
-    return entries.map(d => {
-        const copy = {...d}
+export const eventTitle = (view: CalendarView, props: ScheduleEntryProps) => {
+    switch (view) {
+        case 'month':
+            return `- Grp. ${props.group.label} - ${props.roomLabel}`
+        case 'list':
+            return `Grp. ${props.group.label} - ${props.roomLabel}: ${props.supervisorLabel}`
+    }
+}
 
-        if (copy.extendedProps) {
-            copy.title = eventTitle('list', copy.extendedProps)
+export const makeBlacklistEvents = (blacklists: Blacklist[]): ScheduleEntryEvent<never>[] => {
+    const go = (b: Blacklist): ScheduleEntryEvent<never> => {
+        const backgroundColor = color('warn')
+        const foregroundColor = whiteColor()
+
+        return {
+            allDay: true,
+            start: Time.withNewDate(b.date, b.start).date,
+            end: Time.withNewDate(b.date, b.end).date,
+            title: b.label,
+            borderColor: backgroundColor,
+            backgroundColor: backgroundColor,
+            textColor: foregroundColor
         }
+    }
 
-        return copy
-    })
+    return blacklists.map(go)
 }
+
 
 const supervisorLabel = (supervisors: User[]): string => {
     return supervisors
@@ -100,11 +89,4 @@ const supervisorLabel = (supervisors: User[]): string => {
         .join(', ')
 }
 
-export const eventTitle = (view: CalendarView, props: ExtendedProps) => {
-    switch (view) {
-        case 'month':
-            return `- Grp. ${props.group.label} - ${props.roomLabel}`
-        case 'list':
-            return `Grp. ${props.group.label} - ${props.roomLabel}: ${props.supervisorLabel}`
-    }
-}
+

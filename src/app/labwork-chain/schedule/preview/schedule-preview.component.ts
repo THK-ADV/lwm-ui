@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {TimetableAtom} from '../../../models/timetable'
-import {ScheduleEntryEvent} from '../view/schedule-view-model'
+import {ScheduleEntryEvent, ScheduleEntryProps} from '../view/schedule-view-model'
 import {ScheduleEntryGen, ScheduleEntryService} from '../../../services/schedule-entry.service'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {ConfirmDialogComponent} from '../../../shared-dialogs/confirm-dialog/confirm-dialog.component'
@@ -35,7 +35,7 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
     @Output() createScheduleEmitter: EventEmitter<ScheduleEntryAtom[]>
     @Output() deleteSchedulePreviewEmitter: EventEmitter<void>
 
-    dates: ScheduleEntryEvent[]
+    dates: ScheduleEntryEvent<ScheduleEntryProps>[]
     headerTitle: string
     private subs: Subscription[]
 

@@ -86,6 +86,7 @@ import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
 import {RescheduleComponent} from './report-card-table/reschedule/reschedule.component'
 import {ApplicationListComponent} from './application-list/application-list.component'
 import {StudentCreateApplicationComponent} from './application-list/student-create-application/student-create-application.component'
+import {DashboardCalendarComponent} from './dashboard/dashboard-calendar/dashboard-calendar.component'
 
 @NgModule({
     declarations: [
@@ -153,7 +154,8 @@ import {StudentCreateApplicationComponent} from './application-list/student-crea
         ScheduleEntryComponent,
         RescheduleComponent,
         ApplicationListComponent,
-        StudentCreateApplicationComponent
+        StudentCreateApplicationComponent,
+        DashboardCalendarComponent
     ],
     imports: [
         BrowserModule,
