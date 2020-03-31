@@ -1,5 +1,5 @@
 import {ScheduleEntryGen, ScheduleEntryGenProtocol, ScheduleEntryService} from '../../../services/schedule-entry.service'
-import {eventTitle, ScheduleEntryEvent} from '../view/schedule-view-model'
+import {eventTitle, ScheduleEntryEvent, ScheduleEntryProps} from '../view/schedule-view-model'
 import {color, whiteColor} from '../../../utils/colors'
 import {Time} from '../../../models/time.model'
 import {_groupBy, isEmpty} from '../../../utils/functions'
@@ -8,12 +8,12 @@ import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 import {format, formatTime} from '../../../utils/lwmdate-adapter'
 import {ReportCardEntryService} from '../../../services/report-card-entry.service'
 
-export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryGen[]>): ScheduleEntryEvent[] => {
+export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryGen[]>): ScheduleEntryEvent<ScheduleEntryProps>[] => {
     const rooms = Object.keys(_groupBy(entries.flatMap(s => s.room), identity))
     return entries.map(makeScheduleEntryEvent(rooms))
 }
 
-const makeScheduleEntryEvent = (rooms: string[]): (e: ScheduleEntryGen) => ScheduleEntryEvent => {
+const makeScheduleEntryEvent = (rooms: string[]): (e: ScheduleEntryGen) => ScheduleEntryEvent<ScheduleEntryProps> => {
     return e => {
         const backgroundColor = color('primary')
         const foregroundColor = whiteColor()

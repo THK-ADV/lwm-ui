@@ -21,7 +21,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     readonly calendarPlugins = [dayGridPlugin]
     @ViewChild('calendar') calendar: FullCalendarComponent
 
-    dates: ScheduleEntryEvent[] = []
+    dates: ScheduleEntryEvent<never>[] = []
     private subs: Subscription[] = []
 
     static instance(
@@ -71,7 +71,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
 
     private reportCardEntry = () => this.payload[0]
 
-    private makeEvent = (e: ReportCardEntryAtom, current: boolean): ScheduleEntryEvent => {
+    private makeEvent = (e: ReportCardEntryAtom, current: boolean): ScheduleEntryEvent<never> => {
         const backgroundColor = current ? color('primary') : color('accent')
         const borderColor = current ? 'black' : color('accent')
         const foregroundColor = whiteColor()

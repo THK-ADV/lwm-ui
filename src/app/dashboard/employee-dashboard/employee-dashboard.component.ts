@@ -1,70 +1,94 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, OnDestroy, OnInit} from '@angular/core'
 import {DashboardService} from '../../services/dashboard.service'
 import {EmployeeDashboard} from '../../models/dashboard.model'
-import {Observable} from 'rxjs'
+import {Subscription} from 'rxjs'
 import {ActivatedRoute, Router} from '@angular/router'
-import {_groupBy, dateOrderingASC, first} from '../../utils/functions'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
-import {LabworkAtom} from '../../models/labwork.model'
-import {format, formatTime} from '../../utils/lwmdate-adapter'
-import {KeyValue} from '@angular/common'
+import {CalendarView, eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
+import {whiteColor} from '../../utils/colors'
+import {Time} from '../../models/time.model'
+import {_groupBy, first, foldUndefined, mapUndefined, subscribe} from '../../utils/functions'
 import {CourseAtom} from '../../models/course.model'
+import {colorForCourse} from '../../utils/course-colors'
 
 @Component({
     selector: 'app-employee-dashboard',
     templateUrl: './employee-dashboard.component.html',
     styleUrls: ['./employee-dashboard.component.scss']
 })
-export class EmployeeDashboardComponent implements OnInit {
+export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
-    dashboard$: Observable<EmployeeDashboard>
+    dashboard: EmployeeDashboard
+
+    private subs: Subscription[]
 
     constructor(
         private readonly dashboardService: DashboardService,
         private readonly route: ActivatedRoute,
         private readonly router: Router
     ) {
+        this.subs = []
     }
+
+    colorForCourse_ = colorForCourse
 
     ngOnInit() {
-        this.dashboard$ = this.dashboardService.getEmployeeDashboard()
+        this.subs.push(subscribe(this.dashboardService.getEmployeeDashboard(), d => this.dashboard = d))
     }
 
-    groupByLabworks = (xs: ScheduleEntryAtom[]): KeyValue<string, ScheduleEntryAtom[]> =>
-        _groupBy(xs, x => x.labwork.id)
+    ngOnDestroy(): void {
+        this.subs.forEach(_ => _.unsubscribe())
+    }
 
-    labworkBy = (xs: ScheduleEntryAtom[]): LabworkAtom | undefined =>
-        first(xs)?.labwork
+    calendarEvents = (scheduleEntries: ScheduleEntryAtom[]): () => ScheduleEntryEvent<ScheduleEntryAtom>[] => () => {
+        const go = (e: ScheduleEntryAtom): ScheduleEntryEvent<ScheduleEntryAtom> => {
+            const backgroundColor = colorForCourse(e.labwork.course.id)
+            const foregroundColor = whiteColor()
 
-    displayScheduleEntry = (e: ScheduleEntryAtom) =>
-        `${format(e.date, 'dd.MM.yyyy')} ${formatTime(e.start, 'HH:mm')} - ${formatTime(e.end, 'HH:mm')} Gruppe ${e.group.label} in ${e.room.label}`
+            return {
+                allDay: false,
+                start: Time.withNewDate(e.date, e.start).date,
+                end: Time.withNewDate(e.date, e.end).date,
+                title: eventTitle('month', scheduleEntryProps(e.supervisor, e.room, e.group)),
+                borderColor: backgroundColor,
+                backgroundColor: backgroundColor,
+                textColor: foregroundColor,
+                extendedProps: e
+            }
+        }
 
-    sortScheduleEntries = () => (lhs: ScheduleEntryAtom, rhs: ScheduleEntryAtom) =>
-        dateOrderingASC(lhs.start.date, rhs.start.date)
+        return scheduleEntries.map(go)
+    }
 
-    onScheduleEntry = (e: ScheduleEntryAtom) => {
+    eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ScheduleEntryAtom>>) =>
+        foldUndefined(e.extendedProps, p => eventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group)), () => e.title)
+
+    onEventClick = (event: ScheduleEntryEvent<ScheduleEntryAtom>) => {
+        if (!event.extendedProps) {
+            return
+        }
+
         // https://stackoverflow.com/questions/36320821/passing-multiple-route-params-in-angular2
         // https://stackoverflow.com/questions/44864303/send-data-through-routing-paths-in-angular
         // this.router.navigate(['e/courses/:cid/scheduleEntries/:sid', {cid: e.labwork.course.id, sid: e.id}])
         this.router.navigate(
-            [`courses/${e.labwork.course.id}/scheduleEntries/${e.id}`],
+            [`courses/${event.extendedProps.labwork.course.id}/scheduleEntries/${event.extendedProps.id}`],
             {relativeTo: this.route}
             // {state: {scheduleEntry: e}}
         )
     }
 
-    scheduleEntryHeaderTitle = (d: EmployeeDashboard) =>
-        `Staffelpläne für ${d.semester.label}`
+    private currentCourses = (scheduleEntries: ScheduleEntryAtom[]) => {
+        const obj = _groupBy(scheduleEntries, e => e.labwork.course.id)
+        const courses: CourseAtom[] = []
 
-    courseHeaderTitle = () =>
-        'Module'
+        Object.keys(obj).forEach(k => {
+            mapUndefined<ScheduleEntryAtom, {}>(
+                first(obj[k]),
+                f => courses.push(f.labwork.course)
+            )
+        })
 
-    displayCourse = (c: CourseAtom) =>
-        c.label
-
-    onCourse = (c: CourseAtom) =>
-        this.router.navigate([`courses`, c.id], {relativeTo: this.route})
-
-    sortCourses = () => (lhs: CourseAtom, rhs: CourseAtom) =>
-        lhs.label.localeCompare(rhs.label)
+        return courses
+    }
 }

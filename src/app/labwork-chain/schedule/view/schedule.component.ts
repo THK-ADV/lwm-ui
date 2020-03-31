@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
-import {makeScheduleEntryEvents, ScheduleEntryEvent} from './schedule-view-model'
+import {makeScheduleEntryEvents, ScheduleEntryEvent, ScheduleEntryProps} from './schedule-view-model'
 import {TimetableAtom} from '../../../models/timetable'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
@@ -34,7 +34,7 @@ export class ScheduleComponent implements OnInit {
     @Output() deleteReportCardsEmitter: EventEmitter<void>
     @Output() updateLabworkEmitter: EventEmitter<LabworkAtom>
 
-    dates: ScheduleEntryEvent[]
+    dates: ScheduleEntryEvent<ScheduleEntryProps>[]
     headerTitle: string
     private readonly subs: Subscription[]
 

@@ -2,11 +2,11 @@ import {Component, Input, OnDestroy, OnInit} from '@angular/core'
 import {ReportCardEntryAtom, ReportCardEntryType} from '../../models/report-card-entry.model'
 import {ReportCardEntryTypeService} from '../../services/report-card-entry-type.service'
 import {identity, Subscription} from 'rxjs'
-import {foldUndefined, mapUndefined, subscribe} from '../../utils/functions'
+import {mapUndefined, subscribe} from '../../utils/functions'
 
 enum TernaryState {
     passed = 3201,
-    failed = 3202,
+    failed = 3200,
     neutral = 42
 }
 
@@ -56,8 +56,15 @@ export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {
     private currentType = (): ReportCardEntryType | undefined =>
         this.entry.entryTypes.find(_ => _.entryType === this.attr)
 
-    private fromReportCardEntryType = (t: ReportCardEntryType): TernaryState =>
-        foldUndefined(t.bool, b => b ? TernaryState.passed : TernaryState.failed, () => TernaryState.neutral)
+    private fromReportCardEntryType = (t: ReportCardEntryType): TernaryState => {
+        const bool = t.bool
+
+        if (bool === null) {
+            return TernaryState.neutral
+        }
+
+       return bool ? TernaryState.passed : TernaryState.failed
+    }
 
     private fromNumber = (n: number): boolean | undefined => {
         switch (n) {

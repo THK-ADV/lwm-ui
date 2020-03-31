@@ -1,19 +1,22 @@
-<ng-container *ngIf="dashboard$ | async as dashboard">
-    <lwm-abstract-header [headerTitle]="scheduleEntryHeaderTitle(dashboard)"></lwm-abstract-header>
+<ng-container *ngIf="dashboard">
+    <div class="jumbotron">
+        <h1>{{dashboard.semester.label}}</h1>
+    </div>
 
-    <ng-container *ngFor="let group of groupByLabworks(dashboard.scheduleEntries) | keyvalue ">
-        <h2>{{labworkBy(group.value).label}}</h2>
+    <ng-container *ngIf="currentCourses(dashboard.scheduleEntries) as courses">
+        <div class="ed-chips">
+            <div *ngFor="let c of courses"
+                 [style]="{backgroundColor: colorForCourse_(c.id)}"
+            >{{c.label}}
+            </div>
+        </div>
 
-        <p *ngFor="let entry of group.value | sort: sortScheduleEntries()" (click)="onScheduleEntry(entry)">
-            {{displayScheduleEntry(entry)}}
-        </p>
     </ng-container>
 
-    <ng-container *ngIf="dashboard.courses as courses">
-        <lwm-abstract-header [headerTitle]="courseHeaderTitle()"></lwm-abstract-header>
-
-        <p *ngFor="let c of courses | sort: sortCourses()" (click)="onCourse(c)">
-            {{displayCourse(c)}}
-        </p>
-    </ng-container>
+    <lwm-dashboard-calendar
+            [makeCalendarEvents]="calendarEvents(dashboard.scheduleEntries)"
+            [eventTitleFor]="eventTitleFor"
+            [semester]="dashboard.semester"
+            (eventClickEmitter)="onEventClick($event)">
+    </lwm-dashboard-calendar>
 </ng-container>

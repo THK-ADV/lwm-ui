@@ -9,7 +9,7 @@ import { _groupBy } from '../utils/functions'
 import { convertManyReportCardEntries } from '../utils/http-utils';
 
 interface ReportCardEntryFilter {
-    attribute: 'course' | 'student'
+    attribute: 'course' | 'student' | 'labwork'
     value: string
 }
 
@@ -47,4 +47,7 @@ export class ReportCardEntryService {
         .getAll<ReportCardEntryAtomJSON>(`${makePath('scheduleEntries', courseId)}/${scheduleEntryId}/reportCardEntries`)
         .pipe(map(convertManyReportCardEntries))
 
+    fromStudent = (student: string, labwork: string) => this.http
+        .getAll<ReportCardEntryAtomJSON>(`${this.path}/student/${student}?labwork=${labwork}`)
+        .pipe(map(convertManyReportCardEntries))
 }
