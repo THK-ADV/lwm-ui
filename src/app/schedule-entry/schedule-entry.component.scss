@@ -1,0 +1,26 @@
+.schedule-entry-header-container {
+    .schedule-entry-table {
+        display: table;
+        width: auto;
+    }
+    .schedule-entry-table-row {
+        display: table-row;
+        width: auto;
+        clear: both;
+    }
+    .schedule-entry-table-main-col {
+        float: left; /* fix for  buggy browsers */
+        display: table-column;
+        font-weight: bold;
+        width: 140px;
+    }
+    .schedule-entry-table-col {
+        float: left; /* fix for  buggy browsers */
+        display: table-column;
+        width: 300px;
+    }
+
+    .nostud { 
+        color: #6b6b6b; 
+    }
+}

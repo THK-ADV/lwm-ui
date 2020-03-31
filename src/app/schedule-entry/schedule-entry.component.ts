@@ -1,20 +1,20 @@
-import {Component, OnInit} from '@angular/core'
-import {ActivatedRoute} from '@angular/router'
-import {EMPTY, Observable, of, zip} from 'rxjs'
-import {ReportCardEntryService} from '../services/report-card-entry.service'
-import {switchMap} from 'rxjs/operators'
-import {ScheduleEntryService} from '../services/schedule-entry.service'
-import {ScheduleEntryAtom} from '../models/schedule-entry.model'
-import {format, formatTime} from '../utils/lwmdate-adapter'
-import {shortUserName} from '../labwork-chain/timetable/timetable-view-model'
-import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {MatTableDataSource} from '@angular/material'
-import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
-import {userAuths} from '../security/user-authority-resolver'
-import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
-import {fullUserName} from '../utils/component.utils'
-import {compareUsers} from '../utils/sort'
-import {first, foldUndefined} from '../utils/functions'
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
+import { EMPTY, Observable, of, zip } from 'rxjs'
+import { ReportCardEntryService } from '../services/report-card-entry.service'
+import { switchMap } from 'rxjs/operators'
+import { ScheduleEntryService } from '../services/schedule-entry.service'
+import { ScheduleEntryAtom } from '../models/schedule-entry.model'
+import { format, formatTime } from '../utils/lwmdate-adapter'
+import { shortUserName } from '../labwork-chain/timetable/timetable-view-model'
+import { ReportCardEntryAtom } from '../models/report-card-entry.model'
+import { MatTableDataSource } from '@angular/material'
+import { ReportCardTableModel } from '../report-card-table/report-card-table.component'
+import { userAuths } from '../security/user-authority-resolver'
+import { distinctEntryTypeColumns } from '../report-card-table/report-card-table-utils'
+import { fullUserName } from '../utils/component.utils'
+import { compareUsers } from '../utils/sort'
+import { first, foldUndefined } from '../utils/functions'
 
 @Component({
     selector: 'lwm-schedule-entry',
@@ -47,13 +47,6 @@ export class ScheduleEntryComponent implements OnInit {
         )
     }
 
-    headerTitle = (s: Readonly<ScheduleEntryAtom>, xs: Readonly<ReportCardEntryAtom[]>) =>
-        foldUndefined(
-            first(xs),
-            x => `Termin ${x.assignmentIndex + 1} vom ${format(s.date, 'dd.MM.yyyy')}, ${formatTime(s.start, 'HH:mm')} - ${formatTime(s.end, 'HH:mm')} Uhr in Raum ${s.room.label}`,
-            () => `Abnahme hat keine Teilnehmer`
-        )
-
     supervisors = (x: Readonly<ScheduleEntryAtom>) =>
         x.supervisor.map(shortUserName).join(', ')
 
@@ -63,13 +56,10 @@ export class ScheduleEntryComponent implements OnInit {
     participants = (xs: Readonly<ReportCardEntryAtom[]>) =>
         `${xs.length} Teilnehmer`
 
-    assignment = (x: Readonly<ReportCardEntryAtom>) =>
-        x.label
-
     dataSource = (xs: ReportCardEntryAtom[]): ReportCardTableModel => {
         const columns = [
-            {attr: 'systemId', title: 'GMID'},
-            {attr: 'name', title: 'Name'},
+            { attr: 'systemId', title: 'GMID' },
+            { attr: 'name', title: 'Name' },
             ...distinctEntryTypeColumns(xs.flatMap(_ => _.entryTypes))
         ]
 
@@ -94,4 +84,39 @@ export class ScheduleEntryComponent implements OnInit {
 
     auths = () =>
         userAuths(this.route)
+
+    showHeaderDetails = (xs: Readonly<ReportCardEntryAtom[]>) => {
+        return xs.length > 0
+    }
+
+    assignmentText = (xs: Readonly<ReportCardEntryAtom[]>) => {
+        return foldUndefined(
+            first(xs),
+            x => {
+                const index = x.assignmentIndex + 1
+                const label = `${index} - ${x.label}`
+                return label
+            },
+            () => ``
+        )
+    }
+
+    room = (x: Readonly<ScheduleEntryAtom>) => {
+        return x.room.label
+    }
+
+    day = (x: Readonly<ScheduleEntryAtom>) =>
+        format(x.date, 'dd.MM.yyyy')
+
+    period = (x: Readonly<ScheduleEntryAtom>) => {
+        const start = formatTime(x.start, 'HH:mm')
+        const end = formatTime(x.end, 'HH:mm')
+        return `${start}Uhr - ${end}Uhr`
+    }
+
+    headerTitle = (x: Readonly<ScheduleEntryAtom>) => {
+        const labwork = x.labwork.label
+        const group = x.group.label
+        return `${labwork} - Gruppe ${group}`
+    }
 }
