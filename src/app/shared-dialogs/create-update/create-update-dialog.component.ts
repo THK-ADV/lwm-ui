@@ -84,7 +84,7 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
 
             this.closeModal(this.payload.makeProtocol(updatedValues))
         } else {
-            Object.keys(this.formGroup.controls).forEach(k => console.error(this.formGroup.controls[k].errors))
+            // Object.keys(this.formGroup.controls).forEach(k => console.error(this.formGroup.controls[k].errors))
         }
     }
 

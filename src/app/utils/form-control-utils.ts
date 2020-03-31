@@ -31,9 +31,3 @@ export const resetControl = (control: Readonly<AbstractControl>) => {
     control.setValue('', {emitEvent: true})
     control.markAsUntouched()
 }
-
-export const printFormControlErrors = (formGroup: FormGroup) => {
-    Object.keys(formGroup.controls).forEach(k => {
-        console.error(k, formGroup.controls[k].errors)
-    })
-}
