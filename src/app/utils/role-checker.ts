@@ -25,7 +25,7 @@ export const fetchCurrentUserAuthorities$ = (
     authorityService: AuthorityService,
     tokenService: KeycloakTokenService
 ): Observable<AuthorityAtom[]> => foldUndefined(
-    tokenService.get(KeycloakTokenKey.SYSTEMID),
+    tokenService.get('systemId'),
     authorityService.getAuthorities,
     () => EMPTY
 )

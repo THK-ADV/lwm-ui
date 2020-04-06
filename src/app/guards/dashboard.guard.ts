@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core'
-import {CanActivate, Router, UrlTree} from '@angular/router'
-import {KeycloakTokenService, KeycloakUserStatus} from '../services/keycloak-token.service'
+import {CanActivate, Router} from '@angular/router'
+import {KeycloakTokenService} from '../services/keycloak-token.service'
+import {foldUndefined} from '../utils/functions'
 
 @Injectable()
 export class DashboardGuard implements CanActivate {
@@ -8,22 +9,19 @@ export class DashboardGuard implements CanActivate {
     constructor(private tokenService: KeycloakTokenService, private router: Router) {
     }
 
-    canActivate(): Promise<UrlTree> {
-        return new Promise<UrlTree>(resolve => {
-            const status = this.tokenService.getUserStatus()
-
-            // insert UPDATE user with systemID to refresh data in keycloak
-            switch (status) {
-                case KeycloakUserStatus.STUDENT:
-                    resolve(this.router.parseUrl('/s'))
-                    break
-                case KeycloakUserStatus.EMPLOYEE:
-                    resolve(this.router.parseUrl('/e'))
-                    break
-                default:
-                    resolve(this.router.parseUrl('/'))
-                    break
-            }
-        })
+    canActivate(): Promise<boolean> {
+        return foldUndefined(
+            this.tokenService.getUserStatus(),
+            status => {
+                switch (status) {
+                    case 'student':
+                        return this.router.navigate(['/s'])
+                    case 'employee':
+                    case 'lecturer':
+                        return this.router.navigate(['/e'])
+                }
+            },
+            () => new Promise<boolean>(() => false)
+        )
     }
 }

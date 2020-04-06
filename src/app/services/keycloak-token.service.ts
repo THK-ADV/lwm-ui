@@ -2,15 +2,9 @@ import {Injectable} from '@angular/core'
 import {KeycloakService} from 'keycloak-angular'
 import {mapUndefined} from '../utils/functions'
 
-export enum KeycloakTokenKey {
-    SYSTEMID = 'systemId',
-    STATUS = 'status'
-}
+export type KeycloakTokenKey = 'systemId' | 'status'
 
-export enum KeycloakUserStatus {
-    EMPLOYEE = 'employee',
-    STUDENT = 'student'
-}
+export type KeycloakUserStatus = 'employee' | 'student' | 'lecturer'
 
 @Injectable({
     providedIn: 'root'
@@ -20,13 +14,28 @@ export class KeycloakTokenService {
     constructor(private keycloak: KeycloakService) {
     }
 
-    get = (key: KeycloakTokenKey): string | undefined => mapUndefined(this.keycloak.getKeycloakInstance().tokenParsed, t => t[key])
+    get = (key: KeycloakTokenKey): string | undefined =>
+        mapUndefined(this.keycloak.getKeycloakInstance().tokenParsed, t => t[key])
 
-    hasUserStatus = (status: KeycloakUserStatus): boolean => this.get(KeycloakTokenKey.STATUS) === status
+    hasUserStatus = (status: KeycloakUserStatus): boolean =>
+        this.get('status') === status
 
-    getUserStatus = (): KeycloakUserStatus => {
-        return this.hasUserStatus(KeycloakUserStatus.STUDENT)
-            ? KeycloakUserStatus.STUDENT
-            : KeycloakUserStatus.EMPLOYEE // TODO hasStatus this sufficient enough?
+    getUserStatus = (): KeycloakUserStatus | undefined => {
+        const status = this.get('status')
+
+        if (!status) {
+            return undefined
+        }
+
+        switch (status) {
+            case 'student':
+                return 'student'
+            case 'employee':
+                return 'employee'
+            case 'lecturer':
+                return 'lecturer'
+            default:
+                return undefined
+        }
     }
 }
