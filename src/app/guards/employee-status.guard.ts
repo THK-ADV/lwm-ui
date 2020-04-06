@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core'
 import {CanActivate, Router} from '@angular/router'
-import {KeycloakTokenService, KeycloakUserStatus} from '../services/keycloak-token.service'
+import {KeycloakTokenService} from '../services/keycloak-token.service'
 
 @Injectable()
 export class EmployeeStatusGuard implements CanActivate {
@@ -10,7 +10,8 @@ export class EmployeeStatusGuard implements CanActivate {
 
     canActivate(): Promise<boolean> {
         return new Promise<boolean>(resolve => {
-            const isEmployee = this.tokenService.hasUserStatus(KeycloakUserStatus.EMPLOYEE)
+            const isEmployee = this.tokenService.hasUserStatus('employee') ||
+                this.tokenService.hasUserStatus('lecturer')
 
             if (!isEmployee) {
                 this.router.navigate(['/'])
