@@ -85,9 +85,8 @@ export class GroupsComponent implements OnInit {
     displaySystemId = (user: User): string => user.systemId
 
     onEdit = (group: GroupAtom) => {
-        const fellowStudents$ = this.userService.getAllWithFilter(
-            {attribute: 'status', value: 'student'},
-            {attribute: 'degree', value: group.labwork.degree}
+        const fellowStudents$ = this.userService.getAllWithFilter( // TODO remove those who are already applied to related labworks
+            {attribute: 'status', value: 'student'}
         )
 
         const dialogRef = GroupEditComponent.instance(this.dialog, group, this.groups.map(g => g.value), fellowStudents$)
