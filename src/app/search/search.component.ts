@@ -37,7 +37,7 @@ export class SearchComponent implements OnInit {
     }
 
     userSelected = (student: User) => {
-        this.router.navigate(['e/students', student.id])
+        this.router.navigate(['students', student.id])
         this.control.setValue('')
         this.formInputOption.reset()
     }

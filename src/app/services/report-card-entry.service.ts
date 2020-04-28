@@ -1,8 +1,8 @@
 import { applyFilter } from './http.filter';
 import { Injectable } from '@angular/core'
 import { HttpService } from './http.service'
-import { Observable } from 'rxjs'
-import { map } from 'rxjs/operators'
+import {Observable, of} from 'rxjs'
+import {catchError, map, tap} from 'rxjs/operators'
 import { ReportCardEntryJSON, ReportCardEntryAtom, ReportCardEntryAtomJSON } from '../models/report-card-entry.model'
 import { makePath } from '../utils/component.utils'
 import { _groupBy } from '../utils/functions'

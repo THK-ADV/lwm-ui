@@ -65,11 +65,6 @@ const routes: Routes = [
                 component: BlacklistComponent
             },
             {
-                path: 'students/:sid',
-                resolve: {userAuths: UserAuthorityResolver},
-                component: StudentsComponent
-            },
-            {
                 path: '',
                 component: EmployeeDashboardComponent
             },
@@ -109,6 +104,11 @@ const routes: Routes = [
                 ]
             }
         ]
+    },
+    {
+        path: 'students/:sid',
+        resolve: {userAuths: UserAuthorityResolver},
+        component: StudentsComponent
     },
     {
         path: '',
