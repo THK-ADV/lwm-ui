@@ -9,7 +9,7 @@ import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {UserService} from '../services/user.service'
 import {formatUser} from '../utils/component.utils'
 import {reportCardEntriesByCourseAndStudent$} from './students-view-model'
-import {_groupBy, compose, dateOrderingDESC, nonEmpty} from '../utils/functions'
+import {_groupBy, compose, dateOrderingDESC, first, nonEmpty} from '../utils/functions'
 import {LabworkService} from '../services/labwork.service'
 import {CourseAtom} from '../models/course.model'
 import {LabworkAtom} from '../models/labwork.model'
@@ -99,6 +99,7 @@ export class StudentsComponent implements OnInit {
             // tslint:disable-next-line:no-non-null-assertion
             switchMap(params => this.userService.get(params.get('sid')!)),
             tap(student => {
+                this.dataSources = {}
                 this.cardsByCourse$ = forkJoin(reportCardsWithLaworks$(student)).pipe(
                     map(compose(groupByCourse, filterNonEmpty))
                 )
@@ -116,16 +117,22 @@ export class StudentsComponent implements OnInit {
             {attr: 'label', title: 'Bezeichnung'},
         ]
 
-        if (!this.dataSources[entry.labwork.id]) {
-            this.dataSources[entry.labwork.id] = {
+        if (!this.tableModelFor(entry)) {
+            this.setTableModelFor(entry, {
                 dataSource: new MatTableDataSource<ReportCardEntryAtom>(entry.reportCardEntries),
                 columns: basicColumns().concat(distinctEntryTypeColumns(entry.reportCardEntries.flatMap(_ => _.entryTypes)))
-            }
+            })
         }
     }
 
+    uniqueIdentifier = (entry: ReportCardsByLabwork) =>
+        entry.labwork.id + first(entry.reportCardEntries)?.student?.id ?? ''
+
     tableModelFor = (entry: ReportCardsByLabwork): ReportCardTableModel =>
-        this.dataSources[entry.labwork.id]
+        this.dataSources[this.uniqueIdentifier(entry)]
+
+    setTableModelFor = (entry: ReportCardsByLabwork, model: ReportCardTableModel) =>
+        this.dataSources[this.uniqueIdentifier(entry)] = model
 
     accordionTitle = (labwork: LabworkAtom) =>
         `${labwork.label} - ${labwork.semester.abbreviation}`
