@@ -19,6 +19,7 @@ import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
 import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
 import {format, formatTime} from '../utils/lwmdate-adapter'
+import {isStudentAtom} from '../utils/type.check.utils'
 
 interface ReportCardsByLabwork {
     labwork: LabworkAtom,
@@ -28,6 +29,28 @@ interface ReportCardsByLabwork {
 interface ReportCardsByCourse {
     course: CourseAtom,
     reportCardEntries: ReportCardsByLabwork[]
+}
+
+class DataSource {
+    private dataSources: {
+        [id: string]: ReportCardTableModel
+    }
+
+    constructor() {
+        this.clear()
+    }
+
+    clear = () =>
+        this.dataSources = {}
+
+    private uniqueIdentifier = (entry: ReportCardsByLabwork) =>
+        entry.labwork.id + first(entry.reportCardEntries)?.student?.id ?? ''
+
+    get = (entry: ReportCardsByLabwork): ReportCardTableModel =>
+        this.dataSources[this.uniqueIdentifier(entry)]
+
+    set = (entry: ReportCardsByLabwork, model: ReportCardTableModel) =>
+        this.dataSources[this.uniqueIdentifier(entry)] = model
 }
 
 @Component({
@@ -47,15 +70,13 @@ export class StudentsComponent implements OnInit {
         private readonly userService: UserService,
         private readonly labworkService: LabworkService,
     ) {
-        this.dataSources = {}
+        this.dataSources = new DataSource()
         this.canReschedule = false
     }
 
     formatUser = formatUser
 
-    private dataSources: {
-        [id: string]: ReportCardTableModel
-    }
+    private dataSources: DataSource
 
     ngOnInit() {
         this.fetchReportCardEntries(this.auths().filter(x => x.course !== undefined))
@@ -99,7 +120,7 @@ export class StudentsComponent implements OnInit {
             // tslint:disable-next-line:no-non-null-assertion
             switchMap(params => this.userService.get(params.get('sid')!)),
             tap(student => {
-                this.dataSources = {}
+                this.dataSources.clear()
                 this.cardsByCourse$ = forkJoin(reportCardsWithLaworks$(student)).pipe(
                     map(compose(groupByCourse, filterNonEmpty))
                 )
@@ -117,22 +138,13 @@ export class StudentsComponent implements OnInit {
             {attr: 'label', title: 'Bezeichnung'},
         ]
 
-        if (!this.tableModelFor(entry)) {
-            this.setTableModelFor(entry, {
+        if (!this.dataSources.get(entry)) {
+            this.dataSources.set(entry, {
                 dataSource: new MatTableDataSource<ReportCardEntryAtom>(entry.reportCardEntries),
                 columns: basicColumns().concat(distinctEntryTypeColumns(entry.reportCardEntries.flatMap(_ => _.entryTypes)))
             })
         }
     }
-
-    uniqueIdentifier = (entry: ReportCardsByLabwork) =>
-        entry.labwork.id + first(entry.reportCardEntries)?.student?.id ?? ''
-
-    tableModelFor = (entry: ReportCardsByLabwork): ReportCardTableModel =>
-        this.dataSources[this.uniqueIdentifier(entry)]
-
-    setTableModelFor = (entry: ReportCardsByLabwork, model: ReportCardTableModel) =>
-        this.dataSources[this.uniqueIdentifier(entry)] = model
 
     accordionTitle = (labwork: LabworkAtom) =>
         `${labwork.label} - ${labwork.semester.abbreviation}`
@@ -159,4 +171,10 @@ export class StudentsComponent implements OnInit {
                 return e[attr]
         }
     }
+
+    enrollment = (user: User): string | undefined =>
+        isStudentAtom(user) ? user.enrollment.label : undefined
+
+    mail = (user: User): string =>
+        `mailto:${user.email}`
 }
