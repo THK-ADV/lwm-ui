@@ -3,13 +3,12 @@ import {DashboardService} from '../../services/dashboard.service'
 import {StudentDashboard} from '../../models/dashboard.model'
 import {Subscription} from 'rxjs'
 import {LabworkApplicationAtom} from 'src/app/models/labwork.application.model'
-import {foldUndefined, subscribe} from '../../utils/functions'
+import {_groupBy, nonEmpty, subscribe} from '../../utils/functions'
 import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
-import {CalendarView, ScheduleEntryEvent} from '../../labwork-chain/schedule/view/schedule-view-model'
-import {colorForCourse} from '../../utils/course-colors'
-import {whiteColor} from '../../utils/colors'
-import {Time} from '../../models/time.model'
 import {ActivatedRoute, Router} from '@angular/router'
+import {Card} from '../../card-list/card-list.component'
+import {Labwork} from '../../models/labwork.model'
+import {format, formatTime} from '../../utils/lwmdate-adapter'
 
 @Component({
     selector: 'app-student-dashboard',
@@ -49,54 +48,84 @@ export class StudentDashboardComponent implements OnInit {
         }
     }
 
-    calendarEvents = (reportCardEntries: ReportCardEntryAtom[]): () => ScheduleEntryEvent<ReportCardEntryAtom>[] => () => {
-        const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
-            const backgroundColor = colorForCourse(e.labwork.course)
-            const foregroundColor = whiteColor()
+    cards = (xs: ReportCardEntryAtom[]): Card<Labwork, ReportCardEntryAtom>[] => {
+        const cards: Card<Labwork, ReportCardEntryAtom>[] = []
 
-            return {
-                allDay: false,
-                start: Time.withNewDate(e.date, e.start).date,
-                end: Time.withNewDate(e.date, e.end).date,
-                title: this.eventTitle('month', e),
-                borderColor: backgroundColor,
-                backgroundColor: backgroundColor,
-                textColor: foregroundColor,
-                extendedProps: e
-            }
-        }
+        Object
+            .values(_groupBy(xs, _ => _.labwork.id))
+            .forEach(value => {
+                value = value as ReportCardEntryAtom[]
 
-        return reportCardEntries.map(go)
+                if (nonEmpty(value)) {
+                    cards.push({value: value[0].labwork, entries: value})
+                }
+            })
+
+        return cards
     }
 
-    eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
-        switch (view) {
-            case 'month':
-                return `${e.labwork.label} in ${e.room.label}`
-            case 'list':
-                const grp = foldUndefined(
-                    this.dashboard.groups.find(_ => _.labwork.id === e.labwork.id),
-                    g => ` Gruppe ${g.groupLabel}`,
-                    () => ''
-                )
-                return `${e.labwork.label} in ${e.room.label}: ${e.label}${grp}`
-        }
+    labworkTitle = (l: Labwork) =>
+        l.label
+
+    reportCardEntryTitle = (x: ReportCardEntryAtom) => {
+        const string = `${format(x.date, 'dd.MM')} ${formatTime(x.start, 'HH:mm')}-${formatTime(x.end, 'HH:mm')}: ${x.label}`
+        return x.room.label === 'tbd' ? string : `${string} ${x.room.label}`
     }
 
-    eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ReportCardEntryAtom>>) =>
-        foldUndefined(e.extendedProps, p => this.eventTitle(view, p), () => e.title)
-
-    onEventClick = (event: ScheduleEntryEvent<ReportCardEntryAtom>) => {
-        if (!event.extendedProps) {
-            return
-        }
-
-        const labwork = event.extendedProps.labwork.id
-        const student = event.extendedProps.student.id
-
+    showReportCardEntries = (x: ReportCardEntryAtom) =>
         this.router.navigate(
-            [`reportCards/labworks/${labwork}/students/${student}`],
+            [`reportCards/labworks/${x.labwork.id}/students/${x.student.id}`],
             {relativeTo: this.route}
         )
-    }
+
+    // calendarEvents = (reportCardEntries: ReportCardEntryAtom[]): () => ScheduleEntryEvent<ReportCardEntryAtom>[] => () => {
+    //     const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
+    //         const backgroundColor = colorForCourse(e.labwork.course)
+    //         const foregroundColor = whiteColor()
+    //
+    //         return {
+    //             allDay: false,
+    //             start: Time.withNewDate(e.date, e.start).date,
+    //             end: Time.withNewDate(e.date, e.end).date,
+    //             title: this.eventTitle('month', e),
+    //             borderColor: backgroundColor,
+    //             backgroundColor: backgroundColor,
+    //             textColor: foregroundColor,
+    //             extendedProps: e
+    //         }
+    //     }
+    //
+    //     return reportCardEntries.map(go)
+    // }
+    //
+    // eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
+    //     switch (view) {
+    //         case 'month':
+    //             return `${e.labwork.label} in ${e.room.label}`
+    //         case 'list':
+    //             const grp = foldUndefined(
+    //                 this.dashboard.groups.find(_ => _.labwork.id === e.labwork.id),
+    //                 g => ` Gruppe ${g.groupLabel}`,
+    //                 () => ''
+    //             )
+    //             return `${e.labwork.label} in ${e.room.label}: ${e.label}${grp}`
+    //     }
+    // }
+    //
+    // eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ReportCardEntryAtom>>) =>
+    //     foldUndefined(e.extendedProps, p => this.eventTitle(view, p), () => e.title)
+    //
+    // onEventClick = (event: ScheduleEntryEvent<ReportCardEntryAtom>) => {
+    //     if (!event.extendedProps) {
+    //         return
+    //     }
+    //
+    //     const labwork = event.extendedProps.labwork.id
+    //     const student = event.extendedProps.student.id
+    //
+    //     this.router.navigate(
+    //         [`reportCards/labworks/${labwork}/students/${student}`],
+    //         {relativeTo: this.route}
+    //     )
+    // }
 }
