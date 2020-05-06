@@ -33,7 +33,7 @@ export class LWMDateAdapter extends NativeDateAdapter {
     }
 }
 
-export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'dd.MM.yyyy - HH:mm'
+export type DateTimePattern = 'yyyy-MM-dd' | 'dd.MM.yyyy' | 'dd.MM.yyyy - HH:mm' | 'dd.MM'
 
 export type TimePattern = 'HH:mm:ss' | 'HH:mm'
 
