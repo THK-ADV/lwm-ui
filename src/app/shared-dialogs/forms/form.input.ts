@@ -3,7 +3,7 @@ import {Time} from '../../models/time.model'
 
 export type FormDataType = string | number | Date | Time | boolean
 
-export type FormDataStringType = 'text' | 'number' | 'date' | 'time' | 'options' | 'textArea' | 'boolean'
+export type FormDataStringType = 'text' | 'number' | 'date' | 'time' | 'options' | 'textArea' | 'boolean' | 'select'
 
 export interface FormInput {
     formControlName: string

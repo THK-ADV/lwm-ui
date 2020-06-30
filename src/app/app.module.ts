@@ -88,6 +88,10 @@ import {ApplicationListComponent} from './application-list/application-list.comp
 import {StudentCreateApplicationComponent} from './application-list/student-create-application/student-create-application.component'
 import {DashboardCalendarComponent} from './dashboard/dashboard-calendar/dashboard-calendar.component'
 import {StudentReportCardComponent} from './dashboard/student-dashboard/student-reportcard/student-report-card.component'
+import {EvaluationPatternComponent} from './report-card-evaluation/evaluation-pattern/evaluation-pattern.component'
+import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
+import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
+import {EvaluationListComponent} from './report-card-evaluation/evaluation-list/evaluation-list.component'
 
 @NgModule({
     declarations: [
@@ -157,7 +161,10 @@ import {StudentReportCardComponent} from './dashboard/student-dashboard/student-
         ApplicationListComponent,
         StudentCreateApplicationComponent,
         DashboardCalendarComponent,
-        StudentReportCardComponent
+        StudentReportCardComponent,
+        EvaluationPatternComponent,
+        ReportCardEvaluationComponent,
+        EvaluationListComponent
     ],
     imports: [
         BrowserModule,
@@ -178,6 +185,7 @@ import {StudentReportCardComponent} from './dashboard/student-dashboard/student-
         StudentStatusGuard,
         EmployeeStatusGuard,
         UserAuthorityResolver,
+        CourseLabworkParamResolver,
         {
             provide: APP_INITIALIZER,
             useFactory: keycloakInitializer,

@@ -14,12 +14,19 @@ export class AbstractTableComponent<Model> implements OnInit, OnDestroy {
 
     @Input() columns: TableHeaderColumn[]
     @Input() tableContent: (model: Readonly<Model>, attr: string) => string
-    @Input() data$: Observable<Model[]>
     @Input() sort: Sort
     @Input() pageSizeOptions: number[]
     @Input() canEdit: boolean
     @Input() canDelete: boolean
     @Input() filterPredicate: (data: Model, filter: string) => boolean
+    @Input() sortingDataAccessor: (data: Model, property: string) => number
+
+    @Input() set data$($: Observable<Model[]>) { // TODO: this is the fix for the comment below. apply everywhere
+        this.subscribeAndPush($, data => {
+            this.dataSource.data = data
+            this.sortDataSource()
+        })
+    }
 
     @ViewChild(MatSort, {static: true}) matSort: MatSort
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
@@ -41,11 +48,11 @@ export class AbstractTableComponent<Model> implements OnInit, OnDestroy {
         this.subs = []
         this.pageSizeOptions = [25, 50, 100]
         this.tableContent = (model, attr) => model[attr]
+        this.sortingDataAccessor = (data, property) => data[property]
     }
 
     ngOnInit(): void {
         this.displayedColumns = this.columns.map(_ => _.attr)
-
         if (this.canDelete || this.canEdit) {
             this.displayedColumns.push('action')
         }
@@ -59,17 +66,11 @@ export class AbstractTableComponent<Model> implements OnInit, OnDestroy {
     }
 
     private setupDataSource = () => {
+        this.dataSource.sortingDataAccessor = this.sortingDataAccessor
         this.dataSource.paginator = this.paginator
         this.dataSource.sort = this.matSort
         this.dataSource.sortingDataAccessor = nestedObjectSortingDataAccessor
         mapUndefined(this.filterPredicate, p => this.dataSource.filterPredicate = p)
-
-        this.subscribeAndPush(
-            this.data$,
-            data => {
-                this.dataSource.data = data
-                this.sortDataSource()
-            })
     }
 
     applyFilter = (filterValue: string) =>

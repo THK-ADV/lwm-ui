@@ -131,6 +131,8 @@ export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnD
                 return string.split(':').map(s => s.length === 1 ? s.padStart(2, '0') : s).join(':')
             case 'boolean':
                 return parseUnsafeBoolean(value)
+            case 'select':
+                return this.convertToType('text', value)
         }
     }
 

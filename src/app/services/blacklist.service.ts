@@ -39,7 +39,7 @@ export class BlacklistService implements AbstractCRUDService<BlacklistProtocol, 
         .pipe(map(convertManyBlacklists))
 
     download = (year: number): Observable<PartialResult<Blacklist>> => this.http
-        .create_<PartialResult<BlacklistJSON>>(this.downloadPath(year))
+        .create<Object, PartialResult<BlacklistJSON>>(this.downloadPath(year), {})
         .pipe(map(pr => ({...pr, created: convertManyBlacklists(pr.created)})))
 
     preview = (year: number): Observable<Blacklist[]> => this.http

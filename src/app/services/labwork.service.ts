@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {atomicParams, HttpService} from './http.service'
+import {atomicParams, HttpService, nonAtomicParams} from './http.service'
 import {Observable} from 'rxjs'
 import {HttpParams} from '@angular/common/http'
 import {Labwork, LabworkAtom, LabworkAtomJSON, LabworkProtocol} from '../models/labwork.model'
@@ -20,6 +20,10 @@ export class LabworkService {
     get = (courseId: string, id: string): Observable<LabworkAtom> => this.http
         .get<LabworkAtomJSON>(makePath(this.path, courseId), id, atomicParams)
         .pipe(map(mapLabworkJSON))
+
+    // TODO semester dates are not parsed correctly
+    getNonAtom = (courseId: string, id: string): Observable<Labwork> => this.http
+        .get<Labwork>(makePath(this.path, courseId), id, nonAtomicParams)
 
     getAll = (courseId: string, semester?: string): Observable<LabworkAtom[]> => this.http
         .getAll<LabworkAtomJSON>(makePath(this.path, courseId), this.withSemester(semester))

@@ -20,6 +20,8 @@ import {BlacklistComponent} from './blacklist/blacklist.component'
 import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
 import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
 import {StudentReportCardComponent} from './dashboard/student-dashboard/student-reportcard/student-report-card.component'
+import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
+import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
 
 const routes: Routes = [
     {
@@ -85,6 +87,11 @@ const routes: Routes = [
                         path: 'labworks/:lid/groups',
                         resolve: {userAuths: UserAuthorityResolver},
                         component: GroupsComponent
+                    },
+                    {
+                        path: 'labworks/:lid/graduates',
+                        resolve: {userAuths: UserAuthorityResolver, params: CourseLabworkParamResolver},
+                        component: ReportCardEvaluationComponent
                     },
                     {
                         path: 'labworks/:lid/chain',

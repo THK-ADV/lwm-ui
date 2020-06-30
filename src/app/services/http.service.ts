@@ -49,7 +49,7 @@ export class HttpService {
 
     // tslint:disable-next-line:no-console
     private logResp = <T>(action: string, url: string) => (t: T) => console.debug('HTTP SERVICE', action, url, t)
-l
+
     getAll = <T>(
         url: string,
         params?: HttpParams
@@ -81,6 +81,21 @@ l
             tap(this.logResp('get_', url))
         )
 
+    download = (
+        url: string
+    ): Observable<any> => {
+        const options = {
+            responseType: 'blob' as 'json'
+        }
+
+        return this.http
+            .get(url, options)
+            .pipe(
+                catchError(this.handleError),
+                tap(this.logResp('download', url))
+            )
+    }
+
     delete = <T>(
         url: string,
         id: string
@@ -106,16 +121,6 @@ l
         params?: HttpParams
     ): Observable<O> => this.http
         .post<O>(url, element, {params})
-        .pipe(
-            catchError(this.handleError),
-            tap(this.logResp('create', url))
-        )
-
-    create_ = <O>(
-        url: string,
-        params?: HttpParams
-    ): Observable<O> => this.http
-        .post<O>(url, {params})
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('create', url))
