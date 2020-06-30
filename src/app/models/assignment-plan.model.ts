@@ -24,6 +24,9 @@ export type EntryType =
     'Bonus' |
     'Zusatzleistung'
 
+export const allEntryTypes = (): Array<EntryType> =>
+    ['Anwesenheitspflichtig', 'Testat', 'Bonus', 'Zusatzleistung']
+
 export const entryTypeOrdering = (x: EntryType): number => {
     switch (x) {
         case 'Anwesenheitspflichtig':

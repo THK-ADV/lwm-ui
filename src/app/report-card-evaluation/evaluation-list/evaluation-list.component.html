@@ -1,0 +1,24 @@
+<lwm-abstract-header [headerTitle]="''"
+                     [actionTypes]="actions()"
+                     (performAction)="onAction($event)">
+</lwm-abstract-header>
+
+<ng-container *ngIf="summary">
+    <mat-chip-list>
+        <mat-chip *ngFor="let summary of summary" [color]="summary.color" [selectable]="false">
+            {{summary.text}}
+        </mat-chip>
+    </mat-chip-list>
+</ng-container>
+
+<lwm-abstract-table [sort]="{active: 'lastModified', direction: 'desc'}"
+                    [data$]="evals$"
+                    [tableContent]="tableContent"
+                    [columns]="columns"
+                    [filterPredicate]="filterPredicate"
+                    [sortingDataAccessor]="sortingDataAccessor"
+                    [canEdit]="hasPermission"
+                    [canDelete]="hasPermission"
+                    (deleteEmitter)="onDelete($event)"
+                    (editEmitter)="onEdit($event)">
+</lwm-abstract-table>

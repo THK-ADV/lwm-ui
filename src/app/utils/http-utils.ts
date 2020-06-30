@@ -5,9 +5,8 @@ import {TimetableAtom, TimetableAtomJSON, TimetableEntryAtom, TimetableEntryAtom
 import {ScheduleEntryAtom, ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {ScheduleEntryGen, ScheduleEntryGenJSON} from '../services/schedule-entry.service'
 import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
-import {ReportCardEntryAtomJSON, ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {Employee} from '../models/user.model'
-import {EmployeeDashboard} from '../models/dashboard.model'
+import {ReportCardEntryAtom, ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
+import {ReportCardEvaluationAtom, ReportCardEvaluationAtomJSON} from '../models/report-card-evaluation'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 
@@ -100,6 +99,15 @@ export const mapReportCardEntryJSON = (x: ReportCardEntryAtomJSON): ReportCardEn
     }
 }
 
+export const mapReportCardEvaluationJSON = (x: ReportCardEvaluationAtomJSON): ReportCardEvaluationAtom => {
+    const date = new Date(x.lastModified)
+
+    return {
+        ...x,
+        lastModified: date,
+    }
+}
+
 export const convertManySemesters = (ss: SemesterJSON[]): Semester[] => {
     return convertMany(ss, mapSemesterJSON)
 }
@@ -130,4 +138,8 @@ export const convertManyLabworks = (xs: LabworkAtomJSON[]): LabworkAtom[] => {
 
 export const convertManyReportCardEntries = (xs: ReportCardEntryAtomJSON[]): ReportCardEntryAtom[] => {
     return convertMany(xs, mapReportCardEntryJSON)
+}
+
+export const convertManyReportCardEvaluations = (xs: ReportCardEvaluationAtomJSON[]): ReportCardEvaluationAtom[] => {
+    return convertMany(xs, mapReportCardEvaluationJSON)
 }

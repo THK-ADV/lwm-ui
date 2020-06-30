@@ -13,7 +13,8 @@ export type LWMActionType =
     'preview' |
     'upload' |
     'sync' |
-    'download'
+    'download' |
+    'evaluate'
 
 export interface LWMAction {
     type: LWMActionType
@@ -71,6 +72,11 @@ export const syncAction = (): LWMAction => {
     return {type: 'sync', color: 'primary', iconName: 'sync', tooltipName: 'Mit LDAP abgleichen', tooltipPosition: 'above'}
 }
 
+export const evaluateAction = (): LWMAction => {
+    return {type: 'evaluate', color: 'primary', iconName: 'school', tooltipName: 'Notenhefte evaluieren', tooltipPosition: 'above'}
+}
+
+
 export const action = (type: LWMActionType): LWMAction => {
     switch (type) {
         case 'edit':
@@ -97,5 +103,7 @@ export const action = (type: LWMActionType): LWMAction => {
             return syncAction()
         case 'download':
             return downloadAction()
+        case 'evaluate':
+            return evaluateAction()
     }
 }

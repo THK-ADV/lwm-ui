@@ -40,6 +40,15 @@
                           [formControlName]="d.formControlName"></textarea>
                 </ng-container>
 
+                <ng-container *ngSwitchCase="'select'">
+                    <mat-label>{{d.displayTitle}}</mat-label>
+                    <mat-select [formControlName]="d.formControlName" [(value)]="d.data.value">
+                        <mat-option *ngFor="let value of d.data.allValues" [value]="value">
+                            {{value}}
+                        </mat-option>
+                    </mat-select>
+                </ng-container>
+
                 <ng-container *ngSwitchCase="'boolean'">
                     <!-- workaround to wrap slide toggle inside a valid mat form field type -->
                     <input matInput style="display: none">
