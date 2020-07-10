@@ -323,4 +323,40 @@ export class LabworksComponent implements OnInit, OnDestroy {
             p => this.labworkService.create(course.id, p)
         )
     }
+
+    // labworksOfCurrentSemester = (obj: GroupedLabwork, semester: string) => {
+    //     const go = (xs: LabworkAtom[]) => {
+    //         return xs.map((x, i) => {
+    //             return [
+    //                 {
+    //                     label: x.label,
+    //                     id: x.id,
+    //                     semester: x.semester.id,
+    //                     course: x.course.id,
+    //                     degree: x.degree.id,
+    //                     description: x.description,
+    //                     published: x.published,
+    //                     subscribable: x.subscribable
+    //                 },
+    //                 colors[i]
+    //             ]
+    //         })
+    //     }
+    //     const colors = [
+    //         '#D618D9',
+    //         '#05F2DB',
+    //         '#4F26A6',
+    //         '#0476D9'
+    //     ]
+    //
+    //     let labworks: LabworkAtom[] = []
+    //
+    //     Object.entries(obj).forEach(([k, xs]) => {
+    //         if (k === semester) {
+    //             labworks = xs.map(_ => _.labwork)
+    //         }
+    //     })
+    //
+    //     return go(labworks)
+    // }
 }

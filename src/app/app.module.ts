@@ -92,6 +92,8 @@ import {EvaluationPatternComponent} from './report-card-evaluation/evaluation-pa
 import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
 import {EvaluationListComponent} from './report-card-evaluation/evaluation-list/evaluation-list.component'
+import {EvaluationVisualisationComponent} from './report-card-evaluation/evaluation-visualisation/evaluation-visualisation.component'
+import {CourseParamResolver} from './resolver/course-param-resolver'
 
 @NgModule({
     declarations: [
@@ -164,7 +166,8 @@ import {EvaluationListComponent} from './report-card-evaluation/evaluation-list/
         StudentReportCardComponent,
         EvaluationPatternComponent,
         ReportCardEvaluationComponent,
-        EvaluationListComponent
+        EvaluationListComponent,
+        EvaluationVisualisationComponent
     ],
     imports: [
         BrowserModule,
@@ -186,6 +189,7 @@ import {EvaluationListComponent} from './report-card-evaluation/evaluation-list/
         EmployeeStatusGuard,
         UserAuthorityResolver,
         CourseLabworkParamResolver,
+        CourseParamResolver,
         {
             provide: APP_INITIALIZER,
             useFactory: keycloakInitializer,

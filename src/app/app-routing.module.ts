@@ -22,6 +22,7 @@ import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
 import {StudentReportCardComponent} from './dashboard/student-dashboard/student-reportcard/student-report-card.component'
 import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
+import {CourseParamResolver} from './resolver/course-param-resolver'
 
 const routes: Routes = [
     {

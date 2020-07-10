@@ -4,6 +4,7 @@ import {LabworkApplication} from '../models/labwork.application.model'
 import {Time} from '../models/time.model'
 import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
+import {EntryType} from '../models/assignment-plan.model'
 
 interface GroupMembership {
     group: string
@@ -12,13 +13,13 @@ interface GroupMembership {
 }
 
 interface ReportCardEntryType {
-    entryType: string
+    entryType: EntryType
     bool?: boolean
     int: number
     id: string
 }
 
-interface ReportCardEntry {
+export interface ReportCardEntry {
     student: string
     labwork: string
     label: string
@@ -27,6 +28,9 @@ interface ReportCardEntry {
     end: Time
     room: string
     entryTypes: ReportCardEntryType[]
+    assignmentIndex: number
+    rescheduled?: string
+    retry?: string
     id: string
 }
 
