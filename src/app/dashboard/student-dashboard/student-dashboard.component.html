@@ -27,18 +27,11 @@
     <ng-container>
         <h2>Termine</h2>
 
-        <lwm-card-list
-                [cards]="cards(dashboard.reportCardEntries)"
-                [cardTitle]="labworkTitle"
-                [leftEntryLabel]="reportCardEntryTitle"
-                (onEntryClick)="showReportCardEntries($event)">
-        </lwm-card-list>
-
-<!--        <lwm-dashboard-calendar-->
-<!--                [semester]="dashboard.semester"-->
-<!--                [makeCalendarEvents]="calendarEvents(dashboard.reportCardEntries)"-->
-<!--                [eventTitleFor]="eventTitleFor"-->
-<!--                (eventClickEmitter)="onEventClick($event)">-->
-<!--        </lwm-dashboard-calendar>-->
+        <lwm-dashboard-calendar
+                [semester]="dashboard.semester"
+                [makeCalendarEvents]="calendarEvents(dashboard.reportCardEntries)"
+                [eventTitleFor]="eventTitleFor"
+                (eventClickEmitter)="onEventClick($event)">
+        </lwm-dashboard-calendar>
     </ng-container>
 </ng-container>

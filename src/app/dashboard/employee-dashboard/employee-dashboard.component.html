@@ -3,26 +3,17 @@
         <h1>{{dashboard.semester.label}}</h1>
     </div>
 
-    <lwm-card-list
-            [cards]="cards(dashboard.scheduleEntries)"
-            [cardTitle]="courseTitle"
-            [leftEntryLabel]="scheduleEntryTitle"
-            (onEntryClick)="showReportCardEntries($event)">
-    </lwm-card-list>
+    <div class="ed-chips">
+        <div *ngFor="let c of currentCourses"
+             [style]="{backgroundColor: colorForCourse_(c.id)}">
+            {{c.abbreviation}}
+        </div>
+    </div>
 
-<!--    <ng-container *ngIf="currentCourses(dashboard.scheduleEntries) as courses">-->
-<!--        <div class="ed-chips">-->
-<!--            <div *ngFor="let c of courses"-->
-<!--                 [style]="{backgroundColor: colorForCourse_(c.id)}"-->
-<!--            >{{c.label}}-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </ng-container>-->
-
-<!--    <lwm-dashboard-calendar-->
-<!--            [makeCalendarEvents]="calendarEvents(dashboard.scheduleEntries)"-->
-<!--            [eventTitleFor]="eventTitleFor"-->
-<!--            [semester]="dashboard.semester"-->
-<!--            (eventClickEmitter)="onEventClick($event)">-->
-<!--    </lwm-dashboard-calendar>-->
+    <lwm-dashboard-calendar
+            [makeCalendarEvents]="calendarEvents(dashboard.scheduleEntries)"
+            [eventTitleFor]="eventTitleFor"
+            [semester]="dashboard.semester"
+            (eventClickEmitter)="onEventClick($event)">
+    </lwm-dashboard-calendar>
 </ng-container>

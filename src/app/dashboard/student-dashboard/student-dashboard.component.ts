@@ -1,25 +1,26 @@
-import {Component, OnInit} from '@angular/core'
+import {Component, OnDestroy, OnInit} from '@angular/core'
 import {DashboardService} from '../../services/dashboard.service'
 import {StudentDashboard} from '../../models/dashboard.model'
 import {Subscription} from 'rxjs'
 import {LabworkApplicationAtom} from 'src/app/models/labwork.application.model'
-import {_groupBy, nonEmpty, subscribe} from '../../utils/functions'
+import {foldUndefined, subscribe} from '../../utils/functions'
 import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
 import {ActivatedRoute, Router} from '@angular/router'
-import {Card} from '../../card-list/card-list.component'
-import {Labwork} from '../../models/labwork.model'
-import {format, formatTime} from '../../utils/lwmdate-adapter'
+import {CalendarView, ScheduleEntryEvent} from '../../labwork-chain/schedule/view/schedule-view-model'
+import {colorForCourse} from '../../utils/course-colors'
+import {whiteColor} from '../../utils/colors'
+import {Time} from '../../models/time.model'
 
 @Component({
     selector: 'app-student-dashboard',
     templateUrl: './student-dashboard.component.html',
     styleUrls: ['./student-dashboard.component.scss']
 })
-export class StudentDashboardComponent implements OnInit {
+export class StudentDashboardComponent implements OnInit, OnDestroy {
 
     dashboard: StudentDashboard
 
-    private subs: Subscription[] = []
+    private sub: Subscription
 
     constructor(
         private readonly service: DashboardService,
@@ -29,7 +30,11 @@ export class StudentDashboardComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.subs.push(subscribe(this.service.getStudentDashboard(), d => this.dashboard = d))
+        this.sub = subscribe(this.service.getStudentDashboard(), d => this.dashboard = d)
+    }
+
+    ngOnDestroy() {
+        this.sub.unsubscribe()
     }
 
     onApplicationChange = (arg: [Readonly<LabworkApplicationAtom>, ('add' | 'delete' | 'update')]) => {
@@ -48,84 +53,54 @@ export class StudentDashboardComponent implements OnInit {
         }
     }
 
-    cards = (xs: ReportCardEntryAtom[]): Card<Labwork, ReportCardEntryAtom>[] => {
-        const cards: Card<Labwork, ReportCardEntryAtom>[] = []
+    calendarEvents = (reportCardEntries: ReportCardEntryAtom[]): () => ScheduleEntryEvent<ReportCardEntryAtom>[] => () => {
+        const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
+            const backgroundColor = colorForCourse(e.labwork.course)
+            const foregroundColor = whiteColor()
 
-        Object
-            .values(_groupBy(xs, _ => _.labwork.id))
-            .forEach(value => {
-                value = value as ReportCardEntryAtom[]
+            return {
+                allDay: false,
+                start: Time.withNewDate(e.date, e.start).date,
+                end: Time.withNewDate(e.date, e.end).date,
+                title: this.eventTitle('month', e),
+                borderColor: backgroundColor,
+                backgroundColor: backgroundColor,
+                textColor: foregroundColor,
+                extendedProps: e
+            }
+        }
 
-                if (nonEmpty(value)) {
-                    cards.push({value: value[0].labwork, entries: value})
-                }
-            })
-
-        return cards
+        return reportCardEntries.map(go)
     }
 
-    labworkTitle = (l: Labwork) =>
-        l.label
-
-    reportCardEntryTitle = (x: ReportCardEntryAtom) => {
-        const string = `${format(x.date, 'dd.MM')} ${formatTime(x.start, 'HH:mm')}-${formatTime(x.end, 'HH:mm')}: ${x.label}`
-        return x.room.label === 'tbd' ? string : `${string} ${x.room.label}`
+    eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
+        switch (view) {
+            case 'month':
+                return `${e.labwork.label} in ${e.room.label}`
+            case 'list':
+                const grp = foldUndefined(
+                    this.dashboard.groups.find(_ => _.labwork.id === e.labwork.id),
+                    g => ` Gruppe ${g.groupLabel}`,
+                    () => ''
+                )
+                return `${e.labwork.label} in ${e.room.label}: ${e.label}${grp}`
+        }
     }
 
-    showReportCardEntries = (x: ReportCardEntryAtom) =>
+    eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ReportCardEntryAtom>>) =>
+        foldUndefined(e.extendedProps, p => this.eventTitle(view, p), () => e.title)
+
+    onEventClick = (event: ScheduleEntryEvent<ReportCardEntryAtom>) => {
+        if (!event.extendedProps) {
+            return
+        }
+
+        const labwork = event.extendedProps.labwork.id
+        const student = event.extendedProps.student.id
+
         this.router.navigate(
-            [`reportCards/labworks/${x.labwork.id}/students/${x.student.id}`],
+            [`reportCards/labworks/${labwork}/students/${student}`],
             {relativeTo: this.route}
         )
-
-    // calendarEvents = (reportCardEntries: ReportCardEntryAtom[]): () => ScheduleEntryEvent<ReportCardEntryAtom>[] => () => {
-    //     const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
-    //         const backgroundColor = colorForCourse(e.labwork.course)
-    //         const foregroundColor = whiteColor()
-    //
-    //         return {
-    //             allDay: false,
-    //             start: Time.withNewDate(e.date, e.start).date,
-    //             end: Time.withNewDate(e.date, e.end).date,
-    //             title: this.eventTitle('month', e),
-    //             borderColor: backgroundColor,
-    //             backgroundColor: backgroundColor,
-    //             textColor: foregroundColor,
-    //             extendedProps: e
-    //         }
-    //     }
-    //
-    //     return reportCardEntries.map(go)
-    // }
-    //
-    // eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
-    //     switch (view) {
-    //         case 'month':
-    //             return `${e.labwork.label} in ${e.room.label}`
-    //         case 'list':
-    //             const grp = foldUndefined(
-    //                 this.dashboard.groups.find(_ => _.labwork.id === e.labwork.id),
-    //                 g => ` Gruppe ${g.groupLabel}`,
-    //                 () => ''
-    //             )
-    //             return `${e.labwork.label} in ${e.room.label}: ${e.label}${grp}`
-    //     }
-    // }
-    //
-    // eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ReportCardEntryAtom>>) =>
-    //     foldUndefined(e.extendedProps, p => this.eventTitle(view, p), () => e.title)
-    //
-    // onEventClick = (event: ScheduleEntryEvent<ReportCardEntryAtom>) => {
-    //     if (!event.extendedProps) {
-    //         return
-    //     }
-    //
-    //     const labwork = event.extendedProps.labwork.id
-    //     const student = event.extendedProps.student.id
-    //
-    //     this.router.navigate(
-    //         [`reportCards/labworks/${labwork}/students/${student}`],
-    //         {relativeTo: this.route}
-    //     )
-    // }
+    }
 }

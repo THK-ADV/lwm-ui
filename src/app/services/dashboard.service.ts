@@ -11,6 +11,7 @@ import {map} from 'rxjs/operators'
 import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
+import {HttpParams} from '@angular/common/http'
 
 interface DashboardJSON {
     status: 'student' | 'employee'

@@ -3,7 +3,7 @@
         #calendar
         [plugins]="calendarPlugins"
         [locale]="'de'"
-        [nowIndicator]=false
+        [nowIndicator]=true
         [weekends]="false"
         [firstDay]=1
         [allDaySlot]=true
@@ -20,5 +20,5 @@
         [weekNumbers]=true
         [validRange]="semesterBoundaries"
         [weekNumbersWithinDays]=true
-        [defaultDate]="earliestDate()">
+        [defaultDate]="startDate">
 </full-calendar>

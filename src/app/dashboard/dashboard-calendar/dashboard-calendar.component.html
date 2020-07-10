@@ -1,9 +1,10 @@
 <full-calendar
         defaultView="dayGridMonth"
         #calendar
+        [editable]="true"
         [plugins]="calendarPlugins"
         [locale]="'de'"
-        [nowIndicator]=true
+        [nowIndicator]=false
         [weekends]="false"
         [firstDay]=1
         [allDaySlot]=true
@@ -18,8 +19,8 @@
         [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
         [events]="allDates"
         [weekNumbers]=true
-        [validRange]="semesterBoundaries()"
+        [validRange]="semesterBoundaries"
         [weekNumbersWithinDays]=true
-        [defaultDate]="earliestDate()"
+        [defaultDate]="startDate"
         (eventClick)="onEventClick($event.event)">
 </full-calendar>

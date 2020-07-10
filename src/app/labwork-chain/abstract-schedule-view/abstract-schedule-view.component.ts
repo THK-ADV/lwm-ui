@@ -1,4 +1,4 @@
-import {Component, Input, ViewChild} from '@angular/core'
+import {Component, Input, OnInit, ViewChild} from '@angular/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list'
 import {FullCalendarComponent} from '@fullcalendar/angular'
@@ -11,31 +11,31 @@ import {TimetableAtom} from '../../models/timetable'
     templateUrl: './abstract-schedule-view.component.html',
     styleUrls: ['./abstract-schedule-view.component.scss']
 })
-export class AbstractScheduleViewComponent {
+export class AbstractScheduleViewComponent implements OnInit {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
 
-    allDates: ScheduleEntryEvent<ScheduleEntryProps>[]
     readonly calendarPlugins = [dayGridPlugin, listPlugin]
+
+    allDates: ScheduleEntryEvent<ScheduleEntryProps>[]
+    semesterBoundaries: { start: Date, end: Date }
+    startDate: Date
 
     @ViewChild('calendar') calendar: FullCalendarComponent
 
     @Input() set dates(dates: ScheduleEntryEvent<ScheduleEntryProps>[]) {
         this.allDates = dates.concat(makeBlacklistEvents(this.timetable.localBlacklist))
+        this.setSemesterBoundaries()
     }
 
     constructor() {
         this.allDates = []
     }
 
-    earliestDate = () =>
-        this.timetable.start
-
-    semesterBoundaries = () => ({
-        start: this.labwork.semester.start,
-        end: this.labwork.semester.end
-    })
+    ngOnInit() {
+        this.startDate = this.timetable.start
+    }
 
     showLabworkStartDate = () =>
         this.calendar.getApi().gotoDate(this.timetable.start)
@@ -48,6 +48,10 @@ export class AbstractScheduleViewComponent {
     showListView = () => {
         this.allDates = this.changedTitleFor('list')
         this.calendar.getApi().changeView('listWeek')
+    }
+
+    private setSemesterBoundaries = () => {
+        this.semesterBoundaries = {start: this.labwork.semester.start, end: this.labwork.semester.end}
     }
 
     private changedTitleFor = (view: CalendarView) =>

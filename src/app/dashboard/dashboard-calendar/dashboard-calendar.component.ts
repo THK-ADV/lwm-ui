@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list'
 import {FullCalendarComponent} from '@fullcalendar/angular'
 import {Semester} from '../../models/semester.model'
-import {dateOrderingASC, first, foldUndefined} from '../../utils/functions'
+import {minBy} from '../../utils/functions'
 
 @Component({
     selector: 'lwm-dashboard-calendar',
@@ -22,6 +22,8 @@ export class DashboardCalendarComponent<A> implements OnInit {
     readonly calendarPlugins = [dayGridPlugin, listPlugin]
 
     allDates: ScheduleEntryEvent<A>[] = []
+    startDate: Date
+    semesterBoundaries: { start: Date, end: Date }
 
     @ViewChild('calendar') calendar: FullCalendarComponent
 
@@ -30,22 +32,13 @@ export class DashboardCalendarComponent<A> implements OnInit {
 
     ngOnInit(): void {
         this.allDates = this.makeCalendarEvents()
+        this.setStartDate()
+        this.setSemesterBoundaries()
     }
 
-    semesterBoundaries = () => ({
-        start: this.semester.start,
-        end: this.semester.end
-    })
-
-    goToToday = () =>
+    goToToday = () => {
         this.calendar.getApi().gotoDate(new Date())
-
-    earliestDate = () =>
-        foldUndefined(
-            first(this.allDates.sort((lhs, rhs) => dateOrderingASC(lhs.start, rhs.start))),
-            min => min.start,
-            () => new Date()
-        )
+    }
 
     showMonthView = () => {
         this.allDates = this.changeTitle('month')
@@ -57,8 +50,16 @@ export class DashboardCalendarComponent<A> implements OnInit {
         this.calendar.getApi().changeView('listWeek')
     }
 
-    onEventClick = (event: ScheduleEntryEvent<A>) => {
+    onEventClick = (event: ScheduleEntryEvent<A>) =>
         this.eventClickEmitter.emit(event)
+
+    private setSemesterBoundaries = () => {
+        this.semesterBoundaries = {start: this.semester.start, end: this.semester.end}
+    }
+
+    private setStartDate = () => {
+        const min = minBy(this.allDates, (lhs, rhs) => lhs.start.getTime() < rhs.start.getTime())?.start
+        this.startDate = min ?? new Date()
     }
 
     private changeTitle = (view: CalendarView) =>

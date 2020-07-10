@@ -88,9 +88,8 @@ export class AbstractTimetableViewComponent implements OnInit {
         this.resizeEvent(eventResizeInfo.event)
     }
 
-    allowSelect = (event: CalendarEvent): boolean => {
-        return this.canEdit && this.isValidRange(event)
-    }
+    allowSelect = (event: CalendarEvent): boolean =>
+        this.canEdit && this.isValidRange(event)
 
     isValidRange = (event: CalendarEvent) => isValidTimetableEntry(event.start, event.end)
 
