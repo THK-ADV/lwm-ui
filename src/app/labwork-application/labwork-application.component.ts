@@ -8,7 +8,7 @@ import {fetchLabwork$, formatUser} from '../utils/component.utils'
 import {LabworkService} from '../services/labwork.service'
 import {format} from '../utils/lwmdate-adapter'
 import {UserService} from '../services/user.service'
-import {hasAnyRole} from '../utils/role-checker'
+import {hasAnyRole, isAdmin} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
 import {userAuths} from '../security/user-authority-resolver'
 import {LWMActionType} from '../table-action-button/lwm-actions'
@@ -42,7 +42,7 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
     applications$: Observable<LabworkApplicationAtom[]>
     filterPredicate: (data: LabworkApplicationAtom, filter: string) => boolean
 
-    private canCreateOrUpdate: boolean
+    canCreateOrUpdate: boolean
     labwork: LabworkAtom
     private dataSource: MatTableDataSource<LabworkApplicationAtom>
     private subs: Subscription[]
@@ -125,10 +125,18 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
         const mode = isModel ? DialogMode.edit : DialogMode.create
 
         const inputData = (): FormInput[] => {
-            const fellowStudents$ = this.userService.getAllWithFilter(
-                {attribute: 'status', value: 'student'},
-                {attribute: 'degree', value: this.labwork.degree.id}
-            )
+            const makeRequest = () => {
+                if (isAdmin(userAuths(this.route))) {
+                    return this.userService.getAllWithFilter({attribute: 'status', value: 'student'})
+                } else {
+                    return this.userService.getAllWithFilter({attribute: 'status', value: 'student'}, {
+                        attribute: 'degree',
+                        value: this.labwork.degree.id
+                    })
+                }
+            }
+
+            const fellowStudents$ = makeRequest()
 
             const friendFormInputAt = (i: 0 | 1) => {
                 const controlName = i === 0 ? 'friends1' : 'friends2'
