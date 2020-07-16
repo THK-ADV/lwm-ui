@@ -1,18 +1,14 @@
 <h2>Praktikumsanmeldungen</h2>
 
-<ng-container *ngIf="hasLabworksToApplyFor(); then thenBlockLabwork else elseBlockLabwork"></ng-container>
-<ng-template #thenBlockLabwork>
+<ng-container *ngIf="hasLabworksToApplyFor(); else noApplications">
     <lwm-application-list
             [labworks]="labworks"
             [apps]="labworkApplications"
             [applicant]="student"
             (applicationEmitter)="onApplicationChange($event)">
     </lwm-application-list>
-</ng-template>
-<ng-template #elseBlockLabwork>
-    <p>
-        <!--                <ngb-alert type="info" [dismissible]="false">-->
-        Es stehen aktuell keine Praktika zur Anmeldung bereit!
-        <!--                </ngb-alert>-->
-    </p>
+</ng-container>
+
+<ng-template #noApplications>
+    <p>Es stehen aktuell keine Praktika zur Anmeldung bereit!</p>
 </ng-template>

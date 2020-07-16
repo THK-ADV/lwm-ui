@@ -1,9 +1,9 @@
 <h2>Bestandene Praktika</h2>
 
-<ng-container *ngIf="hasPassedLabworks(); then thenBlockEval else elseBlockEval"></ng-container>
-<ng-template #thenBlockEval>
+<ng-container *ngIf="hasPassedLabworks(); else noEvals">
     <p *ngFor="let eval of passedEvals">{{eval.course}} - {{eval.semester}}: {{eval.passed}}</p>
-</ng-template>
-<ng-template #elseBlockEval>
+</ng-container>
+
+<ng-template #noEvals>
     <p>Es gibt keine bestandene Praktika!</p>
 </ng-template>
