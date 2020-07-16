@@ -1,17 +1,6 @@
 import {Observable, Subscription} from 'rxjs'
 import {isNumber} from '../models/time.model'
 
-export const pipe = <T extends any[], R>(
-    fn1: (...args: T) => R,
-    ...fns: Array<(a: R) => R>
-) => {
-    const piped = fns.reduce(
-        (prevFn, nextFn) => (value: R) => nextFn(prevFn(value)),
-        value => value
-    )
-    return (...args: T) => piped(fn1(...args))
-}
-
 export const compose = <A, B, C>(f: (a: A) => B, g: (b: B) => C): (a: A) => C => a => g(f(a))
 
 export const exists = <T>(array: Readonly<T[]>, p: (t: T) => boolean): boolean => {

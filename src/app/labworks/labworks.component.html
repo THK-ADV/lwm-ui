@@ -8,20 +8,6 @@
     <ng-container *ngIf="currentSemester$ | async as currentSemester">
 
         <ng-container *ngIf="groupedLabworks$ | async as xs">
-
-            <!--            <ng-container>-->
-            <!--                <lwm-abstract-header-->
-            <!--                        [headerTitle]="'Stats für ' + currentSemester.abbreviation">-->
-            <!--                </lwm-abstract-header>-->
-
-            <!--                <lwm-evaluation-visualisation-->
-            <!--                        [width]="800"-->
-            <!--                        [height]="800"-->
-            <!--                        [courseId]="course.id"-->
-            <!--                        [labworks]="labworksOfCurrentSemester(xs, currentSemester.id)">-->
-            <!--                </lwm-evaluation-visualisation>-->
-            <!--            </ng-container>-->
-
             <ng-container>
                 <lwm-abstract-header
                         headerTitle="Praktika"
