@@ -126,7 +126,7 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
 
         const inputData = (): FormInput[] => {
             const makeRequest = () => {
-                if (isAdmin(userAuths(this.route))) {
+                if (isAdmin(userAuths(this.route))) { // Admins can apply any students to a labwork. This is an exception!
                     return this.userService.getAllWithFilter({attribute: 'status', value: 'student'})
                 } else {
                     return this.userService.getAllWithFilter({attribute: 'status', value: 'student'}, {

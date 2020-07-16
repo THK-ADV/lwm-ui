@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {EmployeeDashboard, StudentDashboard} from '../models/dashboard.model'
+import {EmployeeDashboard, PassedEvaluation, StudentDashboard} from '../models/dashboard.model'
 import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
 import {SemesterJSON} from '../models/semester.model'
@@ -7,11 +7,10 @@ import {Employee, StudentAtom} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
 import {ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {convertManyLabworks, convertManyReportCardEntriesAtom, convertManyScheduleEntries, mapSemesterJSON} from '../utils/http-utils'
-import {map} from 'rxjs/operators'
+import {map, tap} from 'rxjs/operators'
 import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
-import {HttpParams} from '@angular/common/http'
 
 interface DashboardJSON {
     status: 'student' | 'employee'
@@ -28,8 +27,9 @@ interface StudentDashboardJSON extends DashboardJSON {
     user: StudentAtom
     labworks: LabworkAtomJSON[]
     labworkApplications: LabworkApplicationAtom[]
-    groups: {groupLabel: string, labwork: LabworkAtom}[]
+    groups: { groupLabel: string, labwork: LabworkAtom }[]
     reportCardEntries: ReportCardEntryAtomJSON[]
+    passedEvaluations: PassedEvaluation[]
 }
 
 @Injectable({

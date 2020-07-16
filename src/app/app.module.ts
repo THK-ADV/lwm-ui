@@ -94,6 +94,9 @@ import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolv
 import {EvaluationListComponent} from './report-card-evaluation/evaluation-list/evaluation-list.component'
 import {EvaluationVisualisationComponent} from './report-card-evaluation/evaluation-visualisation/evaluation-visualisation.component'
 import {CourseParamResolver} from './resolver/course-param-resolver'
+import {StudentDashboardApplicationComponent} from './dashboard/student-dashboard/student-dashboard-application/student-dashboard-application.component'
+import {StudentDashboardCalComponent} from './dashboard/student-dashboard/student-dashboard-cal/student-dashboard-cal.component'
+import {StudentDashboardEvalsComponent} from './dashboard/student-dashboard/student-dashboard-evals/student-dashboard-evals.component'
 
 @NgModule({
     declarations: [
@@ -167,7 +170,10 @@ import {CourseParamResolver} from './resolver/course-param-resolver'
         EvaluationPatternComponent,
         ReportCardEvaluationComponent,
         EvaluationListComponent,
-        EvaluationVisualisationComponent
+        EvaluationVisualisationComponent,
+        StudentDashboardApplicationComponent,
+        StudentDashboardCalComponent,
+        StudentDashboardEvalsComponent
     ],
     imports: [
         BrowserModule,

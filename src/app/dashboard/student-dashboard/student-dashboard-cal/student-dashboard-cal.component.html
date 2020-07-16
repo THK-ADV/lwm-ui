@@ -1,0 +1,14 @@
+<h2>Termine</h2>
+
+<ng-container *ngIf="hasCalendarEntries(); then thenBlockCal else elseBlockCal"></ng-container>
+<ng-template #thenBlockCal>
+    <lwm-dashboard-calendar
+            [semester]="semester"
+            [makeCalendarEvents]="calendarEvents(reportCardEntries)"
+            [eventTitleFor]="eventTitleFor"
+            (eventClickEmitter)="onEventClick($event)">
+    </lwm-dashboard-calendar>
+</ng-template>
+<ng-template #elseBlockCal>
+    <p>Es gibt aktuell keine Termine!</p>
+</ng-template>
