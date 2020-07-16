@@ -23,7 +23,7 @@ export class EvaluationVisualisationComponent implements OnInit, OnDestroy {
 
     @Input() labworks: [Labwork, LineColor][] = []
     @Input() courseId = ''
-    @Input() width = 0
+    @Input() width = 0 // TODO width should be determined by the parents width
     @Input() height = 0
     @Input() margin = {top: 20, right: 20, bottom: 50, left: 70}
     @Input() assignmentLabels: string[]
