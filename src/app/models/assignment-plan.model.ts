@@ -1,3 +1,5 @@
+import {EntryType} from './entry-type'
+
 export interface AssignmentEntry {
     labwork: string,
     index: number,
@@ -17,12 +19,6 @@ export interface AssignmentEntryProtocol {
 export interface AssignmentEntryType {
     entryType: EntryType
 }
-
-export type EntryType =
-    'Anwesenheitspflichtig' |
-    'Testat' |
-    'Bonus' |
-    'Zusatzleistung'
 
 export const allEntryTypes = (): Array<EntryType> =>
     ['Anwesenheitspflichtig', 'Testat', 'Bonus', 'Zusatzleistung']

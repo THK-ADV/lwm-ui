@@ -2,7 +2,11 @@ import {Time} from './time.model'
 import {Room} from './room.model'
 import {User} from './user.model'
 import {Labwork} from './labwork.model'
-import {EntryType} from './assignment-plan.model'
+import {ReportCardEntryType} from './report-card-entry-type'
+import {ReportCardRescheduledAtom, ReportCardRescheduledAtomJSON} from './report-card-rescheduled'
+import {ReportCardRetryAtom, ReportCardRetryAtomJSON} from './report-card-retry'
+
+// atom
 
 export interface ReportCardEntryAtom {
     student: User
@@ -19,21 +23,6 @@ export interface ReportCardEntryAtom {
     id: string
 }
 
-export interface ReportCardEntryJSON {
-    student: string
-    labwork: string
-    label: string
-    date: string
-    start: string
-    end: string
-    room: string
-    entryTypes: ReportCardEntryType[]
-    assignmentIndex: number
-    rescheduled?: string
-    retry?: string
-    id: string
-}
-
 export interface ReportCardEntryAtomJSON {
     student: User
     labwork: Labwork
@@ -44,52 +33,35 @@ export interface ReportCardEntryAtomJSON {
     room: Room
     entryTypes: ReportCardEntryType[]
     assignmentIndex: number
-    rescheduled?: ReportCardRescheduledAtom
-    retry?: ReportCardRetryAtom
+    rescheduled?: ReportCardRescheduledAtomJSON
+    retry?: ReportCardRetryAtomJSON
     id: string
 }
 
-export interface ReportCardEntryType {
-    entryType: EntryType
-    bool?: boolean
-    int: number
-    id: string
-}
+// normal
 
-export interface ReportCardRescheduledAtom {
+export interface ReportCardEntry {
+    student: string
+    labwork: string
+    label: string
     date: Date
     start: Time
     end: Time
-    room: Room
-    reason?: string
+    room: string
+    entryTypes: ReportCardEntryType[]
+    assignmentIndex: number
     id: string
 }
 
-export interface ReportCardRescheduledAtomJSON {
+export interface ReportCardEntryJSON {
+    student: string
+    labwork: string
+    label: string
     date: string
     start: string
     end: string
-    room: Room
-    reason?: string
-    id: string
-}
-
-export interface ReportCardRetryAtom {
-    date: Date
-    start: Time
-    end: Time
-    room: Room
+    room: string
     entryTypes: ReportCardEntryType[]
-    reason?: string
-    id: string
-}
-
-export interface ReportCardRetryAtomJSON {
-    date: string
-    start: string
-    end: string
-    room: Room
-    entryTypes: ReportCardEntryType[]
-    reason?: string
+    assignmentIndex: number
     id: string
 }

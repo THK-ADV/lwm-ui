@@ -5,10 +5,9 @@ import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
-import {openDialog} from '../shared-dialogs/dialog-open-combinator'
-import {RescheduleComponent} from './reschedule/reschedule.component'
-import {of, Subscription} from 'rxjs'
-import {subscribe} from '../utils/functions'
+import {Subscription} from 'rxjs'
+import {updateDataSource} from '../shared-dialogs/dataSource.update'
+import {AlertService} from '../services/alert.service'
 
 export interface ReportCardTableModel {
     dataSource: MatTableDataSource<ReportCardEntryAtom>,
@@ -33,7 +32,8 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     private subs: Subscription[]
 
     constructor(
-        private readonly dialog: MatDialog
+        private readonly dialog: MatDialog,
+        private readonly alertService: AlertService
     ) {
         this.displayedColumns = []
         this.subs = []
@@ -63,8 +63,25 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     private hasApprovalPermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseAssistant, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
-    reschedule = (e: ReportCardEntryAtom) => {
-        const $ = openDialog(RescheduleComponent.instance(this.dialog, e), of)
-        this.subs.push(subscribe($, console.log))
+    reschedule = (e: ReportCardEntryAtom) => { // TODO update UI
+        e = {
+            ...e,
+            rescheduled: {
+                date: e.date,
+                start: e.start,
+                end: e.end,
+                id: '1',
+                room: e.room,
+                reason: 'Ein Grund'
+            }
+        }
+
+        updateDataSource(this.tableModel.dataSource, this.alertService)(e, (a, b) => a.id === b.id)
+
+        // const $ = openDialog(RescheduleComponent.instance(this.dialog, e), _ => of(_))
+        // this.subs.push(subscribe($, _ => NotImplementedError()))
     }
+
+    isRescheduled = (e: ReportCardEntryAtom): boolean =>
+        e.rescheduled !== undefined
 }

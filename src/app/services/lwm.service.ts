@@ -1,36 +1,13 @@
 import {Injectable} from '@angular/core'
 import {HttpService} from './http.service'
 import {LabworkApplication} from '../models/labwork.application.model'
-import {Time} from '../models/time.model'
 import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
-import {EntryType} from '../models/assignment-plan.model'
+import {ReportCardEntry} from '../models/report-card-entry.model'
 
 interface GroupMembership {
     group: string
     student: string
-    id: string
-}
-
-interface ReportCardEntryType {
-    entryType: EntryType
-    bool?: boolean
-    int: number
-    id: string
-}
-
-export interface ReportCardEntry {
-    student: string
-    labwork: string
-    label: string
-    date: Date
-    start: Time
-    end: Time
-    room: string
-    entryTypes: ReportCardEntryType[]
-    assignmentIndex: number
-    rescheduled?: string
-    retry?: string
     id: string
 }
 

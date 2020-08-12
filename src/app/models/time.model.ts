@@ -37,9 +37,24 @@ export class Time {
     }
 }
 
-export const isNumber = (value: any): value is number => !isNaN(value)
+export const isNumber = (any: any): any is number =>
+    any && !isNaN(+any)
 
-export const splitToNumbers = (timeString: string): number[] => timeString
-    .split(':')
-    .map(Number)
-    .filter(isNumber)
+const eachCharIsNumber = (string: string): boolean => {
+    if (!string) {
+        return false
+    }
+
+    return [...Array(string.length).keys()]
+        .every(i => isNumber(string.charAt(i)))
+}
+
+export const splitToNumbers = (timeString: string): number[] => {
+    const split = timeString.split(':')
+
+    if (split.every(eachCharIsNumber)) {
+        return split.map(_ => Number(_))
+    }
+
+    return []
+}

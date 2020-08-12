@@ -1,4 +1,4 @@
-import {AbstractControl, ValidationErrors, ValidatorFn} from '@angular/forms'
+import {AbstractControl, FormControl, ValidationErrors, ValidatorFn} from '@angular/forms'
 import {splitToNumbers} from '../models/time.model'
 
 export const invalidChoiceKey = 'invalidObject'
@@ -33,17 +33,39 @@ export function optionalOptionsValidator(): ValidatorFn {
     }
 }
 
-export function localTimeValidator(): ValidatorFn {
+export const localTimeValidator = (): ValidatorFn => {
     return (ctl: AbstractControl): ValidationErrors | null => {
-        if (!isValidLocalTime(ctl.value) || ctl.value === null || ctl.value === '') {
+        const validTime = isValidLocalTime(ctl.value)
+        if (ctl.value === null || ctl.value === '' || !validTime) {
             return {[invalidLocalTimeKey]: 'Die Uhrzeit muss im Format HH:mm angegeben werden'}
         }
-
         return null
     }
 }
 
-function isValidLocalTime(value: any): boolean {
+export const hasLocalTimeError = (formControl: FormControl): boolean =>
+    !formControl.untouched && formControl.hasError(invalidLocalTimeKey)
+
+export const getLocalTimeErrorMessage = (formControl: FormControl): string =>
+    formControl.getError(invalidLocalTimeKey)
+
+const isValidHour = (hour: number) =>
+    hour >= 0 && hour <= 24
+
+const isValidMinute = (minute: number) =>
+    minute >= 0 && minute <= 60
+
+const isValidLocalTime = (value: any): boolean => {
     const split = splitToNumbers('' + value)
-    return split.length >= 1 && split.length <= 3
+
+    switch (split.length) {
+        case 0:
+            return false
+        case 1:
+            return isValidHour(split[0])
+        case 2:
+            return isValidHour(split[0]) && isValidMinute(split[1])
+        default:
+            return false
+    }
 }

@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core'
 import {EmployeeDashboard, PassedEvaluation, StudentDashboard} from '../models/dashboard.model'
 import {Observable} from 'rxjs'
-import {HttpService} from './http.service'
+import {atomicParams, HttpService} from './http.service'
 import {SemesterJSON} from '../models/semester.model'
 import {Employee, StudentAtom} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'

@@ -1,0 +1,8 @@
+<mat-form-field class="mat-form-field-modal" color="primary">
+    <input matInput
+           [placeholder]="placeholder"
+           [type]="'time'"
+           [formControl]="formControl">
+    <mat-error *ngIf="hasLocalTimeError()">{{getLocalTimeErrorMessage()}}
+    </mat-error>
+</mat-form-field>

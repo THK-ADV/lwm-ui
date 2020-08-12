@@ -1,5 +1,5 @@
-import {EntryType} from './assignment-plan.model'
 import {Student} from './user.model'
+import {EntryType} from './entry-type'
 
 export type EvaluationProperty = 'bool' | 'int'
 

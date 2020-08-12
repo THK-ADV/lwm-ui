@@ -1,6 +1,6 @@
 import {groupBy, toTupleArray} from '../../utils/group-by'
-import {ReportCardEntry} from '../../services/lwm.service'
-import {EntryType} from '../../models/assignment-plan.model'
+import {ReportCardEntry} from '../../models/report-card-entry.model'
+import {EntryType} from '../../models/entry-type'
 
 interface LineData {
     x: number

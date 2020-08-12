@@ -1,8 +1,9 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
-import {ReportCardEntryAtom, ReportCardEntryType} from '../../models/report-card-entry.model'
+import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
 import {ReportCardEntryTypeService} from '../../services/report-card-entry-type.service'
 import {identity, Subscription} from 'rxjs'
 import {mapUndefined, subscribe} from '../../utils/functions'
+import {ReportCardEntryType} from '../../models/report-card-entry-type'
 
 enum TernaryState {
     passed = 3201,

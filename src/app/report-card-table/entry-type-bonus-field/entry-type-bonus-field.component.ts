@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
-import {ReportCardEntryAtom, ReportCardEntryType} from '../../models/report-card-entry.model'
+import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
 import {FormControl} from '@angular/forms'
 import {ReportCardEntryTypeService} from '../../services/report-card-entry-type.service'
 import {Subscription} from 'rxjs'
@@ -7,6 +7,7 @@ import {isNumber} from '../../models/time.model'
 import {mapUndefined, subscribe} from '../../utils/functions'
 import {isString} from '../../utils/type.check.utils'
 import {distinctUntilChanged} from 'rxjs/operators'
+import {ReportCardEntryType} from '../../models/report-card-entry-type'
 
 @Component({
     selector: 'lwm-entry-type-bonus-field',

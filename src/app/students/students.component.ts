@@ -22,8 +22,8 @@ import {format, formatTime} from '../utils/lwmdate-adapter'
 import {isStudentAtom} from '../utils/type.check.utils'
 import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
-import {EntryType} from '../models/assignment-plan.model'
 import {dropLast} from '../utils/string-utils'
+import {EntryType} from '../models/entry-type'
 
 export interface PanelViewModel {
     labwork: LabworkAtom,

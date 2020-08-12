@@ -1,4 +1,4 @@
-import {AssignmentEntry, AssignmentEntryProtocol, EntryType} from '../../../models/assignment-plan.model'
+import {AssignmentEntry, AssignmentEntryProtocol} from '../../../models/assignment-plan.model'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../../../shared-dialogs/dialog.mode'
 import {FormOutputData, FormPayload} from '../../../shared-dialogs/create-update/create-update-dialog.component'
 import {FormInputString} from '../../../shared-dialogs/forms/form.input.string'
@@ -11,6 +11,7 @@ import {FormDataType} from '../../../shared-dialogs/forms/form.input'
 import {switchMap} from 'rxjs/operators'
 import {fetchAssignmentEntries} from '../../labwork-chain-view-model'
 import {LabworkAtom} from '../../../models/labwork.model'
+import {EntryType} from '../../../models/entry-type'
 
 export const assignmentEntryProtocol = (labwork: string): AssignmentEntryProtocol => ({
     labwork: labwork,

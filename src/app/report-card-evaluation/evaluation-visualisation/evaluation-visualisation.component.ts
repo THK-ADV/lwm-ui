@@ -2,12 +2,12 @@ import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/c
 import * as d3 from 'd3'
 import {ReportCardEntryService} from '../../services/report-card-entry.service'
 import {forkJoin, Subscription} from 'rxjs'
-import {ReportCardEntry} from '../../services/lwm.service'
 import {first, subscribe} from '../../utils/functions'
 import {jsonDrawer} from './d3-drawer'
 import {Labwork} from '../../models/labwork.model'
 import {map} from 'rxjs/operators'
 import {rangeTo} from '../../utils/range'
+import {ReportCardEntry} from '../../models/report-card-entry.model'
 
 export type LineColor = string
 

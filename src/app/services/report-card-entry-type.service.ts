@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core'
 import {HttpService} from './http.service'
 import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
-import {ReportCardEntryType} from '../models/report-card-entry.model'
+import {ReportCardEntryType} from '../models/report-card-entry-type'
 
 export interface ReportCardEntryTypeProtocol {
     entryType: string
