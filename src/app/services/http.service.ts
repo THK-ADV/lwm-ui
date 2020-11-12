@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core'
 import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
-import {catchError, tap} from 'rxjs/operators'
+import {catchError, map, tap} from 'rxjs/operators'
 import {AlertService} from './alert.service'
 
 export interface LWMError {
@@ -81,18 +81,19 @@ export class HttpService {
             tap(this.logResp('get_', url))
         )
 
-    download = (
+    downloadXlsSheet = (
         url: string
-    ): Observable<any> => {
+    ): Observable<Blob> => {
         const options = {
             responseType: 'blob' as 'json'
         }
 
         return this.http
-            .get(url, options)
+            .get<Blob>(url, options)
             .pipe(
                 catchError(this.handleError),
-                tap(this.logResp('download', url))
+                tap(this.logResp('download', url)),
+                map(data => new Blob([data], {type: 'application/vnd.ms-excel'}))
             )
     }
 

@@ -33,4 +33,7 @@ export class LabworkApplicationService implements AbstractCRUDService<LabworkApp
 
     update = (protocol: LabworkApplicationProtocol, id: string): Observable<LabworkApplicationAtom> => this.http
         .put(this.path, id, protocol, atomicParams)
+
+    download = (courseId: string, labworkId: string): Observable<Blob> =>
+        this.http.downloadXlsSheet(makePath(this.path, courseId, labworkId) + '/sheet')
 }

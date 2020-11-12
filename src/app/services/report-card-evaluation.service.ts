@@ -27,8 +27,7 @@ export class ReportCardEvaluationService {
             .pipe(map(convertManyReportCardEvaluations))
 
     download = (courseId: string, labworkId: string): Observable<Blob> =>
-        this.http.download(makePath(this.path, courseId, labworkId) + '/sheet')
-            .pipe(map(data => new Blob([data], {type: 'application/vnd.ms-excel'})))
+        this.http.downloadXlsSheet(makePath(this.path, courseId, labworkId) + '/sheet')
 
     // delete = (id: string, courseId: string): Observable<ReportCardEvaluationPattern> =>
     //     this.http.delete(makePath(this.path, courseId), id)

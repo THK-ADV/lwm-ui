@@ -10,6 +10,7 @@ import {LoadingService, withSpinning} from '../../services/loading.service'
 import {groupBy, mapMap} from '../../utils/group-by'
 import {count, isEmpty, maxBy, subscribe} from '../../utils/functions'
 import {LWMColor} from '../../utils/colors'
+import {initiateDownload} from '../../xls-download/xls-download'
 
 interface Eval {
     firstName: string,
@@ -113,11 +114,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
 
     private download = () => {
         const s = subscribe(this.service.download(this.courseId, this.labworkId), blob => {
-            const downloadURL = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = downloadURL
-            link.download = `Absolventen_${this.labworkId}.xls`
-            link.click()
+            initiateDownload(`Absolventen_${this.labworkId}.xls`, blob)
         })
 
         this.subs.push(s)
