@@ -28,6 +28,7 @@ import {subscribe} from '../utils/functions'
 import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AlertService} from '../services/alert.service'
+import {initiateDownload} from '../xls-download/xls-download'
 
 @Component({
     selector: 'lwm-labwork-application',
@@ -43,6 +44,8 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
     filterPredicate: (data: LabworkApplicationAtom, filter: string) => boolean
 
     canCreateOrUpdate: boolean
+    canDownloadApplicants: boolean
+
     labwork: LabworkAtom
     private dataSource: MatTableDataSource<LabworkApplicationAtom>
     private subs: Subscription[]
@@ -86,7 +89,9 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
         this.subs.push(subscribe(fetchLabwork$(this.route, this.labworkService), x => {
             this.labwork = x
             this.headerTitle += ` für ${x.label}`
-            this.canCreateOrUpdate = !x.published && hasAnyRole(userAuths(this.route), UserRole.courseManager, UserRole.admin)
+            const isCM = hasAnyRole(userAuths(this.route), UserRole.courseManager, UserRole.admin)
+            this.canCreateOrUpdate = !x.published && isCM
+            this.canDownloadApplicants = isCM
             this.applications$ = this.appService.getAllByLabworkAtom(x.id)
         }))
     }
@@ -95,16 +100,49 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
         this.subs.forEach(_ => _.unsubscribe())
     }
 
-    createAction = (): LWMActionType[] => this.canCreateOrUpdate ? ['create'] : []
+    actions = (): LWMActionType[] => {
+        const actions: LWMActionType[] = []
+
+        if (this.canCreateOrUpdate) {
+            actions.push('create')
+        }
+
+        if (this.canDownloadApplicants) {
+            actions.push('download')
+        }
+
+        return actions
+    }
 
     initDataSource = (ds: MatTableDataSource<LabworkApplicationAtom>) =>
         this.dataSource = ds
 
-    onCreate = () => {
+    onAction = (event: LWMActionType) => {
+        switch (event) {
+            case 'create':
+                this.create()
+                break
+            case 'download':
+                this.download()
+                break
+            default:
+                break
+        }
+    }
+
+    private create = () => {
         this.subs.push(subscribe(
             this.openUpdateDialog(this.empty(), this.appService.create),
             addToDataSource(this.dataSource, this.alert)
         ))
+    }
+
+    private download = () => {
+        const s = subscribe(this.appService.download(this.labwork.course.id, this.labwork.id), blob => {
+            initiateDownload(`Anmeldungen_${this.labwork.label}_${this.labwork.id}.xls`, blob)
+        })
+
+        this.subs.push(s)
     }
 
     onEdit = (app: LabworkApplicationAtom) => {
