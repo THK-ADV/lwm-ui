@@ -22,4 +22,7 @@ export class GroupService {
 
     getAllWithFilter = (courseId: string, labworkId: string, ...filter: GroupFiler[]): Observable<GroupAtom[]> => this.http
         .getAll(makePath(this.path, courseId, labworkId), applyFilter(filter, atomicParams))
+
+    download = (courseId: string, labworkId: string): Observable<Blob> =>
+        this.http.downloadXlsSheet(makePath(this.path, courseId, labworkId) + '/sheet')
 }

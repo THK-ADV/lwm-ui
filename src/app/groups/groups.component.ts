@@ -2,12 +2,11 @@ import {Component, OnInit} from '@angular/core'
 import {LabworkService} from '../services/labwork.service'
 import {ActivatedRoute} from '@angular/router'
 import {fetchLabwork$} from '../utils/component.utils'
-import {Observable, Subscription} from 'rxjs'
+import {Subscription} from 'rxjs'
 import {GroupService} from '../services/group.service'
 import {map} from 'rxjs/operators'
 import {GroupAtom} from '../models/group.model'
 import {User} from '../models/user.model'
-import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {subscribe} from '../utils/functions'
 import {LabworkAtom} from '../models/labwork.model'
@@ -16,6 +15,8 @@ import {UserService} from '../services/user.service'
 import {GroupEditComponent} from './edit/group-edit.component'
 import {Card} from '../card-list/card-list.component'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
+import {LWMActionType} from '../table-action-button/lwm-actions'
+import {initiateDownload} from '../xls-download/xls-download'
 
 @Component({
     selector: 'lwm-groups',
@@ -25,8 +26,10 @@ import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 export class GroupsComponent implements OnInit {
 
     headerTitle: String
+    actionTypes: LWMActionType[]
+    labwork: Readonly<LabworkAtom>
+
     private subs: Subscription[]
-    private labwork: Readonly<LabworkAtom>
     private hasPermission: Readonly<boolean>
 
     groups: Card<GroupAtom, User>[]
@@ -43,6 +46,7 @@ export class GroupsComponent implements OnInit {
         this.groups = []
         this.headerTitle = 'Gruppen'
         this.hasPermission = false
+        this.actionTypes = []
     }
 
     ngOnInit() {
@@ -59,6 +63,10 @@ export class GroupsComponent implements OnInit {
 
     private setupPermissionChecks = (courseId: string) => {
         this.hasPermission = hasCourseManagerPermission(this.route, courseId)
+
+        if (this.hasPermission) {
+            this.actionTypes.push('download')
+        }
     }
 
     private fetchGroups(l: LabworkAtom) {
@@ -76,8 +84,22 @@ export class GroupsComponent implements OnInit {
         this.subs.push(s)
     }
 
-    private fetchApps(l: LabworkAtom): Observable<LabworkApplicationAtom[]> {
-        return this.labworkApplicationService.getAllByLabworkAtom(l.id)
+    onAction = (action: LWMActionType) => {
+        switch (action) {
+            case 'download':
+                this.download()
+                break
+            default:
+                break
+        }
+    }
+
+    private download = () => {
+        const s = subscribe(this.groupService.download(this.labwork.course.id, this.labwork.id), blob => {
+            initiateDownload(`Gruppen_${this.labwork.label}_${this.labwork.id}.xls`, blob)
+        })
+
+        this.subs.push(s)
     }
 
     displayUser = (user: User): string => `${user.lastname}, ${user.firstname}`

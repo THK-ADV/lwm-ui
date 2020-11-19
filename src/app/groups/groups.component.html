@@ -1,12 +1,16 @@
-<lwm-abstract-header
-        [headerTitle]="headerTitle">
-</lwm-abstract-header>
+<ng-container *ngIf="labwork">
+    <lwm-abstract-header
+            [headerTitle]="headerTitle"
+            [actionTypes]="actionTypes"
+            (performAction)="onAction($event)">
+    </lwm-abstract-header>
 
-<lwm-card-list
-        [cards]="groups"
-        [cardTitle]="cardTitle"
-        [canEdit]="canEdit"
-        [onEdit]="onEdit"
-        [leftEntryLabel]="displayUser"
-        [rightEntryLabel]="displaySystemId">
-</lwm-card-list>
+    <lwm-card-list
+            [cards]="groups"
+            [cardTitle]="cardTitle"
+            [canEdit]="canEdit"
+            [onEdit]="onEdit"
+            [leftEntryLabel]="displayUser"
+            [rightEntryLabel]="displaySystemId">
+    </lwm-card-list>
+</ng-container>
