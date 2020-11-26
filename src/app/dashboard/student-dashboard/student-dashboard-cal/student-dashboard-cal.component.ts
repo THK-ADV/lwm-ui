@@ -1,6 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core'
 import {ReportCardEntryAtom} from '../../../models/report-card-entry.model'
-import {CalendarView, ScheduleEntryEvent} from '../../../labwork-chain/schedule/view/schedule-view-model'
+import {
+    CalendarView,
+    ScheduleEntryEvent,
+    scheduleEntryEventTitle,
+    scheduleEntryProps
+} from '../../../labwork-chain/schedule/view/schedule-view-model'
 import {colorForCourse} from '../../../utils/course-colors'
 import {whiteColor} from '../../../utils/colors'
 import {Time} from '../../../models/time.model'
@@ -8,6 +13,10 @@ import {foldUndefined} from '../../../utils/functions'
 import {Semester} from '../../../models/semester.model'
 import {ActivatedRoute, Router} from '@angular/router'
 import {DashboardGroupLabel} from '../../../models/dashboard.model'
+import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
+import {employeeDashboardScheduleEntryEvents} from '../../employee-dashboard/employee-dashboard.component'
+
+type StudentDashboardCalEntry = ReportCardEntryAtom | ScheduleEntryAtom
 
 @Component({
     selector: 'lwm-student-dashboard-cal',
@@ -17,6 +26,7 @@ import {DashboardGroupLabel} from '../../../models/dashboard.model'
 export class StudentDashboardCalComponent implements OnInit {
 
     @Input() reportCardEntries: ReportCardEntryAtom[]
+    @Input() scheduleEntries: ScheduleEntryAtom[]
     @Input() semester: Semester
     @Input() groups: DashboardGroupLabel[]
 
@@ -30,9 +40,9 @@ export class StudentDashboardCalComponent implements OnInit {
     }
 
     hasCalendarEntries = () =>
-        this.reportCardEntries.length > 0
+        this.reportCardEntries.length > 0 || this.scheduleEntries.length > 0
 
-    calendarEvents = (reportCardEntries: ReportCardEntryAtom[]): () => ScheduleEntryEvent<ReportCardEntryAtom>[] => () => {
+    calendarEvents = (): ScheduleEntryEvent<StudentDashboardCalEntry>[] => {
         const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
             const backgroundColor = colorForCourse(e.labwork.course)
             const foregroundColor = whiteColor()
@@ -49,7 +59,10 @@ export class StudentDashboardCalComponent implements OnInit {
             }
         }
 
-        return reportCardEntries.map(go)
+        return [
+            ...this.reportCardEntries.map(go),
+            ...employeeDashboardScheduleEntryEvents(this.scheduleEntries)()
+        ]
     }
 
     eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
@@ -66,19 +79,34 @@ export class StudentDashboardCalComponent implements OnInit {
         }
     }
 
-    eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ReportCardEntryAtom>>) =>
-        foldUndefined(e.extendedProps, p => this.eventTitle(view, p), () => e.title)
+    isReportCardEntryAtom = (e: StudentDashboardCalEntry): e is ReportCardEntryAtom =>
+        (e as ReportCardEntryAtom).assignmentIndex !== undefined
 
-    onEventClick = (event: ScheduleEntryEvent<ReportCardEntryAtom>) => {
+    eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<StudentDashboardCalEntry>>) =>
+        foldUndefined(e.extendedProps, p => {
+            if (this.isReportCardEntryAtom(p)) {
+                return this.eventTitle(view, p)
+            } else {
+                return scheduleEntryEventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group))
+            }
+
+        }, () => e.title)
+
+    onEventClick = (event: ScheduleEntryEvent<StudentDashboardCalEntry>) => {
         if (!event.extendedProps) {
             return
         }
 
-        const labwork = event.extendedProps.labwork.id
-        const student = event.extendedProps.student.id
+        const routeUrl = (e: StudentDashboardCalEntry) => {
+            if (this.isReportCardEntryAtom(e)) {
+                return `reportCards/labworks/${(e.labwork.id)}/students/${(e.student.id)}`
+            } else {
+                return `courses/${(e.labwork.course.id)}/scheduleEntries/${(e.id)}`
+            }
+        }
 
         this.router.navigate(
-            [`reportCards/labworks/${labwork}/students/${student}`],
+            [routeUrl(event.extendedProps)],
             {relativeTo: this.route}
         )
     }

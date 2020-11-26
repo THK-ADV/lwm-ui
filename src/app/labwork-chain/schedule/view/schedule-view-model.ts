@@ -42,7 +42,7 @@ export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryAtom[]>):
             allDay: false,
             start: Time.withNewDate(e.date, e.start).date,
             end: Time.withNewDate(e.date, e.end).date,
-            title: eventTitle('month', props),
+            title: scheduleEntryEventTitle('month', props),
             borderColor: backgroundColor,
             backgroundColor: backgroundColor,
             textColor: foregroundColor,
@@ -53,7 +53,7 @@ export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryAtom[]>):
     return entries.map(go)
 }
 
-export const eventTitle = (view: CalendarView, props: ScheduleEntryProps) => {
+export const scheduleEntryEventTitle = (view: CalendarView, props: ScheduleEntryProps) => {
     switch (view) {
         case 'month':
             return `- Grp. ${props.group.label} - ${props.roomLabel}`
