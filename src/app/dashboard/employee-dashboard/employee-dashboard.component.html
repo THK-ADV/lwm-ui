@@ -1,19 +1,26 @@
-<ng-container *ngIf="dashboard">
+<ng-container *ngIf="semester">
     <div class="jumbotron">
-        <h1>{{dashboard.semester.label}}</h1>
+        <h1>{{semester.label}}</h1>
     </div>
 
-    <div class="ed-chips">
-        <div *ngFor="let c of currentCourses"
-             [style]="{backgroundColor: colorForCourse_(c.id)}">
-            {{c.abbreviation}}
+    <lwm-dashboard-calendar-settings
+            (ownEntriesOnlyChange)="ownEntriesOnlyDidChange($event)">
+    </lwm-dashboard-calendar-settings>
+
+    <ng-container *ngIf="currentCourses.length > 0">
+        <h2>Legende</h2>
+        <div class="ed-chips legend">
+            <div *ngFor="let c of currentCourses"
+                 [style]="{backgroundColor: colorForCourse_(c.id)}">
+                {{c.abbreviation}}
+            </div>
         </div>
-    </div>
+    </ng-container>
 
     <lwm-dashboard-calendar
-            [makeCalendarEvents]="calendarEvents(dashboard.scheduleEntries)"
+            [scheduleEntryEvents]="entries"
             [eventTitleFor]="eventTitleFor"
-            [semester]="dashboard.semester"
+            [semester]="semester"
             (eventClickEmitter)="onEventClick($event)">
     </lwm-dashboard-calendar>
 </ng-container>

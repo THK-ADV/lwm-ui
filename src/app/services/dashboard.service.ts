@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core'
 import {DashboardEvaluationResult, DashboardGroupLabel, EmployeeDashboard, StudentDashboard} from '../models/dashboard.model'
 import {Observable} from 'rxjs'
-import {HttpService} from './http.service'
+import {atomicParams, HttpService} from './http.service'
 import {SemesterJSON} from '../models/semester.model'
 import {Employee, StudentAtom} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
@@ -11,6 +11,7 @@ import {map} from 'rxjs/operators'
 import {LabworkAtomJSON} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
+import {applyFilter} from './http.filter'
 
 interface DashboardJSON {
     status: 'student' | 'employee'
@@ -33,6 +34,11 @@ interface StudentDashboardJSON extends DashboardJSON {
     scheduleEntries: ScheduleEntryAtomJSON[]
 }
 
+interface DashboardHttpFilter {
+    attribute: 'ownEntriesOnly'
+    value: string
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -47,8 +53,8 @@ export class DashboardService {
         this.http.get_<StudentDashboardJSON>(this.path)
             .pipe(map(this.studentDashboardFromJSON))
 
-    getEmployeeDashboard = (): Observable<EmployeeDashboard> =>
-        this.http.get_<EmployeeDashboardJSON>(this.path)
+    getEmployeeDashboard = (...filter: DashboardHttpFilter[]): Observable<EmployeeDashboard> =>
+        this.http.get_<EmployeeDashboardJSON>(this.path, applyFilter(filter, atomicParams))
             .pipe(map(this.employeeDashboardFromJSON))
 
     private employeeDashboardFromJSON = (x: EmployeeDashboardJSON): EmployeeDashboard => ({

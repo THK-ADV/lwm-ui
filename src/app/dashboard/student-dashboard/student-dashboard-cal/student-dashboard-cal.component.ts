@@ -61,7 +61,7 @@ export class StudentDashboardCalComponent implements OnInit {
 
         return [
             ...this.reportCardEntries.map(go),
-            ...employeeDashboardScheduleEntryEvents(this.scheduleEntries)()
+            ...employeeDashboardScheduleEntryEvents(this.scheduleEntries)
         ]
     }
 
