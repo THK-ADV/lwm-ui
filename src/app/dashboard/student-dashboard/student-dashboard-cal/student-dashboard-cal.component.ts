@@ -6,8 +6,8 @@ import {whiteColor} from '../../../utils/colors'
 import {Time} from '../../../models/time.model'
 import {foldUndefined} from '../../../utils/functions'
 import {Semester} from '../../../models/semester.model'
-import {LabworkAtom} from '../../../models/labwork.model'
 import {ActivatedRoute, Router} from '@angular/router'
+import {DashboardGroupLabel} from '../../../models/dashboard.model'
 
 @Component({
     selector: 'lwm-student-dashboard-cal',
@@ -18,7 +18,7 @@ export class StudentDashboardCalComponent implements OnInit {
 
     @Input() reportCardEntries: ReportCardEntryAtom[]
     @Input() semester: Semester
-    @Input() groups: { groupLabel: string, labwork: LabworkAtom }[]
+    @Input() groups: DashboardGroupLabel[]
 
     constructor(
         private readonly router: Router,
@@ -58,7 +58,7 @@ export class StudentDashboardCalComponent implements OnInit {
                 return `${e.labwork.label} in ${e.room.label}`
             case 'list':
                 const grp = foldUndefined(
-                    this.groups.find(_ => _.labwork.id === e.labwork.id),
+                    this.groups.find(_ => _.labworkId === e.labwork.id),
                     g => ` Gruppe ${g.groupLabel}`,
                     () => ''
                 )

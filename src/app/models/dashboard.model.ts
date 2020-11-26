@@ -6,13 +6,6 @@ import {CourseAtom} from './course.model'
 import {ScheduleEntryAtom} from './schedule-entry.model'
 import {ReportCardEntryAtom} from './report-card-entry.model'
 
-export interface PassedEvaluation {
-    course: string
-    semester: string
-    passed: boolean
-    bonus: number
-}
-
 export interface Dashboard {
     status: 'student' | 'employee'
     semester: Semester
@@ -22,10 +15,10 @@ export interface StudentDashboard extends Dashboard {
     user: StudentAtom
     labworks: LabworkAtom[]
     labworkApplications: LabworkApplicationAtom[]
-    groups: { groupLabel: string, labwork: LabworkAtom }[]
+    groups: DashboardGroupLabel[]
     reportCardEntries: ReportCardEntryAtom[]
-    // allEvaluations: TODO
-    passedEvaluations: PassedEvaluation[]
+    evaluationResults: DashboardEvaluationResult[]
+    scheduleEntries: ScheduleEntryAtom[]
 }
 
 export interface EmployeeDashboard extends Dashboard {
@@ -34,3 +27,15 @@ export interface EmployeeDashboard extends Dashboard {
     scheduleEntries: ScheduleEntryAtom[]
 }
 
+export interface DashboardEvaluationResult {
+    course: string
+    semester: string
+    passed: boolean
+    bonus: number
+}
+
+export interface DashboardGroupLabel {
+    groupLabel: string
+    labworkLabel: string
+    labworkId: string
+}

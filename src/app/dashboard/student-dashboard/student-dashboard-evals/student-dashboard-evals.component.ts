@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core'
-import {PassedEvaluation} from '../../../models/dashboard.model'
+import {DashboardEvaluationResult} from '../../../models/dashboard.model'
 
 @Component({
     selector: 'lwm-student-dashboard-evals',
@@ -10,7 +10,7 @@ export class StudentDashboardEvalsComponent implements OnInit {
 
     // TODO style
 
-    @Input() passedEvals: PassedEvaluation[]
+    @Input() evals: DashboardEvaluationResult[]
 
     constructor() {
     }
@@ -19,5 +19,5 @@ export class StudentDashboardEvalsComponent implements OnInit {
     }
 
     hasPassedLabworks = () =>
-        this.passedEvals.length > 0
+        this.evals.length > 0
 }
