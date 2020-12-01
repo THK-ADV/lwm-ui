@@ -1,7 +1,7 @@
 <h2>Bestandene Praktika</h2>
 
 <ng-container *ngIf="hasPassedLabworks(); else noEvals">
-    <p *ngFor="let eval of passedEvals">{{eval.course}} - {{eval.semester}}: {{eval.passed}}</p>
+    <p *ngFor="let eval of evals">{{eval.course}} - {{eval.semester}}: {{eval.passed}}</p>
 </ng-container>
 
 <ng-template #noEvals>

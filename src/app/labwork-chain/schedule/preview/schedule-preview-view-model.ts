@@ -1,5 +1,5 @@
 import {ScheduleEntryGen, ScheduleEntryGenProtocol, ScheduleEntryService} from '../../../services/schedule-entry.service'
-import {eventTitle, ScheduleEntryEvent, ScheduleEntryProps} from '../view/schedule-view-model'
+import {scheduleEntryEventTitle, ScheduleEntryEvent, ScheduleEntryProps} from '../view/schedule-view-model'
 import {color, whiteColor} from '../../../utils/colors'
 import {Time} from '../../../models/time.model'
 import {_groupBy, isEmpty} from '../../../utils/functions'
@@ -26,7 +26,7 @@ const makeScheduleEntryEvent = (rooms: string[]): (e: ScheduleEntryGen) => Sched
             allDay: false,
             start: Time.withNewDate(e.date, e.start).date,
             end: Time.withNewDate(e.date, e.end).date,
-            title: eventTitle('month', props),
+            title: scheduleEntryEventTitle('month', props),
             borderColor: backgroundColor,
             backgroundColor: backgroundColor,
             textColor: foregroundColor,

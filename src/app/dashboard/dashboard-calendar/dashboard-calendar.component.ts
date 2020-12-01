@@ -13,9 +13,13 @@ import {minBy} from '../../utils/functions'
 })
 export class DashboardCalendarComponent<A> implements OnInit {
 
-    @Input() makeCalendarEvents: () => ScheduleEntryEvent<A>[]
     @Input() eventTitleFor: (view: CalendarView, e: Readonly<ScheduleEntryEvent<A>>) => string
     @Input() semester: Semester
+
+    @Input() set scheduleEntryEvents(xs: ScheduleEntryEvent<A>[]) {
+        this.allDates = xs
+        this.setStartDate()
+    }
 
     @Output() eventClickEmitter = new EventEmitter<ScheduleEntryEvent<A>>()
 
@@ -31,8 +35,6 @@ export class DashboardCalendarComponent<A> implements OnInit {
     }
 
     ngOnInit(): void {
-        this.allDates = this.makeCalendarEvents()
-        this.setStartDate()
         this.setSemesterBoundaries()
     }
 

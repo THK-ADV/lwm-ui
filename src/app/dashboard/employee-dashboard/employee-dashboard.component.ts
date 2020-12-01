@@ -1,17 +1,42 @@
 import {Component, OnDestroy, OnInit} from '@angular/core'
 import {DashboardService} from '../../services/dashboard.service'
-import {EmployeeDashboard} from '../../models/dashboard.model'
 import {Subscription} from 'rxjs'
 import {ActivatedRoute, Router} from '@angular/router'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
 import {first, foldUndefined, mapUndefined, nonEmpty, subscribe} from '../../utils/functions'
 import {CourseAtom} from '../../models/course.model'
 import {Card} from '../../card-list/card-list.component'
-import {CalendarView, eventTitle, ScheduleEntryEvent, scheduleEntryProps} from '../../labwork-chain/schedule/view/schedule-view-model'
+import {
+    CalendarView,
+    ScheduleEntryEvent,
+    scheduleEntryEventTitle,
+    scheduleEntryProps
+} from '../../labwork-chain/schedule/view/schedule-view-model'
 import {colorForCourse} from '../../utils/course-colors'
 import {whiteColor} from '../../utils/colors'
 import {Time} from '../../models/time.model'
 import {forEachMap, groupBy} from '../../utils/group-by'
+import {Semester} from '../../models/semester.model'
+
+export const employeeDashboardScheduleEntryEvents = (scheduleEntries: ScheduleEntryAtom[]): ScheduleEntryEvent<ScheduleEntryAtom>[] => {
+    const go = (e: ScheduleEntryAtom): ScheduleEntryEvent<ScheduleEntryAtom> => {
+        const backgroundColor = colorForCourse(e.labwork.course.id)
+        const foregroundColor = whiteColor()
+
+        return {
+            allDay: false,
+            start: Time.withNewDate(e.date, e.start).date,
+            end: Time.withNewDate(e.date, e.end).date,
+            title: scheduleEntryEventTitle('month', scheduleEntryProps(e.supervisor, e.room, e.group)),
+            borderColor: backgroundColor,
+            backgroundColor: backgroundColor,
+            textColor: foregroundColor,
+            extendedProps: e
+        }
+    }
+
+    return scheduleEntries.map(go)
+}
 
 @Component({
     selector: 'app-employee-dashboard',
@@ -20,10 +45,13 @@ import {forEachMap, groupBy} from '../../utils/group-by'
 })
 export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
-    dashboard: EmployeeDashboard
+    semester: Semester
+    entries: ScheduleEntryEvent<ScheduleEntryAtom>[] = []
     currentCourses: CourseAtom[] = []
 
     private subs: Subscription[]
+
+    colorForCourse_ = colorForCourse
 
     constructor(
         private readonly dashboardService: DashboardService,
@@ -33,13 +61,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         this.subs = []
     }
 
-    colorForCourse_ = colorForCourse
-
     ngOnInit() {
-        this.subs.push(subscribe(this.dashboardService.getEmployeeDashboard(), d => {
-            this.dashboard = d
-            this.currentCourses = this.getCurrentCourses(this.dashboard.scheduleEntries)
-        }))
+        this.fetchDashboard(true)
     }
 
     ngOnDestroy(): void {
@@ -58,28 +81,8 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
         return cards
     }
 
-    calendarEvents = (scheduleEntries: ScheduleEntryAtom[]): () => ScheduleEntryEvent<ScheduleEntryAtom>[] => () => {
-        const go = (e: ScheduleEntryAtom): ScheduleEntryEvent<ScheduleEntryAtom> => {
-            const backgroundColor = colorForCourse(e.labwork.course.id)
-            const foregroundColor = whiteColor()
-
-            return {
-                allDay: false,
-                start: Time.withNewDate(e.date, e.start).date,
-                end: Time.withNewDate(e.date, e.end).date,
-                title: eventTitle('month', scheduleEntryProps(e.supervisor, e.room, e.group)),
-                borderColor: backgroundColor,
-                backgroundColor: backgroundColor,
-                textColor: foregroundColor,
-                extendedProps: e
-            }
-        }
-
-        return scheduleEntries.map(go)
-    }
-
     eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ScheduleEntryAtom>>) =>
-        foldUndefined(e.extendedProps, p => eventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group)), () => e.title)
+        foldUndefined(e.extendedProps, p => scheduleEntryEventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group)), () => e.title)
 
     onEventClick = (event: ScheduleEntryEvent<ScheduleEntryAtom>) => {
         if (!event.extendedProps) {
@@ -94,6 +97,21 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             {relativeTo: this.route}
             // {state: {scheduleEntry: e}}
         )
+    }
+
+    ownEntriesOnlyDidChange = (ownEntriesOnly: boolean) => {
+        this.fetchDashboard(ownEntriesOnly)
+    }
+
+    private fetchDashboard = (ownEntriesOnly: boolean) => {
+        this.subs.push(subscribe(this.dashboardService.getEmployeeDashboard({
+            attribute: 'ownEntriesOnly',
+            value: ownEntriesOnly.toString()
+        }), dashboard => {
+            this.semester = dashboard.semester
+            this.entries = employeeDashboardScheduleEntryEvents(dashboard.scheduleEntries)
+            this.currentCourses = this.getCurrentCourses(dashboard.scheduleEntries)
+        }))
     }
 
     private getCurrentCourses = (scheduleEntries: ScheduleEntryAtom[]) => {

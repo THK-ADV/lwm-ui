@@ -97,6 +97,7 @@ import {CourseParamResolver} from './resolver/course-param-resolver'
 import {StudentDashboardApplicationComponent} from './dashboard/student-dashboard/student-dashboard-application/student-dashboard-application.component'
 import {StudentDashboardCalComponent} from './dashboard/student-dashboard/student-dashboard-cal/student-dashboard-cal.component'
 import {StudentDashboardEvalsComponent} from './dashboard/student-dashboard/student-dashboard-evals/student-dashboard-evals.component'
+import {DashboardCalendarSettingsComponent} from './dashboard/dashboard-calendar-settings/dashboard-calendar-settings.component'
 
 @NgModule({
     declarations: [
@@ -173,7 +174,8 @@ import {StudentDashboardEvalsComponent} from './dashboard/student-dashboard/stud
         EvaluationVisualisationComponent,
         StudentDashboardApplicationComponent,
         StudentDashboardCalComponent,
-        StudentDashboardEvalsComponent
+        StudentDashboardEvalsComponent,
+        DashboardCalendarSettingsComponent
     ],
     imports: [
         BrowserModule,

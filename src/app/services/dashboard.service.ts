@@ -1,16 +1,17 @@
 import {Injectable} from '@angular/core'
-import {EmployeeDashboard, PassedEvaluation, StudentDashboard} from '../models/dashboard.model'
+import {DashboardEvaluationResult, DashboardGroupLabel, EmployeeDashboard, StudentDashboard} from '../models/dashboard.model'
 import {Observable} from 'rxjs'
-import {HttpService} from './http.service'
+import {atomicParams, HttpService} from './http.service'
 import {SemesterJSON} from '../models/semester.model'
 import {Employee, StudentAtom} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
 import {ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
 import {convertManyLabworks, convertManyReportCardEntriesAtom, convertManyScheduleEntries, mapSemesterJSON} from '../utils/http-utils'
-import {map, tap} from 'rxjs/operators'
-import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
+import {map} from 'rxjs/operators'
+import {LabworkAtomJSON} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
+import {applyFilter} from './http.filter'
 
 interface DashboardJSON {
     status: 'student' | 'employee'
@@ -27,9 +28,15 @@ interface StudentDashboardJSON extends DashboardJSON {
     user: StudentAtom
     labworks: LabworkAtomJSON[]
     labworkApplications: LabworkApplicationAtom[]
-    groups: { groupLabel: string, labwork: LabworkAtom }[]
+    groups: DashboardGroupLabel[]
     reportCardEntries: ReportCardEntryAtomJSON[]
-    passedEvaluations: PassedEvaluation[]
+    evaluationResults: DashboardEvaluationResult[]
+    scheduleEntries: ScheduleEntryAtomJSON[]
+}
+
+interface DashboardHttpFilter {
+    attribute: 'ownEntriesOnly'
+    value: string
 }
 
 @Injectable({
@@ -46,8 +53,8 @@ export class DashboardService {
         this.http.get_<StudentDashboardJSON>(this.path)
             .pipe(map(this.studentDashboardFromJSON))
 
-    getEmployeeDashboard = (): Observable<EmployeeDashboard> =>
-        this.http.get_<EmployeeDashboardJSON>(this.path)
+    getEmployeeDashboard = (...filter: DashboardHttpFilter[]): Observable<EmployeeDashboard> =>
+        this.http.get_<EmployeeDashboardJSON>(this.path, applyFilter(filter, atomicParams))
             .pipe(map(this.employeeDashboardFromJSON))
 
     private employeeDashboardFromJSON = (x: EmployeeDashboardJSON): EmployeeDashboard => ({
@@ -60,6 +67,7 @@ export class DashboardService {
         ...x,
         semester: mapSemesterJSON(x.semester),
         labworks: convertManyLabworks(x.labworks),
-        reportCardEntries: convertManyReportCardEntriesAtom(x.reportCardEntries)
+        reportCardEntries: convertManyReportCardEntriesAtom(x.reportCardEntries),
+        scheduleEntries: convertManyScheduleEntries(x.scheduleEntries)
     })
 }

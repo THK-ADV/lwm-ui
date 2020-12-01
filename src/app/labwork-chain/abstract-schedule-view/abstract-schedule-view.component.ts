@@ -2,7 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import listPlugin from '@fullcalendar/list'
 import {FullCalendarComponent} from '@fullcalendar/angular'
-import {CalendarView, eventTitle, makeBlacklistEvents, ScheduleEntryEvent, ScheduleEntryProps} from '../schedule/view/schedule-view-model'
+import {CalendarView, scheduleEntryEventTitle, makeBlacklistEvents, ScheduleEntryEvent, ScheduleEntryProps} from '../schedule/view/schedule-view-model'
 import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
 
@@ -59,7 +59,7 @@ export class AbstractScheduleViewComponent implements OnInit {
             const copy = {...d}
 
             if (copy.extendedProps) {
-                copy.title = eventTitle(view, copy.extendedProps)
+                copy.title = scheduleEntryEventTitle(view, copy.extendedProps)
             }
 
             return copy
