@@ -8,6 +8,10 @@ import {isInThePast, subscribe} from '../../utils/functions'
 import {DIALOG_WIDTH} from '../../shared-dialogs/dialog-constants'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {isDate} from '../../utils/type.check.utils'
+import {formatTime} from '../../utils/lwmdate-adapter'
+
+type DatePicked = 'candidate-date' | 'other-date' | 'none'
+type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
 
 @Component({
     selector: 'lwm-reschedule',
@@ -20,6 +24,13 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     readonly title: String
     readonly formGroup: FormGroup
     readonly dateControl: FormControl
+    readonly slotPickerControl: FormControl
+    readonly modes: ReschedulePickerMode[]
+
+    datePickedMode: DatePicked
+    reschedulePickerMode: ReschedulePickerMode
+
+    slots: RescheduleCandidate[]
 
     private subs: Subscription[]
     private rescheduleCandidates: RescheduleCandidate[]
@@ -43,10 +54,17 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         this.title = `Termin von ${fullUserName(this.payload[0].student)} verschieben`
         this.subs = []
         this.rescheduleCandidates = []
+        this.slots = []
+        this.datePickedMode = 'none'
+        this.reschedulePickerMode = 'none'
+        this.modes = ['pick-available', 'create-custom']
 
         this.dateControl = new FormControl(undefined, Validators.required)
+        this.slotPickerControl = new FormControl(undefined, Validators.required)
+
         this.formGroup = new FormGroup({
-            'date': this.dateControl
+            'date': this.dateControl,
+            'slotPicker': this.slotPickerControl,
         })
     }
 
@@ -64,8 +82,12 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     onCancel = () =>
         this.dialogRef.close()
 
-    onSubmit = () =>
-        this.dialogRef.close(42)
+    onSubmit = () => {
+        if (this.formGroup.valid) {
+            console.log(this.dateControl.value)
+            console.log(this.slotPickerControl.value)
+        }
+    }
 
     onDateChange = ($event: MatDatepickerInputEvent<unknown>) => {
         const date = $event.value
@@ -74,19 +96,41 @@ export class RescheduleComponent implements OnInit, OnDestroy {
             return
         }
 
-        const slots = this.rescheduleCandidates.filter(d => this.isSameDate(d.date, date))
+        this.slots = this.rescheduleCandidates.filter(d => this.isSameDate(d.date, date))
+        this.datePickedMode = this.slots.length > 0 ? 'candidate-date' : 'other-date'
+        this.reschedulePickerMode = 'none'
 
-        if (slots.length === 0) {
-            // chose own slots
-        } else {
-            // chose one of available slots
+        this.resetSlotPickerControls()
+    }
+
+    slotLabel = (slot: RescheduleCandidate): string => {
+        const start = formatTime(slot.start, 'HH:mm')
+        const end = formatTime(slot.end, 'HH:mm')
+        return `${start} - ${end} Uhr in ${slot.room.label}`
+    }
+
+    modeLabel = (mode: ReschedulePickerMode): string => {
+        switch (mode) {
+            case 'create-custom':
+                return 'Neuen Termin erstellen'
+            case 'pick-available':
+                return 'Aus verfügbaren Terminen wählen'
+            default:
+                return ''
         }
+    }
 
-        // this.selectionControl.setValue(this.slots[0]) // it is guaranteed that there is at least one slot
+    reschedulePickerModeDidChange = (mode: ReschedulePickerMode) => {
+        console.log(mode)
+        this.resetSlotPickerControls()
+    }
+
+    private resetSlotPickerControls = () => {
+        this.slotPickerControl.setValue(undefined)
     }
 
     private isSameDate = (lhs: Date, rhs: Date) =>
-        lhs.getMonth() === rhs.getMonth() && lhs.getDate() === rhs.getDate() // ???
+        lhs.getMonth() === rhs.getMonth() && lhs.getDate() === rhs.getDate()
 
     private reportCardEntry = () => this.payload[0]
 

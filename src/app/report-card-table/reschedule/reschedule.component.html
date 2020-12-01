@@ -17,9 +17,52 @@
             </mat-form-field>
         </mat-dialog-content>
 
+
+        <ng-container [ngSwitch]="datePickedMode">
+            <ng-container *ngSwitchCase="'candidate-date'">
+                <label id="example-radio-group-label">Termin wählen</label>
+                <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        (ngModelChange)="reschedulePickerModeDidChange($event)"
+                        [(ngModel)]="reschedulePickerMode"
+                        [ngModelOptions]="{standalone: true}">
+                    <mat-radio-button
+                            class="example-radio-button"
+                            *ngFor="let m of modes"
+                            [value]="m">
+                        {{modeLabel(m)}}
+                    </mat-radio-button>
+                </mat-radio-group>
+
+                <ng-container [ngSwitch]="reschedulePickerMode">
+                    <ng-container *ngSwitchCase="'pick-available'">
+                        <mat-form-field class="mat-form-field-modal" color="primary">
+                            <mat-label>Verfügbare Termine</mat-label>
+                            <mat-select [formControl]="slotPickerControl">
+                                <mat-option *ngFor="let slot of slots" [value]="slot">
+                                    {{slotLabel(slot)}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="'create-custom'">
+                        <p>create own - by own choice</p>
+                    </ng-container>
+                </ng-container>
+
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'other-date'">
+                <p>create own - because have to</p>
+            </ng-container>
+        </ng-container>
+
+
         <mat-dialog-actions>
             <button mat-flat-button (click)="onCancel()">Abbrechen</button>
-            <button mat-flat-button color="primary" cdkFocusInitial >Termin verschieben</button>
+            <button mat-flat-button color="primary" cdkFocusInitial>Termin verschieben</button>
         </mat-dialog-actions>
     </form>
 </div>
