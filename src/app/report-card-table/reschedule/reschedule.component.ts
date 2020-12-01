@@ -1,36 +1,35 @@
-import {Component, Inject, OnDestroy, OnInit, ViewChild} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
+import {MAT_DIALOG_DATA, MatCalendarCellCssClasses, MatDatepickerInputEvent, MatDialog, MatDialogRef} from '@angular/material'
 import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
 import {fullUserName} from '../../utils/component.utils'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import {FullCalendarComponent} from '@fullcalendar/angular'
-import {color, whiteColor} from '../../utils/colors'
-import {Time} from '../../models/time.model'
-import {ScheduleEntryEvent} from '../../labwork-chain/schedule/view/schedule-view-model'
-import {ReportCardEntryService} from '../../services/report-card-entry.service'
-import {subscribe} from '../../utils/functions'
+import {ReportCardEntryService, RescheduleCandidate} from '../../services/report-card-entry.service'
 import {Subscription} from 'rxjs'
+import {isInThePast, subscribe} from '../../utils/functions'
+import {DIALOG_WIDTH} from '../../shared-dialogs/dialog-constants'
+import {FormControl, FormGroup, Validators} from '@angular/forms'
+import {isDate} from '../../utils/type.check.utils'
 
 @Component({
     selector: 'lwm-reschedule',
     templateUrl: './reschedule.component.html',
-    styleUrls: ['./reschedule.component.scss']
+    styleUrls: ['./reschedule.component.scss'],
+    encapsulation: ViewEncapsulation.None,
 })
 export class RescheduleComponent implements OnInit, OnDestroy {
 
-    readonly calendarPlugins = [dayGridPlugin]
-    @ViewChild('calendar') calendar: FullCalendarComponent
+    readonly title: String
+    readonly formGroup: FormGroup
+    readonly dateControl: FormControl
 
-    dates: ScheduleEntryEvent<never>[] = []
-    private subs: Subscription[] = []
+    private subs: Subscription[]
+    private rescheduleCandidates: RescheduleCandidate[]
 
     static instance(
         dialog: MatDialog,
         e: ReportCardEntryAtom
     ): MatDialogRef<RescheduleComponent> {
         return dialog.open<RescheduleComponent>(RescheduleComponent, {
-            minWidth: '800px',
-            minHeight: '600px',
+            width: DIALOG_WIDTH,
             data: [e],
             panelClass: 'lwmCreateUpdateDialog'
         })
@@ -38,52 +37,68 @@ export class RescheduleComponent implements OnInit, OnDestroy {
 
     constructor(
         private dialogRef: MatDialogRef<RescheduleComponent>,
-        private service: ReportCardEntryService,
+        private reportCardEntryService: ReportCardEntryService,
         @Inject(MAT_DIALOG_DATA) public payload: [ReportCardEntryAtom]
     ) {
+        this.title = `Termin von ${fullUserName(this.payload[0].student)} verschieben`
+        this.subs = []
+        this.rescheduleCandidates = []
+
+        this.dateControl = new FormControl(undefined, Validators.required)
+        this.formGroup = new FormGroup({
+            'date': this.dateControl
+        })
     }
 
     ngOnInit(): void {
-        const current = this.reportCardEntry()
-
-        this.subs.push(subscribe(
-            this.service.getAllWithFilter(current.labwork.course),
-            xs => this.dates = xs
-                .map(x => this.makeEvent(x, current.id === x.id)))
-        )
+        this.fetchRescheduleCandidates()
     }
 
     ngOnDestroy(): void {
-        this.subs.forEach(_ => _.unsubscribe())
+        this.subs.forEach(_ => _.unsubscribe)
     }
 
-    cancel = () =>
+    dateCSSClass = (d: Date): MatCalendarCellCssClasses =>
+        this.rescheduleCandidates.find(_ => this.isSameDate(_.date, d)) ? 'example-custom-date-class' : ''
+
+    onCancel = () =>
         this.dialogRef.close()
 
-    confirm = () =>
+    onSubmit = () =>
         this.dialogRef.close(42)
 
-    title = () =>
-        `Termin von ${fullUserName(this.payload[0].student)} verschieben`
+    onDateChange = ($event: MatDatepickerInputEvent<unknown>) => {
+        const date = $event.value
 
-    earliestDate = () =>
-        this.reportCardEntry().date
+        if (!isDate(date)) {
+            return
+        }
+
+        const slots = this.rescheduleCandidates.filter(d => this.isSameDate(d.date, date))
+
+        if (slots.length === 0) {
+            // chose own slots
+        } else {
+            // chose one of available slots
+        }
+
+        // this.selectionControl.setValue(this.slots[0]) // it is guaranteed that there is at least one slot
+    }
+
+    private isSameDate = (lhs: Date, rhs: Date) =>
+        lhs.getMonth() === rhs.getMonth() && lhs.getDate() === rhs.getDate() // ???
 
     private reportCardEntry = () => this.payload[0]
 
-    private makeEvent = (e: ReportCardEntryAtom, current: boolean): ScheduleEntryEvent<never> => {
-        const backgroundColor = current ? color('primary') : color('accent')
-        const borderColor = current ? 'black' : color('accent')
-        const foregroundColor = whiteColor()
+    private fetchRescheduleCandidates = () => {
+        const labwork = this.reportCardEntry().labwork
 
-        return {
-            allDay: false,
-            start: Time.withNewDate(e.date, e.start).date,
-            end: Time.withNewDate(e.date, e.end).date,
-            title: `${e.assignmentIndex + 1}. ${e.label} - ${e.room.label}`,
-            borderColor: borderColor,
-            backgroundColor: backgroundColor,
-            textColor: foregroundColor,
-        }
+        const filterPastDates = (xs: RescheduleCandidate[]) =>
+            xs.filter(x => isInThePast(x.date))
+
+        this.subs.push(subscribe(
+            this.reportCardEntryService.rescheduleCandidates(labwork.course, labwork.semester),
+            xs => this.rescheduleCandidates = filterPastDates(xs)
+        ))
     }
 }

@@ -1,27 +1,26 @@
-<h1 mat-dialog-title>{{title()}}</h1>
+<h1 mat-dialog-title>{{title}}</h1>
 
-<mat-dialog-content>
-    <full-calendar
-            defaultView="dayGridMonth"
-            #calendar
-            [plugins]="calendarPlugins"
-            [locale]="'de'"
-            [nowIndicator]=false
-            [weekends]="false"
-            [firstDay]=1
-            [allDaySlot]=false
-            [columnHeaderFormat]="{ weekday: 'long' }"
-            [eventTimeFormat]="{ hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false }"
-            [events]="dates"
-            [weekNumbers]=true
-            [displayEventEnd]="true"
-            [weekNumbersWithinDays]=true
-            [defaultDate]="earliestDate()">
-    </full-calendar>
+<div class="modalContainer">
+    <form (submit)="onSubmit()">
+        <mat-dialog-content [formGroup]="formGroup">
+            <mat-form-field class="mat-form-field-modal" color="primary">
+                <div class="lwmDatepicker">
+                    <input matInput readonly
+                           [matDatepicker]="dp"
+                           [placeholder]="'Datum'"
+                           [formControl]="dateControl"
+                           (click)="dp.open()"
+                           (dateChange)="onDateChange($event)">
+                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                </div>
+                <mat-datepicker [dateClass]="dateCSSClass" #dp color="primary"></mat-datepicker>
+            </mat-form-field>
+        </mat-dialog-content>
 
-</mat-dialog-content>
+        <mat-dialog-actions>
+            <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+            <button mat-flat-button color="primary" cdkFocusInitial >Termin verschieben</button>
+        </mat-dialog-actions>
+    </form>
+</div>
 
-<mat-dialog-actions>
-    <button mat-flat-button (click)="cancel()">Abbrechen</button>
-    <button mat-flat-button color="primary" cdkFocusInitial (click)="confirm()">Termin verschieben</button>
-</mat-dialog-actions>
