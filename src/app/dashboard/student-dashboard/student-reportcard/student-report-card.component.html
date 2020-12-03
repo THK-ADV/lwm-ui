@@ -2,6 +2,8 @@
     <lwm-abstract-header *ngIf="cards.length > 0" [headerTitle]="headerTitle(cards[0])"></lwm-abstract-header>
 
     <lwm-report-card-table
+            [reschedulePresentationStrategy]="reschedulePresentationStrategy"
+            [allowRescheduling]="false"
             [tableModel]="tableModelFor(cards)"
             [tableContentFor]="tableContentFor"
             [auths]="[]">

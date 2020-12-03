@@ -35,6 +35,11 @@ export class Time {
         date = new Date(date.setHours(time.hour, time.minute, time.seconds))
         return this.fromDate(date)
     }
+
+    equals = (that: Time): boolean =>
+        this.hour === that.hour &&
+        this.minute === that.minute &&
+        this.seconds === that.seconds
 }
 
 export const isNumber = (value: any): value is number => !isNaN(value)

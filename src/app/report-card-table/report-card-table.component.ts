@@ -18,6 +18,22 @@ export interface ReportCardTableModel {
     columns: TableHeaderColumn[]
 }
 
+export interface RescheduleViewStrategy {
+    kind: 'view'
+    attrsAffectedByReschedule: string[]
+    rescheduleReasonAttr: string
+    indexAttr: string
+    rescheduledContentFor: (e: Readonly<ReportCardRescheduledAtom>, attr: string) => string
+}
+
+export interface RescheduleFromIntoStrategy {
+    kind: 'from_into'
+    indexAttr: string
+    isInto: (e: Readonly<ReportCardEntryAtom>) => boolean
+}
+
+export type ReschedulePresentationStrategy = RescheduleViewStrategy | RescheduleFromIntoStrategy
+
 @Component({
     selector: 'lwm-report-card-table',
     templateUrl: './report-card-table.component.html',
@@ -25,13 +41,12 @@ export interface ReportCardTableModel {
 })
 export class ReportCardTableComponent implements OnInit, OnDestroy {
 
-    @Input() attrsAffectedByReschedule: string[]
-    @Input() rescheduleReasonAttr: string
-    @Input() indexAttr: string
+    @Input() allowRescheduling: boolean
+    @Input() reschedulePresentationStrategy: ReschedulePresentationStrategy
+
     @Input() tableModel: ReportCardTableModel
     @Input() auths: Readonly<AuthorityAtom[]>
     @Input() tableContentFor: (e: Readonly<ReportCardEntryAtom>, attr: string) => string
-    @Input() rescheduledContentFor: (e: Readonly<ReportCardRescheduledAtom>, attr: string) => string
 
     canReschedule: boolean
     canApprove: boolean
@@ -46,14 +61,13 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         this.displayedColumns = []
         this.subs = []
         this.tableContentFor = (e, attr) => e[attr]
-        this.rescheduledContentFor = (e, attr) => e[attr]
-        this.attrsAffectedByReschedule = []
-        this.rescheduleReasonAttr = ''
-        this.indexAttr = ''
+        this.allowRescheduling = false
     }
 
     ngOnInit() {
-        this.canReschedule = this.hasReschedulePermission(this.auths)
+        console.assert(this.reschedulePresentationStrategy !== undefined)
+
+        this.canReschedule = this.allowRescheduling && this.hasReschedulePermission(this.auths)
         this.canApprove = this.hasApprovalPermission(this.auths)
 
         const c = this.tableModel.columns.map(_ => _.attr)
@@ -91,6 +105,18 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     canPerformRescheduleAction = (e: ReportCardEntryAtom) =>
         this.canReschedule && e.rescheduled === undefined
 
-    isAffectedByRescheduled = (e: ReportCardEntryAtom, attr: string): boolean =>
-        e.rescheduled !== undefined && this.attrsAffectedByReschedule.includes(attr)
+    isRescheduled = (e: ReportCardEntryAtom) =>
+        e.rescheduled !== undefined
+
+    isAffectedByRescheduled = (s: RescheduleViewStrategy, attr: string): boolean =>
+        s.attrsAffectedByReschedule.includes(attr)
+
+    isInto = (e: ReportCardEntryAtom): boolean =>
+        this.reschedulePresentationStrategy.kind === 'from_into' && this.reschedulePresentationStrategy.isInto(e)
+
+    canSeeApprovals = (e: ReportCardEntryAtom): boolean =>
+        this.isInto(e) || // is either rescheduled into an schedule entry
+        this.reschedulePresentationStrategy.kind === 'view' || // or presented in report card entry view
+        !this.isRescheduled(e) // or is presented as a normal member within a schedule entry
+
 }

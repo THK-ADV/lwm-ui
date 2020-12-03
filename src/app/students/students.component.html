@@ -32,13 +32,11 @@
                     <ng-template matExpansionPanelContent>
                         <ng-container>
                             <lwm-report-card-table
-                                    [indexAttr]="'assignmentIndex'"
-                                    [rescheduleReasonAttr]="'label'"
-                                    [attrsAffectedByReschedule]="attrsAffectedByReschedule()"
+                                    [reschedulePresentationStrategy]="reschedulePresentationStrategy"
+                                    [allowRescheduling]="true"
                                     [tableModel]="dataSources.get(panel)"
                                     [auths]="auths"
-                                    [tableContentFor]="tableContentFor"
-                                    [rescheduledContentFor]="rescheduledContentFor">
+                                    [tableContentFor]="tableContentFor">
                             </lwm-report-card-table>
                         </ng-container>
                     </ng-template>

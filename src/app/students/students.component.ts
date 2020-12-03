@@ -17,7 +17,7 @@ import {MatTableDataSource} from '@angular/material'
 import {AuthorityAtom} from '../models/authority.model'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
-import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
+import {ReportCardTableModel, ReschedulePresentationStrategy} from '../report-card-table/report-card-table.component'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 import {isStudentAtom} from '../utils/type.check.utils'
 import {SemesterService} from '../services/semester.service'
@@ -68,6 +68,33 @@ class DataSource {
         this.dataSources[this.uniqueIdentifier(entry)] = model
 }
 
+export const defaultStudentReschedulePresentationStrategy = (): ReschedulePresentationStrategy => (
+    {
+        kind: 'view',
+        attrsAffectedByReschedule: [
+            'date', 'start', 'end', 'room.label', 'label', 'assignmentIndex'
+        ],
+        indexAttr: 'assignmentIndex',
+        rescheduleReasonAttr: 'label',
+        rescheduledContentFor: (e: ReportCardRescheduledAtom, attr: string) => {
+            switch (attr) {
+                case 'date':
+                    return format(e.date, 'dd.MM.yyyy')
+                case 'start':
+                    return formatTime(e.start, 'HH:mm')
+                case 'end':
+                    return formatTime(e.end, 'HH:mm')
+                case 'room.label':
+                    return e.room.label
+                case 'label':
+                    return e.reason ?? 'Kein Grund angegeben'
+                default:
+                    return ''
+            }
+        }
+    }
+)
+
 @Component({
     selector: 'lwm-students',
     templateUrl: './students.component.html',
@@ -85,6 +112,7 @@ export class StudentsComponent implements OnInit, OnDestroy {
         this.auths = userAuths(route)
         this.dataSources = new DataSource()
         this.canReschedule = false
+        this.reschedulePresentationStrategy = defaultStudentReschedulePresentationStrategy()
     }
 
     accordions$: Observable<AccordionViewModel[]>
@@ -94,6 +122,7 @@ export class StudentsComponent implements OnInit, OnDestroy {
     currentSemester: Semester
     auths: AuthorityAtom[] = []
     dataSources: DataSource
+    readonly reschedulePresentationStrategy: ReschedulePresentationStrategy
 
     private sub: Subscription
 
@@ -266,27 +295,6 @@ export class StudentsComponent implements OnInit, OnDestroy {
                 return e[attr]
         }
     }
-
-    rescheduledContentFor = (e: ReportCardRescheduledAtom, attr: string) => {
-        switch (attr) {
-            case 'date':
-                return format(e.date, 'dd.MM.yyyy')
-            case 'start':
-                return formatTime(e.start, 'HH:mm')
-            case 'end':
-                return formatTime(e.end, 'HH:mm')
-            case 'room.label':
-                return e.room.label
-            case 'label':
-                return e.reason ?? 'Kein Grund angegeben'
-            default:
-                return ''
-        }
-    }
-
-    attrsAffectedByReschedule = (): string[] => [
-        'date', 'start', 'end', 'room.label', 'label', 'assignmentIndex'
-    ]
 
     expandIfCurrentSemester = (p: PanelViewModel): boolean => {
         if (p.isCurrentSemester) {

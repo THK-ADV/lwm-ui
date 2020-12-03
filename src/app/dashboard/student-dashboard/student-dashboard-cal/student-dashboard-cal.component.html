@@ -3,7 +3,7 @@
 <ng-container *ngIf="hasCalendarEntries(); else noAppointments">
     <lwm-dashboard-calendar
             [semester]="semester"
-            [makeCalendarEvents]="calendarEvents"
+            [scheduleEntryEvents]="calendarEvents()"
             [eventTitleFor]="eventTitleFor"
             (eventClickEmitter)="onEventClick($event)">
     </lwm-dashboard-calendar>
