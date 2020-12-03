@@ -17,6 +17,14 @@
             </mat-form-field>
         </mat-dialog-content>
 
+        <mat-form-field class="mat-form-field-modal" color="primary">
+            <mat-label>Grund</mat-label>
+            <mat-select [formControl]="reasonControl">
+                <mat-option *ngFor="let reason of reasons" [value]="reason">
+                    {{reason}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
 
         <ng-container [ngSwitch]="datePickedMode">
             <ng-container *ngSwitchCase="'candidate-date'">

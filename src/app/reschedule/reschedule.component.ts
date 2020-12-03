@@ -13,6 +13,7 @@ import {resetControl} from '../utils/form-control-utils'
 import {ReportCardRescheduledProtocol} from '../models/report-card-rescheduled.model'
 import {RescheduleService} from '../services/reschedule.service'
 import {Time} from '../models/time.model'
+import {Room} from '../models/room.model'
 
 type DatePicked = 'candidate-date' | 'other-date' | 'none'
 type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
@@ -29,8 +30,10 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     readonly title: String
     readonly formGroup: FormGroup
     readonly dateControl: FormControl
+    readonly reasonControl: FormControl
     readonly slotPickerControl: FormControl
     readonly modes: ReschedulePickerMode[]
+    readonly reasons: string[]
 
     datePickedMode: DatePicked
     reschedulePickerMode: ReschedulePickerMode
@@ -64,13 +67,21 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         this.datePickedMode = 'none'
         this.reschedulePickerMode = 'none'
         this.modes = ['pick-available', 'create-custom']
+        this.reasons = [
+            'Krankheit',
+            'Terminkollision',
+            'Privat',
+            'Sonstiges'
+        ]
 
         this.dateControl = new FormControl(undefined, Validators.required)
         this.slotPickerControl = new FormControl(undefined, Validators.required)
+        this.reasonControl = new FormControl(undefined, Validators.required)
 
         this.formGroup = new FormGroup({
             'date': this.dateControl,
             'slotPicker': this.slotPickerControl,
+            'reason': this.reasonControl
         })
     }
 
@@ -92,10 +103,28 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         const isValid = (fc: FormControl): boolean =>
             fc.errors !== undefined
 
-        const createOwn = () => 1
+        const createOwn = () => {
+            const start = this.formGroup.controls['start']
+            const end = this.formGroup.controls['end']
+            const room = this.formGroup.controls['room']
+
+            if (![this.dateControl, this.reasonControl, start, end, room].every(isValid)) {
+                return
+            }
+
+            const date = this.dateControl.value as Date
+            const protocol = this.createProtocol(
+                (room.value as Room).id,
+                date,
+                Time.fromTimeString(start.value, date),
+                Time.fromTimeString(end.value, date),
+                this.reasonControl.value
+            )
+            this.reschedule(protocol)
+        }
 
         const createFromPick = () => {
-            if (![this.dateControl, this.slotPickerControl].every(isValid)) {
+            if (![this.dateControl, this.slotPickerControl, this.reasonControl].every(isValid)) {
                 return
             }
 
@@ -104,8 +133,10 @@ export class RescheduleComponent implements OnInit, OnDestroy {
                 candidate.room.id,
                 candidate.date,
                 candidate.start,
-                candidate.end
+                candidate.end,
+                this.reasonControl.value
             )
+
             this.reschedule(protocol)
         }
 
@@ -165,10 +196,10 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     reschedulePickerModeDidChange = (mode: ReschedulePickerMode) =>
         this.resetSlotPickerControls()
 
-    private createProtocol = (room: string, date: Date, start: Time, end: Time): ReportCardRescheduledProtocol =>
+    private createProtocol = (room: string, date: Date, start: Time, end: Time, reason: string): ReportCardRescheduledProtocol =>
         ({
             reportCardEntry: this.reportCardEntry().id,
-            reason: 'Krank', // TODO let the user chose the reason
+            reason: reason,
             room: room,
             date: format(date, 'yyyy-MM-dd'),
             start: formatTime(start, 'HH:mm:ss'),
