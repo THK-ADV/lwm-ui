@@ -22,8 +22,6 @@ import {first, foldUndefined} from '../utils/functions'
     styleUrls: ['./schedule-entry.component.scss']
 })
 export class ScheduleEntryComponent implements OnInit {
-    // TODO support rescheduled entries
-
     data$: Observable<[Readonly<ReportCardEntryAtom[]>, Readonly<ScheduleEntryAtom>]>
 
     constructor(
