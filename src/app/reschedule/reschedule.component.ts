@@ -8,8 +8,11 @@ import {isInThePast, subscribe} from '../utils/functions'
 import {DIALOG_WIDTH} from '../shared-dialogs/dialog-constants'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {isDate} from '../utils/type.check.utils'
-import {formatTime} from '../utils/lwmdate-adapter'
+import {format, formatTime, LWMDateAdapter} from '../utils/lwmdate-adapter'
 import {resetControl} from '../utils/form-control-utils'
+import {ReportCardRescheduledProtocol} from '../models/report-card-rescheduled.model'
+import {RescheduleService} from '../services/reschedule.service'
+import {Time} from '../models/time.model'
 
 type DatePicked = 'candidate-date' | 'other-date' | 'none'
 type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
@@ -18,6 +21,7 @@ type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
     selector: 'lwm-reschedule',
     templateUrl: './reschedule.component.html',
     styleUrls: ['./reschedule.component.scss'],
+    providers: LWMDateAdapter.defaultProviders(),
     encapsulation: ViewEncapsulation.None,
 })
 export class RescheduleComponent implements OnInit, OnDestroy {
@@ -39,20 +43,21 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     static instance(
         dialog: MatDialog,
         e: ReportCardEntryAtom
-    ): MatDialogRef<RescheduleComponent> {
+    ): MatDialogRef<RescheduleComponent, ReportCardEntryAtom> {
         return dialog.open<RescheduleComponent>(RescheduleComponent, {
-            width: DIALOG_WIDTH,
+            minWidth: DIALOG_WIDTH,
             data: [e],
             panelClass: 'lwmCreateUpdateDialog'
         })
     }
 
     constructor(
-        private dialogRef: MatDialogRef<RescheduleComponent>,
+        private dialogRef: MatDialogRef<RescheduleComponent, ReportCardEntryAtom>,
         private reportCardEntryService: ReportCardEntryService,
+        private rescheduleService: RescheduleService,
         @Inject(MAT_DIALOG_DATA) public payload: [ReportCardEntryAtom]
     ) {
-        this.title = `Termin von ${fullUserName(this.payload[0].student)} verschieben`
+        this.title = `Termin ${this.payload[0].assignmentIndex + 1} (${this.payload[0].label}) von ${fullUserName(this.payload[0].student)} verschieben`
         this.subs = []
         this.rescheduleCandidates = []
         this.slots = []
@@ -94,10 +99,14 @@ export class RescheduleComponent implements OnInit, OnDestroy {
                 return
             }
 
-            const date = this.dateControl.value as Date
-            const candidate = this.dateControl.value as RescheduleCandidate
-
-
+            const candidate = this.slotPickerControl.value as RescheduleCandidate
+            const protocol = this.createProtocol(
+                candidate.room.id,
+                candidate.date,
+                candidate.start,
+                candidate.end
+            )
+            this.reschedule(protocol)
         }
 
         switch (this.datePickedMode) {
@@ -119,22 +128,6 @@ export class RescheduleComponent implements OnInit, OnDestroy {
             case 'none':
                 break
         }
-
-        if (this.formGroup.valid) {
-            console.log('valid')
-        } else {
-            console.error('invalid')
-        }
-
-        Object.keys(this.formGroup.controls).forEach(k => {
-            console.log('control: ', k)
-
-            if (this.formGroup.controls[k].errors) {
-                console.error('errors: ', this.formGroup.controls[k].errors)
-            }
-
-            console.log('values: ', this.formGroup.controls[k].value)
-        })
     }
 
     onDateChange = ($event: MatDatepickerInputEvent<unknown>) => {
@@ -171,6 +164,23 @@ export class RescheduleComponent implements OnInit, OnDestroy {
 
     reschedulePickerModeDidChange = (mode: ReschedulePickerMode) =>
         this.resetSlotPickerControls()
+
+    private createProtocol = (room: string, date: Date, start: Time, end: Time): ReportCardRescheduledProtocol =>
+        ({
+            reportCardEntry: this.reportCardEntry().id,
+            reason: 'Krank', // TODO let the user chose the reason
+            room: room,
+            date: format(date, 'yyyy-MM-dd'),
+            start: formatTime(start, 'HH:mm:ss'),
+            end: formatTime(end, 'HH:mm:ss')
+        })
+
+    private reschedule = (protocol: ReportCardRescheduledProtocol) => {
+        this.subs.push(subscribe(
+            this.rescheduleService.create(this.reportCardEntry().labwork.course, protocol),
+            res => this.dialogRef.close({...this.reportCardEntry(), rescheduled: res})
+        ))
+    }
 
     private resetSlotPickerControls = () =>
         resetControl(this.slotPickerControl)

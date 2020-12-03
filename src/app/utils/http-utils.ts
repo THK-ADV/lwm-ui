@@ -8,6 +8,7 @@ import {LabworkAtom, LabworkAtomJSON} from '../models/labwork.model'
 import {ReportCardEntryAtom, ReportCardEntryAtomJSON, ReportCardEntryJSON} from '../models/report-card-entry.model'
 import {ReportCardEvaluationAtom, ReportCardEvaluationAtomJSON} from '../models/report-card-evaluation'
 import {ReportCardEntry} from '../services/lwm.service'
+import {ReportCardRescheduledAtom, ReportCardRescheduledAtomJSON} from '../models/report-card-rescheduled.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 
@@ -94,6 +95,7 @@ export const mapReportCardEntryAtomJSON = (x: ReportCardEntryAtomJSON): ReportCa
 
     return {
         ...x,
+        rescheduled: x.rescheduled && mapReportCardRescheduledAtomJSON(x.rescheduled),
         date: date,
         start: Time.fromTimeString(x.start, date),
         end: Time.fromTimeString(x.end, date)
@@ -101,6 +103,17 @@ export const mapReportCardEntryAtomJSON = (x: ReportCardEntryAtomJSON): ReportCa
 }
 
 export const mapReportCardEntryJSON = (x: ReportCardEntryJSON): ReportCardEntry => {
+    const date = new Date(x.date)
+
+    return {
+        ...x,
+        date: date,
+        start: Time.fromTimeString(x.start, date),
+        end: Time.fromTimeString(x.end, date)
+    }
+}
+
+export const mapReportCardRescheduledAtomJSON = (x: ReportCardRescheduledAtomJSON): ReportCardRescheduledAtom => {
     const date = new Date(x.date)
 
     return {

@@ -24,6 +24,7 @@ import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
 import {EntryType} from '../models/assignment-plan.model'
 import {dropLast} from '../utils/string-utils'
+import {ReportCardRescheduledAtom} from '../models/report-card-rescheduled.model'
 
 export interface PanelViewModel {
     labwork: LabworkAtom,
@@ -265,6 +266,27 @@ export class StudentsComponent implements OnInit, OnDestroy {
                 return e[attr]
         }
     }
+
+    rescheduledContentFor = (e: ReportCardRescheduledAtom, attr: string) => {
+        switch (attr) {
+            case 'date':
+                return format(e.date, 'dd.MM.yyyy')
+            case 'start':
+                return formatTime(e.start, 'HH:mm')
+            case 'end':
+                return formatTime(e.end, 'HH:mm')
+            case 'room.label':
+                return e.room.label
+            case 'label':
+                return e.reason ?? 'Kein Grund angegeben'
+            default:
+                return ''
+        }
+    }
+
+    attrsAffectedByReschedule = (): string[] => [
+        'date', 'start', 'end', 'room.label', 'label', 'assignmentIndex'
+    ]
 
     expandIfCurrentSemester = (p: PanelViewModel): boolean => {
         if (p.isCurrentSemester) {

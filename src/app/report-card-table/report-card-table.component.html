@@ -25,7 +25,31 @@
                                         [attr]="column.attr"
                                         [canApprove]="canApprove">
             </lwm-entry-type-bonus-field>
-            <span *ngSwitchDefault>{{tableContentFor(e, column.attr)}}</span>
+
+            <ng-container *ngIf="isAffectedByRescheduled(e, column.attr); else standardCell">
+                <ng-container *ngSwitchCase="rescheduleReasonAttr">
+                    <p>Grund: {{rescheduledContentFor(e.rescheduled, column.attr)}}</p>
+                    <p>{{tableContentFor(e, column.attr)}}</p>
+                </ng-container>
+
+                <ng-container *ngSwitchCase="indexAttr">
+                    <p>{{tableContentFor(e, column.attr)}}</p>
+                    <p>
+                        <mat-icon color="primary">repeat</mat-icon>
+                    </p>
+                </ng-container>
+
+                <ng-container *ngSwitchDefault>
+                    <p>
+                        <del>{{tableContentFor(e, column.attr)}}</del>
+                    </p>
+                    <p>{{rescheduledContentFor(e.rescheduled, column.attr)}}</p>
+                </ng-container>
+            </ng-container>
+
+            <ng-template #standardCell>
+                <span>{{tableContentFor(e, column.attr)}}</span>
+            </ng-template>
         </td>
     </ng-container>
 
@@ -35,7 +59,7 @@
             <button mat-stroked-button
                     color="primary"
                     (click)="reschedule(element)"
-                    *ngIf="canReschedule"
+                    *ngIf="canPerformRescheduleAction(element)"
                     matTooltip="Termin verschieben"
                     matTooltipPosition="above">
                 <mat-icon>update</mat-icon>
