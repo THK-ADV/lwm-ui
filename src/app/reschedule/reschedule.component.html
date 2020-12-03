@@ -29,6 +29,7 @@
                         [ngModelOptions]="{standalone: true}">
                     <mat-radio-button
                             class="example-radio-button"
+                            color="primary"
                             *ngFor="let m of modes"
                             [value]="m">
                         {{modeLabel(m)}}
@@ -48,14 +49,16 @@
                     </ng-container>
 
                     <ng-container *ngSwitchCase="'create-custom'">
-                        <p>create own - by own choice</p>
+                        <lwm-reschedule-create-own [fg]="formGroup">
+                        </lwm-reschedule-create-own>
                     </ng-container>
                 </ng-container>
 
             </ng-container>
 
             <ng-container *ngSwitchCase="'other-date'">
-                <p>create own - because have to</p>
+                <lwm-reschedule-create-own [fg]="formGroup">
+                </lwm-reschedule-create-own>
             </ng-container>
         </ng-container>
 

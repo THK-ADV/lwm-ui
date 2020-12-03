@@ -6,7 +6,7 @@ import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
 import {openDialog} from '../shared-dialogs/dialog-open-combinator'
-import {RescheduleComponent} from './reschedule/reschedule.component'
+import {RescheduleComponent} from '../reschedule/reschedule.component'
 import {of, Subscription} from 'rxjs'
 import {subscribe} from '../utils/functions'
 

@@ -1,0 +1,28 @@
+<mat-form-field class="mat-form-field-modal" color="primary">
+    <mat-label>Startzeit</mat-label>
+    <input matInput [placeholder]="'09:00'" [type]="'time'"
+           [formControl]="startTimeControl">
+</mat-form-field>
+<mat-error *ngIf="hasError(startTimeControl)">{{getErrorMessage(startTimeControl)}}
+</mat-error>
+
+<mat-form-field class="mat-form-field-modal" color="primary">
+    <mat-label>Endzeit</mat-label>
+    <input matInput [placeholder]="'11:00'" [type]="'time'"
+           [formControl]="endTimeControl">
+</mat-form-field>
+<mat-error *ngIf="hasError(endTimeControl)">{{getErrorMessage(endTimeControl)}}
+</mat-error>
+
+<ng-container *ngIf="rooms$ | async as rooms">
+    <mat-form-field class="mat-form-field-modal" color="primary">
+        <mat-label>Raum</mat-label>
+        <mat-select [formControl]="roomControl">
+            <mat-option *ngFor="let room of rooms" [value]="room">
+                {{room.label}}
+            </mat-option>
+        </mat-select>
+    </mat-form-field>
+    <mat-error *ngIf="hasError(roomControl)">{{getErrorMessage(roomControl)}}
+    </mat-error>
+</ng-container>

@@ -1,14 +1,15 @@
 import {Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
 import {MAT_DIALOG_DATA, MatCalendarCellCssClasses, MatDatepickerInputEvent, MatDialog, MatDialogRef} from '@angular/material'
-import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
-import {fullUserName} from '../../utils/component.utils'
-import {ReportCardEntryService, RescheduleCandidate} from '../../services/report-card-entry.service'
+import {ReportCardEntryAtom} from '../models/report-card-entry.model'
+import {fullUserName} from '../utils/component.utils'
+import {ReportCardEntryService, RescheduleCandidate} from '../services/report-card-entry.service'
 import {Subscription} from 'rxjs'
-import {isInThePast, subscribe} from '../../utils/functions'
-import {DIALOG_WIDTH} from '../../shared-dialogs/dialog-constants'
+import {isInThePast, subscribe} from '../utils/functions'
+import {DIALOG_WIDTH} from '../shared-dialogs/dialog-constants'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
-import {isDate} from '../../utils/type.check.utils'
-import {formatTime} from '../../utils/lwmdate-adapter'
+import {isDate} from '../utils/type.check.utils'
+import {formatTime} from '../utils/lwmdate-adapter'
+import {resetControl} from '../utils/form-control-utils'
 
 type DatePicked = 'candidate-date' | 'other-date' | 'none'
 type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
@@ -83,10 +84,57 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         this.dialogRef.close()
 
     onSubmit = () => {
-        if (this.formGroup.valid) {
-            console.log(this.dateControl.value)
-            console.log(this.slotPickerControl.value)
+        const isValid = (fc: FormControl): boolean =>
+            fc.errors !== undefined
+
+        const createOwn = () => 1
+
+        const createFromPick = () => {
+            if (![this.dateControl, this.slotPickerControl].every(isValid)) {
+                return
+            }
+
+            const date = this.dateControl.value as Date
+            const candidate = this.dateControl.value as RescheduleCandidate
+
+
         }
+
+        switch (this.datePickedMode) {
+            case 'other-date':
+                createOwn()
+                break
+            case 'candidate-date':
+                switch (this.reschedulePickerMode) {
+                    case 'pick-available':
+                        createFromPick()
+                        break
+                    case 'create-custom':
+                        createOwn()
+                        break
+                    case 'none':
+                        break
+                }
+                break
+            case 'none':
+                break
+        }
+
+        if (this.formGroup.valid) {
+            console.log('valid')
+        } else {
+            console.error('invalid')
+        }
+
+        Object.keys(this.formGroup.controls).forEach(k => {
+            console.log('control: ', k)
+
+            if (this.formGroup.controls[k].errors) {
+                console.error('errors: ', this.formGroup.controls[k].errors)
+            }
+
+            console.log('values: ', this.formGroup.controls[k].value)
+        })
     }
 
     onDateChange = ($event: MatDatepickerInputEvent<unknown>) => {
@@ -100,6 +148,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         this.datePickedMode = this.slots.length > 0 ? 'candidate-date' : 'other-date'
         this.reschedulePickerMode = 'none'
 
+        // slot picker is not required if user chooses custom slots
         this.resetSlotPickerControls()
     }
 
@@ -120,14 +169,11 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         }
     }
 
-    reschedulePickerModeDidChange = (mode: ReschedulePickerMode) => {
-        console.log(mode)
+    reschedulePickerModeDidChange = (mode: ReschedulePickerMode) =>
         this.resetSlotPickerControls()
-    }
 
-    private resetSlotPickerControls = () => {
-        this.slotPickerControl.setValue(undefined)
-    }
+    private resetSlotPickerControls = () =>
+        resetControl(this.slotPickerControl)
 
     private isSameDate = (lhs: Date, rhs: Date) =>
         lhs.getMonth() === rhs.getMonth() && lhs.getDate() === rhs.getDate()

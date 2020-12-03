@@ -83,7 +83,7 @@ import {BlacklistComponent} from './blacklist/blacklist.component'
 import {SafeHtmlPipe} from './pipe/safe-html.pipe'
 import {LabworkApplicationComponent} from './labwork-application/labwork-application.component'
 import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
-import {RescheduleComponent} from './report-card-table/reschedule/reschedule.component'
+import {RescheduleComponent} from './reschedule/reschedule.component'
 import {ApplicationListComponent} from './application-list/application-list.component'
 import {StudentCreateApplicationComponent} from './application-list/student-create-application/student-create-application.component'
 import {DashboardCalendarComponent} from './dashboard/dashboard-calendar/dashboard-calendar.component'
@@ -98,6 +98,7 @@ import {StudentDashboardApplicationComponent} from './dashboard/student-dashboar
 import {StudentDashboardCalComponent} from './dashboard/student-dashboard/student-dashboard-cal/student-dashboard-cal.component'
 import {StudentDashboardEvalsComponent} from './dashboard/student-dashboard/student-dashboard-evals/student-dashboard-evals.component'
 import {DashboardCalendarSettingsComponent} from './dashboard/dashboard-calendar-settings/dashboard-calendar-settings.component'
+import {RescheduleCreateOwnComponent} from './reschedule/reschedule-create-own/reschedule-create-own.component'
 
 @NgModule({
     declarations: [
@@ -175,7 +176,8 @@ import {DashboardCalendarSettingsComponent} from './dashboard/dashboard-calendar
         StudentDashboardApplicationComponent,
         StudentDashboardCalComponent,
         StudentDashboardEvalsComponent,
-        DashboardCalendarSettingsComponent
+        DashboardCalendarSettingsComponent,
+        RescheduleCreateOwnComponent
     ],
     imports: [
         BrowserModule,
