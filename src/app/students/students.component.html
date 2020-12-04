@@ -32,6 +32,8 @@
                     <ng-template matExpansionPanelContent>
                         <ng-container>
                             <lwm-report-card-table
+                                    [reschedulePresentationStrategy]="reschedulePresentationStrategy"
+                                    [allowRescheduling]="true"
                                     [tableModel]="dataSources.get(panel)"
                                     [auths]="auths"
                                     [tableContentFor]="tableContentFor">

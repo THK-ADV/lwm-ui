@@ -8,6 +8,8 @@ import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../../../report-card-table/report-card-table-utils'
 import {format, formatTime} from '../../../utils/lwmdate-adapter'
+import {defaultStudentReschedulePresentationStrategy} from '../../../students/students.component'
+import {ReschedulePresentationStrategy} from '../../../report-card-table/report-card-table.component'
 
 @Component({
     selector: 'lwm-student-report-card',
@@ -17,6 +19,7 @@ import {format, formatTime} from '../../../utils/lwmdate-adapter'
 export class StudentReportCardComponent implements OnInit {
 
     cards$: Observable<ReportCardEntryAtom[]>
+    readonly reschedulePresentationStrategy: ReschedulePresentationStrategy
 
     constructor(
         private readonly route: ActivatedRoute,
@@ -31,6 +34,7 @@ export class StudentReportCardComponent implements OnInit {
             }),
             switchMap(([labwork, student]) => service.fromStudent(student, labwork))
         )
+        this.reschedulePresentationStrategy = defaultStudentReschedulePresentationStrategy()
     }
 
     ngOnInit(): void {
@@ -50,7 +54,7 @@ export class StudentReportCardComponent implements OnInit {
         ]
 
         return {
-            dataSource: new MatTableDataSource<ReportCardEntryAtom>(cards),
+            dataSource: new MatTableDataSource<ReportCardEntryAtom>(cards.sort((a, b) => a.assignmentIndex - b.assignmentIndex)),
             columns: basicColumns().concat(distinctEntryTypeColumns(cards.flatMap(_ => _.entryTypes)))
         }
     }

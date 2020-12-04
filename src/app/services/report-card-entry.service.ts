@@ -8,10 +8,26 @@ import {makePath} from '../utils/component.utils'
 import {_groupBy} from '../utils/functions'
 import {convertManyReportCardEntries, convertManyReportCardEntriesAtom} from '../utils/http-utils'
 import {ReportCardEntry} from './lwm.service'
+import {Time} from '../models/time.model'
+import {Room} from '../models/room.model'
 
 interface ReportCardEntryFilter {
     attribute: 'course' | 'student' | 'labwork'
     value: string
+}
+
+export interface RescheduleCandidate {
+    date: Date
+    start: Time
+    end: Time
+    room: Room
+}
+
+interface RescheduleCandidateJson {
+    date: string
+    start: string
+    end: string
+    room: Room
 }
 
 @Injectable({
@@ -55,4 +71,20 @@ export class ReportCardEntryService {
     fromStudent = (student: string, labwork: string) => this.http
         .getAll<ReportCardEntryAtomJSON>(`${this.path}/student/${student}?labwork=${labwork}`)
         .pipe(map(convertManyReportCardEntriesAtom))
+
+    rescheduleCandidates = (courseId: string, semesterId: string): Observable<RescheduleCandidate[]> =>
+        this.http
+            .getAll<RescheduleCandidateJson>(`courses/${courseId}/rescheduleCandidates/semesters/${semesterId}`)
+            .pipe(map(xs => xs.map(this.fromJson)))
+
+    private fromJson = (x: RescheduleCandidateJson): RescheduleCandidate => {
+        const date = new Date(x.date)
+
+        return {
+            ...x,
+            date: date,
+            start: Time.fromTimeString(x.start, date),
+            end: Time.fromTimeString(x.end, date)
+        }
+    }
 }

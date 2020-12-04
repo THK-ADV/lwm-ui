@@ -3,6 +3,7 @@ import {Room} from './room.model'
 import {User} from './user.model'
 import {Labwork} from './labwork.model'
 import {EntryType} from './assignment-plan.model'
+import {ReportCardRescheduledAtom, ReportCardRescheduledAtomJSON} from './report-card-rescheduled.model'
 
 export interface ReportCardEntryAtom {
     student: User
@@ -44,7 +45,7 @@ export interface ReportCardEntryAtomJSON {
     room: Room
     entryTypes: ReportCardEntryType[]
     assignmentIndex: number
-    rescheduled?: ReportCardRescheduledAtom
+    rescheduled?: ReportCardRescheduledAtomJSON
     retry?: ReportCardRetryAtom
     id: string
 }
@@ -53,24 +54,6 @@ export interface ReportCardEntryType {
     entryType: EntryType
     bool?: boolean
     int: number
-    id: string
-}
-
-export interface ReportCardRescheduledAtom {
-    date: Date
-    start: Time
-    end: Time
-    room: Room
-    reason?: string
-    id: string
-}
-
-export interface ReportCardRescheduledAtomJSON {
-    date: string
-    start: string
-    end: string
-    room: Room
-    reason?: string
     id: string
 }
 

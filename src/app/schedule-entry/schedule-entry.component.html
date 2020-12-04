@@ -41,6 +41,11 @@
         </ng-template>
     </div>
 
-    <lwm-report-card-table [tableModel]="dataSource(data[0])" [auths]="auths()" [tableContentFor]="tableContentFor">
+    <lwm-report-card-table
+            [reschedulePresentationStrategy]="reschedulePresentationStrategy(data[1])"
+            [allowRescheduling]="false"
+            [tableModel]="dataSource(data[0])"
+            [auths]="auths()"
+            [tableContentFor]="tableContentFor">
     </lwm-report-card-table>
 </ng-container>

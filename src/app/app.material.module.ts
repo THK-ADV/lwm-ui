@@ -16,15 +16,16 @@ import {
     MatPaginatorModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
     MatSlideToggleModule,
     MatSortModule,
     MatStepperModule,
     MatTableModule,
+    MatTabsModule,
     MatToolbarModule,
-    MatTooltipModule,
-    MatTabsModule
+    MatTooltipModule
 } from '@angular/material'
 
 import {MatDialogModule} from '@angular/material/dialog'
@@ -58,7 +59,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatProgressSpinnerModule,
         MatProgressBarModule,
         MatButtonToggleModule,
-        MatTabsModule
+        MatTabsModule,
+        MatRadioModule
     ]
 })
 export class LWMMaterialModule {

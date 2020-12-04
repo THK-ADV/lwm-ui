@@ -9,7 +9,7 @@ import {format, formatTime} from '../utils/lwmdate-adapter'
 import {shortUserName} from '../labwork-chain/timetable/timetable-view-model'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {MatTableDataSource} from '@angular/material'
-import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
+import {ReportCardTableModel, ReschedulePresentationStrategy} from '../report-card-table/report-card-table.component'
 import {userAuths} from '../security/user-authority-resolver'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
 import {fullUserName} from '../utils/component.utils'
@@ -22,8 +22,6 @@ import {first, foldUndefined} from '../utils/functions'
     styleUrls: ['./schedule-entry.component.scss']
 })
 export class ScheduleEntryComponent implements OnInit {
-    // TODO support rescheduled entries
-
     data$: Observable<[Readonly<ReportCardEntryAtom[]>, Readonly<ScheduleEntryAtom>]>
 
     constructor(
@@ -71,6 +69,18 @@ export class ScheduleEntryComponent implements OnInit {
             )
         }
     }
+
+    reschedulePresentationStrategy = (s: Readonly<ScheduleEntryAtom>): ReschedulePresentationStrategy => ({
+        kind: 'from_into',
+        indexAttr: 'systemId',
+        isInto: ((e) =>
+                e.rescheduled !== undefined &&
+                e.rescheduled.date.getTime() === s.date.getTime() &&
+                e.rescheduled.start.equals(s.start) &&
+                e.rescheduled.end.equals(s.end) &&
+                e.rescheduled.room.id === s.room.id
+        )
+    })
 
     tableContentFor = (e: Readonly<ReportCardEntryAtom>, attr: string) => {
         switch (attr) {

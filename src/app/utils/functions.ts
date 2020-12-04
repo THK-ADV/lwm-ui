@@ -103,4 +103,7 @@ export const dateOrderingASC = (lhs: Date, rhs: Date): number => lhs.getTime() -
 
 export const dateOrderingDESC = (lhs: Date, rhs: Date): number => rhs.getTime() - lhs.getTime()
 
+export const isInThePast = (date: Date, reference: Date = new Date) =>
+    date.getTime() > reference.getTime()
+
 export const first = <T>(xs: Readonly<Array<T>>): T | undefined => isEmpty(xs) ? undefined : xs[0]
