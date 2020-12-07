@@ -50,7 +50,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         return dialog.open<RescheduleComponent>(RescheduleComponent, {
             minWidth: DIALOG_WIDTH,
             data: [e],
-            panelClass: 'lwmCreateUpdateDialog'
+            panelClass: 'lwmRescheduleDialog'
         })
     }
 
@@ -97,7 +97,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         this.rescheduleCandidates.find(_ => this.isSameDate(_.date, d)) ? 'example-custom-date-class' : ''
 
     onCancel = () =>
-        this.dialogRef.close()
+        this.dialogRef.close(undefined)
 
     onSubmit = () => {
         const isValid = (fc: FormControl): boolean =>
