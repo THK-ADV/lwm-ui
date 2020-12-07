@@ -1,11 +1,18 @@
-<app-nav>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <lwm-progress-bar></lwm-progress-bar>
-                <app-alert></app-alert>
-                <router-outlet></router-outlet>
+<ng-container *ngIf="auths$ | async as auths; else noAuths">
+    <app-nav [authorities]="auths">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <lwm-progress-bar></lwm-progress-bar>
+                    <app-alert></app-alert>
+                    <router-outlet></router-outlet>
+                </div>
             </div>
         </div>
-    </div>
-</app-nav>
+    </app-nav>
+</ng-container>
+
+<ng-template #noAuths>
+    <p>Sorry, no auths!</p>
+    <p>{{errMsg}}</p>
+</ng-template>

@@ -15,20 +15,15 @@ export interface PartialResult<A> {
 }
 
 export const nonAtomicParams = new HttpParams().set('atomic', 'false')
+
 export const atomicParams = new HttpParams().set('atomic', 'true')
 
-@Injectable({
-    providedIn: 'root'
-})
-
-export class HttpService {
-
-    constructor(private http: HttpClient, private alertService: AlertService) {
-    }
-
-    private handleError = (error: HttpErrorResponse): Observable<never> => throwError(this.makeErrorMessage(error))
-
-    private makeErrorMessage = (error: HttpErrorResponse): LWMError => { // TODO move to alert service
+export const makeErrorMessage = (
+    error: HttpErrorResponse,
+    logMsg: boolean,
+    alertService?: AlertService
+): LWMError => {
+    if (logMsg) {
         if (error.error instanceof ErrorEvent) {
             // A client-side or network alert occurred. Handle it accordingly.
             console.error('An alert occurred:', error.error.message)
@@ -37,15 +32,27 @@ export class HttpService {
             // The response body may contain clues as to what went wrong,
             console.error('Backend returned', error)
         }
-
-        const status = error.status
-        const msg = error.error.message
-        const lwmError = {status: status, message: msg}
-
-        this.alertService.reportLWMError(lwmError)
-
-        return lwmError
     }
+
+    const status = error.status
+    const msg = error.error.message
+    const lwmError = {status: status, message: msg}
+
+    alertService?.reportLWMError(lwmError)
+
+    return lwmError
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class HttpService {
+
+    constructor(private http: HttpClient, private alertService: AlertService) {
+    }
+
+    private handleError = (error: HttpErrorResponse): Observable<never> =>
+        throwError(makeErrorMessage(error, true, this.alertService))
 
     // tslint:disable-next-line:no-console
     private logResp = <T>(action: string, url: string) => (t: T) => console.debug('HTTP SERVICE', action, url, t)
