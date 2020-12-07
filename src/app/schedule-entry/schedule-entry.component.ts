@@ -52,8 +52,37 @@ export class ScheduleEntryComponent implements OnInit {
     group = (x: Readonly<ScheduleEntryAtom>) =>
         `Gruppe ${x.group.label}`
 
-    participants = (xs: Readonly<ReportCardEntryAtom[]>) =>
-        `${xs.length} Teilnehmer`
+    participants = (xs: Readonly<ReportCardEntryAtom[]>, se: Readonly<ScheduleEntryAtom>) => {
+        let honest = 0
+        let rescheduledOut = 0
+        let rescheduledIn = 0
+
+        xs.forEach(x => {
+            if (x.rescheduled !== undefined) {
+                // TODO add support for retries
+                if (this.isRescheduledInto(se, x)) {
+                    rescheduledIn += 1
+                } else {
+                    rescheduledOut += 1
+                }
+            } else {
+                honest += 1
+            }
+        })
+
+        honest += rescheduledIn
+        let base = `${honest} Teilnehmer`
+
+        if (rescheduledIn !== 0 && rescheduledOut !== 0) {
+            base += ` (${rescheduledIn} hinzugefügt und ${rescheduledOut} entfernt)`
+        } else if (rescheduledIn !== 0) {
+            base += ` (${rescheduledIn} hinzugefügt)`
+        } else if (rescheduledOut !== 0) {
+            base += ` (${rescheduledOut} entfernt)`
+        }
+
+        return base
+    }
 
     dataSource = (xs: ReportCardEntryAtom[]): ReportCardTableModel => {
         const columns = [
@@ -70,16 +99,17 @@ export class ScheduleEntryComponent implements OnInit {
         }
     }
 
+    isRescheduledInto = (s: ScheduleEntryAtom, e: ReportCardEntryAtom): boolean =>
+        e.rescheduled !== undefined &&
+        e.rescheduled.date.getTime() === s.date.getTime() &&
+        e.rescheduled.start.equals(s.start) &&
+        e.rescheduled.end.equals(s.end) &&
+        e.rescheduled.room.id === s.room.id
+
     reschedulePresentationStrategy = (s: Readonly<ScheduleEntryAtom>): ReschedulePresentationStrategy => ({
         kind: 'from_into',
         indexAttr: 'systemId',
-        isInto: ((e) =>
-                e.rescheduled !== undefined &&
-                e.rescheduled.date.getTime() === s.date.getTime() &&
-                e.rescheduled.start.equals(s.start) &&
-                e.rescheduled.end.equals(s.end) &&
-                e.rescheduled.room.id === s.room.id
-        )
+        isInto: e => this.isRescheduledInto(s, e)
     })
 
     tableContentFor = (e: Readonly<ReportCardEntryAtom>, attr: string) => {
@@ -105,8 +135,7 @@ export class ScheduleEntryComponent implements OnInit {
             first(xs),
             x => {
                 const index = x.assignmentIndex + 1
-                const label = `${index} - ${x.label}`
-                return label
+                return `${index} - ${x.label}`
             },
             () => ``
         )

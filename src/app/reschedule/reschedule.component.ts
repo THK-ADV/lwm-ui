@@ -179,7 +179,8 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     slotLabel = (slot: RescheduleCandidate): string => {
         const start = formatTime(slot.start, 'HH:mm')
         const end = formatTime(slot.end, 'HH:mm')
-        return `${start} - ${end} Uhr in ${slot.room.label}`
+        // TODO remove those who rescheduled out and add those who rescheduled in
+        return `${start} - ${end} Uhr in ${slot.room.label} (max: ${slot.members} Teilnehmer)`
     }
 
     modeLabel = (mode: ReschedulePickerMode): string => {
