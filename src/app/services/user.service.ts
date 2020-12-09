@@ -44,4 +44,8 @@ export class UserService implements AbstractCRUDService<User, User> {
 
     buddy = (labworkId: string, applicantId: string, buddySystemId: string) => this.http
         .get_<BuddyResult>(`labworks/${labworkId}/${this.path}/${applicantId}/buddies/${buddySystemId}`)
+
+    createFromToken = (): Observable<User> =>
+        this.http.create(this.path, {}, nonAtomicParams)
+
 }
