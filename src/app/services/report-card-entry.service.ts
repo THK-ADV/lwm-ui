@@ -21,13 +21,15 @@ export interface RescheduleCandidate {
     start: Time
     end: Time
     room: Room
+    members: number
 }
 
 interface RescheduleCandidateJson {
     date: string
     start: string
     end: string
-    room: Room
+    room: Room,
+    members: number
 }
 
 @Injectable({

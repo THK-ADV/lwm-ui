@@ -6,483 +6,484 @@
 @include mat-core();
 
 @mixin lwm-core-theme($theme) {
-    @include mat-core-theme(map-get($theme, main));
+  @include mat-core-theme(map-get($theme, main));
 }
 
 @mixin lwm-autocomplete-theme($theme) {
-    @include mat-autocomplete-theme(map-get($theme, main));
+  @include mat-autocomplete-theme(map-get($theme, main));
 }
 
 @mixin lwm-badge-theme($theme) {
-    @include mat-badge-theme(map-get($theme, main));
+  @include mat-badge-theme(map-get($theme, main));
 }
 
 @mixin lwm-bottom-sheet-theme($theme) {
-    @include mat-bottom-sheet-theme(map-get($theme, main));
+  @include mat-bottom-sheet-theme(map-get($theme, main));
 }
 
 @mixin lwm-button-theme($theme) {
-    @include mat-button-theme(map-get($theme, main));
+  @include mat-button-theme(map-get($theme, main));
 
-    button.mat-stroked-button.mat-primary {
-        border: 2px lighten($th-magenta, 40) solid;
-        margin-right: $small-spacing;
-    }
+  button.mat-stroked-button.mat-primary {
+    border: 2px lighten($th-magenta, 40) solid;
+    margin-right: $small-spacing;
+  }
 
-    button.mat-stroked-button.mat-accent {
-        border: 2px lighten($th-orange, 40) solid;
-        margin-right: $small-spacing;
-    }
+  button.mat-stroked-button.mat-accent {
+    border: 2px lighten($th-orange, 40) solid;
+    margin-right: $small-spacing;
+  }
 
-    button.mat-stroked-button.mat-warn {
-        border: 2px lighten($th-red, 40) solid;
-        margin-right: $small-spacing;
-    }
+  button.mat-stroked-button.mat-warn {
+    border: 2px lighten($th-red, 40) solid;
+    margin-right: $small-spacing;
+  }
 }
 
 @mixin lwm-button-toggle-theme($theme) {
-    @include mat-button-toggle-theme(map-get($theme, main));
-    $failed-col: #ff4500;
-    $neutral-col: #888;
-    $passed-col: #32cd32;
-    $bg-col: #c0c0c0;
-    .toggle-group.mat-button-toggle-group-appearance-standard {
-        border: none;
+  @include mat-button-toggle-theme(map-get($theme, main));
+  $failed-col: #ff4500;
+  $neutral-col: #888;
+  $passed-col: #32cd32;
+  $bg-col: #c0c0c0;
+  .toggle-group.mat-button-toggle-group-appearance-standard {
+    border: none;
 
-        .mat-button-toggle-label-content {
-            line-height: 2.5em !important;
-            padding: 0 7px !important;
-        }
-
-        i {
-            font-size: 1.5em;
-        }
-
-        .mat-button-toggle {
-            border: none;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            margin: 0px 0 8px 0;
-            padding: 0;
-            background-color: $bg-col;
-            color: white;
-        }
-
-        .mat-button-toggle.failed {
-            border-top-left-radius: 5px;
-            border-bottom-left-radius: 5px;
-        }
-
-        .mat-button-toggle.passed {
-            border-top-right-radius: 5px;
-            border-bottom-right-radius: 5px;
-        }
-
-        .mat-button-toggle-checked.failed {
-            background-color: $failed-col;
-        }
-
-        .mat-button-toggle-checked.neutral {
-            background-color: $neutral-col;
-        }
-
-        .mat-button-toggle-checked.passed {
-            background-color: $passed-col;
-        }
+    .mat-button-toggle-label-content {
+      line-height: 2.5em !important;
+      padding: 0 7px !important;
     }
+
+    i {
+      font-size: 1.5em;
+    }
+
+    .mat-button-toggle {
+      border: none;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      margin: 0px 0 8px 0;
+      padding: 0;
+      background-color: $bg-col;
+      color: white;
+    }
+
+    .mat-button-toggle.failed {
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
+    }
+
+    .mat-button-toggle.passed {
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+
+    .mat-button-toggle-checked.failed {
+      background-color: $failed-col;
+    }
+
+    .mat-button-toggle-checked.neutral {
+      background-color: $neutral-col;
+    }
+
+    .mat-button-toggle-checked.passed {
+      background-color: $passed-col;
+    }
+  }
 }
 
 @mixin lwm-card-theme($theme) {
-    @include mat-card-theme(map-get($theme, main));
-    .mat-card {
-        margin: $low-spacing 0 $med-spacing 0;
-        padding: 0 !important;
-        -webkit-box-shadow: none !important;
-        box-shadow: none !important;
+  @include mat-card-theme(map-get($theme, main));
+  .mat-card {
+    margin: $low-spacing 0 $med-spacing 0;
+    padding: 0 !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
 
-        //background-color: red;
+    //background-color: red;
 
-        mat-card-content {
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: horizontal;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: row;
-            flex-direction: row;
-            -webkit-box-align: start;
-            -ms-flex-align: start;
-            align-items: flex-start;
-            -webkit-box-pack: justify;
-            -ms-flex-pack: justify;
-            justify-content: space-between;
-            margin: 0;
-            padding: 0;
+    mat-card-content {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: horizontal;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      -webkit-box-align: start;
+      -ms-flex-align: start;
+      align-items: flex-start;
+      -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+      justify-content: space-between;
+      margin: 0;
+      padding: 0;
 
-            mat-form-field:not(:first-child) {
-                margin: 0;
-                margin-left: $h-spacing;
-            }
-        }
-
-        .mat-card-actions {
-            margin: 0;
-            padding: 0;
-
-            button {
-                width: 100%;
-            }
-        }
+      mat-form-field:not(:first-child) {
+        margin: 0;
+        margin-left: $h-spacing;
+      }
     }
+
+    .mat-card-actions {
+      margin: 0;
+      padding: 0;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
 }
 
 @mixin lwm-checkbox-theme($theme) {
-    @include mat-checkbox-theme(map-get($theme, main));
+  @include mat-checkbox-theme(map-get($theme, main));
 }
 
 @mixin lwm-chips-theme($theme) {
-    @include mat-chips-theme(map-get($theme, main));
-    $height: 32px;
-    $fontSize: 14px;
+  @include mat-chips-theme(map-get($theme, main));
+  $height: 32px;
+  $fontSize: 14px;
 
-    mat-basic-chip {
-        display: inline-block;
-        padding: 0 12px;
-        border-radius: $height;
-        height: $height;
-        line-height: $height;
-        font-size: $fontSize;
-        margin: 0 5px;
-    }
+  mat-basic-chip {
+    display: inline-block;
+    padding: 0 12px;
+    border-radius: $height;
+    height: $height;
+    line-height: $height;
+    font-size: $fontSize;
+    margin: 0 5px;
+  }
 
-    mat-basic-chip.primary {
-        background-color: $th-magenta;
-        color: white;
-    }
+  mat-basic-chip.primary {
+    background-color: $th-magenta;
+    color: white;
+  }
 
-    mat-basic-chip.accent {
-        background-color: $th-orange;
-        color: white;
-    }
+  mat-basic-chip.accent {
+    background-color: $th-orange;
+    color: white;
+  }
 }
 
 @mixin lwm-datepicker-theme($theme) {
-    @include mat-datepicker-theme(map-get($theme, main));
+  @include mat-datepicker-theme(map-get($theme, main));
 }
 
 @mixin lwm-dialog-theme($theme) {
-    @include mat-dialog-theme(map-get($theme, main));
+  @include mat-dialog-theme(map-get($theme, main));
 
-    h1.mat-dialog-title {
-        font-size: 2em;
+  h1.mat-dialog-title {
+    font-size: 2em;
+  }
+
+  h2.mat-dialog-title {
+    font-size: 1.5em;
+  }
+
+  .mat-form-field {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .mat-form-field-infix {
+    margin-top: 20px;
+  }
+
+
+  mat-dialog-container {
+    .mat-form-field-ripple {
+      background-color: $th-magenta !important;
     }
 
-    h2.mat-dialog-title {
-        font-size: 1.5em;
+    app-user-edit-dialog .mat-dialog-actions,
+    app-delete-dialog .mat-dialog-actions,
+    app-create-update-dialog .mat-dialog-actions,
+    lwm-group-edit .mat-dialog-actions,
+    lwm-course-authority-dialog .mat-dialog-actions,
+    lwm-timetable-entry .mat-dialog-actions,
+    lwm-group-preview-modal .mat-dialog-actions,
+    lwm-confirm-dialog .mat-dialog-actions,
+    lwm-decision-dialog .mat-dialog-actions,
+    lwm-reschedule .mat-dialog-actions,
+    lwm-assignment-entry-takeover-dialog .mat-dialog-actions {
+      background-color: $ivory;
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-align: end;
+      -ms-flex-align: end;
+      align-items: flex-end;
+      -webkit-box-pack: end;
+      -ms-flex-pack: end;
+      justify-content: flex-end;
+      margin: $med-spacing $med-spacing * (-1);
+      margin-bottom: $med-spacing * (-1);
+      padding-right: $med-spacing;
+
+      button {
+        margin: $med-spacing 0 $med-spacing $low-spacing;
+      }
     }
-
-    .mat-form-field {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    .mat-form-field-infix {
-        margin-top: 20px;
-    }
-
-
-    mat-dialog-container {
-        .mat-form-field-ripple {
-            background-color: $th-magenta !important;
-        }
-
-        app-user-edit-dialog .mat-dialog-actions,
-        app-delete-dialog .mat-dialog-actions,
-        app-create-update-dialog .mat-dialog-actions,
-        lwm-group-edit .mat-dialog-actions,
-        lwm-course-authority-dialog .mat-dialog-actions,
-        lwm-timetable-entry .mat-dialog-actions,
-        lwm-group-preview-modal .mat-dialog-actions,
-        lwm-confirm-dialog .mat-dialog-actions,
-        lwm-decision-dialog .mat-dialog-actions,
-        lwm-assignment-entry-takeover-dialog .mat-dialog-actions {
-            background-color: $ivory;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-align: end;
-            -ms-flex-align: end;
-            align-items: flex-end;
-            -webkit-box-pack: end;
-            -ms-flex-pack: end;
-            justify-content: flex-end;
-            margin: $med-spacing $med-spacing * (-1);
-            margin-bottom: $med-spacing * (-1);
-            padding-right: $med-spacing;
-
-            button {
-                margin: $med-spacing 0 $med-spacing $low-spacing;
-            }
-        }
-    }
+  }
 }
 
 @mixin lwm-expansion-panel-theme($theme) {
-    @include mat-expansion-panel-theme(map-get($theme, main));
+  @include mat-expansion-panel-theme(map-get($theme, main));
 }
 
 @mixin lwm-form-field-theme($theme) {
-    @include mat-form-field-theme(map-get($theme, main));
+  @include mat-form-field-theme(map-get($theme, main));
 
-    .reportcard-bonus {
-        max-width: 100px !important;
-    }
+  .reportcard-bonus {
+    max-width: 100px !important;
+  }
 }
 
 @mixin lwm-grid-list-theme($theme) {
-    @include mat-grid-list-theme(map-get($theme, main));
+  @include mat-grid-list-theme(map-get($theme, main));
 }
 
 @mixin lwm-icon-theme($theme) {
-    @include mat-icon-theme(map-get($theme, main));
-    .material-icons.mat-14 {
-        font-size: 14px;
-    }
+  @include mat-icon-theme(map-get($theme, main));
+  .material-icons.mat-14 {
+    font-size: 14px;
+  }
 
-    .material-icons.mat-18 {
-        font-size: 18px;
-    }
+  .material-icons.mat-18 {
+    font-size: 18px;
+  }
 
-    .material-icons.mat-24 {
-        font-size: 24px;
-    }
+  .material-icons.mat-24 {
+    font-size: 24px;
+  }
 
-    .material-icons.mat-36 {
-        font-size: 36px;
-    }
+  .material-icons.mat-36 {
+    font-size: 36px;
+  }
 
-    .material-icons.mat-48 {
-        font-size: 48px;
-    }
+  .material-icons.mat-48 {
+    font-size: 48px;
+  }
 }
 
 @mixin lwm-input-theme($theme) {
-    @include mat-input-theme(map-get($theme, main));
+  @include mat-input-theme(map-get($theme, main));
 }
 
 @mixin lwm-list-theme($theme) {
-    @include mat-list-theme(map-get($theme, main));
+  @include mat-list-theme(map-get($theme, main));
 }
 
 @mixin lwm-menu-theme($theme) {
-    @include mat-menu-theme(map-get($theme, main));
+  @include mat-menu-theme(map-get($theme, main));
 }
 
 @mixin lwm-paginator-theme($theme) {
-    @include mat-paginator-theme(map-get($theme, main));
-    .mat-paginator {
-        margin-bottom: $high-spacing;
-    }
+  @include mat-paginator-theme(map-get($theme, main));
+  .mat-paginator {
+    margin-bottom: $high-spacing;
+  }
 }
 
 @mixin lwm-progress-bar-theme($theme) {
-    @include mat-progress-bar-theme(map-get($theme, main));
+  @include mat-progress-bar-theme(map-get($theme, main));
 }
 
 @mixin lwm-progress-spinner-theme($theme) {
-    @include mat-progress-spinner-theme(map-get($theme, main));
+  @include mat-progress-spinner-theme(map-get($theme, main));
 }
 
 @mixin lwm-radio-theme($theme) {
-    @include mat-radio-theme(map-get($theme, main));
+  @include mat-radio-theme(map-get($theme, main));
 }
 
 @mixin lwm-select-theme($theme) {
-    @include mat-select-theme(map-get($theme, main));
+  @include mat-select-theme(map-get($theme, main));
 }
 
 @mixin lwm-sidenav-theme($theme) {
-    @include mat-sidenav-theme(map-get($theme, main));
-    .mat-drawer-container {
-        background-color: transparent !important;
-    }
-    .mat-drawer {
-        background-color: mat-color(map-get(map-get($theme, overlay), background), dialog);
-        color: mat-color(map-get(map-get($theme, overlay), foreground), text);
-        @include angular-material-theme(map-get($theme, overlay));
-    }
+  @include mat-sidenav-theme(map-get($theme, main));
+  .mat-drawer-container {
+    background-color: transparent !important;
+  }
+  .mat-drawer {
+    background-color: mat-color(map-get(map-get($theme, overlay), background), dialog);
+    color: mat-color(map-get(map-get($theme, overlay), foreground), text);
+    @include angular-material-theme(map-get($theme, overlay));
+  }
 }
 
 @mixin lwm-slide-toggle-theme($theme) {
-    @include mat-slide-toggle-theme(map-get($theme, main));
+  @include mat-slide-toggle-theme(map-get($theme, main));
 }
 
 @mixin lwm-slider-theme($theme) {
-    @include mat-slider-theme(map-get($theme, main));
+  @include mat-slider-theme(map-get($theme, main));
 }
 
 @mixin lwm-stepper-theme($theme) {
-    @include mat-stepper-theme(map-get($theme, main));
+  @include mat-stepper-theme(map-get($theme, main));
 }
 
 @mixin lwm-sort-theme($theme) {
-    @include mat-sort-theme(map-get($theme, main));
+  @include mat-sort-theme(map-get($theme, main));
 }
 
 @mixin lwm-table-theme($theme) {
-    @include mat-table-theme(map-get($theme, main));
+  @include mat-table-theme(map-get($theme, main));
 
-    table {
-        width: 100%;
-        margin-bottom: $high-spacing;
-        border-collapse: initial;
+  table {
+    width: 100%;
+    margin-bottom: $high-spacing;
+    border-collapse: initial;
 
-        td.mat-cell,
-        th.mat-cell,
-        td.mat-header-cell,
-        th.mat-header-cell {
-            padding: $low-spacing $med-spacing;
-            min-width: 60px;
-            word-wrap: initial;
-        }
-
-        td.mat-cell,
-        th.mat-cell {
-            vertical-align: text-top;
-            padding: $low-spacing $med-spacing;
-            min-width: 60px;
-            word-wrap: initial;
-        }
+    td.mat-cell,
+    th.mat-cell,
+    td.mat-header-cell,
+    th.mat-header-cell {
+      padding: $low-spacing $med-spacing;
+      min-width: 60px;
+      word-wrap: initial;
     }
 
-    .mat-row:hover {
-        background-color: $hover-color;
-        cursor: pointer;
+    td.mat-cell,
+    th.mat-cell {
+      vertical-align: text-top;
+      padding: $low-spacing $med-spacing;
+      min-width: 60px;
+      word-wrap: initial;
     }
+  }
+
+  .mat-row:hover {
+    background-color: $hover-color;
+    cursor: pointer;
+  }
 }
 
 @mixin lwm-tabs-theme($theme) {
-    @include mat-tabs-theme(map-get($theme, main));
+  @include mat-tabs-theme(map-get($theme, main));
 }
 
 @mixin lwm-toolbar-theme($theme) {
-    @include mat-toolbar-theme(map-get($theme, main));
+  @include mat-toolbar-theme(map-get($theme, main));
 }
 
 @mixin lwm-tooltip-theme($theme) {
-    @include mat-tooltip-theme(map-get($theme, main));
+  @include mat-tooltip-theme(map-get($theme, main));
 }
 
 @mixin lwm-tree-theme($theme) {
-    @include mat-tree-theme(map-get($theme, main));
+  @include mat-tree-theme(map-get($theme, main));
 }
 
 @mixin lwm-snack-bar-theme($theme) {
-    @include mat-snack-bar-theme(map-get($theme, main));
+  @include mat-snack-bar-theme(map-get($theme, main));
 }
 
 @function lwm-light-theme($primary, $accent, $warn, $foreground: (), $background: ()) {
-    @return (
-        primary: mat-palette(palette-from($primary)),
-        accent: mat-palette(palette-from($accent)),
-        warn: mat-palette(palette-from($warn)),
-        is-dark: false,
-        foreground: map-merge($mat-light-theme-foreground, $foreground),
-        background: map-merge($mat-light-theme-background, $background)
-    );
+  @return (
+          primary: mat-palette(palette-from($primary)),
+          accent: mat-palette(palette-from($accent)),
+          warn: mat-palette(palette-from($warn)),
+          is-dark: false,
+          foreground: map-merge($mat-light-theme-foreground, $foreground),
+          background: map-merge($mat-light-theme-background, $background)
+  );
 }
 
 @function lwm-typography-config(
-    $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
-    $display-4: mat-typography-level(112px, 112px, 300),
-    $display-3: mat-typography-level(56px, 56px, 400),
-    $display-2: mat-typography-level(45px, 48px, 400),
-    $display-1: mat-typography-level(34px, 40px, 400),
-    $headline: mat-typography-level(24px, 32px, 400),
-    $title: mat-typography-level(20px, 32px, 500),
-    $subheading-2: mat-typography-level(16px, 28px, 400),
-    $subheading-1: mat-typography-level(15px, 24px, 400),
-    $body-2: mat-typography-level(14px, 24px, 500),
-    $body-1: mat-typography-level(14px, 20px, 400),
-    $caption: mat-typography-level(12px, 20px, 400),
-    $button: mat-typography-level(14px, 14px, 500),
-    $input: mat-typography-level(inherit, 1.125, 400)
+  $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
+  $display-4: mat-typography-level(112px, 112px, 300),
+  $display-3: mat-typography-level(56px, 56px, 400),
+  $display-2: mat-typography-level(45px, 48px, 400),
+  $display-1: mat-typography-level(34px, 40px, 400),
+  $headline: mat-typography-level(24px, 32px, 400),
+  $title: mat-typography-level(20px, 32px, 500),
+  $subheading-2: mat-typography-level(16px, 28px, 400),
+  $subheading-1: mat-typography-level(15px, 24px, 400),
+  $body-2: mat-typography-level(14px, 24px, 500),
+  $body-1: mat-typography-level(14px, 20px, 400),
+  $caption: mat-typography-level(12px, 20px, 400),
+  $button: mat-typography-level(14px, 14px, 500),
+  $input: mat-typography-level(inherit, 1.125, 400)
 ) {
-    @return mat-typography-config(
-        $font-family,
-        $display-4,
-        $display-3,
-        $display-2,
-        $display-1,
-        $headline,
-        $title,
-        $subheading-2,
-        $subheading-1,
-        $body-2,
-        $body-1,
-        $caption,
-        $button,
-        $input
-    );
+  @return mat-typography-config(
+                  $font-family,
+                  $display-4,
+                  $display-3,
+                  $display-2,
+                  $display-1,
+                  $headline,
+                  $title,
+                  $subheading-2,
+                  $subheading-1,
+                  $body-2,
+                  $body-1,
+                  $caption,
+                  $button,
+                  $input
+  );
 }
 
 @mixin lwm-theme(
-    $main-theme,
-    $overlay-theme,
-    $app-bg-1: #303030,
-    $app-bg-2: #303030,
-    $typography: lwm-typography-config()
+  $main-theme,
+  $overlay-theme,
+  $app-bg-1: #303030,
+  $app-bg-2: #303030,
+  $typography: lwm-typography-config()
 ) {
-    $theme: (
-        main: $main-theme,
-        overlay: $overlay-theme,
-        app-bg-1: $app-bg-1,
-        app-bg-2: $app-bg-2,
-    );
-    @include mat-core($typography);
+  $theme: (
+          main: $main-theme,
+          overlay: $overlay-theme,
+          app-bg-1: $app-bg-1,
+          app-bg-2: $app-bg-2,
+  );
+  @include mat-core($typography);
 
-    @include lwm-core-theme($theme);
-    @include lwm-autocomplete-theme($theme);
-    @include lwm-badge-theme($theme);
-    @include lwm-bottom-sheet-theme($theme);
-    @include lwm-button-theme($theme);
-    @include lwm-button-toggle-theme($theme);
-    @include lwm-card-theme($theme);
-    @include lwm-checkbox-theme($theme);
-    @include lwm-chips-theme($theme);
-    @include lwm-table-theme($theme);
-    @include lwm-datepicker-theme($theme);
-    @include lwm-dialog-theme($theme);
-    @include lwm-expansion-panel-theme($theme);
-    @include lwm-form-field-theme($theme);
-    @include lwm-grid-list-theme($theme);
-    @include lwm-icon-theme($theme);
-    @include lwm-input-theme($theme);
-    @include lwm-list-theme($theme);
-    @include lwm-menu-theme($theme);
-    @include lwm-paginator-theme($theme);
-    @include lwm-progress-bar-theme($theme);
-    @include lwm-progress-spinner-theme($theme);
-    @include lwm-radio-theme($theme);
-    @include lwm-select-theme($theme);
-    @include lwm-sidenav-theme($theme);
-    @include lwm-slide-toggle-theme($theme);
-    @include lwm-slider-theme($theme);
-    @include lwm-stepper-theme($theme);
-    @include lwm-sort-theme($theme);
-    @include lwm-tabs-theme($theme);
-    @include lwm-toolbar-theme($theme);
-    @include lwm-tooltip-theme($theme);
-    @include lwm-tree-theme($theme);
-    @include lwm-snack-bar-theme($theme);
+  @include lwm-core-theme($theme);
+  @include lwm-autocomplete-theme($theme);
+  @include lwm-badge-theme($theme);
+  @include lwm-bottom-sheet-theme($theme);
+  @include lwm-button-theme($theme);
+  @include lwm-button-toggle-theme($theme);
+  @include lwm-card-theme($theme);
+  @include lwm-checkbox-theme($theme);
+  @include lwm-chips-theme($theme);
+  @include lwm-table-theme($theme);
+  @include lwm-datepicker-theme($theme);
+  @include lwm-dialog-theme($theme);
+  @include lwm-expansion-panel-theme($theme);
+  @include lwm-form-field-theme($theme);
+  @include lwm-grid-list-theme($theme);
+  @include lwm-icon-theme($theme);
+  @include lwm-input-theme($theme);
+  @include lwm-list-theme($theme);
+  @include lwm-menu-theme($theme);
+  @include lwm-paginator-theme($theme);
+  @include lwm-progress-bar-theme($theme);
+  @include lwm-progress-spinner-theme($theme);
+  @include lwm-radio-theme($theme);
+  @include lwm-select-theme($theme);
+  @include lwm-sidenav-theme($theme);
+  @include lwm-slide-toggle-theme($theme);
+  @include lwm-slider-theme($theme);
+  @include lwm-stepper-theme($theme);
+  @include lwm-sort-theme($theme);
+  @include lwm-tabs-theme($theme);
+  @include lwm-toolbar-theme($theme);
+  @include lwm-tooltip-theme($theme);
+  @include lwm-tree-theme($theme);
+  @include lwm-snack-bar-theme($theme);
 }
 
 //.lwm-base-theme {
 @include lwm-theme(
-    lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
-    lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
-    $ivory,
-    $ivory,
-    lwm-typography-config()
+                lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
+                lwm-light-theme($primary: $th-magenta, $accent: $th-orange, $warn: $th-red),
+                $ivory,
+                $ivory,
+                lwm-typography-config()
 );
