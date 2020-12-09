@@ -1,9 +1,12 @@
 import {AuthorityAtom} from '../models/authority.model'
 import {UserRole} from '../models/role.model'
 import {exists, foldUndefined} from './functions'
-import {KeycloakTokenKey, KeycloakTokenService} from '../services/keycloak-token.service'
+import {KeycloakTokenService} from '../services/keycloak-token.service'
 import {AuthorityService} from '../services/authority.service'
 import {EMPTY, Observable} from 'rxjs'
+import {catchError, retry, switchMap} from 'rxjs/operators'
+import {UserService} from '../services/user.service'
+import {AlertService} from '../services/alert.service'
 
 export const hasAnyRole = (authorities: Readonly<AuthorityAtom[]>, ...roles: UserRole[]): boolean =>
     exists(authorities, a => exists(roles, r => hasRole(r, a)))
@@ -29,3 +32,24 @@ export const fetchCurrentUserAuthorities$ = (
     authorityService.getAuthorities,
     () => EMPTY
 )
+
+export const fetchCurrentUserAuthoritiesOrCreateNewUser$ = (
+    authorityService: AuthorityService,
+    tokenService: KeycloakTokenService,
+    userService: UserService,
+    alertService: AlertService
+): Observable<AuthorityAtom[]> =>
+    fetchCurrentUserAuthorities$(authorityService, tokenService).pipe(
+        catchError(err => {
+            if (err.status !== 409) {
+                return EMPTY
+            }
+            return userService.createFromToken().pipe(
+                switchMap(user => {
+                    alertService.reset()
+                    return authorityService.getAuthorities(user.systemId)
+                }),
+                retry(1)
+            )
+        })
+    )

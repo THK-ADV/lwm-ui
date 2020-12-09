@@ -19,23 +19,23 @@ export const nonAtomicParams = new HttpParams().set('atomic', 'false')
 export const atomicParams = new HttpParams().set('atomic', 'true')
 
 export const makeErrorMessage = (
-    error: HttpErrorResponse,
+    errorResponse: HttpErrorResponse,
     logMsg: boolean,
     alertService?: AlertService
 ): LWMError => {
     if (logMsg) {
-        if (error.error instanceof ErrorEvent) {
+        if (errorResponse.error instanceof ErrorEvent) {
             // A client-side or network alert occurred. Handle it accordingly.
-            console.error('An alert occurred:', error.error.message)
+            console.error('An alert occurred:', errorResponse.error.message)
         } else {
             // The backend returned an unsuccessful response code.
             // The response body may contain clues as to what went wrong,
-            console.error('Backend returned', error)
+            console.error('Backend returned', errorResponse)
         }
     }
 
-    const status = error.status
-    const msg = error.error.message
+    const status = errorResponse.status
+    const msg = errorResponse.error?.message ?? 'unknown message'
     const lwmError = {status: status, message: msg}
 
     alertService?.reportLWMError(lwmError)

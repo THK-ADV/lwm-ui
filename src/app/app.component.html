@@ -1,4 +1,4 @@
-<ng-container *ngIf="auths$ | async as auths; else noAuths">
+<ng-container *ngIf="auths$ | async as auths">
     <app-nav [authorities]="auths">
         <div class="container-fluid">
             <div class="row">
@@ -11,8 +11,3 @@
         </div>
     </app-nav>
 </ng-container>
-
-<ng-template #noAuths>
-    <p>Sorry, no auths!</p>
-    <p>{{errMsg}}</p>
-</ng-template>

@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component, Input} from '@angular/core'
 import {LabworkApplicationAtom} from '../../../models/labwork.application.model'
 import {StudentAtom} from '../../../models/user.model'
 import {LabworkAtom} from '../../../models/labwork.model'
@@ -8,15 +8,11 @@ import {LabworkAtom} from '../../../models/labwork.model'
     templateUrl: './student-dashboard-application.component.html',
     styleUrls: ['./student-dashboard-application.component.scss']
 })
-export class StudentDashboardApplicationComponent implements OnInit {
+export class StudentDashboardApplicationComponent {
 
     @Input() student: StudentAtom
     @Input() labworks: LabworkAtom[]
     @Input() labworkApplications: LabworkApplicationAtom[]
-
-    ngOnInit() {
-        console.log('on init')
-    }
 
     hasLabworksToApplyFor = () =>
         this.labworks.filter(_ => _.subscribable).length > 0
