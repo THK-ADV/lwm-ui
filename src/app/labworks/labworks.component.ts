@@ -34,7 +34,8 @@ import {
     groupAction,
     labworkApplicationAction,
     LWMAction,
-    LWMActionType
+    LWMActionType,
+    reportCardEntryTypeAction
 } from '../table-action-button/lwm-actions'
 import {openDialog, openDialogFromPayload} from '../shared-dialogs/dialog-open-combinator'
 import {userAuths} from '../security/user-authority-resolver'
@@ -146,7 +147,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
             chainAction(),
             labworkApplicationAction(),
             groupAction(),
-            graduatesAction()
+            graduatesAction(),
+            reportCardEntryTypeAction()
         ]
 
         const auths = userAuths(this.route)
@@ -164,7 +166,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
         }
     }
 
-    private semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => {
+    semesterSortingFn = (lhs: GroupedLabwork, rhs: GroupedLabwork): number => {
         if (isEmpty(lhs.value) && isEmpty(rhs.value)) {
             return 0
         }
@@ -172,19 +174,19 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return dateOrderingDESC(lhs.value[0].semester.start, rhs.value[0].semester.start)
     }
 
-    private sumApplications = (lwas: LabworkWithApplications[]): number => {
+    sumApplications = (lwas: LabworkWithApplications[]): number => {
         return lwas.reduce((acc, v) => acc + v.applications, 0)
     }
 
-    private reloadDataSource(lwas: LabworkWithApplications[]) {
+    reloadDataSource = (lwas: LabworkWithApplications[]) => {
         this.dataSource.data = lwas
     }
 
-    onSelect(lwa: LabworkWithApplications) {
+    onSelect = (lwa: LabworkWithApplications) => {
         this.onAction('chain', lwa.labwork)
     }
 
-    onAction(action: LWMActionType, labwork: LabworkAtom) {
+    onAction = (action: LWMActionType, labwork: LabworkAtom) => {
         switch (action) {
             case 'edit':
                 this.edit(labwork)
@@ -196,6 +198,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
             case 'groups':
             case 'graduates':
             case 'applications':
+            case 'reportCardEntryType':
                 this.routeTo(action, labwork)
                 break
             default:
@@ -203,9 +206,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         }
     }
 
-    private routeTo = (action: LWMActionType, labwork: LabworkAtom) => {
+    private routeTo = (action: LWMActionType, labwork: LabworkAtom) =>
         this.router.navigate(['labworks', labwork.id, action], {relativeTo: this.route})
-    }
 
     private delete = (labwork: LabworkAtom) => {
         const dialogRef = DeleteDialogComponent

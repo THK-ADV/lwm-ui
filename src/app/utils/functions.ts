@@ -107,3 +107,19 @@ export const isInThePast = (date: Date, reference: Date = new Date) =>
     date.getTime() > reference.getTime()
 
 export const first = <T>(xs: Readonly<Array<T>>): T | undefined => isEmpty(xs) ? undefined : xs[0]
+
+export const partition = <A, B>(xs: Readonly<Array<A>>, p: (t: A) => B | undefined): [B[], A[]] => {
+    const match: B[] = []
+    const noMatch: A[] = []
+
+    xs.forEach(x => {
+        const res = p(x)
+        if (res) {
+            match.push(res)
+        } else {
+            noMatch.push(x)
+        }
+    })
+
+    return [match, noMatch]
+}
