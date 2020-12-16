@@ -22,6 +22,7 @@ import {ScheduleEntryComponent} from './schedule-entry/schedule-entry.component'
 import {StudentReportCardComponent} from './dashboard/student-dashboard/student-reportcard/student-report-card.component'
 import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
+import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
 
 const routes: Routes = [
     {
@@ -97,6 +98,11 @@ const routes: Routes = [
                         path: 'labworks/:lid/graduates',
                         resolve: {userAuths: UserAuthorityResolver, params: CourseLabworkParamResolver},
                         component: ReportCardEvaluationComponent
+                    },
+                    {
+                        path: 'labworks/:lid/reportCardEntryType',
+                        resolve: {userAuths: UserAuthorityResolver, params: CourseLabworkParamResolver},
+                        component: ReportCardEntryTypeBatchUpdateComponent
                     },
                     {
                         path: 'labworks/:lid/chain',

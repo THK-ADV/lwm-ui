@@ -3,11 +3,21 @@ import {HttpService} from './http.service'
 import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
 import {ReportCardEntryType} from '../models/report-card-entry.model'
+import {EntryType} from '../models/assignment-plan.model'
+import {isNumeric} from 'rxjs/internal-compatibility'
 
 export interface ReportCardEntryTypeProtocol {
     entryType: string
     bool?: boolean
     int: number
+}
+
+interface BatchUpdateProtocol {
+    users: string[]
+    assignmentEntry: string
+    entryType: EntryType
+    bool?: boolean
+    int?: number
 }
 
 @Injectable({
@@ -22,4 +32,22 @@ export class ReportCardEntryTypeService {
 
     update = (courseId: string, id: string, body: ReportCardEntryTypeProtocol): Observable<ReportCardEntryType> =>
         this.http.put(makePath(this.path, courseId), id, body)
+
+    updateMany = (
+        courseId: string,
+        labworkId: string,
+        users: string[],
+        assignmentEntry: string,
+        entryType: EntryType,
+        value: boolean | number,
+    ): Observable<number> => {
+        const body: BatchUpdateProtocol = {
+            users: users,
+            assignmentEntry: assignmentEntry,
+            entryType: entryType,
+            int: isNumeric(value) ? value : undefined,
+            bool: isNumeric(value) ? undefined : value
+        }
+        return this.http.put_(makePath(this.path, courseId, labworkId), body)
+    }
 }

@@ -99,6 +99,7 @@ import {StudentDashboardCalComponent} from './dashboard/student-dashboard/studen
 import {StudentDashboardEvalsComponent} from './dashboard/student-dashboard/student-dashboard-evals/student-dashboard-evals.component'
 import {DashboardCalendarSettingsComponent} from './dashboard/dashboard-calendar-settings/dashboard-calendar-settings.component'
 import {RescheduleCreateOwnComponent} from './reschedule/reschedule-create-own/reschedule-create-own.component'
+import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
 
 @NgModule({
     declarations: [
@@ -177,7 +178,8 @@ import {RescheduleCreateOwnComponent} from './reschedule/reschedule-create-own/r
         StudentDashboardCalComponent,
         StudentDashboardEvalsComponent,
         DashboardCalendarSettingsComponent,
-        RescheduleCreateOwnComponent
+        RescheduleCreateOwnComponent,
+        ReportCardEntryTypeBatchUpdateComponent
     ],
     imports: [
         BrowserModule,
