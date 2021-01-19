@@ -23,6 +23,7 @@ import {StudentReportCardComponent} from './dashboard/student-dashboard/student-
 import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
 import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
+import {StudentQueryComponent} from './student-query/student-query.component'
 
 const routes: Routes = [
     {
@@ -48,6 +49,10 @@ const routes: Routes = [
         path: 'e',
         canActivate: [EmployeeStatusGuard],
         children: [
+            {
+                path: 'students',
+                component: StudentQueryComponent
+            },
             {
                 path: 'authorities',
                 component: UserComponent

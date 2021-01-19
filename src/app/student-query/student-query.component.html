@@ -1,0 +1,54 @@
+<lwm-abstract-header [headerTitle]="'Studierende suchen'"></lwm-abstract-header>
+
+<ng-container>
+    <h2>Suchkriterien definieren</h2>
+
+    <mat-chip-list *ngIf="criteria">
+        <mat-chip *ngFor="let c of criteria"
+                  [selectable]="true"
+                  [removable]="true"
+                  (removed)="remove(c)">
+            {{show(c)}}
+            <mat-icon matChipRemove>cancel</mat-icon>
+        </mat-chip>
+    </mat-chip-list>
+
+    <table class="example-full-width" cellspacing="0">
+        <tr>
+            <td>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Kriterium</mat-label>
+                    <input matInput [(ngModel)]="currentCriteria" >
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field class="example-full-width">
+                    <mat-label>Wert</mat-label>
+                    <input matInput [(ngModel)]="currentValue" >
+                </mat-form-field>
+            </td>
+            <td>
+                <button matSuffix mat-flat-button mat-icon-button aria-label="add"
+                        style="margin-left: 8px"
+                        [disabled]="!validCriteria()"
+                        (click)="add()"
+                        [color]="'primary'"
+                        class="unselectable">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </td>
+        </tr>
+    </table>
+</ng-container>
+
+<ng-container>
+    <h2>Studierende</h2>
+
+    <ng-container *ngIf="students as students; else noStudents">
+
+    </ng-container>
+
+    <ng-template #noStudents>
+        <p>Keine Studierenden gefunden</p>
+    </ng-template>
+</ng-container>
