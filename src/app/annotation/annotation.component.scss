@@ -1,0 +1,16 @@
+@import "../../lwm.vars.scss";
+
+.annotations {
+  margin-bottom: $v-spacing;
+  margin-left: $h-spacing;
+
+  .annotationData::after {
+    content: '\A';
+    white-space: pre;
+  }
+
+  .annotationMetadata {
+    font-size: 11px;
+    color: $light-secondary-text;
+  }
+}

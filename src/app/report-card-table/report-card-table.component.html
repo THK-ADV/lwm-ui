@@ -99,11 +99,20 @@
         <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
             <button mat-stroked-button
                     color="primary"
-                    (click)="reschedule(element)"
+                    (click)="openRescheduleDialog(element)"
                     *ngIf="canPerformRescheduleAction(element)"
                     matTooltip="Termin verschieben"
                     matTooltipPosition="above">
                 <mat-icon>update</mat-icon>
+            </button>
+
+            <button mat-stroked-button
+                    color="accent"
+                    (click)="openAnnotationDialog(element)"
+                    *ngIf="canAnnotate"
+                    matTooltip="Annotieren"
+                    matTooltipPosition="above">
+                <mat-icon fontSet="material-icons-outlined">message</mat-icon>
             </button>
         </td>
     </ng-container>

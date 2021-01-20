@@ -12,6 +12,7 @@ import {subscribe} from '../utils/functions'
 import {ReportCardRescheduledAtom} from '../models/report-card-rescheduled.model'
 import {updateDataSource} from '../shared-dialogs/dataSource.update'
 import {AlertService} from '../services/alert.service'
+import {AnnotationComponent} from '../annotation/annotation.component'
 
 export interface ReportCardTableModel {
     dataSource: MatTableDataSource<ReportCardEntryAtom>,
@@ -42,6 +43,7 @@ export type ReschedulePresentationStrategy = RescheduleViewStrategy | Reschedule
 export class ReportCardTableComponent implements OnInit, OnDestroy {
 
     @Input() allowRescheduling: boolean
+    @Input() allowAnnotations: boolean
     @Input() reschedulePresentationStrategy: ReschedulePresentationStrategy
 
     @Input() tableModel: ReportCardTableModel
@@ -49,6 +51,7 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     @Input() tableContentFor: (e: Readonly<ReportCardEntryAtom>, attr: string) => string
 
     canReschedule: boolean
+    canAnnotate: boolean
     canApprove: boolean
     displayedColumns: string []
 
@@ -62,17 +65,19 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         this.subs = []
         this.tableContentFor = (e, attr) => e[attr]
         this.allowRescheduling = false
+        this.allowAnnotations = false
     }
 
     ngOnInit() {
         console.assert(this.reschedulePresentationStrategy !== undefined)
 
         this.canReschedule = this.allowRescheduling && this.hasReschedulePermission(this.auths)
+        this.canAnnotate = this.allowAnnotations && this.hasAnnotationPermission(this.auths)
         this.canApprove = this.hasApprovalPermission(this.auths)
 
         const c = this.tableModel.columns.map(_ => _.attr)
 
-        if (this.canReschedule) {
+        if (this.canReschedule || this.canAnnotate) {
             c.push('action')
         }
 
@@ -86,19 +91,29 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     private hasReschedulePermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
+    private hasAnnotationPermission = (auths: Readonly<AuthorityAtom[]>) =>
+        hasAnyRole(auths, UserRole.courseAssistant, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
+
     private hasApprovalPermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseAssistant, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
-    reschedule = (e: ReportCardEntryAtom) => {
+    private updateTable = (e: ReportCardEntryAtom) => {
+        const update = updateDataSource(this.tableModel.dataSource, this.alertService)
+        update(e, (lhs, rhs) => lhs.id === rhs.id)
+    }
+
+    openRescheduleDialog = (e: ReportCardEntryAtom) => {
         this.subs.push(subscribe(
             openDialog(RescheduleComponent.instance(this.dialog, e), of),
             this.updateTable
         ))
     }
 
-    private updateTable = (e: ReportCardEntryAtom) => {
-        const update = updateDataSource(this.tableModel.dataSource, this.alertService)
-        update(e, (lhs, rhs) => lhs.id === rhs.id)
+    openAnnotationDialog = (e: ReportCardEntryAtom) => {
+        this.subs.push(subscribe(
+            openDialog(AnnotationComponent.instance(this.dialog, e, this.auths[0].user), of),
+            console.log
+        ))
     }
 
     // a report card entry can only be rescheduled once by now. add support for multiple reschedules later on

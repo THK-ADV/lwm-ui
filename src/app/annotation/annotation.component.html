@@ -1,0 +1,44 @@
+<h1 mat-dialog-title>{{title}}</h1>
+
+<div class="modalContainer">
+    <mat-dialog-content [formGroup]="formGroup">
+
+        <div class="annotations" *ngFor="let a of otherAnnotations">
+            <span class="annotationData">{{showAnnotationData(a)}}</span>
+            <span class="annotationMetadata">{{showAnnotationMetadata(a)}}</span>
+        </div>
+
+        <mat-form-field class="mat-form-field-modal" color="primary">
+            <mat-label>Eigene Annotation</mat-label>
+            <textarea matInput
+                      [type]="'text'"
+                      [formControl]="messageControl">
+            </textarea>
+        </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+        <button mat-flat-button (click)="onCancel()">Abbrechen</button>
+
+        <ng-container *ngIf="hasOwnAnnotation(); else createAnnotation">
+            <button mat-flat-button
+                    (click)="onDelete()"
+                    color="warn">
+                Annotation löschen
+            </button>
+
+            <button mat-flat-button
+                    (click)="onUpdate()"
+                    cdkFocusInitial
+                    color="primary">
+                Annotation aktualisieren
+            </button>
+        </ng-container>
+
+        <ng-template #createAnnotation>
+            <button mat-flat-button (click)="onCreate()" color="primary" cdkFocusInitial>Annotation erstellen</button>
+        </ng-template>
+
+    </mat-dialog-actions>
+</div>
+
