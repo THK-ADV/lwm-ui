@@ -101,6 +101,8 @@ import {DashboardCalendarSettingsComponent} from './dashboard/dashboard-calendar
 import {RescheduleCreateOwnComponent} from './reschedule/reschedule-create-own/reschedule-create-own.component'
 import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
 import {AnnotationComponent} from './annotation/annotation.component'
+import {Students2Component} from './students/students2/students2.component'
+import {StudentMetadataComponent} from './students/student-metadata/student-metadata.component'
 
 @NgModule({
     declarations: [
@@ -181,7 +183,9 @@ import {AnnotationComponent} from './annotation/annotation.component'
         DashboardCalendarSettingsComponent,
         RescheduleCreateOwnComponent,
         ReportCardEntryTypeBatchUpdateComponent,
-        AnnotationComponent
+        AnnotationComponent,
+        Students2Component,
+        StudentMetadataComponent
     ],
     imports: [
         BrowserModule,

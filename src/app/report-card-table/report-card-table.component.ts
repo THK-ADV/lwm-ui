@@ -14,10 +14,14 @@ import {updateDataSource} from '../shared-dialogs/dataSource.update'
 import {AlertService} from '../services/alert.service'
 import {AnnotationComponent} from '../annotation/annotation.component'
 
+// ReportCard Model
+
 export interface ReportCardTableModel {
     dataSource: MatTableDataSource<ReportCardEntryAtom>,
     columns: TableHeaderColumn[]
 }
+
+// Reschedule Model
 
 export interface RescheduleViewStrategy {
     kind: 'view'
@@ -42,17 +46,20 @@ export type ReschedulePresentationStrategy = RescheduleViewStrategy | Reschedule
 })
 export class ReportCardTableComponent implements OnInit, OnDestroy {
 
+    // Permissions
+    @Input() auths: Readonly<AuthorityAtom[]>
     @Input() allowRescheduling: boolean
     @Input() allowAnnotations: boolean
-    @Input() reschedulePresentationStrategy: ReschedulePresentationStrategy
-
-    @Input() tableModel: ReportCardTableModel
-    @Input() auths: Readonly<AuthorityAtom[]>
-    @Input() tableContentFor: (e: Readonly<ReportCardEntryAtom>, attr: string) => string
-
     canReschedule: boolean
     canAnnotate: boolean
     canApprove: boolean
+
+    // Reschedule Strategy
+    @Input() reschedulePresentationStrategy: ReschedulePresentationStrategy
+
+    // Content
+    @Input() tableModel: ReportCardTableModel
+    @Input() tableContentFor: (e: Readonly<ReportCardEntryAtom>, attr: string) => string
     displayedColumns: string []
 
     private subs: Subscription[]
@@ -88,6 +95,8 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         this.subs.forEach(_ => _.unsubscribe())
     }
 
+    // permission checks
+
     private hasReschedulePermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
@@ -97,17 +106,21 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     private hasApprovalPermission = (auths: Readonly<AuthorityAtom[]>) =>
         hasAnyRole(auths, UserRole.courseAssistant, UserRole.courseEmployee, UserRole.courseManager, UserRole.admin)
 
-    private updateTable = (e: ReportCardEntryAtom) => {
-        const update = updateDataSource(this.tableModel.dataSource, this.alertService)
-        update(e, (lhs, rhs) => lhs.id === rhs.id)
-    }
+    // reschedule dialog
 
     openRescheduleDialog = (e: ReportCardEntryAtom) => {
+        const updateTable = (entry: ReportCardEntryAtom) => {
+            const update = updateDataSource(this.tableModel.dataSource, this.alertService)
+            update(entry, (lhs, rhs) => lhs.id === rhs.id)
+        }
+
         this.subs.push(subscribe(
             openDialog(RescheduleComponent.instance(this.dialog, e), of),
-            this.updateTable
+            updateTable
         ))
     }
+
+    // annotation dialog
 
     openAnnotationDialog = (e: ReportCardEntryAtom) => {
         this.subs.push(subscribe(
@@ -115,6 +128,8 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
             console.log
         ))
     }
+
+    // decisions whether the current user can see reschedules or not
 
     // a report card entry can only be rescheduled once by now. add support for multiple reschedules later on
     canPerformRescheduleAction = (e: ReportCardEntryAtom) =>
@@ -133,5 +148,7 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         this.isInto(e) || // is either rescheduled into an schedule entry
         this.reschedulePresentationStrategy.kind === 'view' || // or presented in report card entry view
         !this.isRescheduled(e) // or is presented as a normal member within a schedule entry
+
+    // annotation badge handling
 
 }

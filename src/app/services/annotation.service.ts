@@ -5,7 +5,6 @@ import {Annotation, AnnotationAtom} from '../models/annotation'
 import {makePath} from '../utils/component.utils'
 import {applyFilter, ParamFilter} from './http.filter'
 import {map} from 'rxjs/operators'
-import {ReportCardEntry} from './lwm.service'
 import {User} from '../models/user.model'
 
 interface AnnotationProtocol {
@@ -28,7 +27,7 @@ interface AnnotationJSON {
 }
 
 export interface AnnotationAtomJSON {
-    reportCardEntry: ReportCardEntry
+    reportCardEntry: string
     author: User
     message: string
     lastModified: string

@@ -15,6 +15,15 @@ export interface ReportCardEvaluationPattern {
 
 export type ReportCardEvaluationPatternProtocol = Omit<ReportCardEvaluationPattern, 'id'>
 
+export interface ReportCardEvaluationJSON {
+    student: string,
+    label: string,
+    bool: boolean,
+    int: number,
+    lastModified: string,
+    id: string
+}
+
 export interface ReportCardEvaluationAtomJSON {
     student: Student,
     label: string,

@@ -23,6 +23,7 @@ import {StudentReportCardComponent} from './dashboard/student-dashboard/student-
 import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
 import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
+import {Students2Component} from './students/students2/students2.component'
 
 const routes: Routes = [
     {
@@ -126,7 +127,7 @@ const routes: Routes = [
     {
         path: 'students/:sid',
         resolve: {userAuths: UserAuthorityResolver},
-        component: StudentsComponent
+        component: Students2Component
     },
     {
         path: '',

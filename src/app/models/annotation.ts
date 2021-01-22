@@ -1,4 +1,3 @@
-import {ReportCardEntry} from '../services/lwm.service'
 import {User} from './user.model'
 
 export interface Annotation {
@@ -10,7 +9,7 @@ export interface Annotation {
 }
 
 export interface AnnotationAtom {
-    reportCardEntry: ReportCardEntry
+    reportCardEntry: string
     author: User
     message: string
     lastModified: Date

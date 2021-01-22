@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core'
 import {
     MatAutocompleteModule,
+    MatBadgeModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatCardModule,
@@ -60,7 +61,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar'
         MatProgressBarModule,
         MatButtonToggleModule,
         MatTabsModule,
-        MatRadioModule
+        MatRadioModule,
+        MatBadgeModule
     ]
 })
 export class LWMMaterialModule {

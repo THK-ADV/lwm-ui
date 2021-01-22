@@ -112,7 +112,14 @@
                     *ngIf="canAnnotate"
                     matTooltip="Annotieren"
                     matTooltipPosition="above">
-                <mat-icon fontSet="material-icons-outlined">message</mat-icon>
+                <mat-icon [matBadgeHidden]="true"
+                          [matBadge]="'0'"
+                          matBadgePosition="above after"
+                          matBadgeSize="medium"
+                          matBadgeColor="accent"
+                          fontSet="material-icons-outlined">
+                    message
+                </mat-icon>
             </button>
         </td>
     </ng-container>

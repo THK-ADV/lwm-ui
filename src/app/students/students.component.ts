@@ -127,8 +127,8 @@ export class StudentsComponent implements OnInit, OnDestroy {
     private sub: Subscription
 
     ngOnInit() {
-        this.fetchReportCardEntries(this.auths.filter(x => x.course !== undefined))
-        this.fetchCurrentSemester()
+        this.fetchReportCardEntries(this.auths.filter(x => x.course !== undefined)) // TODO expand this check to add admin implicitly
+        this.fetchCurrentSemester() // TODO fetch current semester
     }
 
     ngOnDestroy() {
@@ -144,25 +144,25 @@ export class StudentsComponent implements OnInit, OnDestroy {
     private fetchReportCardEntries = (courseRelatedAuths: Readonly<AuthorityAtom[]>) => {
         this.student$ = this.route.paramMap.pipe(
             // tslint:disable-next-line:no-non-null-assertion
-            switchMap(params => this.userService.get(params.get('sid')!)),
+            switchMap(params => this.userService.get(params.get('sid')!)), // TODO fetch student
             switchMap(s => isStudentAtom(s) ? of(s) : EMPTY),
             tap(s => this.onNewStudentLoaded(s, courseRelatedAuths)),
             map(s => ({title: formatUser(s), mailto: `mailto:${s.email}`, mailAddress: s.email, enrollmentLabel: s.enrollment.label}))
         )
     }
 
-    // This function is called if a new student is search. Use this to reset state and fetch new data
+    // This function is called if a new student is searched. Use this to reset state and fetch new data
     private onNewStudentLoaded = (student: StudentAtom, courseRelatedAuths: Readonly<AuthorityAtom[]>) => {
         const makeAccordions = (xs: [ReportCardEntryAtom[], LabworkAtom[]][]): AccordionViewModel[] =>
             xs.map(([r, l]) => {
                 const course = l[0].course
-                const reportCardEntries: PanelViewModel[] = Object.entries(_groupBy(r, _ => _.labwork.id)).map(x => {
+                const reportCardEntries: PanelViewModel[] = Object.entries(_groupBy(r, _ => _.labwork.id)).map(x => { // TODO group by labwork
                     const labwork = l.find(_ => _.id === x[0])!
                     const entries = x[1] as ReportCardEntryAtom[]
 
                     return {
                         labwork: labwork,
-                        reportCardEntries: entries.sort((a, b) => a.assignmentIndex - b.assignmentIndex),
+                        reportCardEntries: entries.sort((a, b) => a.assignmentIndex - b.assignmentIndex), // TODO sort by assignment index
                         title: this.panelTitle(labwork),
                         subTitle: this.panelSubTitle(entries),
                         isCurrentSemester: this.isCurrentSemester(labwork)
@@ -187,7 +187,7 @@ export class StudentsComponent implements OnInit, OnDestroy {
         const filterNonEmpty = (xs: AccordionViewModel[]) =>
             xs.filter(x => nonEmpty(x.panels))
 
-        this.dataSources.clear()
+
         // forkJoin maps Obserable<A>[] to Observable<A[]>
         this.accordions$ = forkJoin(reportCardsWithLaworks$()).pipe(
             map(compose(makeAccordions, filterNonEmpty))
@@ -263,7 +263,7 @@ export class StudentsComponent implements OnInit, OnDestroy {
 
         if (!this.dataSources.get(p)) {
             this.dataSources.set(p, {
-                dataSource: new MatTableDataSource<ReportCardEntryAtom>(p.reportCardEntries),
+                dataSource: new MatTableDataSource(p.reportCardEntries),
                 columns: basicColumns().concat(distinctEntryTypeColumns(p.reportCardEntries.flatMap(_ => _.entryTypes)))
             })
         }
