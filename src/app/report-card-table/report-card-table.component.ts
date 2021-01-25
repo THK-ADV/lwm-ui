@@ -16,8 +16,13 @@ import {AnnotationComponent} from '../annotation/annotation.component'
 
 // ReportCard Model
 
+export interface ReportCardTableEntry {
+    entry: ReportCardEntryAtom
+    annotationCount: number
+}
+
 export interface ReportCardTableModel {
-    dataSource: MatTableDataSource<ReportCardEntryAtom>,
+    dataSource: MatTableDataSource<ReportCardTableEntry>,
     columns: TableHeaderColumn[]
 }
 
@@ -108,14 +113,17 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
 
     // reschedule dialog
 
-    openRescheduleDialog = (e: ReportCardEntryAtom) => {
+    openRescheduleDialog = (e: ReportCardTableEntry) => {
         const updateTable = (entry: ReportCardEntryAtom) => {
             const update = updateDataSource(this.tableModel.dataSource, this.alertService)
-            update(entry, (lhs, rhs) => lhs.id === rhs.id)
+            update(
+                {...e, entry: entry},
+                (lhs, rhs) => lhs.entry.id === rhs.entry.id
+            )
         }
 
         this.subs.push(subscribe(
-            openDialog(RescheduleComponent.instance(this.dialog, e), of),
+            openDialog(RescheduleComponent.instance(this.dialog, e.entry), of),
             updateTable
         ))
     }
@@ -150,5 +158,4 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         !this.isRescheduled(e) // or is presented as a normal member within a schedule entry
 
     // annotation badge handling
-
 }

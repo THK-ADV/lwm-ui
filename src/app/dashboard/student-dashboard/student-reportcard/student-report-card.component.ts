@@ -8,8 +8,8 @@ import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../../../report-card-table/report-card-table-utils'
 import {format, formatTime} from '../../../utils/lwmdate-adapter'
-import {defaultStudentReschedulePresentationStrategy} from '../../../students/students.component'
 import {ReschedulePresentationStrategy} from '../../../report-card-table/report-card-table.component'
+import {defaultStudentReschedulePresentationStrategy} from '../../../student-search/students-view-model'
 
 @Component({
     selector: 'lwm-student-report-card',

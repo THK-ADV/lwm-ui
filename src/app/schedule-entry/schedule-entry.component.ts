@@ -93,8 +93,10 @@ export class ScheduleEntryComponent implements OnInit {
 
         return {
             columns: columns,
-            dataSource: new MatTableDataSource<ReportCardEntryAtom>(
-                xs.sort((lhs, rhs) => compareUsers(lhs.student, rhs.student))
+            dataSource: new MatTableDataSource(
+                xs
+                    .sort((lhs, rhs) => compareUsers(lhs.student, rhs.student))
+                    .map(e => ({entry: e, annotationCount: 0})) // TODO
             )
         }
     }

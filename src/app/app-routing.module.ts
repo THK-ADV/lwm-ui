@@ -10,7 +10,6 @@ import {LabworksComponent} from './labworks/labworks.component'
 import {GroupsComponent} from './groups/groups.component'
 import {LabworkChainComponent} from './labwork-chain/labwork-chain.component'
 import {UserAuthorityResolver} from './security/user-authority-resolver'
-import {StudentsComponent} from './students/students.component'
 import {SemesterComponent} from './semester/semester.component'
 import {RoomComponent} from './room/room.component'
 import {UserComponent} from './user/user.component'
@@ -23,7 +22,7 @@ import {StudentReportCardComponent} from './dashboard/student-dashboard/student-
 import {ReportCardEvaluationComponent} from './report-card-evaluation/report-card-evaluation.component'
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
 import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
-import {Students2Component} from './students/students2/students2.component'
+import {StudentSearchComponent} from './student-search/student-search.component'
 
 const routes: Routes = [
     {
@@ -31,7 +30,7 @@ const routes: Routes = [
         canActivate: [StudentStatusGuard],
         children: [
             {
-                path: 'reportCards/labworks/:lid/students/:sid',
+                path: 'reportCards/labworks/:lid/student-search/:sid',
                 component: StudentReportCardComponent
             },
             {
@@ -127,7 +126,7 @@ const routes: Routes = [
     {
         path: 'students/:sid',
         resolve: {userAuths: UserAuthorityResolver},
-        component: Students2Component
+        component: StudentSearchComponent
     },
     {
         path: '',

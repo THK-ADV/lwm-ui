@@ -67,7 +67,6 @@ import {ProgressBarComponent} from './progress-bar/progress-bar.component'
 import {DecisionDialogComponent} from './shared-dialogs/decision-dialog/decision-dialog.component'
 import {AssignmentEntryTakeoverDialogComponent} from './labwork-chain/assignment-plan/takeover-dialog/assignment-entry-takeover-dialog.component'
 import {SearchComponent} from './search/search.component'
-import {StudentsComponent} from './students/students.component'
 import {SortPipe} from './pipe/sort.pipe'
 import {ReportCardTableComponent} from './report-card-table/report-card-table.component'
 import {TernaryEntryTypeToggleComponent} from './report-card-table/ternary-entry-type-toggle/ternary-entry-type-toggle.component'
@@ -101,8 +100,8 @@ import {DashboardCalendarSettingsComponent} from './dashboard/dashboard-calendar
 import {RescheduleCreateOwnComponent} from './reschedule/reschedule-create-own/reschedule-create-own.component'
 import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
 import {AnnotationComponent} from './annotation/annotation.component'
-import {Students2Component} from './students/students2/students2.component'
-import {StudentMetadataComponent} from './students/student-metadata/student-metadata.component'
+import {StudentSearchComponent} from './student-search/student-search.component'
+import {StudentMetadataComponent} from './student-search/student-metadata/student-metadata.component'
 
 @NgModule({
     declarations: [
@@ -152,7 +151,6 @@ import {StudentMetadataComponent} from './students/student-metadata/student-meta
         DecisionDialogComponent,
         AssignmentEntryTakeoverDialogComponent,
         SearchComponent,
-        StudentsComponent,
         SortPipe,
         ReportCardTableComponent,
         TernaryEntryTypeToggleComponent,
@@ -184,7 +182,7 @@ import {StudentMetadataComponent} from './students/student-metadata/student-meta
         RescheduleCreateOwnComponent,
         ReportCardEntryTypeBatchUpdateComponent,
         AnnotationComponent,
-        Students2Component,
+        StudentSearchComponent,
         StudentMetadataComponent
     ],
     imports: [

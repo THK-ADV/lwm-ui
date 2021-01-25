@@ -1,21 +1,25 @@
 import {Component, OnDestroy, OnInit} from '@angular/core'
-import {fetchStudentSearchDashboard, LabworkContent, StudentSearchDashboard} from '../students-view-model'
-import {HttpService} from '../../services/http.service'
+import {
+    defaultStudentReschedulePresentationStrategy,
+    fetchStudentSearchDashboard,
+    LabworkContent,
+    StudentSearchDashboard
+} from './students-view-model'
+import {HttpService} from '../services/http.service'
 import {ActivatedRoute} from '@angular/router'
 import {map, switchMap} from 'rxjs/operators'
 import {EMPTY, Observable, Subscription} from 'rxjs'
-import {SemesterJSON} from '../../models/semester.model'
-import {ReportCardTableModel, ReschedulePresentationStrategy} from '../../report-card-table/report-card-table.component'
-import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
+import {SemesterJSON} from '../models/semester.model'
+import {ReportCardTableModel, ReschedulePresentationStrategy} from '../report-card-table/report-card-table.component'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
-import {distinctEntryTypeColumns} from '../../report-card-table/report-card-table-utils'
-import {mapReportCardEntryAtomJSON} from '../../utils/http-utils'
-import {LabworkAtomJSON} from '../../models/labwork.model'
-import {userAuths} from '../../security/user-authority-resolver'
-import {AuthorityAtom} from '../../models/authority.model'
-import {defaultStudentReschedulePresentationStrategy} from '../students.component'
-import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
-import {format, formatTime} from '../../utils/lwmdate-adapter'
+import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
+import {mapReportCardEntryAtomJSON} from '../utils/http-utils'
+import {LabworkAtomJSON} from '../models/labwork.model'
+import {userAuths} from '../security/user-authority-resolver'
+import {AuthorityAtom} from '../models/authority.model'
+import {ReportCardEntryAtom} from '../models/report-card-entry.model'
+import {format, formatTime} from '../utils/lwmdate-adapter'
 
 class DataSource {
     dataSources: {
@@ -39,12 +43,14 @@ class DataSource {
         this.dataSources[this.uniqueIdentifier(labwork)] = model
 }
 
+
+
 @Component({
-    selector: 'lwm-students2',
-    templateUrl: './students2.component.html',
-    styleUrls: ['./students2.component.scss']
+    selector: 'lwm-student-search',
+    templateUrl: './student-search.component.html',
+    styleUrls: ['./student-search.component.scss']
 })
-export class Students2Component implements OnInit, OnDestroy {
+export class StudentSearchComponent implements OnInit, OnDestroy {
 
     dashboard$: Observable<StudentSearchDashboard>
     dataSources: DataSource = new DataSource()
@@ -75,7 +81,7 @@ export class Students2Component implements OnInit, OnDestroy {
                 const sid = params.get('sid')
                 return sid && fetchStudentSearchDashboard(this.http, sid) || EMPTY
             }),
-            map(d => this.prepareForUI(d))
+            map(this.prepareForUI)
         )
     }
 
@@ -109,14 +115,17 @@ export class Students2Component implements OnInit, OnDestroy {
     }
 
     bindDataSource = (labwork: LabworkContent) => {
-        console.log(this.dataSources.dataSources)
         if (this.dataSources.get(labwork)) {
             return
         }
 
         this.dataSources.set(
-            labwork, { // TODO improve
-                dataSource: new MatTableDataSource(labwork.reportCardEntries.map(_ => mapReportCardEntryAtomJSON(_.reportCardEntry))),
+            labwork,
+            { // TODO improve
+                dataSource: new MatTableDataSource(labwork.reportCardEntries.map(e => ({
+                    entry: mapReportCardEntryAtomJSON(e.reportCardEntry),
+                    annotationCount: e.annotations.length
+                }))),
                 columns: this.basicColumns.concat(distinctEntryTypeColumns(labwork.reportCardEntries.flatMap(_ => _.reportCardEntry.entryTypes)))
             })
     }
