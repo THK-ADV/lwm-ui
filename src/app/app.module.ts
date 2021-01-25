@@ -102,6 +102,7 @@ import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-
 import {AnnotationComponent} from './annotation/annotation.component'
 import {StudentSearchComponent} from './student-search/student-search.component'
 import {StudentMetadataComponent} from './student-search/student-metadata/student-metadata.component'
+import {HighlightPipe} from './pipe/highlight.pipe'
 
 @NgModule({
     declarations: [
@@ -183,7 +184,8 @@ import {StudentMetadataComponent} from './student-search/student-metadata/studen
         ReportCardEntryTypeBatchUpdateComponent,
         AnnotationComponent,
         StudentSearchComponent,
-        StudentMetadataComponent
+        StudentMetadataComponent,
+        HighlightPipe
     ],
     imports: [
         BrowserModule,

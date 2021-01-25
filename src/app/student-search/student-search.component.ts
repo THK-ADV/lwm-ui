@@ -148,10 +148,12 @@ export class StudentSearchComponent implements OnInit, OnDestroy {
 
         details = details.slice(0, -2)
 
+        const oldApi = labwork.evals.every(e => e.int === 0)
+
         if (passed) {
-            return `Praktikum bestanden (${details})`
+            return oldApi ? 'Praktikum bestanden': `Praktikum bestanden (${details})`
         } else {
-            return `Praktikum nicht bestanden (${details})`
+            return oldApi ? 'Praktikum nicht bestanden': `Praktikum nicht bestanden (${details})`
         }
     }
 

@@ -1,16 +1,17 @@
 <form>
     <input type="text"
+           matInput
            placeholder="Suche nach Studenten"
-           [formControl]="control"
-           [matAutocomplete]="auto"
-           (click)="inputClicked()">
+           [formControl]="userControl"
+           [matAutocomplete]="auto">
 
     <mat-autocomplete #auto="matAutocomplete"
-                      [displayWith]="formInputOption.displayFn">
-        <mat-option *ngFor="let option of formInputOption.filteredOptions | async"
-                    [value]="option"
-                    (onSelectionChange)="userSelected(option)">
-            {{formInputOption.displayFn(option)}}
+                      (optionSelected)="userSelected($event.option.value)"
+                      [displayWith]="displayFn">
+        <mat-option *ngFor="let user of filteredUser | async"
+                    [value]="user">
+            <span [innerHTML]="displayFn(user) | highlight: toHighlight"></span>
+            <span></span>
         </mat-option>
     </mat-autocomplete>
 </form>
