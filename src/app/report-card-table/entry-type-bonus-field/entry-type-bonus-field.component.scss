@@ -2,4 +2,8 @@
 
 .reportcard-bonus {
     margin: auto $med-spacing;
+
+    input:disabled {
+        color: $lwm-font-color;
+    }
 }

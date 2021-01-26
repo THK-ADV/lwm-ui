@@ -28,11 +28,11 @@ export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {
 
     state?: TernaryState
 
-    private passed = TernaryState.passed
-    private failed = TernaryState.failed
-    private neutral = TernaryState.neutral
+    passed = TernaryState.passed
+    failed = TernaryState.failed
+    neutral = TernaryState.neutral
 
-    private onChange = (value: number) => {
+    onChange = (value: number) => {
         const update$ = (t: ReportCardEntryType) =>
             this.service.update(this.entry.labwork.course, t.id, {...t, bool: this.fromNumber(value)})
 

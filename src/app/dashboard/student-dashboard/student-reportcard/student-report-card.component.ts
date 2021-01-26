@@ -8,7 +8,7 @@ import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../../../report-card-table/report-card-table-utils'
 import {format, formatTime} from '../../../utils/lwmdate-adapter'
-import {ReschedulePresentationStrategy} from '../../../report-card-table/report-card-table.component'
+import {ReportCardTableModel, ReschedulePresentationStrategy} from '../../../report-card-table/report-card-table.component'
 import {defaultStudentReschedulePresentationStrategy} from '../../../student-search/students-view-model'
 
 @Component({
@@ -43,7 +43,7 @@ export class StudentReportCardComponent implements OnInit {
     headerTitle = (card: ReportCardEntryAtom) =>
         `Notenheft für ${card.labwork.label}`
 
-    tableModelFor = (cards: ReportCardEntryAtom[]) => {
+    tableModelFor = (cards: ReportCardEntryAtom[]): ReportCardTableModel => {
         const basicColumns = (): TableHeaderColumn[] => [
             {attr: 'assignmentIndex', title: '#'},
             {attr: 'date', title: 'Datum'},
@@ -54,7 +54,11 @@ export class StudentReportCardComponent implements OnInit {
         ]
 
         return {
-            dataSource: new MatTableDataSource<ReportCardEntryAtom>(cards.sort((a, b) => a.assignmentIndex - b.assignmentIndex)),
+            dataSource: new MatTableDataSource(
+                cards
+                    .sort((a, b) => a.assignmentIndex - b.assignmentIndex)
+                    .map(e => ({entry: e, annotationCount: 0})) // TODO
+            ),
             columns: basicColumns().concat(distinctEntryTypeColumns(cards.flatMap(_ => _.entryTypes)))
         }
     }

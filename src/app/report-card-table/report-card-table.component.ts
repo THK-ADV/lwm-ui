@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core'
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {MatDialog, MatTableDataSource} from '@angular/material'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
@@ -51,6 +51,17 @@ export type ReschedulePresentationStrategy = RescheduleViewStrategy | Reschedule
 })
 export class ReportCardTableComponent implements OnInit, OnDestroy {
 
+    constructor(
+        private readonly dialog: MatDialog,
+        private readonly alertService: AlertService,
+    ) {
+        this.displayedColumns = []
+        this.subs = []
+        this.tableContentFor = (e, attr) => e[attr]
+        this.allowRescheduling = false
+        this.allowAnnotations = false
+    }
+
     // Permissions
     @Input() auths: Readonly<AuthorityAtom[]>
     @Input() allowRescheduling: boolean
@@ -67,18 +78,12 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     @Input() tableContentFor: (e: Readonly<ReportCardEntryAtom>, attr: string) => string
     displayedColumns: string []
 
+    // Other
+    @Output() onReportCardEntry = new EventEmitter<ReportCardEntryAtom>(false)
+
     private subs: Subscription[]
 
-    constructor(
-        private readonly dialog: MatDialog,
-        private readonly alertService: AlertService
-    ) {
-        this.displayedColumns = []
-        this.subs = []
-        this.tableContentFor = (e, attr) => e[attr]
-        this.allowRescheduling = false
-        this.allowAnnotations = false
-    }
+    mousePosition = {x: 0, y: 0}
 
     ngOnInit() {
         console.assert(this.reschedulePresentationStrategy !== undefined)
@@ -157,5 +162,16 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         this.reschedulePresentationStrategy.kind === 'view' || // or presented in report card entry view
         !this.isRescheduled(e) // or is presented as a normal member within a schedule entry
 
-    // annotation badge handling
+    // track mouse positions to disable click events if the user is selecting text
+
+    onMouseDown = ($event: MouseEvent) => {
+        this.mousePosition.x = $event.screenX
+        this.mousePosition.y = $event.screenY
+    }
+
+    onClick = ($event: MouseEvent, e: ReportCardEntryAtom) => {
+        if (this.mousePosition.x === $event.screenX && this.mousePosition.y === $event.screenY) {
+            this.onReportCardEntry.emit(e)
+        }
+    }
 }

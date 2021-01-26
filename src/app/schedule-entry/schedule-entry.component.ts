@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core'
-import {ActivatedRoute} from '@angular/router'
-import {EMPTY, Observable, of, zip} from 'rxjs'
+import {Component, OnDestroy, OnInit} from '@angular/core'
+import {ActivatedRoute, Router} from '@angular/router'
+import {EMPTY, Subscription, zip} from 'rxjs'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {switchMap} from 'rxjs/operators'
 import {ScheduleEntryService} from '../services/schedule-entry.service'
@@ -14,45 +14,132 @@ import {userAuths} from '../security/user-authority-resolver'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
 import {fullUserName} from '../utils/component.utils'
 import {compareUsers} from '../utils/sort'
-import {first, foldUndefined} from '../utils/functions'
+import {first, foldUndefined, subscribe} from '../utils/functions'
+import {AuthorityAtom} from '../models/authority.model'
+
+interface HeaderView {
+    title: string
+    assignment: string
+    room: string
+    date: string
+    timePeriod: string
+    supervisors: string
+    participants: string
+}
 
 @Component({
     selector: 'lwm-schedule-entry',
     templateUrl: './schedule-entry.component.html',
     styleUrls: ['./schedule-entry.component.scss']
 })
-export class ScheduleEntryComponent implements OnInit {
-    data$: Observable<[Readonly<ReportCardEntryAtom[]>, Readonly<ScheduleEntryAtom>]>
+export class ScheduleEntryComponent implements OnInit, OnDestroy {
+
+    headerView: HeaderView
+    auths: AuthorityAtom[]
+    reschedulePresentationStrategy: ReschedulePresentationStrategy
+    tableModel: ReportCardTableModel
+
+    subs: Subscription[] = []
 
     constructor(
         private readonly route: ActivatedRoute,
+        private readonly router: Router,
         private readonly scheduleEntryService: ScheduleEntryService,
-        private readonly reportCardService: ReportCardEntryService
+        private readonly reportCardService: ReportCardEntryService,
     ) {
+        this.auths = userAuths(route)
     }
 
     ngOnInit(): void {
-        console.log('ScheduleEntryComponent onInit')
         // TODO you can access the data in route either directly via snapshot or stream via observable
         // TODO e.g. this.route.snapshot.paramMap.get('cid')
 
-        this.data$ = this.route.paramMap.pipe(
-            switchMap(map => {
-                const cid = map.get('cid')
-                const sid = map.get('sid')
-                return cid && sid ? of([cid, sid]) : EMPTY
-            }),
-            switchMap(([cid, sid]) => zip(this.reportCardService.fromScheduleEntry(cid, sid), this.scheduleEntryService.get(cid, sid)))
-        )
+        this.subs.push(subscribe(
+            this.route.paramMap.pipe(
+                switchMap(map => {
+                    const cid = map.get('cid')
+                    const sid = map.get('sid')
+                    return cid && sid
+                        ? zip(this.reportCardService.fromScheduleEntry(cid, sid), this.scheduleEntryService.get(cid, sid))
+                        : EMPTY
+                })
+            ),
+            data => this.updateUI(data[0], data[1])
+        ))
     }
 
-    supervisors = (x: Readonly<ScheduleEntryAtom>) =>
+    ngOnDestroy() {
+        this.subs.forEach(_ => _.unsubscribe())
+    }
+
+    isRescheduledInto = (s: ScheduleEntryAtom, e: ReportCardEntryAtom): boolean =>
+        e.rescheduled !== undefined &&
+        e.rescheduled.date.getTime() === s.date.getTime() &&
+        e.rescheduled.start.equals(s.start) &&
+        e.rescheduled.end.equals(s.end) &&
+        e.rescheduled.room.id === s.room.id
+
+    tableContentFor = (e: Readonly<ReportCardEntryAtom>, attr: string) => {
+        switch (attr) {
+            case 'systemId':
+                return e.student.systemId
+            case 'name':
+                return fullUserName(e.student)
+            default:
+                return e[attr]
+        }
+    }
+
+    onReportCardEntry = (e: ReportCardEntryAtom) =>
+        this.router.navigate(['students', e.student.id]) // TODO pass information to highlight report-card-entry
+
+    // UI builder
+
+    private updateUI = (reportCardEntries: Readonly<ReportCardEntryAtom[]>, scheduleEntry: Readonly<ScheduleEntryAtom>) => {
+        this.headerView = this.makeHeaderView(scheduleEntry, reportCardEntries)
+        this.reschedulePresentationStrategy = this.makeReschedulePresentationStrategy(scheduleEntry)
+        this.tableModel = this.makeTableModel(reportCardEntries)
+    }
+
+    private makeTableModel = (xs: Readonly<ReportCardEntryAtom[]>): ReportCardTableModel => {
+        console.log('datasource', xs)
+        const columns = [
+            {attr: 'systemId', title: 'GMID'},
+            {attr: 'name', title: 'Name'}
+        ]
+
+        return {
+            columns: columns.concat(...distinctEntryTypeColumns(xs.flatMap(_ => _.entryTypes))),
+            dataSource: new MatTableDataSource(
+                [...xs]
+                    .sort((lhs, rhs) => compareUsers(lhs.student, rhs.student))
+                    .map(e => ({entry: e, annotationCount: 0}))
+            ) // TODO
+        }
+    }
+
+    private makeReschedulePresentationStrategy = (s: Readonly<ScheduleEntryAtom>): ReschedulePresentationStrategy => ({
+        kind: 'from_into',
+        indexAttr: 'systemId',
+        isInto: e => this.isRescheduledInto(s, e)
+    })
+
+    // header view builder
+
+    private makeHeaderView = (s: Readonly<ScheduleEntryAtom>, e: Readonly<ReportCardEntryAtom[]>): HeaderView => ({
+        title: this.headerTitle(s),
+        assignment: this.assignmentLabel(e),
+        date: this.dateLabel(s),
+        participants: this.participantsLabel(e, s),
+        room: this.roomLabel(s),
+        supervisors: this.supervisorLabel(s),
+        timePeriod: this.timePeriodLabel(s)
+    })
+
+    private supervisorLabel = (x: Readonly<ScheduleEntryAtom>) =>
         x.supervisor.map(shortUserName).join(', ')
 
-    group = (x: Readonly<ScheduleEntryAtom>) =>
-        `Gruppe ${x.group.label}`
-
-    participants = (xs: Readonly<ReportCardEntryAtom[]>, se: Readonly<ScheduleEntryAtom>) => {
+    private participantsLabel = (xs: Readonly<ReportCardEntryAtom[]>, se: Readonly<ScheduleEntryAtom>) => {
         let honest = 0
         let rescheduledOut = 0
         let rescheduledIn = 0
@@ -84,55 +171,7 @@ export class ScheduleEntryComponent implements OnInit {
         return base
     }
 
-    dataSource = (xs: ReportCardEntryAtom[]): ReportCardTableModel => {
-        const columns = [
-            {attr: 'systemId', title: 'GMID'},
-            {attr: 'name', title: 'Name'},
-            ...distinctEntryTypeColumns(xs.flatMap(_ => _.entryTypes))
-        ]
-
-        return {
-            columns: columns,
-            dataSource: new MatTableDataSource(
-                xs
-                    .sort((lhs, rhs) => compareUsers(lhs.student, rhs.student))
-                    .map(e => ({entry: e, annotationCount: 0})) // TODO
-            )
-        }
-    }
-
-    isRescheduledInto = (s: ScheduleEntryAtom, e: ReportCardEntryAtom): boolean =>
-        e.rescheduled !== undefined &&
-        e.rescheduled.date.getTime() === s.date.getTime() &&
-        e.rescheduled.start.equals(s.start) &&
-        e.rescheduled.end.equals(s.end) &&
-        e.rescheduled.room.id === s.room.id
-
-    reschedulePresentationStrategy = (s: Readonly<ScheduleEntryAtom>): ReschedulePresentationStrategy => ({
-        kind: 'from_into',
-        indexAttr: 'systemId',
-        isInto: e => this.isRescheduledInto(s, e)
-    })
-
-    tableContentFor = (e: Readonly<ReportCardEntryAtom>, attr: string) => {
-        switch (attr) {
-            case 'systemId':
-                return e.student.systemId
-            case 'name':
-                return fullUserName(e.student)
-            default:
-                return e[attr]
-        }
-    }
-
-    auths = () =>
-        userAuths(this.route)
-
-    showHeaderDetails = (xs: Readonly<ReportCardEntryAtom[]>) => {
-        return xs.length > 0
-    }
-
-    assignmentText = (xs: Readonly<ReportCardEntryAtom[]>) => {
+    private assignmentLabel = (xs: Readonly<ReportCardEntryAtom[]>) => {
         return foldUndefined(
             first(xs),
             x => {
@@ -143,20 +182,20 @@ export class ScheduleEntryComponent implements OnInit {
         )
     }
 
-    room = (x: Readonly<ScheduleEntryAtom>) => {
+    private roomLabel = (x: Readonly<ScheduleEntryAtom>) => {
         return x.room.label
     }
 
-    day = (x: Readonly<ScheduleEntryAtom>) =>
+    private dateLabel = (x: Readonly<ScheduleEntryAtom>) =>
         format(x.date, 'dd.MM.yyyy')
 
-    period = (x: Readonly<ScheduleEntryAtom>) => {
+    private timePeriodLabel = (x: Readonly<ScheduleEntryAtom>) => {
         const start = formatTime(x.start, 'HH:mm')
         const end = formatTime(x.end, 'HH:mm')
-        return `${start}Uhr - ${end}Uhr`
+        return `${start} Uhr - ${end} Uhr`
     }
 
-    headerTitle = (x: Readonly<ScheduleEntryAtom>) => {
+    private headerTitle = (x: Readonly<ScheduleEntryAtom>) => {
         const labwork = x.labwork.label
         const group = x.group.label
         return `${labwork} - Gruppe ${group}`

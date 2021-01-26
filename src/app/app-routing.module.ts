@@ -30,7 +30,7 @@ const routes: Routes = [
         canActivate: [StudentStatusGuard],
         children: [
             {
-                path: 'reportCards/labworks/:lid/student-search/:sid',
+                path: 'reportCards/labworks/:lid/students/:sid',
                 component: StudentReportCardComponent
             },
             {

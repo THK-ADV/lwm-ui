@@ -109,6 +109,7 @@ export class AnnotationComponent implements OnInit, OnDestroy {
             this.ownAnnotation.id
         ))
 
+    // TODO update previous UI
     onCreate = () =>
         this.formGroup.valid &&
         this.finishDialog(this.service.create(
