@@ -11,6 +11,9 @@ import {subscribe} from '../../utils/functions'
 })
 export class StudentDashboardComponent implements OnInit, OnDestroy {
 
+    // TODO add badges which link to the report-cards respectively
+    // TODO show rescheduled entries
+
     dashboard: StudentDashboard
 
     private sub: Subscription
@@ -21,7 +24,10 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.sub = subscribe(this.service.getStudentDashboard(), d => this.dashboard = d)
+        this.sub = subscribe(
+            this.service.getStudentDashboard({attribute: 'entriesSinceNow', value: 'false'}),
+            d => this.dashboard = d
+        )
     }
 
     ngOnDestroy() {

@@ -65,6 +65,15 @@ export class AnnotationService {
             .getAll(makePath(this.resource, courseId), applyFilter(filter, atomicParams))
             .pipe(map(_ => _.map(this.fromAtomicJson)))
 
+    getForStudent = (labworkId: string): Observable<AnnotationAtom[]> =>
+        this.http
+            .getAll(`labworks/${labworkId}/${this.resource}`, atomicParams)
+            .pipe(map(_ => _.map(this.fromAtomicJson)))
+
+    count = (courseId: string, ...filter: AnnotationFilter[]): Observable<number> =>
+        this.http
+            .get_(`${makePath(this.resource, courseId)}/count`, applyFilter(filter, nonAtomicParams))
+
     fromReportCardEntry = (courseId: string, reportCardEntry: string): Observable<AnnotationAtom[]> =>
         this.getAll(courseId, {attribute: 'reportCardEntry', value: reportCardEntry})
 

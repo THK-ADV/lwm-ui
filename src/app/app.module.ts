@@ -103,6 +103,8 @@ import {AnnotationComponent} from './annotation/annotation.component'
 import {StudentSearchComponent} from './student-search/student-search.component'
 import {StudentMetadataComponent} from './student-search/student-metadata/student-metadata.component'
 import {HighlightPipe} from './pipe/highlight.pipe'
+import {ScheduleEntryHeaderComponent} from './schedule-entry/schedule-entry-header/schedule-entry-header.component'
+import {ScheduleEntryTableComponent} from './schedule-entry/schedule-entry-table/schedule-entry-table.component'
 
 @NgModule({
     declarations: [
@@ -185,7 +187,9 @@ import {HighlightPipe} from './pipe/highlight.pipe'
         AnnotationComponent,
         StudentSearchComponent,
         StudentMetadataComponent,
-        HighlightPipe
+        HighlightPipe,
+        ScheduleEntryHeaderComponent,
+        ScheduleEntryTableComponent
     ],
     imports: [
         BrowserModule,

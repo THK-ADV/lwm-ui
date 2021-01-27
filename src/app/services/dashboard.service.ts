@@ -35,7 +35,7 @@ interface StudentDashboardJSON extends DashboardJSON {
 }
 
 interface DashboardHttpFilter {
-    attribute: 'ownEntriesOnly'
+    attribute: 'ownEntriesOnly' | 'entriesSinceNow'
     value: string
 }
 
@@ -49,8 +49,8 @@ export class DashboardService {
 
     private readonly path = 'dashboard'
 
-    getStudentDashboard = (): Observable<StudentDashboard> =>
-        this.http.get_<StudentDashboardJSON>(this.path)
+    getStudentDashboard = (...filter: DashboardHttpFilter[]): Observable<StudentDashboard> =>
+        this.http.get_<StudentDashboardJSON>(this.path, applyFilter(filter, atomicParams))
             .pipe(map(this.studentDashboardFromJSON))
 
     getEmployeeDashboard = (...filter: DashboardHttpFilter[]): Observable<EmployeeDashboard> =>

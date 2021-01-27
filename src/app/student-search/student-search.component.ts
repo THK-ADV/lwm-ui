@@ -18,7 +18,7 @@ import {mapReportCardEntryAtomJSON} from '../utils/http-utils'
 import {LabworkAtomJSON} from '../models/labwork.model'
 import {userAuths} from '../security/user-authority-resolver'
 import {AuthorityAtom} from '../models/authority.model'
-import {ReportCardEntryAtom} from '../models/report-card-entry.model'
+import {ReportCardEntryAtom, ReportCardEntryType} from '../models/report-card-entry.model'
 import {format, formatTime} from '../utils/lwmdate-adapter'
 
 class DataSource {
@@ -42,7 +42,6 @@ class DataSource {
     set = (labwork: LabworkContent, model: ReportCardTableModel) =>
         this.dataSources[this.uniqueIdentifier(labwork)] = model
 }
-
 
 
 @Component({
@@ -119,14 +118,21 @@ export class StudentSearchComponent implements OnInit, OnDestroy {
             return
         }
 
+        const entryTypes: ReportCardEntryType[] = []
+
+        const tableEntries = labwork.reportCardEntries.map(e => {
+            entryTypes.push(...e.reportCardEntry.entryTypes)
+            return {
+                entry: mapReportCardEntryAtomJSON(e.reportCardEntry),
+                annotationCount: e.annotations.length
+            }
+        })
+
         this.dataSources.set(
             labwork,
-            { // TODO improve
-                dataSource: new MatTableDataSource(labwork.reportCardEntries.map(e => ({
-                    entry: mapReportCardEntryAtomJSON(e.reportCardEntry),
-                    annotationCount: e.annotations.length
-                }))),
-                columns: this.basicColumns.concat(distinctEntryTypeColumns(labwork.reportCardEntries.flatMap(_ => _.reportCardEntry.entryTypes)))
+            {
+                dataSource: new MatTableDataSource(tableEntries),
+                columns: this.basicColumns.concat(distinctEntryTypeColumns(entryTypes))
             })
     }
 
@@ -151,9 +157,9 @@ export class StudentSearchComponent implements OnInit, OnDestroy {
         const oldApi = labwork.evals.every(e => e.int === 0)
 
         if (passed) {
-            return oldApi ? 'Praktikum bestanden': `Praktikum bestanden (${details})`
+            return oldApi ? 'Praktikum bestanden' : `Praktikum bestanden (${details})`
         } else {
-            return oldApi ? 'Praktikum nicht bestanden': `Praktikum nicht bestanden (${details})`
+            return oldApi ? 'Praktikum nicht bestanden' : `Praktikum nicht bestanden (${details})`
         }
     }
 

@@ -15,6 +15,7 @@ export class DashboardCalendarComponent<A> implements OnInit {
 
     @Input() eventTitleFor: (view: CalendarView, e: Readonly<ScheduleEntryEvent<A>>) => string
     @Input() semester: Semester
+    @Input() startAtToday: boolean
 
     @Input() set scheduleEntryEvents(xs: ScheduleEntryEvent<A>[]) {
         this.allDates = xs
@@ -60,8 +61,12 @@ export class DashboardCalendarComponent<A> implements OnInit {
     }
 
     private setStartDate = () => {
-        const min = minBy(this.allDates, (lhs, rhs) => lhs.start.getTime() < rhs.start.getTime())?.start
-        this.startDate = min ?? new Date()
+        if (this.startAtToday) {
+            this.startDate = new Date()
+        } else {
+            const min = minBy(this.allDates, (lhs, rhs) => lhs.start.getTime() < rhs.start.getTime())?.start
+            this.startDate = min ?? new Date()
+        }
     }
 
     private changeTitle = (view: CalendarView) =>

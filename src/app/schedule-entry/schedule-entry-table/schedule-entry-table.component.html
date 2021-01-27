@@ -1,0 +1,133 @@
+<ng-container *ngIf="reportCardEntries && reportCardEntries.length > 0; else elseBlock">
+    <table mat-table [dataSource]="dataSource">
+        <ng-container *ngFor="let column of columns" [matColumnDef]="column.attr">
+            <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
+            <td mat-cell *matCellDef="let e" [ngSwitch]="column.attr" (click)="onClick($event, e.entry)"
+                (mousedown)="onMouseDown($event)">
+                <!-- strikethrough and disable entry-types of the current student if he/she is rescheduled
+                out of the schedule entry. show normally otherwise. -->
+                <ng-container *ngIf="e.rescheduledFrom; else normalView">
+                    <lwm-ternary-entry-type-toggle *ngSwitchCase="'Anwesenheitspflichtig'"
+                                                   style="visibility: hidden;"
+                                                   [entry]="e.entry"
+                                                   [attr]="column.attr"
+                                                   [canApprove]="false"
+                                                   (click)="$event.stopPropagation()">
+                    </lwm-ternary-entry-type-toggle>
+
+                    <lwm-ternary-entry-type-toggle *ngSwitchCase="'Testat'"
+                                                   style="visibility: hidden;"
+                                                   [entry]="e.entry"
+                                                   [attr]="column.attr"
+                                                   [canApprove]="false"
+                                                   (click)="$event.stopPropagation()">
+                    </lwm-ternary-entry-type-toggle>
+
+                    <lwm-ternary-entry-type-toggle *ngSwitchCase="'Zusatzleistung'"
+                                                   style="visibility: hidden;"
+                                                   [entry]="e.entry"
+                                                   [attr]="column.attr"
+                                                   [canApprove]="false"
+                                                   (click)="$event.stopPropagation()">
+                    </lwm-ternary-entry-type-toggle>
+
+                    <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
+                                                style="visibility: hidden;"
+                                                [entry]="e.entry"
+                                                [attr]="column.attr"
+                                                [canApprove]="false"
+                                                (click)="$event.stopPropagation()">
+                    </lwm-entry-type-bonus-field>
+
+                    <ng-container *ngSwitchCase="'index'">
+                        <span class="text-with-icon">
+                            <span>{{tableContentFor(e, column.attr)}}</span>
+                            <mat-icon
+                                    [matTooltip]="'Aus diesen Termin verschoben'"
+                                    color="warn">
+                                person_remove
+                            </mat-icon>
+                        </span>
+                    </ng-container>
+
+                    <del *ngSwitchDefault class="strikethroughText">{{tableContentFor(e, column.attr)}}</del>
+                </ng-container>
+                <ng-template #normalView>
+                    <lwm-ternary-entry-type-toggle *ngSwitchCase="'Anwesenheitspflichtig'"
+                                                   [entry]="e.entry"
+                                                   [attr]="column.attr"
+                                                   [canApprove]="true"
+                                                   (click)="$event.stopPropagation()">
+                    </lwm-ternary-entry-type-toggle>
+
+                    <lwm-ternary-entry-type-toggle *ngSwitchCase="'Testat'"
+                                                   [entry]="e.entry"
+                                                   [attr]="column.attr"
+                                                   [canApprove]="true"
+                                                   (click)="$event.stopPropagation()">
+                    </lwm-ternary-entry-type-toggle>
+
+                    <lwm-ternary-entry-type-toggle *ngSwitchCase="'Zusatzleistung'"
+                                                   [entry]="e.entry"
+                                                   [attr]="column.attr"
+                                                   [canApprove]="true"
+                                                   (click)="$event.stopPropagation()">
+                    </lwm-ternary-entry-type-toggle>
+
+                    <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
+                                                [entry]="e.entry"
+                                                [attr]="column.attr"
+                                                [canApprove]="true"
+                                                (click)="$event.stopPropagation()">
+                    </lwm-entry-type-bonus-field>
+
+                    <ng-container *ngSwitchCase="'index'">
+                        <ng-container *ngIf="e.rescheduledInto; else showIndex">
+                        <span class="text-with-icon">
+                            <span>{{tableContentFor(e, column.attr)}}</span>
+                            <mat-icon
+                                    [matTooltip]="'In diesen Termin verschoben'"
+                                    color="primary">
+                                person_add
+                            </mat-icon>
+                        </span>
+                        </ng-container>
+                        <ng-template #showIndex>
+                            {{tableContentFor(e, column.attr)}}
+                        </ng-template>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="'name'">
+                        <ng-container *ngIf="e.annotations; else showName">
+                        <span class="text-with-icon">
+                            <span>{{tableContentFor(e, column.attr)}}</span>
+                            <mat-icon
+                                    [matTooltip]="'Annotationen für Studierende'"
+                                    color="primary"
+                                    [matBadge]="e.annotations"
+                                    matBadgePosition="above after"
+                                    matBadgeSize="medium"
+                                    matBadgeColor="primary"
+                                    fontSet="material-icons-outlined">
+                                message
+                            </mat-icon>
+                        </span>
+                        </ng-container>
+                        <ng-template #showName>
+                            {{tableContentFor(e, column.attr)}}
+                        </ng-template>
+                    </ng-container>
+
+                    <span *ngSwitchDefault>{{tableContentFor(e, column.attr)}}</span>
+                </ng-template>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+</ng-container>
+<ng-template #elseBlock>
+    <h3 class="nostud">Keine Studierenden in diesem Termin</h3>
+</ng-template>

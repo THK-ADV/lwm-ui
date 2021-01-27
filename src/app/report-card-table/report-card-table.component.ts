@@ -12,7 +12,7 @@ import {subscribe} from '../utils/functions'
 import {ReportCardRescheduledAtom} from '../models/report-card-rescheduled.model'
 import {updateDataSource} from '../shared-dialogs/dataSource.update'
 import {AlertService} from '../services/alert.service'
-import {AnnotationComponent} from '../annotation/annotation.component'
+import {AnnotationComponent, AnnotationDialogAction} from '../annotation/annotation.component'
 
 // ReportCard Model
 
@@ -135,11 +135,33 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
 
     // annotation dialog
 
-    openAnnotationDialog = (e: ReportCardEntryAtom) => {
-        this.subs.push(subscribe(
-            openDialog(AnnotationComponent.instance(this.dialog, e, this.auths[0].user), of),
-            console.log
-        ))
+    openAnnotationDialog = (e: ReportCardTableEntry) => {
+        const updateAnnotations = (f: (annotations: number) => number) => {
+            const update = updateDataSource(this.tableModel.dataSource)
+            update(
+                {...e, annotationCount: f(e.annotationCount)},
+                (a, b) => a.entry.id === b.entry.id
+            )
+        }
+
+        this.subs.push(
+            subscribe(
+                openDialog(AnnotationComponent.instance(this.dialog, e.entry, this.auths[0].user), _ => of(_)),
+                ([_, action]) => {
+                    switch (action) {
+                        case AnnotationDialogAction.create:
+                            updateAnnotations(a => a + 1)
+                            break
+                        case AnnotationDialogAction.delete:
+                            updateAnnotations(a => a - 1)
+                            break
+                        case AnnotationDialogAction.update:
+                            break
+
+                    }
+                }
+            )
+        )
     }
 
     // decisions whether the current user can see reschedules or not

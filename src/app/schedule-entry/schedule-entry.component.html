@@ -1,59 +1,15 @@
-<ng-container *ngIf="tableModel && headerView; else loading">
+<ng-container *ngIf="reportCardEntries && scheduleEntry; else loading">
+    <lwm-schedule-entry-header
+            [reportCardEntries]="withOutAnnotations()"
+            [scheduleEntry]="scheduleEntry">
+    </lwm-schedule-entry-header>
 
-    <div class="jumbotron schedule-entry-header-container">
-        <h1>{{headerView.title}}</h1>
-        <div class="schedule-entry-table">
-            <div class="schedule-entry-table-row">
-                <div class="schedule-entry-table-main-col">Termin:</div>
-                <div class="schedule-entry-table-col">{{headerView.assignment}}</div>
-            </div>
-
-            <div class="schedule-entry-table-row">
-                <div class="schedule-entry-table-main-col">Raum:</div>
-                <div class="schedule-entry-table-col">{{headerView.room}}</div>
-            </div>
-
-            <div class="schedule-entry-table-row">
-                <div class="schedule-entry-table-main-col">Datum:</div>
-                <div class="schedule-entry-table-col">{{headerView.date}}</div>
-            </div>
-
-            <div class="schedule-entry-table-row">
-                <div class="schedule-entry-table-main-col">Zeitraum:</div>
-                <div class="schedule-entry-table-col">{{headerView.timePeriod}}</div>
-            </div>
-
-            <div class="schedule-entry-table-row">
-                <div class="schedule-entry-table-main-col">Betreuer:</div>
-                <div class="schedule-entry-table-col">{{headerView.supervisors}}</div>
-            </div>
-
-            <div class="schedule-entry-table-row">
-                <div class="schedule-entry-table-main-col">Teilnehmer:</div>
-                <div class="schedule-entry-table-col">{{headerView.participants}}</div>
-            </div>
-        </div>
-    </div>
-
-    <ng-container *ngIf="tableModel.dataSource.data.length > 0; else elseBlock">
-        <lwm-report-card-table
-                [reschedulePresentationStrategy]="reschedulePresentationStrategy"
-                [allowRescheduling]="false"
-                [allowAnnotations]="false"
-                [tableModel]="tableModel"
-                [auths]="auths"
-                [tableContentFor]="tableContentFor"
-                (onReportCardEntry)="onReportCardEntry($event)">
-        </lwm-report-card-table>
-    </ng-container>
-    <ng-template #elseBlock>
-        <h3 class="nostud">Keine Studierenden in diesem Termin</h3>
-    </ng-template>
+    <lwm-schedule-entry-table
+            [reportCardEntries]="reportCardEntries"
+            [scheduleEntry]="scheduleEntry">
+    </lwm-schedule-entry-table>
 </ng-container>
 
 <ng-template #loading>
     <p>Einträge werden geladen...</p>
 </ng-template>
-
-
-

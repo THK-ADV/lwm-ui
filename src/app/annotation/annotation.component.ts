@@ -11,6 +11,10 @@ import {dateOrderingASC, first, partition, subscribe} from '../utils/functions'
 import {format} from '../utils/lwmdate-adapter'
 import {User} from '../models/user.model'
 
+export enum AnnotationDialogAction {
+    create, update, delete
+}
+
 @Component({
     selector: 'lwm-annotation',
     templateUrl: './annotation.component.html',
@@ -30,7 +34,7 @@ export class AnnotationComponent implements OnInit, OnDestroy {
         dialog: MatDialog,
         e: ReportCardEntryAtom,
         user: User
-    ): MatDialogRef<AnnotationComponent, Annotation> {
+    ): MatDialogRef<AnnotationComponent, [Annotation, AnnotationDialogAction]> {
         return dialog.open<AnnotationComponent>(AnnotationComponent, {
             minWidth: DIALOG_WIDTH,
             data: [e, user],
@@ -39,7 +43,7 @@ export class AnnotationComponent implements OnInit, OnDestroy {
     }
 
     constructor(
-        private dialogRef: MatDialogRef<AnnotationComponent, Annotation>,
+        private dialogRef: MatDialogRef<AnnotationComponent, [Annotation, AnnotationDialogAction]>,
         private readonly service: AnnotationService,
         @Inject(MAT_DIALOG_DATA) public payload: [ReportCardEntryAtom, User]
     ) {
@@ -84,8 +88,8 @@ export class AnnotationComponent implements OnInit, OnDestroy {
         message: this.messageControl.value as string
     })
 
-    private finishDialog = (update$: Observable<Annotation>) =>
-        this.subs.push(subscribe(update$, a => this.dialogRef.close(a)))
+    private finishDialog = (annotation$: Observable<Annotation>, action: AnnotationDialogAction) =>
+        this.subs.push(subscribe(annotation$, a => this.dialogRef.close([a, action])))
 
     ngOnDestroy() {
         this.subs.forEach(_ => _.unsubscribe())
@@ -103,26 +107,34 @@ export class AnnotationComponent implements OnInit, OnDestroy {
     onUpdate = () =>
         this.formGroup.valid &&
         this.ownAnnotation &&
-        this.finishDialog(this.service.update(
-            this.courseId(),
-            this.makeProtocol(),
-            this.ownAnnotation.id
-        ))
+        this.finishDialog(
+            this.service.update(
+                this.courseId(),
+                this.makeProtocol(),
+                this.ownAnnotation.id
+            ),
+            AnnotationDialogAction.update
+        )
 
-    // TODO update previous UI
     onCreate = () =>
         this.formGroup.valid &&
-        this.finishDialog(this.service.create(
-            this.courseId(),
-            this.makeProtocol()
-        ))
+        this.finishDialog(
+            this.service.create(
+                this.courseId(),
+                this.makeProtocol()
+            ),
+            AnnotationDialogAction.create
+        )
 
     onDelete = () =>
         this.ownAnnotation &&
-        this.finishDialog(this.service.delete(
-            this.courseId(),
-            this.ownAnnotation.id
-        ))
+        this.finishDialog(
+            this.service.delete(
+                this.courseId(),
+                this.ownAnnotation.id
+            ),
+            AnnotationDialogAction.delete
+        )
 
     hasOwnAnnotation = () =>
         this.ownAnnotation !== undefined

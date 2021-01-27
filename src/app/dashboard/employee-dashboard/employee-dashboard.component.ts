@@ -104,14 +104,22 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     }
 
     private fetchDashboard = (ownEntriesOnly: boolean) => {
-        this.subs.push(subscribe(this.dashboardService.getEmployeeDashboard({
-            attribute: 'ownEntriesOnly',
-            value: ownEntriesOnly.toString()
-        }), dashboard => {
-            this.semester = dashboard.semester
-            this.entries = employeeDashboardScheduleEntryEvents(dashboard.scheduleEntries)
-            this.currentCourses = this.getCurrentCourses(dashboard.scheduleEntries)
-        }))
+        this.subs.push(subscribe(
+            this.dashboardService.getEmployeeDashboard(
+                {
+                    attribute: 'ownEntriesOnly',
+                    value: ownEntriesOnly.toString()
+                },
+                {
+                    attribute: 'entriesSinceNow',
+                    value: 'false'
+                }
+            ),
+            dashboard => {
+                this.semester = dashboard.semester
+                this.entries = employeeDashboardScheduleEntryEvents(dashboard.scheduleEntries)
+                this.currentCourses = this.getCurrentCourses(dashboard.scheduleEntries)
+            }))
     }
 
     private getCurrentCourses = (scheduleEntries: ScheduleEntryAtom[]) => {

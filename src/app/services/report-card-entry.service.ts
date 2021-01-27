@@ -1,18 +1,18 @@
 import {applyFilter} from './http.filter'
 import {Injectable} from '@angular/core'
-import {HttpService, nonAtomicParams} from './http.service'
+import {atomicParams, HttpService, nonAtomicParams} from './http.service'
 import {Observable} from 'rxjs'
 import {map} from 'rxjs/operators'
 import {ReportCardEntryAtom, ReportCardEntryAtomJSON, ReportCardEntryJSON} from '../models/report-card-entry.model'
 import {makePath} from '../utils/component.utils'
 import {_groupBy} from '../utils/functions'
-import {convertManyReportCardEntries, convertManyReportCardEntriesAtom} from '../utils/http-utils'
+import {convertManyReportCardEntries, convertManyReportCardEntriesAtom, mapReportCardEntryAtomJSON} from '../utils/http-utils'
 import {ReportCardEntry} from './lwm.service'
 import {Time} from '../models/time.model'
 import {Room} from '../models/room.model'
 
 interface ReportCardEntryFilter {
-    attribute: 'course' | 'student' | 'labwork'
+    attribute: 'course' | 'student' | 'labwork' | 'scheduleEntry'
     value: string
 }
 
@@ -66,9 +66,12 @@ export class ReportCardEntryService {
         .getAll<ReportCardEntryJSON>(makePath(this.path, courseId), applyFilter(filter, nonAtomicParams))
         .pipe(map(convertManyReportCardEntries))
 
-    fromScheduleEntry = (courseId: string, scheduleEntryId: string): Observable<ReportCardEntryAtom[]> => this.http
-        .getAll<ReportCardEntryAtomJSON>(`${makePath('scheduleEntries', courseId)}/${scheduleEntryId}/reportCardEntries`)
-        .pipe(map(convertManyReportCardEntriesAtom))
+    fromScheduleEntry = (courseId: string, scheduleEntryId: string): Observable<[ReportCardEntryAtom, number][]> => this.http
+        .getAll<[ReportCardEntryAtomJSON, number]>(
+            `${makePath(this.path, courseId)}/scheduleEntry/${scheduleEntryId}`,
+            atomicParams
+        )
+        .pipe(map(x => x.map(([e, n]) => [mapReportCardEntryAtomJSON(e), n])))
 
     fromStudent = (student: string, labwork: string) => this.http
         .getAll<ReportCardEntryAtomJSON>(`${this.path}/student/${student}?labwork=${labwork}`)

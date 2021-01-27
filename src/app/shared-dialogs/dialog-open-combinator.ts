@@ -5,7 +5,6 @@ import {CreateUpdateDialogComponent, FormPayload} from './create-update/create-u
 import {ConfirmationResult, ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {foldUndefined} from '../utils/functions'
 import {DeleteDialogComponent} from './delete/delete-dialog.component'
-import {Decision, DecisionDialogComponent} from './decision-dialog/decision-dialog.component'
 
 // TODO use this abstraction everywhere
 export const openDialog = <T, R, U>(dialogRef: MatDialogRef<T, R>, andThen: (e: R) => Observable<U>) => {
@@ -42,7 +41,7 @@ export const subscribeConfirmationDialog = <A>(
 ): Subscription => openConfirmationDialog(dialog, andThen)
     .subscribe(a => foldUndefined(a, success, failure), failure)
 
-export const subscribeDeleteDialog = <A> (
+export const subscribeDeleteDialog = <A>(
     dialog: MatDialogRef<DeleteDialogComponent, string>,
     andThen: (id: string) => Observable<A>,
     success: (a: A) => void,
