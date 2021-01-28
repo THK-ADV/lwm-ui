@@ -6,7 +6,6 @@
 
 <lwm-report-card-table
         *ngIf="tableModel && tableModel.dataSource.data.length > 0; else noReportCards"
-        [reschedulePresentationStrategy]="reschedulePresentationStrategy"
         [allowRescheduling]="false"
         [allowAnnotations]="false"
         [tableModel]="tableModel"

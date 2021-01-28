@@ -1,16 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core'
-import {
-    defaultStudentReschedulePresentationStrategy,
-    fetchStudentSearchDashboard,
-    LabworkContent,
-    StudentSearchDashboard
-} from './students-view-model'
+import {Component, OnInit} from '@angular/core'
+import {fetchStudentSearchDashboard, LabworkContent, StudentSearchDashboard} from './students-view-model'
 import {HttpService} from '../services/http.service'
 import {ActivatedRoute} from '@angular/router'
 import {map, switchMap} from 'rxjs/operators'
-import {EMPTY, Observable, Subscription} from 'rxjs'
+import {EMPTY, Observable} from 'rxjs'
 import {SemesterJSON} from '../models/semester.model'
-import {ReportCardTableModel, ReschedulePresentationStrategy} from '../report-card-table/report-card-table.component'
+import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
@@ -49,15 +44,13 @@ class DataSource {
     templateUrl: './student-search.component.html',
     styleUrls: ['./student-search.component.scss']
 })
-export class StudentSearchComponent implements OnInit, OnDestroy {
+export class StudentSearchComponent implements OnInit {
 
     dashboard$: Observable<StudentSearchDashboard>
     dataSources: DataSource = new DataSource()
     readonly auths: AuthorityAtom[]
-    readonly reschedulePresentationStrategy: ReschedulePresentationStrategy
 
-    private subs: Subscription[] = []
-    private basicColumns: TableHeaderColumn[] = [
+    private readonly basicColumns: TableHeaderColumn[] = [
         {attr: 'assignmentIndex', title: '#'},
         {attr: 'date', title: 'Datum'},
         {attr: 'start', title: 'Start'},
@@ -71,7 +64,6 @@ export class StudentSearchComponent implements OnInit, OnDestroy {
         private readonly route: ActivatedRoute,
     ) {
         this.auths = userAuths(route)
-        this.reschedulePresentationStrategy = defaultStudentReschedulePresentationStrategy()
     }
 
     ngOnInit(): void {
@@ -82,10 +74,6 @@ export class StudentSearchComponent implements OnInit, OnDestroy {
             }),
             map(this.prepareForUI)
         )
-    }
-
-    ngOnDestroy() {
-        this.subs.forEach(_ => _.unsubscribe())
     }
 
     private prepareForUI = (dashboard: StudentSearchDashboard): StudentSearchDashboard => {

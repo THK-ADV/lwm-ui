@@ -8,8 +8,7 @@ import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../../../report-card-table/report-card-table-utils'
 import {format, formatTime} from '../../../utils/lwmdate-adapter'
-import {ReportCardTableModel, ReschedulePresentationStrategy} from '../../../report-card-table/report-card-table.component'
-import {defaultStudentReschedulePresentationStrategy} from '../../../student-search/students-view-model'
+import {ReportCardTableModel} from '../../../report-card-table/report-card-table.component'
 import {dateOrderingASC, subscribe} from '../../../utils/functions'
 import {AnnotationService} from '../../../services/annotation.service'
 import {AnnotationAtom} from '../../../models/annotation'
@@ -38,15 +37,13 @@ export class StudentReportCardComponent implements OnInit, OnDestroy {
     labworkView: LabworkView
     displayedColumns: string[] = ['index', 'label', 'content']
 
-    subs: Subscription[] = []
-    readonly reschedulePresentationStrategy: ReschedulePresentationStrategy
+    private subs: Subscription[] = []
 
     constructor(
         private readonly route: ActivatedRoute,
         private readonly reportCardEntryService: ReportCardEntryService,
         private readonly annotationService: AnnotationService,
     ) {
-        this.reschedulePresentationStrategy = defaultStudentReschedulePresentationStrategy() // TODO remove this shit
     }
 
     ngOnInit(): void {

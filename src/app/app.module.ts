@@ -105,6 +105,7 @@ import {StudentMetadataComponent} from './student-search/student-metadata/studen
 import {HighlightPipe} from './pipe/highlight.pipe'
 import {ScheduleEntryHeaderComponent} from './schedule-entry/schedule-entry-header/schedule-entry-header.component'
 import {ScheduleEntryTableComponent} from './schedule-entry/schedule-entry-table/schedule-entry-table.component'
+import {ReportCardEntryRowRescheduleComponent} from './report-card-table/report-card-entry-row-reschedule/report-card-entry-row-reschedule.component'
 
 @NgModule({
     declarations: [
@@ -189,7 +190,8 @@ import {ScheduleEntryTableComponent} from './schedule-entry/schedule-entry-table
         StudentMetadataComponent,
         HighlightPipe,
         ScheduleEntryHeaderComponent,
-        ScheduleEntryTableComponent
+        ScheduleEntryTableComponent,
+        ReportCardEntryRowRescheduleComponent
     ],
     imports: [
         BrowserModule,

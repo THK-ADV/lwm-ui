@@ -1,0 +1,26 @@
+<ng-container
+        *ngIf="isRescheduled(entry) && isAffectedByRescheduled(column); else standardCell">
+    <ng-container [ngSwitch]="column">
+        <ng-container *ngSwitchCase="rescheduleReasonAttr">
+            <span>Grund: {{rescheduledContentFor(entry.rescheduled, column)}}</span>
+            <p>{{tableContentFor(entry, column)}}</p>
+        </ng-container>
+
+        <!-- TODO: align text with icon vertically -->
+        <ng-container *ngSwitchCase="indexAttr">
+            <span>{{tableContentFor(entry, column)}}</span>
+            <p>
+                <mat-icon color="primary">repeat</mat-icon>
+            </p>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+            <del class="strikethroughText">{{tableContentFor(entry, column)}}</del>
+            <p>{{rescheduledContentFor(entry.rescheduled, column)}}</p>
+        </ng-container>
+    </ng-container>
+</ng-container>
+
+<ng-template #standardCell>
+    {{tableContentFor(entry, column)}}
+</ng-template>

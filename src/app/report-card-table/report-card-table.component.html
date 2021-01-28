@@ -1,104 +1,36 @@
 <table mat-table [dataSource]="tableModel.dataSource">
     <ng-container *ngFor="let column of tableModel.columns" [matColumnDef]="column.attr">
         <th mat-header-cell *matHeaderCellDef>{{column.title}}</th>
-        <td mat-cell
-            *matCellDef="let e"
-            [ngSwitch]="column.attr"
-            (click)="onClick($event, e.entry)"
-            (mousedown)="onMouseDown($event)">
-            <ng-container *ngIf="canSeeApprovals(e.entry)">
-                <lwm-ternary-entry-type-toggle *ngSwitchCase="'Anwesenheitspflichtig'"
-                                               [entry]="e.entry"
-                                               [attr]="column.attr"
-                                               [canApprove]="canApprove"
-                                               (click)="$event.stopPropagation()">
-                </lwm-ternary-entry-type-toggle>
+        <td mat-cell *matCellDef="let e" [ngSwitch]="column.attr">
+            <lwm-ternary-entry-type-toggle *ngSwitchCase="'Anwesenheitspflichtig'"
+                                           [entry]="e.entry"
+                                           [attr]="column.attr"
+                                           [canApprove]="canApprove">
+            </lwm-ternary-entry-type-toggle>
 
-                <lwm-ternary-entry-type-toggle *ngSwitchCase="'Testat'"
-                                               [entry]="e.entry"
-                                               [attr]="column.attr"
-                                               [canApprove]="canApprove"
-                                               (click)="$event.stopPropagation()">
-                </lwm-ternary-entry-type-toggle>
+            <lwm-ternary-entry-type-toggle *ngSwitchCase="'Testat'"
+                                           [entry]="e.entry"
+                                           [attr]="column.attr"
+                                           [canApprove]="canApprove">
+            </lwm-ternary-entry-type-toggle>
 
-                <lwm-ternary-entry-type-toggle *ngSwitchCase="'Zusatzleistung'"
-                                               [entry]="e.entry"
-                                               [attr]="column.attr"
-                                               [canApprove]="canApprove"
-                                               (click)="$event.stopPropagation()">
-                </lwm-ternary-entry-type-toggle>
+            <lwm-ternary-entry-type-toggle *ngSwitchCase="'Zusatzleistung'"
+                                           [entry]="e.entry"
+                                           [attr]="column.attr"
+                                           [canApprove]="canApprove">
+            </lwm-ternary-entry-type-toggle>
 
-                <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
-                                            [entry]="e.entry"
-                                            [attr]="column.attr"
-                                            [canApprove]="canApprove"
-                                            (click)="$event.stopPropagation()">
-                </lwm-entry-type-bonus-field>
-            </ng-container>
+            <lwm-entry-type-bonus-field *ngSwitchCase="'Bonus'"
+                                        [entry]="e.entry"
+                                        [attr]="column.attr"
+                                        [canApprove]="canApprove">
+            </lwm-entry-type-bonus-field>
 
-            <ng-container *ngIf="isRescheduled(e.entry); else standardCell">
-                <ng-container [ngSwitch]="reschedulePresentationStrategy.kind">
-                    <ng-container *ngSwitchCase="'from_into'">
-                        <ng-container *ngIf="reschedulePresentationStrategy.isInto(e.entry); else isFrom">
-                            <ng-container
-                                    *ngIf="column.attr == reschedulePresentationStrategy.indexAttr; else renderDefault">
-                                <span>
-                                    <mat-icon color="primary">person_add</mat-icon>
-                                    {{tableContentFor(e.entry, column.attr)}}
-                                </span>
-                            </ng-container>
-                            <ng-template #renderDefault>
-                                <span>{{tableContentFor(e.entry, column.attr)}}</span>
-                            </ng-template>
-                        </ng-container>
-                        <ng-template #isFrom>
-                            <ng-container
-                                    *ngIf="column.attr == reschedulePresentationStrategy.indexAttr; else renderDefault">
-                                <span>
-                                    <mat-icon color="warn">person_remove</mat-icon>
-                                    <del> {{tableContentFor(e.entry, column.attr)}}</del>
-                                </span>
-                            </ng-container>
-                            <ng-template #renderDefault>
-                                <span><del>{{tableContentFor(e.entry, column.attr)}}</del></span>
-                            </ng-template>
-                        </ng-template>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'view'">
-                        <ng-container
-                                *ngIf="isAffectedByRescheduled(reschedulePresentationStrategy, column.attr); else standardCell">
-                            <ng-container [ngSwitch]="column.attr">
-                                <ng-container *ngSwitchCase="reschedulePresentationStrategy.rescheduleReasonAttr">
-                                    <p>
-                                        Grund: {{reschedulePresentationStrategy.rescheduledContentFor(e.entry.rescheduled, column.attr)}}</p>
-                                    <p>{{tableContentFor(e.entry, column.attr)}}</p>
-                                </ng-container>
-
-                                <ng-container *ngSwitchCase="reschedulePresentationStrategy.indexAttr">
-                                    <p>{{tableContentFor(e.entry, column.attr)}}</p>
-                                    <p>
-                                        <mat-icon color="primary">repeat</mat-icon>
-                                    </p>
-                                </ng-container>
-
-                                <ng-container *ngSwitchDefault>
-                                    <p>
-                                        <del>{{tableContentFor(e.entry, column.attr)}}</del>
-                                    </p>
-                                    <p>{{reschedulePresentationStrategy.rescheduledContentFor(e.entry.rescheduled, column.attr)}}</p>
-                                </ng-container>
-                            </ng-container>
-                        </ng-container>
-                        <ng-template #standardCell>
-                            <span>{{tableContentFor(e.entry, column.attr)}}</span>
-                        </ng-template>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-
-            <ng-template #standardCell>
-                <span>{{tableContentFor(e.entry, column.attr)}}</span>
-            </ng-template>
+            <lwm-report-card-entry-row-reschedule
+                    [column]="column.attr"
+                    [entry]="e.entry"
+                    [tableContentFor]="tableContentFor">
+            </lwm-report-card-entry-row-reschedule>
         </td>
     </ng-container>
 
