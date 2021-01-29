@@ -9,7 +9,7 @@ import {AssignmentEntriesService} from '../services/assignment-entries.service'
 import {identity, Observable, of, Subscription} from 'rxjs'
 import {AssignmentEntry, AssignmentEntryType} from '../models/assignment-plan.model'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
-import {partition, subscribe} from '../utils/functions'
+import {partitionWith, subscribe} from '../utils/functions'
 import {User} from '../models/user.model'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {map} from 'rxjs/operators'
@@ -146,7 +146,7 @@ export class ReportCardEntryTypeBatchUpdateComponent implements OnInit, OnDestro
     private validateStudents = (students: User[]) => {
         const gmids = (this.studentsFc.value as string).split(',')
 
-        const [valid, invalid] = partition(gmids, gmid => students.find(s => s.systemId.toLowerCase() === gmid.toLowerCase()))
+        const [valid, invalid] = partitionWith(gmids, gmid => students.find(s => s.systemId.toLowerCase() === gmid.toLowerCase()))
 
         if (valid.length === 0) {
             const dialogRef = ConfirmDialogComponent.instance(

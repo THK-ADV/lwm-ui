@@ -9,8 +9,9 @@ import {KeycloakService} from 'keycloak-angular'
 import {getInitials} from '../utils/component.utils'
 import {isAdmin} from '../utils/role-checker'
 import {ActivatedRoute, Router} from '@angular/router'
-import {isEmpty, subscribe} from '../utils/functions'
+import {partition, subscribe} from '../utils/functions'
 import {switchMap} from 'rxjs/operators'
+
 
 @Component({
     selector: 'app-nav',
@@ -21,12 +22,15 @@ export class NavComponent implements OnInit, OnDestroy {
 
     @Input() authorities: AuthorityAtom[]
 
-    private subs: Subscription[]
+    private sub: Subscription
     readonly configs: Config[]
 
-    moduleAuthorities: AuthorityAtom[]
-    roleAuthorities: AuthorityAtom[]
+    moduleAuthorities: AuthorityAtom[] = []
     user: User
+
+    hasModuleAuthorities: boolean
+    isAdmin: boolean
+    initials: string
 
     constructor(
         private readonly changeDetectorRef: ChangeDetectorRef,
@@ -35,11 +39,7 @@ export class NavComponent implements OnInit, OnDestroy {
         private readonly router: Router,
         private readonly keycloakService: KeycloakService,
     ) {
-        this.subs = []
-        this.moduleAuthorities = []
-        this.roleAuthorities = []
         this.configs = Config.All()
-        this.authorities = []
 
         this.mobileQuery = media.matchMedia('(max-width: 600px)')
         this._mobileQueryListener = () => changeDetectorRef.detectChanges()
@@ -50,45 +50,32 @@ export class NavComponent implements OnInit, OnDestroy {
     private readonly _mobileQueryListener: () => void
 
     ngOnInit() {
-        this.unzipAuthorities()
+        this.updateUI()
     }
 
     ngOnDestroy(): void {
         this.mobileQuery.removeListener(this._mobileQueryListener)
-        this.subs.forEach(v => v.unsubscribe())
+        this.sub.unsubscribe()
     }
 
-    private unzipAuthorities = () => {
-        this.authorities.forEach(auth => {
-            if (auth.course === undefined) {
-                this.roleAuthorities.push(auth)
-            } else {
-                this.moduleAuthorities.push(auth)
-            }
-        })
+    private updateUI = () => {
+        const [roleAuths, moduleAuths] = partition(this.authorities, a => a.course === undefined)
 
-        const first = this.authorities[0]
-        if (first) {
-            this.user = first.user
-        }
+        this.user = this.authorities[0].user
 
-        this.moduleAuthorities = this.moduleAuthorities
-            .sort((a, b) => (a.course as CourseAtom).abbreviation < (b.course as CourseAtom).abbreviation ? -1 : 1)
+        this.moduleAuthorities = moduleAuths
+            .sort((a, b) => (a.course as CourseAtom).abbreviation.localeCompare((b.course as CourseAtom).abbreviation))
 
-        this.authorities = []
+        this.hasModuleAuthorities = this.moduleAuthorities.length > 0
+        this.isAdmin = isAdmin(roleAuths)
+        this.initials = getInitials(this.user)
     }
-
-    hasModuleAuthorities = () => !isEmpty(this.moduleAuthorities)
-
-    isAdmin = (): boolean => isAdmin(this.roleAuthorities)
-
-    getInitials = (): string => getInitials(this.user)
 
     logout = (): void => {
-        const $ = from(this.router.navigate(['/'])).pipe(
-            switchMap(x => from(this.keycloakService.logout()))
+        this.sub = subscribe(
+            from(this.router.navigate(['/']))
+                .pipe(switchMap(_ => from(this.keycloakService.logout()))),
+            identity
         )
-
-        this.subs.push(subscribe($, identity))
     }
 }

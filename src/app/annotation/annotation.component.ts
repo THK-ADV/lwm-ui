@@ -7,7 +7,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {Observable, Subscription} from 'rxjs'
 import {fullUserName} from '../utils/component.utils'
 import {AnnotationService} from '../services/annotation.service'
-import {dateOrderingASC, first, partition, subscribe} from '../utils/functions'
+import {dateOrderingASC, first, partitionWith, subscribe} from '../utils/functions'
 import {format} from '../utils/lwmdate-adapter'
 import {User} from '../models/user.model'
 
@@ -61,7 +61,7 @@ export class AnnotationComponent implements OnInit, OnDestroy {
         this.subs.push(subscribe(
             this.service.fromReportCardEntry(this.courseId(), this.reportCardEntry().id),
             annotations => {
-                const [own, others] = partition(annotations, a => a.author.id === this.user().id ? a : undefined)
+                const [own, others] = partitionWith(annotations, a => a.author.id === this.user().id ? a : undefined)
                 this.ownAnnotation = first(own)
 
                 if (this.ownAnnotation) {
