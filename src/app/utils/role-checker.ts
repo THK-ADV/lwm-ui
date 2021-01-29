@@ -45,10 +45,7 @@ export const fetchCurrentUserAuthoritiesOrCreateNewUser$ = (
                 return EMPTY
             }
             return userService.createFromToken().pipe(
-                switchMap(user => {
-                    alertService.reset()
-                    return authorityService.getAuthorities(user.systemId)
-                }),
+                switchMap(user => authorityService.getAuthorities(user.systemId)),
                 retry(1)
             )
         })

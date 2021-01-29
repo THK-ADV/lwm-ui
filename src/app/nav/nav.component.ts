@@ -6,7 +6,6 @@ import {Config} from '../models/config.model'
 import {User} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
 import {KeycloakService} from 'keycloak-angular'
-import {AlertService} from '../services/alert.service'
 import {getInitials} from '../utils/component.utils'
 import {isAdmin} from '../utils/role-checker'
 import {ActivatedRoute, Router} from '@angular/router'
@@ -35,7 +34,6 @@ export class NavComponent implements OnInit, OnDestroy {
         private readonly route: ActivatedRoute,
         private readonly router: Router,
         private readonly keycloakService: KeycloakService,
-        private readonly alertService: AlertService,
     ) {
         this.subs = []
         this.moduleAuthorities = []
@@ -92,9 +90,5 @@ export class NavComponent implements OnInit, OnDestroy {
         )
 
         this.subs.push(subscribe($, identity))
-    }
-
-    linkClicked = () => {
-        this.alertService.reset()
     }
 }

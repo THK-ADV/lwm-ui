@@ -35,9 +35,6 @@ export class ScheduleEntryComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        // TODO you can access the data in route either directly via snapshot or stream via observable
-        // TODO e.g. this.route.snapshot.paramMap.get('cid')
-
         this.subs.push(subscribe(
             this.route.paramMap.pipe(
                 switchMap(map => {

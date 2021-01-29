@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core'
 import {LWMError} from './http.service'
 import {Html} from '../html-builder/html-builder'
+import {Subject} from 'rxjs'
 
 type AlertType =
     'success' |
@@ -27,16 +28,18 @@ export interface Alert {
 @Injectable({
     providedIn: 'root'
 })
-export class AlertService { // TODO dismiss after a few seconds https://ng-bootstrap.github.io/#/components/alert/examples
+export class AlertService {
 
-    private alerts: Alert[]
+    private _alerts = new Subject<Alert>()
 
     constructor() {
-        this.reset()
     }
 
+    alerts = () =>
+        this._alerts.asObservable()
+
     reportAlert = (alert: Alert) =>
-        this.alerts.push(alert)
+        this._alerts.next(alert)
 
     reportSuccess = (message: string) =>
         this.reportAlert({type: 'success', body: {kind: 'message', value: message}})
@@ -46,13 +49,4 @@ export class AlertService { // TODO dismiss after a few seconds https://ng-boots
 
     reportError = (error: Error) =>
         this.reportAlert({type: 'danger', body: {kind: 'message', value: error.message}})
-
-    getAlerts = (): Alert[] =>
-        this.alerts
-
-    close = (alert: Alert) =>
-        this.alerts.splice(this.alerts.indexOf(alert), 1)
-
-    reset = () =>
-        this.alerts = []
 }
