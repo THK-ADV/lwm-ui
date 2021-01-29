@@ -35,9 +35,9 @@
                        routerLinkActive="list-item-active">{{config.label}}</a>
                 </div>
 
-                <h3 mat-subheader class="sidebarHeader logoutHeader">
+                <h3 mat-subheader class="sidebarHeader logoutHeader" (click)="logout()">
                     <mat-icon>power_settings_new</mat-icon>
-                    <span (click)="logout()">Ausloggen</span>
+                    <span>Ausloggen</span>
                 </h3>
             </mat-nav-list>
         </mat-sidenav>
