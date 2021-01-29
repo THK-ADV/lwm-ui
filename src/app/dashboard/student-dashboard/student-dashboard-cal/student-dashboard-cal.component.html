@@ -1,10 +1,8 @@
-<h2>Termine</h2>
-
-<ng-container *ngIf="hasCalendarEntries(); else noAppointments">
+<ng-container *ngIf="hasCalendarEntries; else noAppointments">
     <lwm-dashboard-calendar
             [startAtToday]="true"
             [semester]="semester"
-            [scheduleEntryEvents]="calendarEvents()"
+            [scheduleEntryEvents]="scheduleEntryEvents"
             [eventTitleFor]="eventTitleFor"
             (eventClickEmitter)="onEventClick($event)">
     </lwm-dashboard-calendar>

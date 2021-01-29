@@ -2,7 +2,9 @@ import {Component, OnDestroy, OnInit} from '@angular/core'
 import {DashboardService} from '../../services/dashboard.service'
 import {StudentDashboard} from '../../models/dashboard.model'
 import {Subscription} from 'rxjs'
-import {subscribe} from '../../utils/functions'
+import {distinctBy, filterIsDefined, subscribe} from '../../utils/functions'
+import {CourseAtom} from '../../models/course.model'
+import {ActivatedRoute, Router} from '@angular/router'
 
 @Component({
     selector: 'app-student-dashboard',
@@ -11,26 +13,49 @@ import {subscribe} from '../../utils/functions'
 })
 export class StudentDashboardComponent implements OnInit, OnDestroy {
 
-    // TODO add badges which link to the report-cards respectively
-    // TODO show rescheduled entries
-
     dashboard: StudentDashboard
+    courses: CourseAtom[] = []
 
     private sub: Subscription
 
     constructor(
         private readonly service: DashboardService,
+        private readonly router: Router,
+        private readonly route: ActivatedRoute
     ) {
     }
 
     ngOnInit() {
         this.sub = subscribe(
             this.service.getStudentDashboard({attribute: 'entriesSinceNow', value: 'false'}),
-            d => this.dashboard = d
+            this.updateUI
         )
     }
 
     ngOnDestroy() {
         this.sub.unsubscribe()
+    }
+
+    private updateUI = (d: StudentDashboard) => {
+        this.dashboard = d
+        const sCourses = distinctBy(d.scheduleEntries, a => a.labwork.course.id)
+            .map(a => a.labwork.course)
+        const rCourses = distinctBy(d.reportCardEntries, a => a.labwork.course)
+            .map(a => d.labworkApplications.find(_ => _.labwork.course.id === a.labwork.course)?.labwork?.course)
+
+        this.courses = sCourses.concat(filterIsDefined(rCourses))
+    }
+
+    routeToReportCards = (course: CourseAtom) => {
+        const app = this.dashboard.labworkApplications.find(a => a.labwork.course.id === course.id)
+
+        if (!app) { // students can only route to their report-cards. thus, an applicant must exists.
+            return
+        }
+
+        this.router.navigate(
+            [`reportCards/labworks/${app.labwork.id}/students/${app.applicant.id}`,],
+            {relativeTo: this.route}
+        )
     }
 }

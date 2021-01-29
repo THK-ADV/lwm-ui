@@ -7,15 +7,11 @@
             (ownEntriesOnlyChange)="ownEntriesOnlyDidChange($event)">
     </lwm-dashboard-calendar-settings>
 
-    <ng-container *ngIf="currentCourses.length > 0">
-        <h2>Legende</h2>
-        <div class="ed-chips legend">
-            <div *ngFor="let c of currentCourses"
-                 [style]="{backgroundColor: colorForCourse_(c.id)}">
-                {{c.abbreviation}}
-            </div>
-        </div>
-    </ng-container>
+    <lwm-dashboard-cal-legend
+            [title]="'Termine'"
+            [courses]="currentCourses"
+            (legendClicked)="routeToCourse($event)">
+    </lwm-dashboard-cal-legend>
 
     <lwm-dashboard-calendar
             [startAtToday]="true"

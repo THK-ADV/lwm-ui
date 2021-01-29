@@ -106,6 +106,7 @@ import {HighlightPipe} from './pipe/highlight.pipe'
 import {ScheduleEntryHeaderComponent} from './schedule-entry/schedule-entry-header/schedule-entry-header.component'
 import {ScheduleEntryTableComponent} from './schedule-entry/schedule-entry-table/schedule-entry-table.component'
 import {ReportCardEntryRowRescheduleComponent} from './report-card-table/report-card-entry-row-reschedule/report-card-entry-row-reschedule.component'
+import {DashboardCalLegendComponent} from './dashboard/dashboard-cal-legend/dashboard-cal-legend.component'
 
 @NgModule({
     declarations: [
@@ -191,7 +192,8 @@ import {ReportCardEntryRowRescheduleComponent} from './report-card-table/report-
         HighlightPipe,
         ScheduleEntryHeaderComponent,
         ScheduleEntryTableComponent,
-        ReportCardEntryRowRescheduleComponent
+        ReportCardEntryRowRescheduleComponent,
+        DashboardCalLegendComponent
     ],
     imports: [
         BrowserModule,

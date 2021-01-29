@@ -9,6 +9,12 @@
             [student]="dashboard.user">
     </lwm-student-dashboard-application>
 
+    <lwm-dashboard-cal-legend
+            [title]="'Laufende Praktika'"
+            [courses]="courses"
+            (legendClicked)="routeToReportCards($event)">
+    </lwm-dashboard-cal-legend>
+
     <lwm-student-dashboard-cal
             [groups]="dashboard.groups"
             [reportCardEntries]="dashboard.reportCardEntries"

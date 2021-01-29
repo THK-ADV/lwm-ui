@@ -30,6 +30,9 @@ export class StudentDashboardCalComponent implements OnInit {
     @Input() semester: Semester
     @Input() groups: DashboardGroupLabel[]
 
+    scheduleEntryEvents: ScheduleEntryEvent<StudentDashboardCalEntry>[]
+    hasCalendarEntries: boolean
+
     constructor(
         private readonly router: Router,
         private readonly route: ActivatedRoute
@@ -37,12 +40,11 @@ export class StudentDashboardCalComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.hasCalendarEntries = this.reportCardEntries.length > 0 || this.scheduleEntries.length > 0
+        this.scheduleEntryEvents = this.makeCalendarEvents()
     }
 
-    hasCalendarEntries = () =>
-        this.reportCardEntries.length > 0 || this.scheduleEntries.length > 0
-
-    calendarEvents = (): ScheduleEntryEvent<StudentDashboardCalEntry>[] => {
+    private makeCalendarEvents = (): ScheduleEntryEvent<StudentDashboardCalEntry>[] => {
         const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
             const backgroundColor = colorForCourse(e.labwork.course)
             const foregroundColor = whiteColor()
@@ -65,7 +67,7 @@ export class StudentDashboardCalComponent implements OnInit {
         ]
     }
 
-    eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
+    private eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
         switch (view) {
             case 'month':
                 return `${e.labwork.label} in ${e.room.label}`

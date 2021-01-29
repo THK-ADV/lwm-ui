@@ -1,0 +1,10 @@
+<ng-container *ngIf="legendViewItems && legendViewItems.length > 0">
+    <h2 *ngIf="title">{{title}}</h2>
+    <div class="ed-chips legend">
+        <div *ngFor="let l of legendViewItems"
+             [style]="{backgroundColor: l.color}"
+             (click)="onClick(l)">
+            {{l.label}}
+        </div>
+    </div>
+</ng-container>

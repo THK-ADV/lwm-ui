@@ -51,8 +51,6 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 
     private subs: Subscription[]
 
-    colorForCourse_ = colorForCourse
-
     constructor(
         private readonly dashboardService: DashboardService,
         private readonly route: ActivatedRoute,
@@ -128,5 +126,12 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
             mapUndefined(first(v), f => courses.push(f.labwork.course))
         })
         return courses
+    }
+
+    routeToCourse = (course: CourseAtom) => {
+        this.router.navigate(
+            [`courses/${course.id}`],
+            {relativeTo: this.route}
+        )
     }
 }

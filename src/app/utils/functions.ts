@@ -123,3 +123,21 @@ export const partition = <A, B>(xs: Readonly<Array<A>>, p: (t: A) => B | undefin
 
     return [match, noMatch]
 }
+
+export const distinctBy = <A, B>(xs: Readonly<A[]>, f: (a: A) => B): A[] => {
+    const distinct: A[] = []
+
+    xs.forEach(x => {
+        if (!exists(distinct, a => f(a) === f(x))) {
+            distinct.push(x)
+        }
+    })
+
+    return distinct
+}
+
+export const isDefined = <A>(a: A | undefined): a is A =>
+    a !== undefined
+
+export const filterIsDefined = <A>(xs: Readonly<Array<A | undefined>>): A[] =>
+    xs.filter(isDefined)
