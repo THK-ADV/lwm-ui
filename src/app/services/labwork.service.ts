@@ -21,7 +21,7 @@ export class LabworkService {
         .get<LabworkAtomJSON>(makePath(this.path, courseId), id, atomicParams)
         .pipe(map(mapLabworkJSON))
 
-    // TODO semester dates are not parsed correctly
+    // Care: semester dates are not parsed correctly
     getNonAtom = (courseId: string, id: string): Observable<Labwork> => this.http
         .get<Labwork>(makePath(this.path, courseId), id, nonAtomicParams)
 
