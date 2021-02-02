@@ -3,15 +3,10 @@ import {DashboardService} from '../../services/dashboard.service'
 import {Subscription} from 'rxjs'
 import {ActivatedRoute, Router} from '@angular/router'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
-import {first, foldUndefined, mapUndefined, nonEmpty, subscribe} from '../../utils/functions'
+import {first, mapUndefined, nonEmpty, subscribe} from '../../utils/functions'
 import {CourseAtom} from '../../models/course.model'
 import {Card} from '../../card-list/card-list.component'
-import {
-    CalendarView,
-    ScheduleEntryEvent,
-    scheduleEntryEventTitle,
-    scheduleEntryProps
-} from '../../labwork-chain/schedule/view/schedule-view-model'
+import {CalendarView, ScheduleEntryEvent, scheduleEntryEventTitleLong} from '../../labwork-chain/schedule/view/schedule-view-model'
 import {colorForCourse} from '../../utils/course-colors'
 import {whiteColor} from '../../utils/colors'
 import {Time} from '../../models/time.model'
@@ -27,7 +22,7 @@ export const employeeDashboardScheduleEntryEvents = (scheduleEntries: ScheduleEn
             allDay: false,
             start: Time.withNewDate(e.date, e.start).date,
             end: Time.withNewDate(e.date, e.end).date,
-            title: scheduleEntryEventTitle('month', scheduleEntryProps(e.supervisor, e.room, e.group)),
+            title: scheduleEntryEventTitleLong('month', e),
             borderColor: backgroundColor,
             backgroundColor: backgroundColor,
             textColor: foregroundColor,
@@ -80,7 +75,7 @@ export class EmployeeDashboardComponent implements OnInit, OnDestroy {
     }
 
     eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<ScheduleEntryAtom>>) =>
-        foldUndefined(e.extendedProps, p => scheduleEntryEventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group)), () => e.title)
+        e.extendedProps && scheduleEntryEventTitleLong(view, e.extendedProps) || e.title
 
     onEventClick = (event: ScheduleEntryEvent<ScheduleEntryAtom>) => {
         if (!event.extendedProps) {

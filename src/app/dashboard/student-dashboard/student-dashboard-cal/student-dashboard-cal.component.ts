@@ -1,11 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core'
 import {ReportCardEntryAtom} from '../../../models/report-card-entry.model'
-import {
-    CalendarView,
-    ScheduleEntryEvent,
-    scheduleEntryEventTitle,
-    scheduleEntryProps
-} from '../../../labwork-chain/schedule/view/schedule-view-model'
+import {CalendarView, ScheduleEntryEvent, scheduleEntryEventTitleLong} from '../../../labwork-chain/schedule/view/schedule-view-model'
 import {colorForCourse} from '../../../utils/course-colors'
 import {whiteColor} from '../../../utils/colors'
 import {Time} from '../../../models/time.model'
@@ -49,10 +44,15 @@ export class StudentDashboardCalComponent implements OnInit {
             const backgroundColor = colorForCourse(e.labwork.course)
             const foregroundColor = whiteColor()
 
+
+            const date = this.getDate(e)
+            const start = this.getStart(e)
+            const end = this.getEnd(e)
+
             return {
                 allDay: false,
-                start: Time.withNewDate(e.date, e.start).date,
-                end: Time.withNewDate(e.date, e.end).date,
+                start: Time.withNewDate(date, start).date,
+                end: Time.withNewDate(date, end).date,
                 title: this.eventTitle('month', e),
                 borderColor: backgroundColor,
                 backgroundColor: backgroundColor,
@@ -67,17 +67,32 @@ export class StudentDashboardCalComponent implements OnInit {
         ]
     }
 
+    private getEnd = (e: ReportCardEntryAtom) =>
+        e.rescheduled?.end ?? e.end
+
+    private getStart = (e: ReportCardEntryAtom) =>
+        e.rescheduled?.start ?? e.start
+
+    private getDate = (e: ReportCardEntryAtom) =>
+        e.rescheduled?.date ?? e.date
+
+    private getRoom = (e: ReportCardEntryAtom) =>
+        e.rescheduled?.room ?? e.room
+
     private eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
+        const room = this.getRoom(e)
+        const labwork = e.labwork
+        const grp = this.groups.find(_ => _.labworkId === labwork.id)
+        const index = e.assignmentIndex + 1
+        let base = ''
+
         switch (view) {
             case 'month':
-                return `${e.labwork.label} in ${e.room.label}`
+                base = `#${index} ${labwork.label} in ${room.label}`
+                return (grp && base + ` (Grp. ${grp.groupLabel})`) ?? base
             case 'list':
-                const grp = foldUndefined(
-                    this.groups.find(_ => _.labworkId === e.labwork.id),
-                    g => ` Gruppe ${g.groupLabel}`,
-                    () => ''
-                )
-                return `${e.labwork.label} in ${e.room.label}: ${e.label}${grp}`
+                base = `#${index} ${labwork.label} in ${room.label}: ${e.label}`
+                return (grp && base + ` Gruppe ${grp.groupLabel}`) ?? base
         }
     }
 
@@ -85,14 +100,13 @@ export class StudentDashboardCalComponent implements OnInit {
         (e as ReportCardEntryAtom).assignmentIndex !== undefined
 
     eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<StudentDashboardCalEntry>>) =>
-        foldUndefined(e.extendedProps, p => {
-            if (this.isReportCardEntryAtom(p)) {
-                return this.eventTitle(view, p)
-            } else {
-                return scheduleEntryEventTitle(view, scheduleEntryProps(p.supervisor, p.room, p.group))
-            }
-
-        }, () => e.title)
+        foldUndefined(
+            e.extendedProps,
+            p => this.isReportCardEntryAtom(p) ?
+                this.eventTitle(view, p) :
+                scheduleEntryEventTitleLong(view, p),
+            () => e.title
+        )
 
     onEventClick = (event: ScheduleEntryEvent<StudentDashboardCalEntry>) => {
         if (!event.extendedProps) {
