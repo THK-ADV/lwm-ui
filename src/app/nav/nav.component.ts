@@ -11,7 +11,7 @@ import {isAdmin} from '../utils/role-checker'
 import {ActivatedRoute, Router} from '@angular/router'
 import {partition, subscribe} from '../utils/functions'
 import {switchMap} from 'rxjs/operators'
-
+import {MiscLink, standardMiscLinks} from './misc-links'
 
 @Component({
     selector: 'app-nav',
@@ -24,6 +24,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
     private sub: Subscription
     readonly configs: Config[]
+    readonly miscLinks: MiscLink[]
 
     moduleAuthorities: AuthorityAtom[] = []
     user: User
@@ -40,6 +41,7 @@ export class NavComponent implements OnInit, OnDestroy {
         private readonly keycloakService: KeycloakService,
     ) {
         this.configs = Config.All()
+        this.miscLinks = standardMiscLinks()
 
         this.mobileQuery = media.matchMedia('(max-width: 600px)')
         this._mobileQueryListener = () => changeDetectorRef.detectChanges()

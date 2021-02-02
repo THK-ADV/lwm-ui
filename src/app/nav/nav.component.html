@@ -18,13 +18,15 @@
             </div>
 
             <mat-nav-list class="navListContainer">
-                <h3 mat-subheader class="sidebarHeader moduleHeader" *ngIf="hasModuleAuthorities">
-                    <mat-icon>account_balance</mat-icon>
-                    <span>Module</span>
-                </h3>
+                <div *ngIf="hasModuleAuthorities">
+                    <h3 mat-subheader class="sidebarHeader moduleHeader">
+                        <mat-icon>account_balance</mat-icon>
+                        <span>Module</span>
+                    </h3>
 
-                <a mat-list-item routerLink="e/courses/{{auth.course.id}}" *ngFor="let auth of moduleAuthorities"
-                   routerLinkActive="list-item-active">{{auth.course.abbreviation}}</a>
+                    <a mat-list-item routerLink="e/courses/{{auth.course.id}}" *ngFor="let auth of moduleAuthorities"
+                       routerLinkActive="list-item-active">{{auth.course.abbreviation}}</a>
+                </div>
 
                 <div *ngIf="isAdmin">
                     <h3 mat-subheader class="sidebarHeader configHeader">
@@ -33,6 +35,15 @@
                     </h3>
                     <a mat-list-item routerLink="e/{{config.path}}" *ngFor="let config of configs"
                        routerLinkActive="list-item-active">{{config.label}}</a>
+                </div>
+
+                <div>
+                    <h3 mat-subheader class="sidebarHeader configHeader">
+                        <mat-icon>miscellaneous_services</mat-icon>
+                        <span>Sonstiges</span>
+                    </h3>
+                    <a mat-list-item routerLink="/{{link.path}}" *ngFor="let link of miscLinks"
+                       routerLinkActive="list-item-active">{{link.label}}</a>
                 </div>
 
                 <h3 mat-subheader class="sidebarHeader logoutHeader" (click)="logout()">

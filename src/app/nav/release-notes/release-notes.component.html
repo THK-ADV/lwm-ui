@@ -1,0 +1,8 @@
+<lwm-abstract-header [headerTitle]="'Release notes'"></lwm-abstract-header>
+
+<ng-container *ngFor="let note of notes">
+    <h2>{{note.dateLabel}} (v.{{note.version}})</h2>
+    <ul>
+        <li *ngFor="let e of note.notes">{{e}}</li>
+    </ul>
+</ng-container>

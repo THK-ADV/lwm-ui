@@ -23,6 +23,8 @@ import {ReportCardEvaluationComponent} from './report-card-evaluation/report-car
 import {CourseLabworkParamResolver} from './resolver/course-labwork-param-resolver'
 import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-batch-update/report-card-entry-type-batch-update.component'
 import {StudentSearchComponent} from './student-search/student-search.component'
+import {PrivacyComponent} from './nav/privacy/privacy.component'
+import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component'
 
 const routes: Routes = [
     {
@@ -127,6 +129,14 @@ const routes: Routes = [
         path: 'students/:sid',
         resolve: {userAuths: UserAuthorityResolver},
         component: StudentSearchComponent
+    },
+    {
+        path: 'privacy',
+        component: PrivacyComponent
+    },
+    {
+        path: 'release-notes',
+        component: ReleaseNotesComponent
     },
     {
         path: '',
