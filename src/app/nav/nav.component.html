@@ -42,8 +42,12 @@
                         <mat-icon>miscellaneous_services</mat-icon>
                         <span>Sonstiges</span>
                     </h3>
-                    <a mat-list-item routerLink="/{{link.path}}" *ngFor="let link of miscLinks"
-                       routerLinkActive="list-item-active">{{link.label}}</a>
+                    <a *ngFor="let link of miscLinks"
+                       (click)="openLink(link)"
+                       mat-list-item
+                       routerLinkActive="list-item-active">
+                        {{link.label}}
+                    </a>
                 </div>
 
                 <h3 mat-subheader class="sidebarHeader logoutHeader" (click)="logout()">

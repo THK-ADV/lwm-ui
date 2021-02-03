@@ -80,4 +80,15 @@ export class NavComponent implements OnInit, OnDestroy {
             identity
         )
     }
+
+    openLink = (link: MiscLink) => {
+        switch (link.url.kind) {
+            case 'internal':
+                this.router.navigate([link.url.path])
+                break
+            case 'external':
+                window.open(link.url.path, '_blank')
+                break
+        }
+    }
 }
