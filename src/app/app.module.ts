@@ -28,7 +28,6 @@ import {DeleteDialogComponent} from './shared-dialogs/delete/delete-dialog.compo
 import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
 import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
-import {UserAuthorityUpdateDialogComponent} from './users/update/user-authority-update-dialog.component'
 import {LabworksComponent} from './labworks/labworks.component'
 import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
@@ -121,7 +120,6 @@ import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component
         CreateUpdateDialogComponent,
         ListTemplateComponent,
         AlertComponent,
-        UserAuthorityUpdateDialogComponent,
         LabworksComponent,
         FilterPipe,
         NgInitDirective,
@@ -232,7 +230,6 @@ import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component
     entryComponents: [
         DeleteDialogComponent,
         CreateUpdateDialogComponent,
-        UserAuthorityUpdateDialogComponent,
         GroupEditComponent,
         CourseDetailComponent,
         CourseAuthorityUpdateDialogComponent,

@@ -1,35 +1,23 @@
 import {Injectable} from '@angular/core'
-import {HttpService} from './http.service'
-import {AbstractCRUDService} from '../abstract-crud/abstract-crud.service'
-import {Role, userStatusRoles} from '../models/role.model'
+import {HttpService, nonAtomicParams} from './http.service'
+import {Role} from '../models/role.model'
 import {Observable} from 'rxjs'
-import {exists, NotImplementedError} from '../utils/functions'
-import {map} from 'rxjs/operators'
+import {applyFilter} from './http.filter'
+import {makePath} from '../utils/component.utils'
 
 @Injectable({
     providedIn: 'root'
 })
-export class RoleService implements AbstractCRUDService<Role, Role> {
+export class RoleService {
 
     constructor(private http: HttpService) {
     }
 
     private readonly path = 'roles'
 
-    create = (protocol: Role): Observable<Role> => NotImplementedError()
-
-    delete = (id: string): Observable<Role> => NotImplementedError()
-
-    update = (protocol: Role, id: string): Observable<Role> => NotImplementedError()
-
-    getAll = (): Observable<Role[]> => this.http.getAll(this.path)
-
-    getCourseRoles = (): Observable<Role[]> => this.http
-        .getAll<Role>(this.path)
-        .pipe(
-            map(roles => {
-                const userRoles = userStatusRoles()
-                return roles.filter(r => !exists(userRoles, u => r.label === u) && r.label !== 'Rechteverantwortlicher') // TODO move to backend
-            })
+    courseRelatedRoles = (courseId: string): Observable<Role[]> =>
+        this.http.getAll<Role>(
+            makePath(this.path, courseId),
+            applyFilter([{attribute: 'select', value: 'courseRelated'}], nonAtomicParams)
         )
 }

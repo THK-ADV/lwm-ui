@@ -68,27 +68,39 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         this.setupFormControls()
     }
 
-    private userFormInput(): FormInput {
+    private userFormInput = (): FormInput => {
         const fcn = 'userControl'
         return {
             formControlName: fcn,
             displayTitle: 'Nutzer',
             isDisabled: false,
-            data: new FormInputOption<User>(fcn, invalidChoiceKey, true, formatUser, this.userService.getAll())
+            data: new FormInputOption<User>(
+                fcn,
+                invalidChoiceKey,
+                true,
+                formatUser,
+                this.userService.getAll()
+            )
         }
     }
 
-    private roleFormInput(): FormInput {
+    private roleFormInput = (): FormInput => {
         const fcn = 'roleControl'
         return {
             formControlName: fcn,
             displayTitle: 'Rolle',
             isDisabled: false,
-            data: new FormInputOption<Role>(fcn, invalidChoiceKey, true, r => r.label, this.roleService.getCourseRoles())
+            data: new FormInputOption<Role>(
+                fcn,
+                invalidChoiceKey,
+                true,
+                r => r.label,
+                this.roleService.courseRelatedRoles(this.course.id) // TODO routes for roles are now restricted
+            )
         }
     }
 
-    private setupAuthorities() {
+    private setupAuthorities = () => {
         this.subs.push(subscribe(
             this.authorityService.getAuthoritiesForCourse(this.course.id),
             auths => {
@@ -101,7 +113,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
         ))
     }
 
-    private setupFormControls() {
+    private setupFormControls = () => {
         foreachOption(this.inputs, o => {
             const fc = new FormControl(o.value, o.validator)
             this.authGroup.addControl(o.controlName, fc)
@@ -145,7 +157,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     private createAuthority = (auth: AuthorityProtocol) => {
         this.subs.push(
             subscribe(
-                this.authorityService.create(auth),
+                this.authorityService.create(this.course.id, auth),
                 this.afterCreate.bind(this)
             )
         )
@@ -159,7 +171,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
     onDelete = (auth: AuthorityAtom) => {
         this.subs.push(
             subscribe(
-                this.authorityService.delete(auth.id),
+                this.authorityService.delete(this.course.id, auth.id),
                 _ => this.afterDelete(auth)
             )
         )
@@ -173,7 +185,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 
     emptyData = (): boolean => this.dataSource.data.length === 0
 
-    private fold(attr: string, auth: AuthorityAtom, mapUser: (User) => string, mapRole: (Role) => string): string {
+    private fold = (attr: string, auth: AuthorityAtom, mapUser: (User) => string, mapRole: (Role) => string): string => {
         switch (attr) {
             case 'user':
                 return mapUser(auth.user)
