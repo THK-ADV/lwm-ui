@@ -1,11 +1,8 @@
-<lwm-abstract-header [headerTitle]="'Nutzer'"
-                     [actionTypes]="syncAction()"
-                     (performAction)="onSync()">
-</lwm-abstract-header>
-
-<lwm-abstract-table
-                    [sort]="{active: 'lastname', direction: 'asc'}"
-                    [data$]="users$"
-                    [columns]="columns"
-                    (dataSourceEmitter)="initDataSource($event)">
-</lwm-abstract-table>
+<lwm-abstract-crud
+        [headerTitle]="'Benutzer'"
+        [columns]="columns"
+        [data$]="users$"
+        [creatable]="creatable"
+        [tableContent]="tableContent"
+        [sort]="{active: 'lastname', direction: 'asc'}">
+</lwm-abstract-crud>
