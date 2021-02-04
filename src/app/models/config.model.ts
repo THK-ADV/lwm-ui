@@ -5,7 +5,7 @@ export class Config {
 
     static All(): Config[] {
         return [
-            new Config('Berechtigungen', 'authorities'),
+            new Config('Benutzer', 'users'),
             new Config('Module', 'modules'),
             new Config('Räume', 'rooms'),
             new Config('Studiengänge', 'degrees'),

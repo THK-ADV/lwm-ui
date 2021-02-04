@@ -116,13 +116,19 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> impleme
 
 
         const emptyProtocol = this.creatable.emptyProtocol()
-        const input: FormInput[] = this.columns.map(c => ({
-            formControlName: c.attr,
-            displayTitle: c.title,
-            // this is safe here, because every attribute maps to an input
-            // tslint:disable-next-line:no-non-null-assertion
-            ...this.creatable.makeInput(c.attr, entity)!!
-        }))
+        const input: FormInput[] = []
+
+        this.columns.forEach(c => {
+            const i = this.creatable.makeInput(c.attr, entity)
+
+            if (i) {
+                input.push({
+                    formControlName: c.attr,
+                    displayTitle: c.title,
+                    ...i
+                })
+            }
+        })
 
         const formPayload: FormPayload<Protocol> = {
             headerTitle: dialogTitle(mode, this.creatable.dialogTitle),

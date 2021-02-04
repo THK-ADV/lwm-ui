@@ -51,7 +51,7 @@ const routes: Routes = [
         canActivate: [EmployeeStatusGuard],
         children: [
             {
-                path: 'authorities',
+                path: 'users',
                 component: UserComponent
             },
             {
