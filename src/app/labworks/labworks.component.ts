@@ -128,7 +128,13 @@ export class LabworksComponent implements OnInit, OnDestroy {
 
                 this.groupedLabworks$ = merge(labworksWithApps$).pipe(
                     toArray(),
-                    map(xs => xs.map(x => ({semester: x[1], labwork: x[0].labwork, applications: x[0].apps}))),
+                    map(xs => {
+                        const values: LabworkWithApplications[] = xs
+                            .map(x => ({semester: x[1], labwork: x[0].labwork, applications: x[0].apps}))
+                            .sort((a, b) => a.labwork.label.localeCompare(b.labwork.label))
+
+                        return values
+                    }),
                     map(xs => _groupBy(xs, x => x.semester.id))
                 )
             })
