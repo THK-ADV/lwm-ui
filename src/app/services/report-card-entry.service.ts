@@ -82,6 +82,9 @@ export class ReportCardEntryService {
             .getAll<RescheduleCandidateJson>(`courses/${courseId}/rescheduleCandidates/semesters/${semesterId}`)
             .pipe(map(xs => xs.map(this.fromJson)))
 
+    download = (courseId: string, labworkId: string): Observable<Blob> =>
+        this.http.downloadXlsSheet(makePath(this.path, courseId, labworkId) + '/sheet')
+
     private fromJson = (x: RescheduleCandidateJson): RescheduleCandidate => {
         const date = new Date(x.date)
 

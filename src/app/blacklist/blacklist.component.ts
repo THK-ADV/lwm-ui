@@ -28,6 +28,7 @@ import {ConfirmDialogComponent} from '../shared-dialogs/confirm-dialog/confirm-d
 import {switchMap} from 'rxjs/operators'
 import {PartialResult} from '../services/http.service'
 import {makeHtmlParagraphs} from '../html-builder/html-builder'
+import {ActionType} from '../abstract-header/abstract-header.component'
 
 @Component({
     selector: 'lwm-blacklist',
@@ -58,7 +59,10 @@ export class BlacklistComponent implements OnDestroy {
         this.subs.forEach(_ => _.unsubscribe())
     }
 
-    actions = (): LWMActionType[] => ['download', 'create']
+    actions = (): ActionType[] => [
+        {type: 'download', label: undefined},
+        {type: 'create', label: undefined}
+    ]
 
     onAction = (a: LWMActionType) => {
         switch (a) {

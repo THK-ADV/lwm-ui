@@ -2,7 +2,7 @@
     <lwm-abstract-header
             [headerTitle]="headerTitle"
             [actionTypes]="actionTypes"
-            (performAction)="onAction($event)">
+            (performAction)="onAction($event.type)">
     </lwm-abstract-header>
 
     <lwm-card-list

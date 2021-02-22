@@ -3,7 +3,6 @@ import {LabworkAtom} from '../../../models/labwork.model'
 import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 import {makeScheduleEntryEvents, ScheduleEntryEvent, ScheduleEntryProps} from './schedule-view-model'
 import {TimetableAtom} from '../../../models/timetable'
-import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
 import {MatDialog} from '@angular/material'
 import {ReportCardEntryService} from '../../../services/report-card-entry.service'
@@ -16,6 +15,7 @@ import {updateLabwork$} from '../../../labworks/labwork-view-model'
 import {LabworkService} from '../../../services/labwork.service'
 import {LoadingService, withSpinning} from '../../../services/loading.service'
 import {compose} from '../../../utils/functions'
+import {ActionType} from '../../../abstract-header/abstract-header.component'
 
 @Component({
     selector: 'lwm-schedule',
@@ -63,7 +63,7 @@ export class ScheduleComponent implements OnInit {
         this.dates = makeScheduleEntryEvents(scheduleEntries)
     }
 
-    canDelete = (): LWMActionType[] => this.hasPermission ? ['delete'] : []
+    canDelete = (): ActionType[] => this.hasPermission ? [{type: 'delete', label: undefined}] : []
 
     onDelete = () => {
         const dialogRef = DeleteDialogComponent.instance(

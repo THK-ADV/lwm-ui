@@ -1,6 +1,5 @@
 import {Component, Input, OnDestroy} from '@angular/core'
 import {MatDialog, MatTableDataSource, Sort} from '@angular/material'
-import {LWMActionType} from '../table-action-button/lwm-actions'
 import {Observable, Subscription} from 'rxjs'
 import {mapUndefined, subscribe} from '../utils/functions'
 import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
@@ -13,6 +12,7 @@ import {AlertService} from '../services/alert.service'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
+import {ActionType} from '../abstract-header/abstract-header.component'
 
 export interface TableHeaderColumn {
     attr: string
@@ -69,8 +69,8 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> impleme
     initDataSource = (ds: MatTableDataSource<Model>) =>
         this.dataSource = ds
 
-    canCreate = (): LWMActionType[] =>
-        this.creatable?.create ? ['create'] : []
+    canCreate = (): ActionType[] =>
+        this.creatable?.create ? [{type: 'create', label: undefined}] : []
 
     canEdit = () => this.creatable?.update !== undefined
 

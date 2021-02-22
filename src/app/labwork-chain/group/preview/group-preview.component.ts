@@ -9,8 +9,8 @@ import {Observable, Subscription} from 'rxjs'
 import {fetchPreview, SchedulePreviewConfig} from './group-preview-view-model'
 import {ScheduleEntryLike} from '../../abstract-group-view/abstract-group-view.component'
 import {format} from '../../../utils/lwmdate-adapter'
-import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {LoadingService, withSpinning} from '../../../services/loading.service'
+import {ActionType} from '../../../abstract-header/abstract-header.component'
 
 interface SchedulePreviewResult {
     fitness: number
@@ -67,8 +67,8 @@ export class GroupPreviewComponent implements OnInit, OnDestroy {
 
     ngOnDestroy = () => this.subs.forEach(s => s.unsubscribe())
 
-    canPreview = (): LWMActionType[] =>
-        this.hasPermission ? ['preview'] : []
+    canPreview = (): ActionType[] =>
+        this.hasPermission ? [{type: 'preview', label: 'Vorschau'}] : []
 
     onPreview = () => {
         const preview$ = openDialog(

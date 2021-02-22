@@ -1,7 +1,7 @@
 <ng-container *ngIf="labwork">
     <lwm-abstract-header [headerTitle]="headerTitle"
                          [actionTypes]="actions()"
-                         (performAction)="onAction($event)">
+                         (performAction)="onAction($event.type)">
     </lwm-abstract-header>
 
     <lwm-abstract-table [sort]="{active: 'lastModified', direction: 'asc'}"

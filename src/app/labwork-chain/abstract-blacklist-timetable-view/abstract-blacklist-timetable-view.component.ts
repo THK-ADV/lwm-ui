@@ -61,7 +61,8 @@ export class AbstractBlacklistTimetableViewComponent implements OnInit {
         }
     }
 
-    canCreateF = () => foldUndefined(this.canCreate, x => [x], () => [])
+    canCreateF = () =>
+        foldUndefined(this.canCreate, x => [{type: x, label: undefined}], () => [])
 
     onCreate = () => this.createEmitter.emit()
 

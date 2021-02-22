@@ -5,6 +5,7 @@ import {MatTableDataSource} from '@angular/material'
 import {LWMActionType} from '../../table-action-button/lwm-actions'
 import {foldUndefined} from '../../utils/functions'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
+import {ActionType} from '../../abstract-header/abstract-header.component'
 
 @Component({
     selector: 'lwm-abstract-assignment-plan-view',
@@ -52,7 +53,8 @@ export class AbstractAssignmentPlanViewComponent implements OnInit {
         this.headerTitle = `${this.canEdit ? 'Ablaufplanbearbeitung' : 'Ablaufplan'} für ${this.labwork.label}`
     }
 
-    canCreateF = (): LWMActionType[] => foldUndefined(this.canCreate, x => [x], () => [])
+    canCreateF = (): ActionType[] =>
+        foldUndefined(this.canCreate, x => [{type: x, label: undefined}], () => [])
 
     displayedEntryTypes = (entry: AssignmentEntry): AssignmentEntryType[] =>
         sortedByEntryTypes(entry).types
