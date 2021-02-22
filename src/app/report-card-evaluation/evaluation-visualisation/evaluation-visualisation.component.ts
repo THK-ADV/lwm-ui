@@ -5,7 +5,7 @@ import {forkJoin, Subscription} from 'rxjs'
 import {ReportCardEntry} from '../../services/lwm.service'
 import {first, subscribe} from '../../utils/functions'
 import {jsonDrawer} from './d3-drawer'
-import {Labwork} from '../../models/labwork.model'
+import {LabworkAtom} from '../../models/labwork.model'
 import {map} from 'rxjs/operators'
 import {rangeTo} from '../../utils/range'
 
@@ -21,7 +21,7 @@ type Drawer = (data: Readonly<ReportCardEntry[]>, itemColor: string) => void
 })
 export class EvaluationVisualisationComponent implements OnInit, OnDestroy {
 
-    @Input() labworks: [Labwork, LineColor][] = []
+    @Input() labworks: [LabworkAtom, LineColor][] = []
     @Input() courseId = ''
     @Input() width = 0 // TODO width should be determined by the parents width
     @Input() height = 0

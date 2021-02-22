@@ -28,7 +28,8 @@ import {subscribe} from '../utils/functions'
 import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {AlertService} from '../services/alert.service'
-import {initiateDownload} from '../xls-download/xls-download'
+import {initiateDownloadWithDefaultFilenameSuffix} from '../xls-download/xls-download'
+import {ActionType} from '../abstract-header/abstract-header.component'
 
 @Component({
     selector: 'lwm-labwork-application',
@@ -100,15 +101,15 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
         this.subs.forEach(_ => _.unsubscribe())
     }
 
-    actions = (): LWMActionType[] => {
-        const actions: LWMActionType[] = []
+    actions = (): ActionType[] => {
+        const actions: ActionType[] = []
 
         if (this.canCreateOrUpdate) {
-            actions.push('create')
+            actions.push({type: 'create', label: undefined})
         }
 
         if (this.canDownloadApplicants) {
-            actions.push('download')
+            actions.push({type: 'download', label: undefined})
         }
 
         return actions
@@ -139,7 +140,7 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
 
     private download = () => {
         const s = subscribe(this.appService.download(this.labwork.course.id, this.labwork.id), blob => {
-            initiateDownload(`Anmeldungen_${this.labwork.label}_${this.labwork.id}.xls`, blob)
+            initiateDownloadWithDefaultFilenameSuffix('Anmeldungen', this.labwork, blob)
         })
 
         this.subs.push(s)

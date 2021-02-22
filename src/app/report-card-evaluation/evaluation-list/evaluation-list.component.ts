@@ -5,12 +5,14 @@ import {ReportCardEvaluationAtom} from '../../models/report-card-evaluation'
 import {ReportCardEvaluationService} from '../../services/report-card-evaluation.service'
 import {format} from '../../utils/lwmdate-adapter'
 import {map, tap} from 'rxjs/operators'
-import {LWMActionType} from '../../table-action-button/lwm-actions'
 import {LoadingService, withSpinning} from '../../services/loading.service'
 import {groupBy, mapMap} from '../../utils/group-by'
 import {count, isEmpty, maxBy, subscribe} from '../../utils/functions'
 import {LWMColor} from '../../utils/colors'
-import {initiateDownload} from '../../xls-download/xls-download'
+import {initiateDownloadWithDefaultFilenameSuffix} from '../../xls-download/xls-download'
+import {ActionType} from '../../abstract-header/abstract-header.component'
+import {ReportCardEntryService} from '../../services/report-card-entry.service'
+import {LabworkAtom} from '../../models/labwork.model'
 
 interface Eval {
     firstName: string,
@@ -33,21 +35,28 @@ interface Summary {
 })
 export class EvaluationListComponent implements OnInit, OnDestroy {
 
-    @Input() labworkId: string
-    @Input() courseId: string
-    @Input() hasPermission: boolean
+    private static readonly evalLabel = 'Evaluieren'
 
+    private static readonly pssoLabel = 'Prüfungsleistungen (PSSO) herunterladen'
+
+    private static readonly detailReportCardsLabel = 'Detailierte Praktikumsleistungen herunterladen'
+
+    @Input() labwork: LabworkAtom
+
+    @Input() hasPermission: boolean
     columns: TableHeaderColumn[]
     tableContent: (model: Readonly<Eval>, attr: string) => string
     filterPredicate: (data: Eval, filter: string) => boolean
-    sortingDataAccessor: (data: Eval, property: string) => number
 
+    sortingDataAccessor: (data: Eval, property: string) => number
     summary: Summary[]
     evals$: Observable<Eval[]>
+
     private subs: Subscription[] = []
 
     constructor(
-        private readonly service: ReportCardEvaluationService,
+        private readonly evalService: ReportCardEvaluationService,
+        private readonly reportCardService: ReportCardEntryService,
         private readonly loadingService: LoadingService,
     ) {
         this.summary = []
@@ -85,23 +94,44 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.evals$ = this.toEval(this.service.getAll(this.courseId, this.labworkId))
+        this.evals$ = this.toEval(this.evalService.getAll(this.courseId(), this.labworkId()))
     }
+
+    private labworkId = () =>
+        this.labwork.id
+
+    private courseId = () =>
+        this.labwork.course.id
 
     ngOnDestroy() {
         this.subs.forEach(_ => _.unsubscribe())
     }
 
-    actions = (): LWMActionType[] =>
-        this.hasPermission ? ['evaluate', 'download'] : []
+    actions = (): ActionType[] =>
+        this.hasPermission ?
+            [
+                {type: 'evaluate', label: EvaluationListComponent.evalLabel},
+                {type: 'download', label: EvaluationListComponent.pssoLabel},
+                {type: 'download', label: EvaluationListComponent.detailReportCardsLabel},
+            ] :
+            []
 
-    onAction = (action: LWMActionType) => {
-        switch (action) {
+    onAction = (action: ActionType) => {
+        switch (action.type) {
             case 'evaluate':
                 this.evaluate()
                 break
             case 'download':
-                this.download()
+                switch (action.label) {
+                    case EvaluationListComponent.pssoLabel:
+                        this.downloadGraduates()
+                        break
+                    case EvaluationListComponent.detailReportCardsLabel:
+                        this.downloadReportCardStats()
+                        break
+                    default:
+                        break
+                }
                 break
             default:
                 break
@@ -112,16 +142,24 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
 
     onEdit = (e: Readonly<Eval>) => e
 
-    private download = () => {
-        const s = subscribe(this.service.download(this.courseId, this.labworkId), blob => {
-            initiateDownload(`Absolventen_${this.labworkId}.xls`, blob)
+    private downloadGraduates = () => {
+        const s = subscribe(this.evalService.download(this.courseId(), this.labworkId()), blob => {
+            initiateDownloadWithDefaultFilenameSuffix('Absolventen', this.labwork, blob)
+        })
+
+        this.subs.push(s)
+    }
+
+    private downloadReportCardStats = () => {
+        const s = subscribe(this.reportCardService.download(this.courseId(), this.labworkId()), blob => {
+            initiateDownloadWithDefaultFilenameSuffix('Notenhefte', this.labwork, blob)
         })
 
         this.subs.push(s)
     }
 
     private evaluate = () =>
-        this.evals$ = withSpinning<Eval[]>(this.loadingService)(this.toEval(this.service.create(this.courseId, this.labworkId)))
+        this.evals$ = withSpinning<Eval[]>(this.loadingService)(this.toEval(this.evalService.create(this.courseId(), this.labworkId())))
 
     private toEval = (evals$: Observable<ReportCardEvaluationAtom[]>): Observable<Eval[]> => {
         const updateStats = (evals: Eval[]) => {

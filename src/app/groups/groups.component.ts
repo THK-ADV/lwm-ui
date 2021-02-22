@@ -16,7 +16,8 @@ import {GroupEditComponent} from './edit/group-edit.component'
 import {Card} from '../card-list/card-list.component'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 import {LWMActionType} from '../table-action-button/lwm-actions'
-import {initiateDownload} from '../xls-download/xls-download'
+import {initiateDownloadWithDefaultFilenameSuffix} from '../xls-download/xls-download'
+import {ActionType} from '../abstract-header/abstract-header.component'
 
 @Component({
     selector: 'lwm-groups',
@@ -26,7 +27,7 @@ import {initiateDownload} from '../xls-download/xls-download'
 export class GroupsComponent implements OnInit {
 
     headerTitle: String
-    actionTypes: LWMActionType[]
+    actionTypes: ActionType[]
     labwork: Readonly<LabworkAtom>
 
     private subs: Subscription[]
@@ -65,7 +66,7 @@ export class GroupsComponent implements OnInit {
         this.hasPermission = hasCourseManagerPermission(this.route, courseId)
 
         if (this.hasPermission) {
-            this.actionTypes.push('download')
+            this.actionTypes.push({type: 'download', label: undefined})
         }
     }
 
@@ -96,7 +97,7 @@ export class GroupsComponent implements OnInit {
 
     private download = () => {
         const s = subscribe(this.groupService.download(this.labwork.course.id, this.labwork.id), blob => {
-            initiateDownload(`Gruppen_${this.labwork.label}_${this.labwork.id}.xls`, blob)
+            initiateDownloadWithDefaultFilenameSuffix('Gruppen', this.labwork, blob)
         })
 
         this.subs.push(s)

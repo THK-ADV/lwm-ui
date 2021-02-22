@@ -1,35 +1,32 @@
-<ng-container *ngIf="paramsLoaded()">
-    <ng-container *ngIf="labwork$ | async as labwork">
-        <h1>{{labwork.label}}</h1>
+<ng-container *ngIf="labwork$ | async as labwork">
+    <h1>{{labwork.label}}</h1>
 
-        <mat-tab-group animationDuration="0ms">
-            <mat-tab label="Absolventen">
-                <ng-template matTabContent>
-                    <lwm-evaluation-list
-                            [hasPermission]="hasPermission"
-                            [courseId]="courseId"
-                            [labworkId]="labworkId">
-                    </lwm-evaluation-list>
-                </ng-template>
-            </mat-tab>
-            <mat-tab label="Statistik">
-                <ng-template matTabContent>
-                    <lwm-evaluation-visualisation
-                            [width]="1200"
-                            [height]="600"
-                            [labworks]="[[labwork, '#D618D9']]"
-                            [courseId]="courseId">
-                    </lwm-evaluation-visualisation>
-                </ng-template>
-            </mat-tab>
-            <mat-tab label="Evaluations Kriterien">
-                <ng-template matTabContent>
-                    <lwm-evaluation-pattern
-                            [labworkId]="labworkId"
-                            [courseId]="courseId">
-                    </lwm-evaluation-pattern>
-                </ng-template>
-            </mat-tab>
-        </mat-tab-group>
-    </ng-container>
+    <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Absolventen">
+            <ng-template matTabContent>
+                <lwm-evaluation-list
+                        [hasPermission]="hasPermission"
+                        [labwork]="labwork">
+                </lwm-evaluation-list>
+            </ng-template>
+        </mat-tab>
+        <mat-tab label="Statistik">
+            <ng-template matTabContent>
+                <lwm-evaluation-visualisation
+                        [width]="1200"
+                        [height]="600"
+                        [labworks]="[[labwork, '#D618D9']]"
+                        [courseId]="labwork.course.id">
+                </lwm-evaluation-visualisation>
+            </ng-template>
+        </mat-tab>
+        <mat-tab label="Evaluations Kriterien">
+            <ng-template matTabContent>
+                <lwm-evaluation-pattern
+                        [labworkId]="labwork.id"
+                        [courseId]="labwork.course.id">
+                </lwm-evaluation-pattern>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
 </ng-container>

@@ -1,7 +1,7 @@
 <lwm-abstract-header
         [headerTitle]="headerTitle"
         [actionTypes]="canDeleteAndCommit()"
-        (performAction)="performAction($event)">
+        (performAction)="performAction($event.type)">
 </lwm-abstract-header>
 
 <lwm-abstract-schedule-view

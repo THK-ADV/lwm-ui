@@ -41,6 +41,7 @@ import {openDialog, openDialogFromPayload} from '../shared-dialogs/dialog-open-c
 import {userAuths} from '../security/user-authority-resolver'
 import {isAdmin, isCourseManager} from '../utils/role-checker'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {ActionType} from '../abstract-header/abstract-header.component'
 
 interface LabworkWithApplications {
     labwork: LabworkAtom
@@ -127,7 +128,13 @@ export class LabworksComponent implements OnInit, OnDestroy {
 
                 this.groupedLabworks$ = merge(labworksWithApps$).pipe(
                     toArray(),
-                    map(xs => xs.map(x => ({semester: x[1], labwork: x[0].labwork, applications: x[0].apps}))),
+                    map(xs => {
+                        const values: LabworkWithApplications[] = xs
+                            .map(x => ({semester: x[1], labwork: x[0].labwork, applications: x[0].apps}))
+                            .sort((a, b) => a.labwork.label.localeCompare(b.labwork.label))
+
+                        return values
+                    }),
                     map(xs => _groupBy(xs, x => x.semester.id))
                 )
             })
@@ -312,8 +319,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    canCreate = (): LWMActionType[] => {
-        return this.hasPermission ? ['create'] : []
+    canCreate = (): ActionType[] => {
+        return this.hasPermission ? [{type: 'create', label: undefined}] : []
     }
 
     // TODO labworks are currently always added to the selected data source regardless of their semester.

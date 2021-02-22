@@ -13,6 +13,7 @@ import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
 import {voidF} from '../../../utils/functions'
 import {LoadingService, withSpinning} from '../../../services/loading.service'
+import {ActionType} from '../../../abstract-header/abstract-header.component'
 
 @Component({
     selector: 'lwm-schedule-preview',
@@ -64,7 +65,8 @@ export class SchedulePreviewComponent implements OnInit, OnDestroy {
         this.dates = makeScheduleEntryEvents(scheduleEntries)
     }
 
-    canDeleteAndCommit = (): LWMActionType[] => this.hasPermission ? ['delete', 'upload'] : []
+    canDeleteAndCommit = (): ActionType[] =>
+        this.hasPermission ? [{type: 'delete', label: undefined}, {type: 'upload', label: undefined}] : []
 
     performAction = (action: LWMActionType) => {
         switch (action) {

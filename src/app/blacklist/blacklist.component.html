@@ -1,6 +1,6 @@
 <lwm-abstract-header [headerTitle]="'Globale Blacklists'"
                      [actionTypes]="actions()"
-                     (performAction)="onAction($event)">
+                     (performAction)="onAction($event.type)">
 </lwm-abstract-header>
 
 <lwm-abstract-table [columns]="columns"
