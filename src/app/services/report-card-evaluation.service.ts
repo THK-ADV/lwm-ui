@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core'
-import {atomicParams, HttpService} from './http.service'
+import {atomicParams, HttpService, nonAtomicParams} from './http.service'
 import {Observable} from 'rxjs'
-import {ReportCardEvaluationAtom, ReportCardEvaluationAtomJSON} from '../models/report-card-evaluation'
+import {ReportCardEvaluationAtom, ReportCardEvaluationAtomJSON, ReportCardEvaluationJSON} from '../models/report-card-evaluation'
 import {makePath} from '../utils/component.utils'
 import {map, tap} from 'rxjs/operators'
 import {convertManyReportCardEvaluations} from '../utils/http-utils'
@@ -29,11 +29,17 @@ export class ReportCardEvaluationService {
     download = (courseId: string, labworkId: string): Observable<Blob> =>
         this.http.downloadXlsSheet(makePath(this.path, courseId, labworkId) + '/sheet')
 
-    // delete = (id: string, courseId: string): Observable<ReportCardEvaluationPattern> =>
-    //     this.http.delete(makePath(this.path, courseId), id)
-    //
+    fastForward = (courseId: string, labworkId: string, student: string): Observable<ReportCardEvaluationJSON[]> =>
+        this.http.create(
+            `/courses/${courseId}/labworks/${labworkId}/students/${student}/reportCardEvaluations`,
+            {explicitEval: 'fastForward'},
+            nonAtomicParams
+        )
 
-    //
-    // update = (pattern: ReportCardEvaluationPatternProtocol, id: string, courseId: string): Observable<ReportCardEvaluationPattern> =>
-    //     this.http.put(makePath(this.path, courseId), id, pattern)
+    fire = (courseId: string, labworkId: string, student: string): Observable<ReportCardEvaluationJSON[]> =>
+        this.http.create(
+            `/courses/${courseId}/labworks/${labworkId}/students/${student}/reportCardEvaluations`,
+            {explicitEval: 'fire'},
+            nonAtomicParams
+        )
 }

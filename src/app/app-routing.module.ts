@@ -25,6 +25,7 @@ import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-
 import {StudentSearchComponent} from './student-search/student-search.component'
 import {PrivacyComponent} from './nav/privacy/privacy.component'
 import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component'
+import {GroupEditComponent} from './groups/edit/group-edit.component'
 
 const routes: Routes = [
     {
@@ -94,7 +95,12 @@ const routes: Routes = [
                     {
                         path: 'labworks/:lid/groups',
                         resolve: {userAuths: UserAuthorityResolver},
-                        component: GroupsComponent
+                        component: GroupsComponent,
+                    },
+                    {
+                        path: 'labworks/:lid/groups/:gid',
+                        resolve: {userAuths: UserAuthorityResolver},
+                        component: GroupEditComponent
                     },
                     {
                         path: 'labworks/:lid/graduates',

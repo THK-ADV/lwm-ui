@@ -1,21 +1,32 @@
-import {Component, EventEmitter, Inject, OnDestroy, OnInit} from '@angular/core'
+import {Component, OnDestroy, OnInit} from '@angular/core'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
+import {MatDialog, MatTableDataSource} from '@angular/material'
 import {GroupAtom} from '../../models/group.model'
-import {Observable, Subscription} from 'rxjs'
+import {EMPTY, Observable, of, Subscription, zip} from 'rxjs'
 import {User} from '../../models/user.model'
-import {AlertService} from '../../services/alert.service'
-import {addToDataSource, removeFromDataSource} from '../../shared-dialogs/dataSource.update'
 import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
-import {invalidChoiceKey} from '../../utils/form.validator'
-import {exists, subscribe} from '../../utils/functions'
+import {exists, partition, subscribe} from '../../utils/functions'
 import {FormInput} from '../../shared-dialogs/forms/form.input'
-import {GroupDeletionResult, GroupInsertionResult, GroupMovementResult, LwmService} from '../../services/lwm.service'
-import {map, tap} from 'rxjs/operators'
-import {createAction, deleteAction, LWMAction, swapAction} from '../../table-action-button/lwm-actions'
-import {formatUser} from '../../utils/component.utils'
-import {foreachOption, isOption, resetControl} from '../../utils/form-control-utils'
+import {map, switchMap, tap} from 'rxjs/operators'
+import {createAction, deleteAction, fireAction, honorAction, LWMAction, swapAction} from '../../table-action-button/lwm-actions'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
+import {ActivatedRoute} from '@angular/router'
+import {GroupService} from '../../services/group.service'
+import {UserService} from '../../services/user.service'
+import {invalidChoiceKey} from '../../utils/form.validator'
+import {formatUser} from '../../utils/component.utils'
+import {
+    ExplicitEvaluationRequestKind,
+    GroupDeletionResult,
+    GroupInsertionResult,
+    GroupMovementResult,
+    LwmService
+} from '../../services/lwm.service'
+import {addToDataSource, removeFromDataSource} from '../../shared-dialogs/dataSource.update'
+import {isOption, resetControl} from '../../utils/form-control-utils'
+import {AlertService} from '../../services/alert.service'
+import {ConfirmationResult, ConfirmDialogComponent} from '../../shared-dialogs/confirm-dialog/confirm-dialog.component'
+import {openDialog} from '../../shared-dialogs/dialog-open-combinator'
 
 @Component({
     selector: 'lwm-group-edit',
@@ -25,7 +36,11 @@ import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply assignment index changes
 
     private subs: Subscription[]
-    dataSource = new MatTableDataSource<User>()
+
+    // UI
+
+    dataSource: MatTableDataSource<User>
+    title: string
 
     readonly displayedColumns: string[]
     readonly columns: TableHeaderColumn[]
@@ -33,84 +48,136 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
     readonly addAction: LWMAction
     readonly deleteAction: LWMAction
     readonly swapAction: LWMAction
+    readonly fireAction: LWMAction
+    readonly honorAction: LWMAction
 
     readonly addStudentFormGroup: FormGroup
-    readonly addStudentForm: FormInput
-    readonly studentOption: FormInputOption<User>
+    addStudentForm: FormInput
+    studentOption: FormInputOption<User>
 
-    readonly groupChanged: EventEmitter<void>
+    // Data
 
-    static instance(
-        dialog: MatDialog,
-        selectedGroup: GroupAtom,
-        allGroups: GroupAtom[],
-        fellowStudents$: Observable<User[]>
-    ): MatDialogRef<GroupEditComponent> {
-        const otherGroups = allGroups.filter(g => g.id !== selectedGroup.id)
-        fellowStudents$ = this.removeAllGroupMembers(allGroups, fellowStudents$)
-
-        return dialog.open<GroupEditComponent>(GroupEditComponent, {
-            data: {group: selectedGroup, otherGroups: otherGroups, fellowStudents$: fellowStudents$},
-            panelClass: 'lwmGroupEditDialog'
-        })
-    }
-
-    private static removeAllGroupMembers(allGroups: GroupAtom[], students$: Observable<User[]>) {
-        const allStudentsInGroup = allGroups.flatMap(g => g.members)
-
-        return students$.pipe(
-            map(students => students.filter(s => !exists(allStudentsInGroup, x => x.id === s.id)))
-        )
-    }
+    labworkId: string
+    courseId: string
+    groupLabel: string
+    groupId: string
+    otherGroups: GroupAtom[]
+    fellowStudents$: Observable<User[]>
 
     constructor(
-        private readonly dialogRef: MatDialogRef<GroupEditComponent>,
+        private readonly route: ActivatedRoute,
+        private readonly groupService: GroupService,
+        private readonly userService: UserService,
+        private readonly lwmService: LwmService,
         private readonly alertService: AlertService,
         private readonly dialog: MatDialog,
-        private readonly service: LwmService,
-        @Inject(MAT_DIALOG_DATA) public payload: { group: GroupAtom, otherGroups: GroupAtom[], fellowStudents$: Observable<User[]> }
     ) {
-        this.groupChanged = new EventEmitter<void>()
         this.subs = []
-        this.columns = [{attr: 'name', title: 'Name, Vorname'}, {attr: 'systemId', title: 'GMID'}]
+        this.dataSource = new MatTableDataSource()
+        this.columns = [
+            {attr: 'index', title: '#'},
+            {attr: 'name', title: 'Name, Vorname'},
+            {attr: 'systemId', title: 'GMID'}
+        ]
         this.displayedColumns = this.columns.map(c => c.attr).concat('action')
-        this.dataSource.data = payload.group.members
         this.deleteAction = deleteAction()
         this.swapAction = swapAction()
         this.addAction = createAction()
-
+        this.fireAction = fireAction()
+        this.honorAction = honorAction()
         this.addStudentFormGroup = new FormGroup({})
-
-        const addStudentFcName = 'member'
-        this.studentOption = new FormInputOption<User>(addStudentFcName, invalidChoiceKey, true, formatUser, payload.fellowStudents$)
-        this.addStudentForm = {
-            formControlName: addStudentFcName,
-            displayTitle: 'Student hinzufügen',
-            isDisabled: false,
-            data: this.studentOption
-        }
-
-        this.setupFormGroups()
     }
 
-    private setupFormGroups() {
-        this.addStudentFormGroup.addControl(
-            this.addStudentForm.formControlName,
-            new FormControl(this.addStudentForm.data.value, this.addStudentForm.data.validator)
+
+    ngOnInit() {
+        this.subs.push(
+            subscribe(this.fetchGroupsAndStudents(), this.updateUI)
         )
     }
 
-    ngOnInit() {
-        foreachOption([this.addStudentForm], o => o.onInit(this.addStudentFormGroup))
+    private fetchGroupsAndStudents = (): Observable<[GroupAtom[], string]> =>
+        this.route.paramMap.pipe(
+            switchMap(params => {
+                const cid = params.get('cid')
+                const lid = params.get('lid')
+                const gid = params.get('gid')
+
+                return cid && lid && gid &&
+                    zip(
+                        this.groupService.getAllWithFilter(cid, lid),
+                        of(gid)
+                    ) || EMPTY
+            })
+        )
+
+    private updateUI = (data: [GroupAtom[], string]) => {
+        const allGroups = this.setupGroups(data)
+        this.setupStudents(allGroups)
+        this.updateTitle()
+    }
+
+    private updateTitle = () => {
+        this.title = `Gruppe ${this.groupLabel} (${this.dataSource.data.length} Mitglieder) bearbeiten`
+    }
+
+    private setupGroups = (data: [GroupAtom[], string]) => {
+        const allGroups = data[0]
+        const selectedGroupId = data[1]
+
+        const [selectedGroup, otherGroups] = partition(allGroups, g => g.id === selectedGroupId)
+        this.groupId = selectedGroup[0].id
+        this.labworkId = selectedGroup[0].labwork.id
+        this.courseId = selectedGroup[0].labwork.course
+        this.groupLabel = selectedGroup[0].label
+        this.dataSource.data = selectedGroup[0].members
+            .sort((a, b) => a.lastname.localeCompare(b.lastname))
+
+        this.otherGroups = otherGroups
+            .sort((a, b) => a.label.localeCompare(b.label))
+        return allGroups
+    }
+
+    private setupStudents = (allGroups: GroupAtom[]) => {
+        const setupStudentFormGroup = () => {
+            const addStudentFcName = 'member'
+            this.studentOption = new FormInputOption<User>(
+                addStudentFcName,
+                invalidChoiceKey,
+                true,
+                formatUser,
+                this.fellowStudents$
+            )
+            this.addStudentForm = {
+                formControlName: addStudentFcName,
+                displayTitle: 'Student hinzufügen',
+                isDisabled: false,
+                data: this.studentOption
+            }
+            this.addStudentFormGroup.addControl(
+                this.addStudentForm.formControlName,
+                new FormControl(this.addStudentForm.data.value, this.addStudentForm.data.validator)
+            )
+
+            this.studentOption.onInit(this.addStudentFormGroup)
+        }
+
+        const allStudentsInGroup = allGroups.flatMap(g => g.members)
+        // TODO remove those who are already applied to related labworks
+        this.fellowStudents$ = this.userService.getAllWithFilter({attribute: 'status', value: 'student'}).pipe(
+            map(students => students.filter(s => !exists(allStudentsInGroup, x => x.id === s.id)))
+        )
+
+        setupStudentFormGroup()
     }
 
     ngOnDestroy() {
-        foreachOption([this.addStudentForm], o => o.onDestroy())
-        this.onCancel()
+        this.studentOption.onDestroy()
     }
 
-    prepareTableContent = (user: User, attr: string): string => {
+    prepareTableContent = (user: User, index: number, attr: string): string => {
         switch (attr) {
+            case 'index':
+                return (index + 1).toString()
             case 'name':
                 return `${user.lastname}, ${user.firstname}`
             default:
@@ -118,17 +185,14 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         }
     }
 
-    userFormControl = (): AbstractControl => {
-        return this.addStudentFormGroup.controls[this.addStudentForm.formControlName]
-    }
+    userFormControl = (): AbstractControl =>
+        this.addStudentFormGroup.controls[this.addStudentForm.formControlName]
 
-    userFromControl = (): User => {
-        return this.userFormControl().value as User
-    }
+    userFromControl = (): User =>
+        this.userFormControl().value as User
 
-    onCancel = () => {
-        this.dialogRef.close()
-    }
+    shouldAllowSwapping = (): boolean =>
+        this.otherGroups.length > 0
 
     move = (member: User, dest: GroupAtom) => {
         const movementMsg = (result: GroupMovementResult): string => {
@@ -140,12 +204,12 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             return msg
         }
 
-        const result$ = this.service.moveStudentToGroup(
-            this.payload.group.labwork.course,
+        const result$ = this.lwmService.moveStudentToGroup(
+            this.courseId,
             {
-                labwork: this.payload.group.labwork.id,
+                labwork: this.labworkId,
                 student: member.id,
-                srcGroup: this.payload.group.id,
+                srcGroup: this.groupId,
                 destGroup: dest.id
             }
         )
@@ -153,7 +217,8 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
         const s = subscribe(result$, result => {
             removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
-            this.groupChanged.emit()
+            dest.members.push(member)
+            this.updateTitle()
             this.alertService.reportSuccess(movementMsg(result))
         })
 
@@ -171,28 +236,42 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             return msg
         }
 
-        const result$ = this.service.removeStudentFromGroup(
-            this.payload.group.labwork.course,
+        const updateStudentsByAdding = () => {
+            this.fellowStudents$ = this.fellowStudents$.pipe(
+                tap(xs => xs.push(member))
+            )
+
+            if (isOption(this.addStudentForm.data)) {
+                this.addStudentForm.data.bindOptions(this.fellowStudents$)
+            }
+        }
+
+        const delete$ = () => this.lwmService.removeStudentFromGroup(
+            this.courseId,
             {
-                labwork: this.payload.group.labwork.id,
-                group: this.payload.group.id,
+                labwork: this.labworkId,
+                group: this.groupId,
                 student: member.id
             }
+        )
+
+        const result$ = openDialog(
+            ConfirmDialogComponent.instance(this.dialog, {title: `${formatUser(member)} aus der Gruppe dauerhaft entfernen?`}),
+            res => res === ConfirmationResult.ok ? delete$() : EMPTY
         )
 
         const s = subscribe(result$, result => {
             removeFromDataSource(this.dataSource)(m => m.id === member.id)
 
-            this.updateStudentsByAdding(member)
-
-            this.groupChanged.emit()
+            updateStudentsByAdding()
+            this.updateTitle()
             this.alertService.reportSuccess(deletionMsg(result))
         })
 
         this.subs.push(s)
     }
 
-    create = (member: User) => {
+    add = (member: User) => {
         const creationMsg = (result: GroupInsertionResult): string => {
             const cardsCreated = result.reportCardEntries.length !== 0
             let msg = `created group membership ${JSON.stringify(result.membership)}`
@@ -202,11 +281,21 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             return msg
         }
 
-        const result$ = this.service.insertStudentIntoGroup(
-            this.payload.group.labwork.course,
+        const updateStudentsByRemoving = () => {
+            this.fellowStudents$ = this.fellowStudents$.pipe(
+                map(xs => xs.filter(x => x.id !== member.id))
+            )
+
+            if (isOption(this.addStudentForm.data)) {
+                this.addStudentForm.data.bindOptions(this.fellowStudents$)
+            }
+        }
+
+        const result$ = this.lwmService.insertStudentIntoGroup(
+            this.courseId,
             {
-                labwork: this.payload.group.labwork.id,
-                group: this.payload.group.id,
+                labwork: this.labworkId,
+                group: this.groupId,
                 student: member.id
             }
         )
@@ -215,36 +304,60 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
             addToDataSource(this.dataSource)(member)
             resetControl(this.userFormControl())
 
-            this.updateStudentsByRemoving(member)
-
-            this.groupChanged.emit()
+            updateStudentsByRemoving()
+            this.updateTitle()
             this.alertService.reportSuccess(creationMsg(result))
         })
 
         this.subs.push(s)
     }
 
-    private updateStudentsByRemoving = (member: User) => {
-        this.payload.fellowStudents$ = this.payload.fellowStudents$.pipe(
-            map(xs => xs.filter(x => x.id !== member.id))
+    fastForward = (member: User) =>
+        this.evalExplicit(member, 'fastForward')
+
+    fire = (member: User) =>
+        this.evalExplicit(member, 'fire')
+
+    private evalExplicit = (member: User, kind: ExplicitEvaluationRequestKind) => {
+        const go = () => this.lwmService.evaluateExplicit(
+            this.courseId,
+            {
+                student: member.id,
+                labwork: this.labworkId,
+                group: this.groupId,
+                kind: kind
+            }
         )
 
-        if (isOption(this.addStudentForm.data)) {
-            this.addStudentForm.data.bindOptions(this.payload.fellowStudents$)
+        const title = () => {
+            switch (kind) {
+                case 'fastForward':
+                    return `${formatUser(member)} das Praktikum vorzeitig anerkennen?`
+                case 'fire':
+                    return `${formatUser(member)} endgültig aus dem Praktikum werfen?`
+            }
         }
-    }
 
-    private updateStudentsByAdding = (member: User) => {
-        this.payload.fellowStudents$ = this.payload.fellowStudents$.pipe(
-            tap(xs => xs.push(member))
+        const successMsg = () => {
+            switch (kind) {
+                case 'fastForward':
+                    return `Praktikum von ${formatUser(member)} vorzeitig anerkannt.`
+                case 'fire':
+                    return `${formatUser(member)} aus dem Praktikum geworfen`
+            }
+        }
+
+        const result$ = openDialog(
+            ConfirmDialogComponent.instance(this.dialog, {title: title()}),
+            res => res === ConfirmationResult.ok ? go() : EMPTY
         )
 
-        if (isOption(this.addStudentForm.data)) {
-            this.addStudentForm.data.bindOptions(this.payload.fellowStudents$)
-        }
-    }
+        const s = subscribe(result$, _ => {
+            removeFromDataSource(this.dataSource)(m => m.id === member.id)
+            this.updateTitle()
+            this.alertService.reportSuccess(successMsg())
+        })
 
-    private shouldAllowSwapping = (): boolean => {
-        return this.payload.otherGroups.length > 0
+        this.subs.push(s)
     }
 }

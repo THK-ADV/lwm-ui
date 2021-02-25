@@ -11,7 +11,7 @@ type ConfirmationBody = Html | Text
 
 interface ConfirmationPayload {
     title: string
-    body: ConfirmationBody
+    body?: ConfirmationBody
 }
 
 export enum ConfirmationResult {

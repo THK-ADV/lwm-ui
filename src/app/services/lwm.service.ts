@@ -5,6 +5,8 @@ import {Time} from '../models/time.model'
 import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
 import {EntryType} from '../models/assignment-plan.model'
+import {ReportCardEvaluationAtom} from '../models/report-card-evaluation'
+import {GroupAtom} from '../models/group.model'
 
 interface GroupMembership {
     group: string
@@ -65,6 +67,21 @@ export interface GroupMovingRequest {
     destGroup: string
 }
 
+export type ExplicitEvaluationRequestKind = 'fastForward' | 'fire'
+
+export interface ExplicitEvaluationRequest {
+    labwork: string
+    student: string
+    group: string
+    kind: ExplicitEvaluationRequestKind
+}
+
+export interface ExplicitEvaluationResult {
+    evals: ReportCardEvaluationAtom
+    group: GroupAtom
+}
+
+
 @Injectable({
     providedIn: 'root'
 })
@@ -90,4 +107,10 @@ export class LwmService {
         request: GroupMovingRequest
     ): Observable<GroupMovementResult> => this.http
         .put_(makePath('moveToGroup', courseId), request)
+
+    evaluateExplicit = (
+        courseId: string,
+        request: ExplicitEvaluationRequest
+    ): Observable<ExplicitEvaluationResult> => this.http
+        .put_(makePath('evaluateExplicit', courseId), request)
 }

@@ -5,6 +5,13 @@ export type EvaluationProperty = 'bool' | 'int'
 
 export const allPropertyTypes = (): Array<EvaluationProperty> => ['bool', 'int']
 
+export const fastForwarded = (evals: ReportCardEvaluationJSON[]): boolean =>
+    evals.every(_ => _.int === 3201)
+
+export const fired = (evals: ReportCardEvaluationJSON[]): boolean =>
+    evals.every(_ => _.int === 3207)
+
+
 export interface ReportCardEvaluationPattern {
     labwork: string,
     entryType: EntryType,

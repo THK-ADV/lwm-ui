@@ -230,7 +230,6 @@ import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component
     entryComponents: [
         DeleteDialogComponent,
         CreateUpdateDialogComponent,
-        GroupEditComponent,
         CourseDetailComponent,
         CourseAuthorityUpdateDialogComponent,
         TimetableEntryComponent,

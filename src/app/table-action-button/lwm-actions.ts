@@ -15,7 +15,9 @@ export type LWMActionType =
     'sync' |
     'download' |
     'evaluate' |
-    'reportCardEntryType'
+    'reportCardEntryType' |
+    'fire' |
+    'honor'
 
 export interface LWMAction {
     type: LWMActionType
@@ -54,7 +56,7 @@ export const createAction = (): LWMAction => {
 }
 
 export const swapAction = (): LWMAction => {
-    return {type: 'swap', color: 'accent', iconName: 'swap_horiz', tooltipName: 'Wechseln', tooltipPosition: 'above'}
+    return {type: 'swap', color: 'primary', iconName: 'swap_horiz', tooltipName: 'Wechseln', tooltipPosition: 'above'}
 }
 
 export const previewAction = (): LWMAction => {
@@ -77,15 +79,30 @@ export const evaluateAction = (): LWMAction => {
     return {type: 'evaluate', color: 'primary', iconName: 'school', tooltipName: 'Notenhefte evaluieren', tooltipPosition: 'above'}
 }
 
-export const reportCardEntryTypeAction = (): LWMAction => {
-    return {        type: 'reportCardEntryType',
-        color: 'accent',
-        iconName: 'assignment_turned_in',
-        tooltipName: 'Abnahmen vergeben',
-        tooltipPosition: 'above'
-    }
-}
+export const reportCardEntryTypeAction = (): LWMAction => ({
+    type: 'reportCardEntryType',
+    color: 'accent',
+    iconName: 'assignment_turned_in',
+    tooltipName: 'Abnahmen vergeben',
+    tooltipPosition: 'above'
+})
 
+
+export const fireAction = (): LWMAction => ({
+    type: 'fire',
+    color: 'warn',
+    iconName: 'local_fire_department',
+    tooltipName: 'Sofort durchgefallen',
+    tooltipPosition: 'above'
+})
+
+export const honorAction = (): LWMAction => ({
+    type: 'honor',
+    color: 'accent',
+    iconName: 'emoji_events',
+    tooltipName: 'Sofort bestanden',
+    tooltipPosition: 'above'
+})
 
 export const action = (type: LWMActionType): LWMAction => {
     switch (type) {
@@ -117,5 +134,9 @@ export const action = (type: LWMActionType): LWMAction => {
             return evaluateAction()
         case 'reportCardEntryType':
             return reportCardEntryTypeAction()
+        case 'fire':
+            return fireAction()
+        case 'honor':
+            return honorAction()
     }
 }

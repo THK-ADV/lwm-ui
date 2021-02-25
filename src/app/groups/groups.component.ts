@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core'
 import {LabworkService} from '../services/labwork.service'
-import {ActivatedRoute} from '@angular/router'
+import {ActivatedRoute, Router} from '@angular/router'
 import {fetchLabwork$} from '../utils/component.utils'
 import {Subscription} from 'rxjs'
 import {GroupService} from '../services/group.service'
@@ -12,7 +12,6 @@ import {subscribe} from '../utils/functions'
 import {LabworkAtom} from '../models/labwork.model'
 import {MatDialog} from '@angular/material'
 import {UserService} from '../services/user.service'
-import {GroupEditComponent} from './edit/group-edit.component'
 import {Card} from '../card-list/card-list.component'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 import {LWMActionType} from '../table-action-button/lwm-actions'
@@ -41,7 +40,8 @@ export class GroupsComponent implements OnInit {
         private readonly labworkService: LabworkService,
         private readonly labworkApplicationService: LabworkApplicationService,
         private readonly userService: UserService,
-        private readonly route: ActivatedRoute
+        private readonly route: ActivatedRoute,
+        private readonly router: Router,
     ) {
         this.subs = []
         this.groups = []
@@ -107,21 +107,8 @@ export class GroupsComponent implements OnInit {
 
     displaySystemId = (user: User): string => user.systemId
 
-    onEdit = (group: GroupAtom) => {
-        const fellowStudents$ = this.userService.getAllWithFilter( // TODO remove those who are already applied to related labworks
-            {attribute: 'status', value: 'student'}
-        )
-
-        const dialogRef = GroupEditComponent.instance(this.dialog, group, this.groups.map(g => g.value), fellowStudents$)
-        const s = dialogRef.componentInstance.groupChanged.subscribe(_ => {
-            this.fetchGroups(this.labwork)
-        })
-        const s1 = dialogRef.afterClosed().subscribe(a => {
-            s.unsubscribe()
-        })
-
-        this.subs.push(s1)
-    }
+    onEdit = (group: GroupAtom) =>
+        this.router.navigate([group.id], {relativeTo: this.route})
 
     canEdit = (): boolean => {
         return this.hasPermission

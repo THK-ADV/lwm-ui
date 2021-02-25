@@ -15,6 +15,7 @@ import {userAuths} from '../security/user-authority-resolver'
 import {AuthorityAtom} from '../models/authority.model'
 import {ReportCardEntryAtom, ReportCardEntryType} from '../models/report-card-entry.model'
 import {format, formatTime} from '../utils/lwmdate-adapter'
+import {fastForwarded, fired} from '../models/report-card-evaluation'
 
 class DataSource {
     dataSources: {
@@ -128,6 +129,14 @@ export class StudentSearchComponent implements OnInit {
         `${labwork.label} - ${labwork.semester.abbreviation}`
 
     panelSubTitle = (labwork: LabworkContent) => {
+        if (fastForwarded(labwork.evals)) {
+            return 'Praktikum bestanden (vorzeitig anerkannt)'
+        }
+
+        if (fired(labwork.evals)) {
+            return 'Praktikum nicht bestanden (rausgeworfen)'
+        }
+
         let passed = true
         let details = ''
 

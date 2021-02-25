@@ -1,6 +1,6 @@
 import {FormInput, FormInputData} from '../shared-dialogs/forms/form.input'
 import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
-import {AbstractControl, FormGroup} from '@angular/forms'
+import {AbstractControl} from '@angular/forms'
 
 export const isOption = (d: FormInputData<any>): d is FormInputOption<any> => {
     return (d as FormInputOption<any>).bindOptions !== undefined
