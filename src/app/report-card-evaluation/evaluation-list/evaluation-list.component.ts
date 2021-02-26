@@ -1,7 +1,7 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core'
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {Observable, Subscription} from 'rxjs'
-import {ReportCardEvaluationAtom} from '../../models/report-card-evaluation'
+import {explicitEvaluationKind, ReportCardEvaluationAtom} from '../../models/report-card-evaluation'
 import {ReportCardEvaluationService} from '../../services/report-card-evaluation.service'
 import {format} from '../../utils/lwmdate-adapter'
 import {map, tap} from 'rxjs/operators'
@@ -13,6 +13,8 @@ import {initiateDownloadWithDefaultFilenameSuffix} from '../../xls-download/xls-
 import {ActionType} from '../../abstract-header/abstract-header.component'
 import {ReportCardEntryService} from '../../services/report-card-entry.service'
 import {LabworkAtom} from '../../models/labwork.model'
+import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material'
+import {ExplicitEvaluationKind} from '../../services/lwm.service'
 
 interface Eval {
     firstName: string,
@@ -20,7 +22,8 @@ interface Eval {
     systemId: string,
     studentId: string,
     passed: boolean,
-    lastModified: Date
+    lastModified: Date,
+    evalKind?: ExplicitEvaluationKind
 }
 
 interface Summary {
@@ -42,15 +45,19 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     private static readonly detailReportCardsLabel = 'Detailierte Praktikumsleistungen herunterladen'
 
     @Input() labwork: LabworkAtom
-
     @Input() hasPermission: boolean
-    columns: TableHeaderColumn[]
-    tableContent: (model: Readonly<Eval>, attr: string) => string
-    filterPredicate: (data: Eval, filter: string) => boolean
 
-    sortingDataAccessor: (data: Eval, property: string) => number
+    @ViewChild(MatSort, {static: true}) matSort: MatSort
+    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator
+
+    readonly columns: TableHeaderColumn[]
+    readonly displayedColumns: string[]
+    readonly dataSource = new MatTableDataSource<Eval>()
+    readonly pageSizeOptions: number[]
+    readonly tableContent: (model: Readonly<Eval>, attr: string) => string
+    readonly sort: Sort = {active: 'lastModified', direction: 'desc'}
+
     summary: Summary[]
-    evals$: Observable<Eval[]>
 
     private subs: Subscription[] = []
 
@@ -67,6 +74,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
             {title: 'Bestanden', attr: 'passed'},
             {title: 'Datum', attr: 'lastModified'}
         ]
+        this.displayedColumns = this.columns.map(_ => _.attr)
         this.tableContent = (e, attr) => {
             switch (attr) {
                 case 'passed':
@@ -77,13 +85,31 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
                     return e[attr]
             }
         }
-        this.filterPredicate = (e, filter) =>
-            e.systemId.toLowerCase().includes(filter) ||
-            e.firstName.toLowerCase().includes(filter) ||
-            e.lastName.toLowerCase().includes(filter) ||
-            (e.passed ? 'Ja' : 'Nein').toLowerCase().includes(filter) ||
-            format(e.lastModified, 'dd.MM.yyyy - HH:mm').includes(filter)
-        this.sortingDataAccessor = (data, property) => {
+        this.pageSizeOptions = [25, 50, 100]
+    }
+
+    ngOnInit(): void {
+        this.setupDataSource()
+
+        this.updateUI(this.toEval(this.evalService.getAll(this.courseId(), this.labworkId())))
+
+        if (this.hasPermission) {
+            this.displayedColumns.push('action')
+        }
+    }
+
+    private updateUI = (evals: Observable<Eval[]>) => {
+        this.subs.push(subscribe(
+            evals,
+            xs => {
+                this.dataSource.data = xs
+                this.sortDataSource()
+            }
+        ))
+    }
+
+    private setupDataSource = () => {
+        this.dataSource.sortingDataAccessor = (data, property) => {
             switch (property) {
                 case 'date':
                     return new Date(data.lastModified)
@@ -91,10 +117,23 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
                     return data[property]
             }
         }
+        this.dataSource.paginator = this.paginator
+        this.dataSource.sort = this.matSort
+        this.dataSource.filterPredicate = (e, filter) =>
+            e.systemId.toLowerCase().includes(filter) ||
+            e.firstName.toLowerCase().includes(filter) ||
+            e.lastName.toLowerCase().includes(filter) ||
+            (e.passed ? 'Ja' : 'Nein').toLowerCase().includes(filter) ||
+            format(e.lastModified, 'dd.MM.yyyy - HH:mm').includes(filter)
+
+
+        this.sortDataSource()
     }
 
-    ngOnInit(): void {
-        this.evals$ = this.toEval(this.evalService.getAll(this.courseId(), this.labworkId()))
+    private sortDataSource = () => {
+        this.matSort.active = this.sort.active
+        this.matSort.direction = this.sort.direction
+        this.matSort.sortChange.emit(this.sort)
     }
 
     private labworkId = () =>
@@ -106,6 +145,9 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.subs.forEach(_ => _.unsubscribe())
     }
+
+    applyFilter = (filterValue: string) =>
+        this.dataSource.filter = filterValue.trim().toLowerCase() // TODO override this.dataSource.filterPredicate if needed
 
     actions = (): ActionType[] =>
         this.hasPermission ?
@@ -159,7 +201,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     }
 
     private evaluate = () =>
-        this.evals$ = withSpinning<Eval[]>(this.loadingService)(this.toEval(this.evalService.create(this.courseId(), this.labworkId())))
+        this.updateUI(withSpinning<Eval[]>(this.loadingService)(this.toEval(this.evalService.create(this.courseId(), this.labworkId()))))
 
     private toEval = (evals$: Observable<ReportCardEvaluationAtom[]>): Observable<Eval[]> => {
         const updateStats = (evals: Eval[]) => {
@@ -196,10 +238,17 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
                     systemId: first.student.systemId,
                     studentId: first.student.id,
                     passed: passed,
-                    lastModified: latest
+                    lastModified: latest,
+                    evalKind: explicitEvaluationKind(xs)
                 }
             })
 
         return evals$.pipe(map(go), tap(updateStats))
     }
+
+    isEvaluatedExplicitly = (e: Eval) =>
+        e.evalKind !== undefined
+
+    isFastForwarded = (e: Eval) =>
+        e.evalKind === 'fastForward'
 }

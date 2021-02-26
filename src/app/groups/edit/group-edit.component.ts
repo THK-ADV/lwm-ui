@@ -16,7 +16,7 @@ import {UserService} from '../../services/user.service'
 import {invalidChoiceKey} from '../../utils/form.validator'
 import {formatUser} from '../../utils/component.utils'
 import {
-    ExplicitEvaluationRequestKind,
+    ExplicitEvaluationKind,
     GroupDeletionResult,
     GroupInsertionResult,
     GroupMovementResult,
@@ -318,7 +318,7 @@ export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply ass
     fire = (member: User) =>
         this.evalExplicit(member, 'fire')
 
-    private evalExplicit = (member: User, kind: ExplicitEvaluationRequestKind) => {
+    private evalExplicit = (member: User, kind: ExplicitEvaluationKind) => {
         const go = () => this.lwmService.evaluateExplicit(
             this.courseId,
             {

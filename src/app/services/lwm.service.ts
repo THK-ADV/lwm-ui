@@ -67,13 +67,13 @@ export interface GroupMovingRequest {
     destGroup: string
 }
 
-export type ExplicitEvaluationRequestKind = 'fastForward' | 'fire'
+export type ExplicitEvaluationKind = 'fastForward' | 'fire'
 
 export interface ExplicitEvaluationRequest {
     labwork: string
     student: string
     group: string
-    kind: ExplicitEvaluationRequestKind
+    kind: ExplicitEvaluationKind
 }
 
 export interface ExplicitEvaluationResult {

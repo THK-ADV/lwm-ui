@@ -134,7 +134,7 @@ export class StudentSearchComponent implements OnInit {
         }
 
         if (fired(labwork.evals)) {
-            return 'Praktikum nicht bestanden (rausgeworfen)'
+            return 'Praktikum nicht bestanden (vorzeitig durchgefallen)'
         }
 
         let passed = true
