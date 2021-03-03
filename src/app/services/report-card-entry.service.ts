@@ -12,7 +12,7 @@ import {Time} from '../models/time.model'
 import {Room} from '../models/room.model'
 
 interface ReportCardEntryFilter {
-    attribute: 'course' | 'student' | 'labwork' | 'scheduleEntry'
+    attribute: 'course' | 'student' | 'labwork' | 'scheduleEntry' | 'semester'
     value: string
 }
 

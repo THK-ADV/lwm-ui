@@ -1,17 +1,15 @@
-import {Component, Input, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
 import * as d3 from 'd3'
 import {ReportCardEntryService} from '../../services/report-card-entry.service'
-import {forkJoin, Subscription} from 'rxjs'
+import {EMPTY, Observable, Subscription, zip} from 'rxjs'
 import {ReportCardEntry} from '../../services/lwm.service'
-import {first, subscribe} from '../../utils/functions'
+import {subscribe} from '../../utils/functions'
+import {switchMap} from 'rxjs/operators'
+import {ActivatedRoute} from '@angular/router'
 import {jsonDrawer} from './d3-drawer'
+import {forEachMap, groupBy} from '../../utils/group-by'
+import {LabworkService} from '../../services/labwork.service'
 import {LabworkAtom} from '../../models/labwork.model'
-import {map} from 'rxjs/operators'
-import {rangeTo} from '../../utils/range'
-
-export type LineColor = string
-
-type Drawer = (data: Readonly<ReportCardEntry[]>, itemColor: string) => void
 
 @Component({
     selector: 'lwm-evaluation-visualisation',
@@ -21,113 +19,125 @@ type Drawer = (data: Readonly<ReportCardEntry[]>, itemColor: string) => void
 })
 export class EvaluationVisualisationComponent implements OnInit, OnDestroy {
 
-    @Input() labworks: [LabworkAtom, LineColor][] = []
-    @Input() courseId = ''
-    @Input() width = 0 // TODO width should be determined by the parents width
-    @Input() height = 0
-    @Input() margin = {top: 20, right: 20, bottom: 50, left: 70}
-    @Input() assignmentLabels: string[]
+    // d3 constants
+    private readonly width
+    private readonly height
+    private readonly margin
+    private readonly colors = [
+        '#A7414A',
+        '#00743F',
+        '#888C46',
+        '#A3586D',
+        '#0ABDA0'
+    ]
+
+    title: string
 
     private sub: Subscription
 
     constructor(
-        private readonly service: ReportCardEntryService
+        private readonly reportCardEntryService: ReportCardEntryService,
+        private readonly labworkService: LabworkService,
+        private readonly route: ActivatedRoute
     ) {
+        this.title = 'Statistik'
+        this.margin = {top: 30, right: 60, bottom: 60, left: 60}
+        this.width = window.outerWidth - this.margin.left - this.margin.right
+        this.height = window.outerHeight * 0.6 - this.margin.top - this.margin.bottom
     }
 
     ngOnInit() {
-        this.sub = subscribe(forkJoin(this.makeRequest()), this.draw)
+        this.sub = subscribe(this.fetchData(), ([reportCardEntries, labworks]) => {
+            const {semester, course} = labworks[0]
+            this.title = `Statistik für ${course.abbreviation} im ${semester.abbreviation}`
+            this.renderSvg(reportCardEntries, labworks)
+        })
     }
 
     ngOnDestroy() {
         this.sub.unsubscribe()
     }
 
-    private makeRequest = () => {
-        const shouldTake = (x: ReportCardEntry): boolean => {
-            if (this.assignmentLabels) {
-                return this.assignmentLabels.some(_ => _ === x.label)
-            } else {
-                return x.entryTypes.some(_ => _.entryType === 'Testat')
-            }
-        }
+    private fetchData = (): Observable<[ReportCardEntry[], LabworkAtom[]]> => {
+        const reportCards = (cid: string, sid: string): Observable<ReportCardEntry[]> =>
+            this.reportCardEntryService.getAllWithFilterNonAtomic(cid, {attribute: 'semester', value: sid})
 
-        return this.labworks.map(([l, _]) => {
-            return this.service.getAllWithFilterNonAtomic(this.courseId, {attribute: 'labwork', value: l.id}).pipe(
-                map(xs => xs.filter(shouldTake))
-            )
+        const labworks = (cid: string, sid: string): Observable<LabworkAtom[]> =>
+            this.labworkService.getAll(cid, sid)
+
+        return this.route.paramMap.pipe(
+            switchMap(params => {
+                const cid = params.get('cid')
+                const sid = params.get('sid')
+                return cid && sid && zip(reportCards(cid, sid), labworks(cid, sid)) || EMPTY
+            })
+        )
+    }
+
+    private renderSvg = (reportCardEntries: ReportCardEntry[], labworks: LabworkAtom[]) => {
+        const data = groupBy(reportCardEntries, _ => _.labwork)
+        const draw = this.prepareSvg(data.size + 1)
+
+        forEachMap(data, (k, v, i) => {
+            const labworkLabel = labworks.find(_ => _.id === k)?.label ?? k
+            const color = this.colors[i]
+
+            draw(v, labworkLabel, color)
         })
     }
 
-    private draw = (xss: ReportCardEntry[][]) => {
-        const f = first(xss)
-
-        if (!f) {
-            return
-        }
-
-        const assignments = new Set<string>(f.map(_ => _.label))
-        const drawer = this.setupSvg(assignments.size)
-
-        xss.forEach(xs => {
-            // tslint:disable-next-line:no-non-null-assertion
-            const [_, color] = this.labworks.find(([l, _]) => l.id === xs[0].labwork)!!
-            drawer(xs, color)
-        })
-    }
-
-    private setupSvg = (numberOfAssignments: number): Drawer => {
-        const labelAxis = (xLabel: string, yLabel: string) => {
-            svg.append('text')
-                .attr('transform',
-                    'translate(' + (width / 2) + ' ,' +
-                    (height + this.margin.top + 15) + ')')
-                .style('text-anchor', 'middle')
-                .text(xLabel)
-
-            svg.append('text')
-                .attr('transform', 'rotate(-90)')
-                .attr('y', 0 - this.margin.left)
-                .attr('x', 0 - (height / 2))
-                .attr('dy', '1em')
-                .style('text-anchor', 'middle')
-                .text(yLabel)
-        }
-
-        const addAxis = (): [any, any] => {
-            const x = d3.scaleLinear()
-                .domain([1, numberOfAssignments])
-                .range([0, width])
-
-            svg.append('g')
-                .attr('transform', 'translate(0,' + height + ')')
-                .call(d3.axisBottom(x).tickValues(rangeTo(1, numberOfAssignments)))
-
-            const y = d3.scaleLinear()
-                .domain([0, 100])
-                .range([height, 0])
-
-            svg.append('g')
-                .call(d3.axisLeft(y))
-
-            return [x, y]
-        }
-
-        const width = this.width - this.margin.left - this.margin.right
-        const height = this.height - this.margin.top - this.margin.bottom
-
+    private prepareSvg = (numberOfAssignments: number) => {
         const container = d3.select('#svgContainer')
-        const svg = container
-            .select('svg')
-            .attr('width', width + this.margin.left + this.margin.right)
-            .attr('height', height + this.margin.top + this.margin.bottom)
+        const svg = this.addSvg(container)
+        const [scaleX, scaleY] = this.addAxis(svg, numberOfAssignments)
+        this.labelAxis(svg, 'Aufgaben', 'Teilnehmer in %')
+
+        return jsonDrawer(svg, container, scaleX, scaleY)
+    }
+
+    private addSvg = (container) =>
+        container
+            .append('svg')
+            .attr('width', this.width + this.margin.left + this.margin.right)
+            .attr('height', this.height + this.margin.top + this.margin.bottom)
             .append('g')
             .attr('transform', 'translate(' + this.margin.left + ',' + this.margin.top + ')')
 
+    private addAxis = (svg, numberOfAssignments: number) => {
+        const ticks = [...new Array(numberOfAssignments)].map((_, i) => i + 1)
 
-        const [scaleX, scaleY] = addAxis()
-        labelAxis('Aufgaben', 'Teilnehmer (in %)')
+        const scaleX = d3.scaleLinear()
+            .domain([1, numberOfAssignments])
+            .range([0, this.width])
 
-        return jsonDrawer(d3, svg, container, scaleX, scaleY)
+        svg.append('g')
+            .attr('transform', 'translate(0,' + this.height + ')')
+            .call(d3.axisBottom(scaleX).tickValues(ticks).tickFormat(_ => _.toFixed()))
+
+        const scaleY = d3.scaleLinear()
+            .domain([0, 100])
+            .range([this.height, 0])
+
+        svg.append('g')
+            .call(d3.axisLeft(scaleY))
+
+        return [scaleX, scaleY]
+    }
+
+    private labelAxis = (svg, xLabel: string, yLabel: string) => {
+        svg.append('text')
+            .attr('transform',
+                'translate(' + (this.width / 2) + ' ,' +
+                (this.height + this.margin.bottom * 0.75) + ')')
+            .style('text-anchor', 'middle')
+            .text(xLabel)
+
+        svg.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', 0 - this.margin.left)
+            .attr('x', 0 - (this.height / 2))
+            .attr('dy', '1em')
+            .style('text-anchor', 'middle')
+            .text(yLabel)
     }
 }

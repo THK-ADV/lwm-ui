@@ -1,6 +1,7 @@
 import {groupBy, toTupleArray} from '../../utils/group-by'
 import {ReportCardEntry} from '../../services/lwm.service'
 import {EntryType} from '../../models/assignment-plan.model'
+import * as d3 from 'd3'
 
 interface LineData {
     x: number
@@ -25,12 +26,12 @@ type ReportCardEntryByAssignmentIndex = [number, ReportCardEntry[]][]
 
 const groupByAssignmentIndex = (data: Readonly<ReportCardEntry[]>): ReportCardEntryByAssignmentIndex =>
     toTupleArray(groupBy(data, _ => _.assignmentIndex))
-        .sort((a, b) => a[0][0] - b[0][0])
+        .sort((a, b) => a[0] - b[0])
 
 const accIfEntryType = (entryType: EntryType): (acc: number, x: ReportCardEntry) => number => {
     return (acc, x) => {
-        const hasPassed = x.entryTypes.some(_ => _.entryType === entryType && (_.bool || false))
-        if (hasPassed) {
+        const maybeEntryType = x.entryTypes.find(_ => _.entryType === entryType)
+        if (maybeEntryType && (maybeEntryType.bool ?? false)) {
             return acc + 1
         } else {
             return acc
@@ -41,7 +42,6 @@ const accIfEntryType = (entryType: EntryType): (acc: number, x: ReportCardEntry)
 const toLineData = (data: ReportCardEntryByAssignmentIndex, entryType: EntryType): LineData[] => {
     return data.map(([index, xs]) => {
         const sum = xs.reduce(accIfEntryType(entryType), 0)
-
         const total = xs.length
         const percent = 100 / total * sum
 
@@ -70,10 +70,10 @@ const toAreaData = (data: ReportCardEntryByAssignmentIndex): AreaData[] => {
     })
 }
 
-export function jsonDrawer(d3, svg, container, scaleX, scaleY) {
+export function jsonDrawer(svg, container, scaleX, scaleY) {
     const allCircles = svg.selectAll('circle')
 
-    const drawLine = (data, color) => {
+    function drawLine(data, color) {
         const line = d3.line()
             .curve(d3.curveCardinal.tension(0.8))
             .defined(d => d.yp > 0)
@@ -93,7 +93,7 @@ export function jsonDrawer(d3, svg, container, scaleX, scaleY) {
             .attr('d', line)
     }
 
-    const drawArea = (data, color) => {
+    function drawArea(data, color) {
         const area = d3.area()
             .defined(d => d.y0p > 0.0 && d.y1p > 0.0)
             .x(d => scaleX(d.x))
@@ -109,7 +109,7 @@ export function jsonDrawer(d3, svg, container, scaleX, scaleY) {
             .style('mix-blend-mode', 'multiply')
     }
 
-    const drawCircle = (dataset, itemColor) => {
+    function drawCircle(dataset, itemColor) {
         const data = dataset.filter(d => d.yp > 0.0)
 
         allCircles
@@ -131,21 +131,7 @@ export function jsonDrawer(d3, svg, container, scaleX, scaleY) {
             })
     }
 
-    const drawJson = (data: Readonly<ReportCardEntry[]>, itemColor: string) => {
-        const grouped = groupByAssignmentIndex(data)
-        const attendanceData = toLineData(grouped, 'Anwesenheitspflichtig')
-        const certificateData = toLineData(grouped, 'Testat')
-        const bothData = toAreaData(grouped)
-
-        drawArea(bothData, itemColor)
-
-        drawLine(attendanceData, itemColor)
-        drawLine(certificateData, itemColor)
-
-        drawCircle(attendanceData.concat(certificateData), itemColor)
-    }
-
-    const showTooltip = (x, y, d) => {
+    function showTooltip(x, y, d) {
         const body = d.ya + ' / ' + d.total + ' (' + parseFloat(d.yp).toFixed(2) + '%)'
         const head = d.label
 
@@ -162,7 +148,29 @@ export function jsonDrawer(d3, svg, container, scaleX, scaleY) {
         d3.select('#tooltip').classed('hidden', false)
     }
 
-    const removeTooltip = () => d3.select('#tooltip').classed('hidden', true)
+    function removeTooltip() {
+        d3.select('#tooltip').classed('hidden', true)
+    }
+
+    function drawLegend(name, itemColor) {
+        container
+            .append('p')
+            .text(name)
+            .style('color', itemColor)
+    }
+
+    function drawJson(data: Readonly<ReportCardEntry[]>, labworkLabel: string, itemColor: string) {
+        const grouped = groupByAssignmentIndex(data)
+        const attendanceData = toLineData(grouped, 'Anwesenheitspflichtig')
+        const certificateData = toLineData(grouped, 'Testat')
+        const bothData = toAreaData(grouped)
+
+        drawArea(bothData, itemColor)
+        drawLine(attendanceData, itemColor)
+        drawLine(certificateData, itemColor)
+        drawLegend(labworkLabel, itemColor)
+        drawCircle(attendanceData.concat(certificateData), itemColor)
+    }
 
     return Object.freeze(drawJson)
 }

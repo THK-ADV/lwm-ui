@@ -17,7 +17,8 @@ export type LWMActionType =
     'evaluate' |
     'reportCardEntryType' |
     'fire' |
-    'honor'
+    'honor' |
+    'chart'
 
 export interface LWMAction {
     type: LWMActionType
@@ -104,6 +105,14 @@ export const honorAction = (): LWMAction => ({
     tooltipPosition: 'above'
 })
 
+export const chartAction = (): LWMAction => ({
+    type: 'chart',
+    color: 'accent',
+    iconName: 'show_chart',
+    tooltipName: 'Statistik',
+    tooltipPosition: 'above'
+})
+
 export const action = (type: LWMActionType): LWMAction => {
     switch (type) {
         case 'edit':
@@ -138,5 +147,7 @@ export const action = (type: LWMActionType): LWMAction => {
             return fireAction()
         case 'honor':
             return honorAction()
+        case 'chart':
+            return chartAction()
     }
 }
