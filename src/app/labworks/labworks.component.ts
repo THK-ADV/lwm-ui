@@ -28,6 +28,7 @@ import {Degree} from '../models/degree.model'
 import {DegreeService} from '../services/degree.service'
 import {
     chainAction,
+    chartAction,
     deleteAction,
     editAction,
     graduatesAction,
@@ -155,7 +156,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
             labworkApplicationAction(),
             groupAction(),
             graduatesAction(),
-            reportCardEntryTypeAction()
+            chartAction(),
+            reportCardEntryTypeAction(),
         ]
 
         const auths = userAuths(this.route)
@@ -207,6 +209,9 @@ export class LabworksComponent implements OnInit, OnDestroy {
             case 'applications':
             case 'reportCardEntryType':
                 this.routeTo(action, labwork)
+                break
+            case 'chart':
+                this.showStatistic(labwork.semester)
                 break
             default:
                 break
@@ -319,9 +324,8 @@ export class LabworksComponent implements OnInit, OnDestroy {
         return inputs.filter(i => !(!isModel && i.formControlName === 'course'))
     }
 
-    canCreate = (): ActionType[] => {
-        return this.hasPermission ? [{type: 'create', label: undefined}] : []
-    }
+    canCreate = (): ActionType[] =>
+        this.hasPermission ? [{type: 'create', label: undefined},] : []
 
     // TODO labworks are currently always added to the selected data source regardless of their semester.
     //  this is a wrong behaviour due to a single data source.
@@ -333,39 +337,6 @@ export class LabworksComponent implements OnInit, OnDestroy {
         )
     }
 
-    // labworksOfCurrentSemester = (obj: GroupedLabwork, semester: string) => {
-    //     const go = (xs: LabworkAtom[]) => {
-    //         return xs.map((x, i) => {
-    //             return [
-    //                 {
-    //                     label: x.label,
-    //                     id: x.id,
-    //                     semester: x.semester.id,
-    //                     course: x.course.id,
-    //                     degree: x.degree.id,
-    //                     description: x.description,
-    //                     published: x.published,
-    //                     subscribable: x.subscribable
-    //                 },
-    //                 colors[i]
-    //             ]
-    //         })
-    //     }
-    //     const colors = [
-    //         '#D618D9',
-    //         '#05F2DB',
-    //         '#4F26A6',
-    //         '#0476D9'
-    //     ]
-    //
-    //     let labworks: LabworkAtom[] = []
-    //
-    //     Object.entries(obj).forEach(([k, xs]) => {
-    //         if (k === semester) {
-    //             labworks = xs.map(_ => _.labwork)
-    //         }
-    //     })
-    //
-    //     return go(labworks)
-    // }
+    private showStatistic = (semester: Semester) =>
+        this.router.navigate([`semesters/${semester.id}/statistics`], {relativeTo: this.route})
 }

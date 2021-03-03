@@ -26,6 +26,7 @@ import {StudentSearchComponent} from './student-search/student-search.component'
 import {PrivacyComponent} from './nav/privacy/privacy.component'
 import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component'
 import {GroupEditComponent} from './groups/edit/group-edit.component'
+import {EvaluationVisualisationComponent} from './report-card-evaluation/evaluation-visualisation/evaluation-visualisation.component'
 
 const routes: Routes = [
     {
@@ -86,6 +87,11 @@ const routes: Routes = [
                         path: 'scheduleEntries/:sid',
                         resolve: {userAuths: UserAuthorityResolver},
                         component: ScheduleEntryComponent
+                    },
+                    {
+                        path: 'semesters/:sid/statistics',
+                        resolve: {userAuths: UserAuthorityResolver},
+                        component: EvaluationVisualisationComponent
                     },
                     {
                         path: 'labworks/:lid/applications',

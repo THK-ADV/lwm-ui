@@ -10,16 +10,6 @@
                 </lwm-evaluation-list>
             </ng-template>
         </mat-tab>
-        <mat-tab label="Statistik">
-            <ng-template matTabContent>
-                <lwm-evaluation-visualisation
-                        [width]="1200"
-                        [height]="600"
-                        [labworks]="[[labwork, '#D618D9']]"
-                        [courseId]="labwork.course.id">
-                </lwm-evaluation-visualisation>
-            </ng-template>
-        </mat-tab>
         <mat-tab label="Evaluations Kriterien">
             <ng-template matTabContent>
                 <lwm-evaluation-pattern
