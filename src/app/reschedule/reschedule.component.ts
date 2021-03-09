@@ -10,13 +10,22 @@ import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {isDate} from '../utils/type.check.utils'
 import {format, formatTime, LWMDateAdapter} from '../utils/lwmdate-adapter'
 import {resetControl} from '../utils/form-control-utils'
-import {ReportCardRescheduledProtocol} from '../models/report-card-rescheduled.model'
+import {ReportCardRescheduledProtocol, RescheduleReason} from '../models/report-card-rescheduled.model'
 import {RescheduleService} from '../services/reschedule.service'
 import {Time} from '../models/time.model'
 import {Room} from '../models/room.model'
 
 type DatePicked = 'candidate-date' | 'other-date' | 'none'
 type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
+
+const allReasons = (): RescheduleReason[] => [
+    'Krankheit',
+    'Terminkollision',
+    'Erneuter Versuch',
+    'Defizit',
+    'Privat',
+    'Sonstiges'
+]
 
 @Component({
     selector: 'lwm-reschedule',
@@ -67,12 +76,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
         this.datePickedMode = 'none'
         this.reschedulePickerMode = 'none'
         this.modes = ['pick-available', 'create-custom']
-        this.reasons = [
-            'Krankheit',
-            'Terminkollision',
-            'Privat',
-            'Sonstiges'
-        ]
+        this.reasons = allReasons()
 
         this.dateControl = new FormControl(undefined, Validators.required)
         this.slotPickerControl = new FormControl(undefined, Validators.required)
@@ -129,12 +133,13 @@ export class RescheduleComponent implements OnInit, OnDestroy {
             }
 
             const candidate = this.slotPickerControl.value as RescheduleCandidate
+            const reason = this.reasonControl.value as RescheduleReason
             const protocol = this.createProtocol(
                 candidate.room.id,
                 candidate.date,
                 candidate.start,
                 candidate.end,
-                this.reasonControl.value
+                reason
             )
 
             this.reschedule(protocol)
@@ -197,7 +202,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     reschedulePickerModeDidChange = (mode: ReschedulePickerMode) =>
         this.resetSlotPickerControls()
 
-    private createProtocol = (room: string, date: Date, start: Time, end: Time, reason: string): ReportCardRescheduledProtocol =>
+    private createProtocol = (room: string, date: Date, start: Time, end: Time, reason: RescheduleReason): ReportCardRescheduledProtocol =>
         ({
             reportCardEntry: this.reportCardEntry().id,
             reason: reason,
