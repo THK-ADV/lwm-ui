@@ -9,6 +9,7 @@ export interface ReportCardRescheduledAtom {
     end: Time
     room: Room
     reason?: RescheduleReason
+    lastModified: Date
     id: string
 }
 
@@ -18,6 +19,7 @@ export interface ReportCardRescheduledAtomJSON {
     end: string
     room: Room
     reason?: RescheduleReason
+    lastModified: string
     id: string
 }
 

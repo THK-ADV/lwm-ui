@@ -12,11 +12,14 @@ import {subscribe} from '../utils/functions'
 import {updateDataSource} from '../shared-dialogs/dataSource.update'
 import {AlertService} from '../services/alert.service'
 import {AnnotationComponent, AnnotationDialogAction} from '../annotation/annotation.component'
+import {ReportCardRescheduledAtom} from '../models/report-card-rescheduled.model'
+import {ReportCardEntryRowRescheduleModel} from './report-card-entry-row-reschedule/report-card-entry-row-reschedule.component'
 
 // ReportCard Model
 
 export interface ReportCardTableEntry {
     entry: ReportCardEntryAtom
+    reschedules: ReportCardRescheduledAtom[]
     annotationCount: number
 }
 
@@ -76,6 +79,9 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
         this.subs.forEach(_ => _.unsubscribe())
     }
 
+    entryFor = ({entry, reschedules}: ReportCardTableEntry): ReportCardEntryRowRescheduleModel =>
+        [entry, reschedules]
+
     // permission checks
 
     private hasReschedulePermission = (auths: Readonly<AuthorityAtom[]>) =>
@@ -90,16 +96,16 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
     // reschedule dialog
 
     openRescheduleDialog = (e: ReportCardTableEntry) => {
-        const updateTable = (entry: ReportCardEntryAtom) => {
+        const updateTable = (rs: ReportCardRescheduledAtom) => {
             const update = updateDataSource(this.tableModel.dataSource, this.alertService)
             update(
-                {...e, entry: entry},
+                {...e, reschedules: [...e.reschedules, rs]},
                 (lhs, rhs) => lhs.entry.id === rhs.entry.id
             )
         }
 
         this.subs.push(subscribe(
-            openDialog(RescheduleComponent.instance(this.dialog, e.entry), of),
+            openDialog(RescheduleComponent.instance(this.dialog, e.entry, e.reschedules), _ => of(_)),
             updateTable
         ))
     }
@@ -134,8 +140,4 @@ export class ReportCardTableComponent implements OnInit, OnDestroy {
             )
         )
     }
-
-    // a report card entry can only be rescheduled once by now. add support for multiple reschedules later on
-    canPerformRescheduleAction = (e: ReportCardEntryAtom) =>
-        this.canReschedule && e.rescheduled === undefined
 }

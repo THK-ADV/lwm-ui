@@ -95,7 +95,6 @@ export const mapReportCardEntryAtomJSON = (x: ReportCardEntryAtomJSON): ReportCa
 
     return {
         ...x,
-        rescheduled: x.rescheduled && mapReportCardRescheduledAtomJSON(x.rescheduled),
         date: date,
         start: Time.fromTimeString(x.start, date),
         end: Time.fromTimeString(x.end, date)
@@ -118,6 +117,7 @@ export const mapReportCardRescheduledAtomJSON = (x: ReportCardRescheduledAtomJSO
 
     return {
         ...x,
+        lastModified: new Date(x.lastModified),
         date: date,
         start: Time.fromTimeString(x.start, date),
         end: Time.fromTimeString(x.end, date)
@@ -171,4 +171,8 @@ export const convertManyReportCardEntries = (xs: ReportCardEntryJSON[]): ReportC
 
 export const convertManyReportCardEvaluations = (xs: ReportCardEvaluationAtomJSON[]): ReportCardEvaluationAtom[] => {
     return convertMany(xs, mapReportCardEvaluationJSON)
+}
+
+export const convertManyReportCardRescheduledAtomJSON = (xs: ReportCardRescheduledAtomJSON[]): ReportCardRescheduledAtom[] => {
+    return convertMany(xs, mapReportCardRescheduledAtomJSON)
 }

@@ -7,6 +7,7 @@ import {CourseAtom} from '../models/course.model'
 import {LabworkAtomJSON} from '../models/labwork.model'
 import {AnnotationAtomJSON} from '../services/annotation.service'
 import {ReportCardEvaluationJSON} from '../models/report-card-evaluation'
+import {ReportCardRescheduledAtomJSON} from '../models/report-card-rescheduled.model'
 
 export interface StudentSearchDashboard {
     user: StudentAtom,
@@ -16,18 +17,19 @@ export interface StudentSearchDashboard {
 
 export interface CourseContent {
     course: CourseAtom,
-    labworks: Array<LabworkContent>
+    labworks: LabworkContent[]
 }
 
 export interface LabworkContent {
     labwork: LabworkAtomJSON,
-    reportCardEntries: [ReportCardEntryContent]
+    reportCardEntries: ReportCardEntryContent[]
     evals: ReportCardEvaluationJSON[]
 }
 
 export interface ReportCardEntryContent {
     reportCardEntry: ReportCardEntryAtomJSON,
     annotations: AnnotationAtomJSON[]
+    reschedules: ReportCardRescheduledAtomJSON[]
 }
 
 export const fetchStudentSearchDashboard = (

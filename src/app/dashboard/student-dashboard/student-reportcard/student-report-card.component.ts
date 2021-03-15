@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core'
 import {ActivatedRoute} from '@angular/router'
 import {ReportCardEntryService} from '../../../services/report-card-entry.service'
-import {EMPTY, Subscription} from 'rxjs'
+import {EMPTY, of, Subscription, zip} from 'rxjs'
 import {ReportCardEntryAtom} from '../../../models/report-card-entry.model'
-import {switchMap} from 'rxjs/operators'
+import {mergeAll, switchMap, toArray} from 'rxjs/operators'
 import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../../../report-card-table/report-card-table-utils'
@@ -14,6 +14,8 @@ import {AnnotationService} from '../../../services/annotation.service'
 import {AnnotationAtom} from '../../../models/annotation'
 import {groupBy, mapMap} from '../../../utils/group-by'
 import {fullUserName} from '../../../utils/component.utils'
+import {RescheduleService} from '../../../services/reschedule.service'
+import {ReportCardRescheduledAtom} from '../../../models/report-card-rescheduled.model'
 
 interface LabworkView {
     title: string
@@ -43,15 +45,32 @@ export class StudentReportCardComponent implements OnInit, OnDestroy {
         private readonly route: ActivatedRoute,
         private readonly reportCardEntryService: ReportCardEntryService,
         private readonly annotationService: AnnotationService,
+        private readonly rescheduledService: RescheduleService,
     ) {
     }
 
     ngOnInit(): void {
-        this.fetchReportCards(cards => this.fetchAnnotations(cards))
+        this.fetchReportCards(cards => {
+            this.fetchReschedules(cards, res => this.updateReportCardEntryTableUI(res))
+            this.fetchAnnotations(cards)
+        })
     }
 
     ngOnDestroy() {
         this.subs.forEach(_ => _.unsubscribe())
+    }
+
+    private fetchReschedules = (cards: ReportCardEntryAtom[], completion: (rs: [ReportCardEntryAtom, ReportCardRescheduledAtom[]][]) => void) => {
+        this.subs.push(
+            subscribe(
+                of(cards).pipe(
+                    switchMap(xs => xs.map(x => zip(of(x), this.rescheduledService.all(x.id)))),
+                    mergeAll(),
+                    toArray()
+                ),
+                rs => completion(rs)
+            )
+        )
     }
 
     private fetchReportCards = (completion: (cards: ReportCardEntryAtom[]) => void) => {
@@ -65,7 +84,7 @@ export class StudentReportCardComponent implements OnInit, OnDestroy {
                 })
             ),
             cards => {
-                this.updateReportCardEntryUI(cards)
+                this.updateTitle(cards[0])
                 completion(cards)
             }
         ))
@@ -83,12 +102,12 @@ export class StudentReportCardComponent implements OnInit, OnDestroy {
         ))
     }
 
-    private updateReportCardEntryUI = (cards: ReportCardEntryAtom[]) => {
-        const card = cards[0]
-
+    private updateTitle = (card: ReportCardEntryAtom) =>
         this.labworkView = {
             title: `Praktikumsdaten zu ${card.labwork.label}`,
         }
+
+    private updateReportCardEntryTableUI = (cards: [ReportCardEntryAtom, ReportCardRescheduledAtom[]][]) => {
         this.tableModel = this.makeTableModel(cards)
     }
 
@@ -111,7 +130,7 @@ export class StudentReportCardComponent implements OnInit, OnDestroy {
         )
     }
 
-    private makeTableModel = (cards: ReportCardEntryAtom[]): ReportCardTableModel => {
+    private makeTableModel = (cards: [ReportCardEntryAtom, ReportCardRescheduledAtom[]][]): ReportCardTableModel => {
         const basicColumns: TableHeaderColumn[] = [
             {attr: 'assignmentIndex', title: '#'},
             {attr: 'date', title: 'Datum'},
@@ -124,10 +143,10 @@ export class StudentReportCardComponent implements OnInit, OnDestroy {
         return {
             dataSource: new MatTableDataSource(
                 cards
-                    .sort((a, b) => a.assignmentIndex - b.assignmentIndex)
-                    .map(e => ({entry: e, annotationCount: 0}))
+                    .sort(([a], [b]) => a.assignmentIndex - b.assignmentIndex)
+                    .map(([entry, reschedules]) => ({entry, reschedules, annotationCount: 0}))
             ),
-            columns: basicColumns.concat(distinctEntryTypeColumns(cards.flatMap(_ => _.entryTypes)))
+            columns: basicColumns.concat(distinctEntryTypeColumns(cards.flatMap(([e]) => e.entryTypes)))
         }
     }
 

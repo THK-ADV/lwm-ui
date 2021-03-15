@@ -1,6 +1,6 @@
 <ng-container *ngIf="reportCardEntries && scheduleEntry; else loading">
     <lwm-schedule-entry-header
-            [reportCardEntries]="withOutAnnotations()"
+            [reportCardEntries]="reportCardEntries"
             [scheduleEntry]="scheduleEntry">
     </lwm-schedule-entry-header>
 

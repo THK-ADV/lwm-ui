@@ -10,8 +10,11 @@ import {ActivatedRoute, Router} from '@angular/router'
 import {DashboardGroupLabel} from '../../../models/dashboard.model'
 import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 import {employeeDashboardScheduleEntryEvents} from '../../employee-dashboard/employee-dashboard.component'
+import {latestReportCardReschedule} from '../../../models/report-card-entry-reschedules.model'
+import {ReportCardRescheduledAtom} from '../../../models/report-card-rescheduled.model'
 
-type StudentDashboardCalEntry = ReportCardEntryAtom | ScheduleEntryAtom
+type StudentDashboardReportCardEntry = [ReportCardEntryAtom, ReportCardRescheduledAtom | undefined]
+type StudentDashboardCalEntry = StudentDashboardReportCardEntry | ScheduleEntryAtom
 
 @Component({
     selector: 'lwm-student-dashboard-cal',
@@ -20,7 +23,7 @@ type StudentDashboardCalEntry = ReportCardEntryAtom | ScheduleEntryAtom
 })
 export class StudentDashboardCalComponent implements OnInit {
 
-    @Input() reportCardEntries: ReportCardEntryAtom[]
+    @Input() reportCardEntries: [ReportCardEntryAtom, ReportCardRescheduledAtom[]][]
     @Input() scheduleEntries: ScheduleEntryAtom[]
     @Input() semester: Semester
     @Input() groups: DashboardGroupLabel[]
@@ -40,24 +43,24 @@ export class StudentDashboardCalComponent implements OnInit {
     }
 
     private makeCalendarEvents = (): ScheduleEntryEvent<StudentDashboardCalEntry>[] => {
-        const go = (e: ReportCardEntryAtom): ScheduleEntryEvent<ReportCardEntryAtom> => {
-            const backgroundColor = colorForCourse(e.labwork.course)
+        const go = ([entry, reschedules]: [ReportCardEntryAtom, ReportCardRescheduledAtom[]]): ScheduleEntryEvent<StudentDashboardReportCardEntry> => {
+            const backgroundColor = colorForCourse(entry.labwork.course)
             const foregroundColor = whiteColor()
 
-
-            const date = this.getDate(e)
-            const start = this.getStart(e)
-            const end = this.getEnd(e)
+            const latestReschedule = latestReportCardReschedule(reschedules)
+            const date = this.getDate(entry, latestReschedule)
+            const start = this.getStart(entry, latestReschedule)
+            const end = this.getEnd(entry, latestReschedule)
 
             return {
                 allDay: false,
                 start: Time.withNewDate(date, start).date,
                 end: Time.withNewDate(date, end).date,
-                title: this.eventTitle('month', e),
+                title: this.eventTitle('month', entry),
                 borderColor: backgroundColor,
                 backgroundColor: backgroundColor,
                 textColor: foregroundColor,
-                extendedProps: e
+                extendedProps: [entry, latestReschedule]
             }
         }
 
@@ -67,17 +70,17 @@ export class StudentDashboardCalComponent implements OnInit {
         ]
     }
 
-    private getEnd = (e: ReportCardEntryAtom) =>
-        e.rescheduled?.end ?? e.end
+    private getEnd = (e: ReportCardEntryAtom, rs?: ReportCardRescheduledAtom) =>
+        rs?.end ?? e.end
 
-    private getStart = (e: ReportCardEntryAtom) =>
-        e.rescheduled?.start ?? e.start
+    private getStart = (e: ReportCardEntryAtom, rs?: ReportCardRescheduledAtom) =>
+        rs?.start ?? e.start
 
-    private getDate = (e: ReportCardEntryAtom) =>
-        e.rescheduled?.date ?? e.date
+    private getDate = (e: ReportCardEntryAtom, rs?: ReportCardRescheduledAtom) =>
+        rs?.date ?? e.date
 
-    private getRoom = (e: ReportCardEntryAtom) =>
-        e.rescheduled?.room ?? e.room
+    private getRoom = (e: ReportCardEntryAtom, rs?: ReportCardRescheduledAtom) =>
+        rs?.room ?? e.room
 
     private eventTitle = (view: CalendarView, e: ReportCardEntryAtom) => {
         const room = this.getRoom(e)
@@ -96,14 +99,14 @@ export class StudentDashboardCalComponent implements OnInit {
         }
     }
 
-    isReportCardEntryAtom = (e: StudentDashboardCalEntry): e is ReportCardEntryAtom =>
-        (e as ReportCardEntryAtom).assignmentIndex !== undefined
+    isReportCardEntryAtom = (e: StudentDashboardCalEntry): e is StudentDashboardReportCardEntry =>
+        (e as StudentDashboardReportCardEntry)[0]?.assignmentIndex !== undefined
 
     eventTitleFor = (view: CalendarView, e: Readonly<ScheduleEntryEvent<StudentDashboardCalEntry>>) =>
         foldUndefined(
             e.extendedProps,
             p => this.isReportCardEntryAtom(p) ?
-                this.eventTitle(view, p) :
+                this.eventTitle(view, p[0]) :
                 scheduleEntryEventTitleLong(view, p),
             () => e.title
         )
@@ -115,7 +118,7 @@ export class StudentDashboardCalComponent implements OnInit {
 
         const routeUrl = (e: StudentDashboardCalEntry) => {
             if (this.isReportCardEntryAtom(e)) {
-                return `reportCards/labworks/${(e.labwork.id)}/students/${(e.student.id)}`
+                return `reportCards/labworks/${(e[0].labwork.id)}/students/${(e[0].student.id)}`
             } else {
                 return `courses/${(e.labwork.course.id)}/scheduleEntries/${(e.id)}`
             }

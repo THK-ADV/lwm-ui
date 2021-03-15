@@ -5,6 +5,8 @@ import {shortUserName} from '../../labwork-chain/timetable/timetable-view-model'
 import {first, foldUndefined} from '../../utils/functions'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
 import {isRescheduledInto} from '../schedule-entry.component'
+import {latestReportCardReschedule} from '../../models/report-card-entry-reschedules.model'
+import {ReportCardRescheduledAtom} from '../../models/report-card-rescheduled.model'
 
 interface HeaderView {
     title: string
@@ -26,19 +28,22 @@ export class ScheduleEntryHeaderComponent implements OnInit {
     constructor() {
     }
 
-    @Input() reportCardEntries: Readonly<ReportCardEntryAtom[]>
+    @Input() reportCardEntries: Readonly<[ReportCardEntryAtom, number, ReportCardRescheduledAtom[]][]>
     @Input() scheduleEntry: Readonly<ScheduleEntryAtom>
     headerView: HeaderView
 
     ngOnInit(): void {
-        this.headerView = this.makeHeaderView(this.scheduleEntry, this.reportCardEntries)
+        this.headerView = this.makeHeaderView(
+            this.scheduleEntry,
+            this.reportCardEntries.map(a => [a[0], a[2]])
+        )
     }
 
-    private makeHeaderView = (s: Readonly<ScheduleEntryAtom>, e: Readonly<ReportCardEntryAtom[]>): HeaderView => ({
+    private makeHeaderView = (s: Readonly<ScheduleEntryAtom>, es: Readonly<[ReportCardEntryAtom, ReportCardRescheduledAtom[]][]>): HeaderView => ({
         title: this.headerTitle(s),
-        assignment: this.assignmentLabel(e),
+        assignment: this.assignmentLabel(es),
         date: this.dateLabel(s),
-        participants: this.participantsLabel(e, s),
+        participants: this.participantsLabel(es, s),
         room: this.roomLabel(s),
         supervisors: this.supervisorLabel(s),
         timePeriod: this.timePeriodLabel(s)
@@ -47,15 +52,17 @@ export class ScheduleEntryHeaderComponent implements OnInit {
     private supervisorLabel = (x: Readonly<ScheduleEntryAtom>) =>
         x.supervisor.map(shortUserName).join(', ')
 
-    private participantsLabel = (xs: Readonly<ReportCardEntryAtom[]>, se: Readonly<ScheduleEntryAtom>) => {
+    private participantsLabel = (xs: Readonly<[ReportCardEntryAtom, ReportCardRescheduledAtom[]][]>, se: Readonly<ScheduleEntryAtom>) => {
         let honest = 0
         let rescheduledOut = 0
         let rescheduledIn = 0
 
-        xs.forEach(x => {
-            if (x.rescheduled !== undefined) {
+        xs.forEach(([_, reschedules]) => {
+            const rescheduled = latestReportCardReschedule(reschedules)
+
+            if (rescheduled !== undefined) {
                 // TODO add support for retries
-                if (isRescheduledInto(se, x)) {
+                if (isRescheduledInto(se, rescheduled)) {
                     rescheduledIn += 1
                 } else {
                     rescheduledOut += 1
@@ -79,12 +86,12 @@ export class ScheduleEntryHeaderComponent implements OnInit {
         return base
     }
 
-    private assignmentLabel = (xs: Readonly<ReportCardEntryAtom[]>) => {
+    private assignmentLabel = (xs: Readonly<[ReportCardEntryAtom, ReportCardRescheduledAtom[]][]>) => {
         return foldUndefined(
             first(xs),
-            x => {
-                const index = x.assignmentIndex + 1
-                return `${index} - ${x.label}`
+            ([entry]) => {
+                const index = entry.assignmentIndex + 1
+                return `${index} - ${entry.label}`
             },
             () => ``
         )

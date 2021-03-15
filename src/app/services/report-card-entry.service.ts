@@ -6,10 +6,16 @@ import {map} from 'rxjs/operators'
 import {ReportCardEntryAtom, ReportCardEntryAtomJSON, ReportCardEntryJSON} from '../models/report-card-entry.model'
 import {makePath} from '../utils/component.utils'
 import {_groupBy} from '../utils/functions'
-import {convertManyReportCardEntries, convertManyReportCardEntriesAtom, mapReportCardEntryAtomJSON} from '../utils/http-utils'
+import {
+    convertManyReportCardEntries,
+    convertManyReportCardEntriesAtom,
+    convertManyReportCardRescheduledAtomJSON,
+    mapReportCardEntryAtomJSON
+} from '../utils/http-utils'
 import {ReportCardEntry} from './lwm.service'
 import {Time} from '../models/time.model'
 import {Room} from '../models/room.model'
+import {ReportCardRescheduledAtom, ReportCardRescheduledAtomJSON} from '../models/report-card-rescheduled.model'
 
 interface ReportCardEntryFilter {
     attribute: 'course' | 'student' | 'labwork' | 'scheduleEntry' | 'semester'
@@ -66,12 +72,14 @@ export class ReportCardEntryService {
         .getAll<ReportCardEntryJSON>(makePath(this.path, courseId), applyFilter(filter, nonAtomicParams))
         .pipe(map(convertManyReportCardEntries))
 
-    fromScheduleEntry = (courseId: string, scheduleEntryId: string): Observable<[ReportCardEntryAtom, number][]> => this.http
-        .getAll<[ReportCardEntryAtomJSON, number]>(
+    fromScheduleEntry = (courseId: string, scheduleEntryId: string): Observable<[ReportCardEntryAtom, number, ReportCardRescheduledAtom[]][]> => this.http
+        .getAll<[ReportCardEntryAtomJSON, number, ReportCardRescheduledAtomJSON[]]>(
             `${makePath(this.path, courseId)}/scheduleEntry/${scheduleEntryId}`,
             atomicParams
         )
-        .pipe(map(x => x.map(([e, n]) => [mapReportCardEntryAtomJSON(e), n])))
+        .pipe(map(x => x.map(([e, n, rs]) =>
+            [mapReportCardEntryAtomJSON(e), n, convertManyReportCardRescheduledAtomJSON(rs)]
+        )))
 
     fromStudent = (student: string, labwork: string) => this.http
         .getAll<ReportCardEntryAtomJSON>(`${this.path}/student/${student}?labwork=${labwork}`)

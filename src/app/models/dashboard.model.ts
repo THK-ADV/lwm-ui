@@ -5,6 +5,7 @@ import {Semester} from './semester.model'
 import {CourseAtom} from './course.model'
 import {ScheduleEntryAtom} from './schedule-entry.model'
 import {ReportCardEntryAtom} from './report-card-entry.model'
+import {ReportCardRescheduledAtom} from './report-card-rescheduled.model'
 
 export interface Dashboard {
     status: 'student' | 'employee'
@@ -16,7 +17,7 @@ export interface StudentDashboard extends Dashboard {
     labworks: LabworkAtom[]
     labworkApplications: LabworkApplicationAtom[]
     groups: DashboardGroupLabel[]
-    reportCardEntries: ReportCardEntryAtom[]
+    reportCardEntries: [ReportCardEntryAtom, ReportCardRescheduledAtom[]][]
     evaluationResults: DashboardEvaluationResult[]
     scheduleEntries: ScheduleEntryAtom[]
 }
