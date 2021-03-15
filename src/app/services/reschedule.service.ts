@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core'
 import {atomicParams, HttpService} from './http.service'
 import {Observable} from 'rxjs'
 import {map} from 'rxjs/operators'
-import {mapReportCardRescheduledAtomJSON} from '../utils/http-utils'
+import {convertManyReportCardRescheduledAtomJSON, mapReportCardRescheduledAtomJSON} from '../utils/http-utils'
 import {
     ReportCardRescheduledAtom,
     ReportCardRescheduledAtomJSON,
@@ -24,4 +24,8 @@ export class RescheduleService {
         this.http
             .create<ReportCardRescheduledProtocol, ReportCardRescheduledAtomJSON>(makePath(this.path, courseId), protocol, atomicParams)
             .pipe(map(mapReportCardRescheduledAtomJSON))
+
+    all = (reportCardEntryId: string): Observable<ReportCardRescheduledAtom[]> =>
+        this.http.getAll<ReportCardRescheduledAtomJSON>(`reportCardEntries/${reportCardEntryId}/reportCardReschedules`, atomicParams)
+            .pipe(map(convertManyReportCardRescheduledAtomJSON))
 }

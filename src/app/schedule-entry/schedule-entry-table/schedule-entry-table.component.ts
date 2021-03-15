@@ -9,6 +9,8 @@ import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
 import {ScheduleEntryAtom} from '../../models/schedule-entry.model'
 import {isRescheduledInto} from '../schedule-entry.component'
 import {Subscription} from 'rxjs'
+import {latestReportCardReschedule} from '../../models/report-card-entry-reschedules.model'
+import {ReportCardRescheduledAtom} from '../../models/report-card-rescheduled.model'
 
 interface TableEntry {
     entry: ReportCardEntryAtom
@@ -31,7 +33,7 @@ export class ScheduleEntryTableComponent implements OnInit {
     ) {
     }
 
-    @Input() reportCardEntries: [ReportCardEntryAtom, number][]
+    @Input() reportCardEntries: [ReportCardEntryAtom, number, ReportCardRescheduledAtom[]][]
     @Input() scheduleEntry: Readonly<ScheduleEntryAtom>
 
     dataSource: MatTableDataSource<TableEntry>
@@ -58,18 +60,19 @@ export class ScheduleEntryTableComponent implements OnInit {
         const entryTypes: ReportCardEntryType[] = []
 
         const tableEntries: TableEntry[] = this.reportCardEntries
-            .sort((lhs, rhs) => compareUsers(lhs[0].student, rhs[0].student))
-            .map(([e, a], i) => {
-                entryTypes.push(...e.entryTypes)
+            .sort(([lhs], [rhs]) => compareUsers(lhs.student, rhs.student))
+            .map(([entry, annotations, reschedules], i) => {
+                entryTypes.push(...entry.entryTypes)
 
-                const rescheduledInto = isRescheduledInto(this.scheduleEntry, e)
+                const latestReschedule = latestReportCardReschedule(reschedules)
+                const rescheduledInto = isRescheduledInto(this.scheduleEntry, latestReschedule)
 
                 return ({
-                    entry: e,
+                    entry: entry,
                     index: i + 1,
-                    annotations: a,
-                    rescheduledInto: (e.rescheduled && rescheduledInto) || false,
-                    rescheduledFrom: (e.rescheduled && !rescheduledInto) || false,
+                    annotations: annotations,
+                    rescheduledInto: (latestReschedule && rescheduledInto) || false,
+                    rescheduledFrom: (latestReschedule && !rescheduledInto) || false,
                     retriedInto: false
                 })
             })

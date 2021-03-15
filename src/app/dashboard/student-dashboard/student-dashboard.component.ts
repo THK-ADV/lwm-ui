@@ -38,10 +38,10 @@ export class StudentDashboardComponent implements OnInit, OnDestroy {
 
     private updateUI = (d: StudentDashboard) => {
         this.dashboard = d
-        const sCourses = distinctBy(d.scheduleEntries, a => a.labwork.course.id)
+        const sCourses = distinctBy(d.scheduleEntries, s => s.labwork.course.id)
             .map(a => a.labwork.course)
-        const rCourses = distinctBy(d.reportCardEntries, a => a.labwork.course)
-            .map(a => d.labworkApplications.find(_ => _.labwork.course.id === a.labwork.course)?.labwork?.course)
+        const rCourses = distinctBy(d.reportCardEntries, ([e]) => e.labwork.course)
+            .map(([e]) => d.labworkApplications.find(_ => _.labwork.course.id === e.labwork.course)?.labwork?.course)
 
         this.courses = sCourses.concat(filterIsDefined(rCourses))
     }

@@ -7,13 +7,14 @@ import {ScheduleEntryService} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {subscribe} from '../utils/functions'
+import {ReportCardRescheduledAtom} from '../models/report-card-rescheduled.model'
 
-export const isRescheduledInto = (s: ScheduleEntryAtom, e: ReportCardEntryAtom): boolean =>
-    e.rescheduled !== undefined &&
-    e.rescheduled.date.getTime() === s.date.getTime() &&
-    e.rescheduled.start.equals(s.start) &&
-    e.rescheduled.end.equals(s.end) &&
-    e.rescheduled.room.id === s.room.id
+export const isRescheduledInto = (s: ScheduleEntryAtom, rescheduled?: ReportCardRescheduledAtom): boolean =>
+    rescheduled !== undefined &&
+    rescheduled.date.getTime() === s.date.getTime() &&
+    rescheduled.start.equals(s.start) &&
+    rescheduled.end.equals(s.end) &&
+    rescheduled.room.id === s.room.id
 
 @Component({
     selector: 'lwm-schedule-entry',
@@ -22,7 +23,7 @@ export const isRescheduledInto = (s: ScheduleEntryAtom, e: ReportCardEntryAtom):
 })
 export class ScheduleEntryComponent implements OnInit, OnDestroy {
 
-    reportCardEntries: Readonly<[ReportCardEntryAtom, number][]>
+    reportCardEntries: Readonly<[ReportCardEntryAtom, number, ReportCardRescheduledAtom[]][]>
     scheduleEntry: Readonly<ScheduleEntryAtom>
 
     subs: Subscription[] = []
@@ -54,11 +55,8 @@ export class ScheduleEntryComponent implements OnInit, OnDestroy {
     }
 
 
-    private updateUI = (reportCardEntries: Readonly<[ReportCardEntryAtom, number][]>, scheduleEntry: Readonly<ScheduleEntryAtom>) => {
+    private updateUI = (reportCardEntries: Readonly<[ReportCardEntryAtom, number, ReportCardRescheduledAtom[]][]>, scheduleEntry: Readonly<ScheduleEntryAtom>) => {
         this.reportCardEntries = reportCardEntries
         this.scheduleEntry = scheduleEntry
     }
-
-    withOutAnnotations = () =>
-        this.reportCardEntries.map(a => a[0])
 }

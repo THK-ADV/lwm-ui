@@ -6,12 +6,19 @@ import {SemesterJSON} from '../models/semester.model'
 import {Employee, StudentAtom} from '../models/user.model'
 import {CourseAtom} from '../models/course.model'
 import {ScheduleEntryAtomJSON} from '../models/schedule-entry.model'
-import {convertManyLabworks, convertManyReportCardEntriesAtom, convertManyScheduleEntries, mapSemesterJSON} from '../utils/http-utils'
+import {
+    convertManyLabworks,
+    convertManyReportCardRescheduledAtomJSON,
+    convertManyScheduleEntries,
+    mapReportCardEntryAtomJSON,
+    mapSemesterJSON
+} from '../utils/http-utils'
 import {map} from 'rxjs/operators'
 import {LabworkAtomJSON} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {ReportCardEntryAtomJSON} from '../models/report-card-entry.model'
 import {applyFilter} from './http.filter'
+import {ReportCardRescheduledAtomJSON} from '../models/report-card-rescheduled.model'
 
 interface DashboardJSON {
     status: 'student' | 'employee'
@@ -29,7 +36,7 @@ interface StudentDashboardJSON extends DashboardJSON {
     labworks: LabworkAtomJSON[]
     labworkApplications: LabworkApplicationAtom[]
     groups: DashboardGroupLabel[]
-    reportCardEntries: ReportCardEntryAtomJSON[]
+    reportCardEntries: [ReportCardEntryAtomJSON, ReportCardRescheduledAtomJSON[]][]
     evaluationResults: DashboardEvaluationResult[]
     scheduleEntries: ScheduleEntryAtomJSON[]
 }
@@ -67,7 +74,9 @@ export class DashboardService {
         ...x,
         semester: mapSemesterJSON(x.semester),
         labworks: convertManyLabworks(x.labworks),
-        reportCardEntries: convertManyReportCardEntriesAtom(x.reportCardEntries),
+        reportCardEntries: x.reportCardEntries.map(([e, rs]) =>
+            [mapReportCardEntryAtomJSON(e), convertManyReportCardRescheduledAtomJSON(rs)]
+        ),
         scheduleEntries: convertManyScheduleEntries(x.scheduleEntries)
     })
 }

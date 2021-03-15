@@ -28,7 +28,7 @@
 
             <lwm-report-card-entry-row-reschedule
                     [column]="column.attr"
-                    [entry]="e.entry"
+                    [entry]="entryFor(e)"
                     [tableContentFor]="tableContentFor">
             </lwm-report-card-entry-row-reschedule>
         </td>
@@ -40,7 +40,7 @@
             <button mat-stroked-button
                     color="primary"
                     (click)="openRescheduleDialog(element)"
-                    *ngIf="canPerformRescheduleAction(element.entry)"
+                    *ngIf="canReschedule"
                     matTooltip="Termin verschieben"
                     matTooltipPosition="above">
                 <mat-icon>update</mat-icon>

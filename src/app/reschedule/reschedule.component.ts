@@ -10,7 +10,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {isDate} from '../utils/type.check.utils'
 import {format, formatTime, LWMDateAdapter} from '../utils/lwmdate-adapter'
 import {resetControl} from '../utils/form-control-utils'
-import {ReportCardRescheduledProtocol, RescheduleReason} from '../models/report-card-rescheduled.model'
+import {ReportCardRescheduledAtom, ReportCardRescheduledProtocol, RescheduleReason} from '../models/report-card-rescheduled.model'
 import {RescheduleService} from '../services/reschedule.service'
 import {Time} from '../models/time.model'
 import {Room} from '../models/room.model'
@@ -54,20 +54,21 @@ export class RescheduleComponent implements OnInit, OnDestroy {
 
     static instance(
         dialog: MatDialog,
-        e: ReportCardEntryAtom
-    ): MatDialogRef<RescheduleComponent, ReportCardEntryAtom> {
+        e: ReportCardEntryAtom,
+        rs: ReportCardRescheduledAtom[]
+    ): MatDialogRef<RescheduleComponent, ReportCardRescheduledAtom> {
         return dialog.open<RescheduleComponent>(RescheduleComponent, {
             minWidth: DIALOG_WIDTH,
-            data: [e],
+            data: [e, rs],
             panelClass: 'lwmRescheduleDialog'
         })
     }
 
     constructor(
-        private dialogRef: MatDialogRef<RescheduleComponent, ReportCardEntryAtom>,
+        private dialogRef: MatDialogRef<RescheduleComponent, ReportCardRescheduledAtom>,
         private reportCardEntryService: ReportCardEntryService,
         private rescheduleService: RescheduleService,
-        @Inject(MAT_DIALOG_DATA) public payload: [ReportCardEntryAtom]
+        @Inject(MAT_DIALOG_DATA) public payload: [ReportCardEntryAtom, ReportCardRescheduledAtom[]]
     ) {
         this.title = `Termin ${this.payload[0].assignmentIndex + 1} (${this.payload[0].label}) von ${fullUserName(this.payload[0].student)} verschieben`
         this.subs = []
@@ -215,7 +216,7 @@ export class RescheduleComponent implements OnInit, OnDestroy {
     private reschedule = (protocol: ReportCardRescheduledProtocol) => {
         this.subs.push(subscribe(
             this.rescheduleService.create(this.reportCardEntry().labwork.course, protocol),
-            res => this.dialogRef.close({...this.reportCardEntry(), rescheduled: res})
+            res => this.dialogRef.close(res)
         ))
     }
 

@@ -5,11 +5,11 @@ import {ActivatedRoute} from '@angular/router'
 import {map, switchMap} from 'rxjs/operators'
 import {EMPTY, Observable} from 'rxjs'
 import {SemesterJSON} from '../models/semester.model'
-import {ReportCardTableModel} from '../report-card-table/report-card-table.component'
+import {ReportCardTableEntry, ReportCardTableModel} from '../report-card-table/report-card-table.component'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {MatTableDataSource} from '@angular/material'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
-import {mapReportCardEntryAtomJSON} from '../utils/http-utils'
+import {convertManyReportCardRescheduledAtomJSON, mapReportCardEntryAtomJSON} from '../utils/http-utils'
 import {LabworkAtomJSON} from '../models/labwork.model'
 import {userAuths} from '../security/user-authority-resolver'
 import {AuthorityAtom} from '../models/authority.model'
@@ -109,13 +109,15 @@ export class StudentSearchComponent implements OnInit {
 
         const entryTypes: ReportCardEntryType[] = []
 
-        const tableEntries = labwork.reportCardEntries.map(e => {
-            entryTypes.push(...e.reportCardEntry.entryTypes)
-            return {
-                entry: mapReportCardEntryAtomJSON(e.reportCardEntry),
-                annotationCount: e.annotations.length
-            }
-        })
+        const tableEntries: ReportCardTableEntry[] =
+            labwork.reportCardEntries.map(({reportCardEntry, annotations, reschedules}) => {
+                entryTypes.push(...reportCardEntry.entryTypes)
+                return {
+                    entry: mapReportCardEntryAtomJSON(reportCardEntry),
+                    annotationCount: annotations.length,
+                    reschedules: convertManyReportCardRescheduledAtomJSON(reschedules)
+                }
+            })
 
         this.dataSources.set(
             labwork,
