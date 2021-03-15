@@ -35,7 +35,7 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
         return dialog.open<StudentCreateApplicationComponent, any, LabworkApplicationProtocol>(StudentCreateApplicationComponent, {
             minWidth: '600px',
             data: [labwork, app, applicantId],
-            panelClass: 'lwmCreateUpdateDialog'
+            panelClass: 'studentApplicationDialog'
         })
     }
 

@@ -29,7 +29,6 @@ import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create
 import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
 import {LabworksComponent} from './labworks/labworks.component'
-import {FilterPipe} from './pipe/filter.pipe'
 import {NgInitDirective} from './directives/ng-init.directive'
 import {AbstractHeaderComponent} from './abstract-header/abstract-header.component'
 import {GroupsComponent} from './groups/groups.component'
@@ -101,7 +100,6 @@ import {ReportCardEntryTypeBatchUpdateComponent} from './report-card-entry-type-
 import {AnnotationComponent} from './annotation/annotation.component'
 import {StudentSearchComponent} from './student-search/student-search.component'
 import {StudentMetadataComponent} from './student-search/student-metadata/student-metadata.component'
-import {HighlightPipe} from './pipe/highlight.pipe'
 import {ScheduleEntryHeaderComponent} from './schedule-entry/schedule-entry-header/schedule-entry-header.component'
 import {ScheduleEntryTableComponent} from './schedule-entry/schedule-entry-table/schedule-entry-table.component'
 import {ReportCardEntryRowRescheduleComponent} from './report-card-table/report-card-entry-row-reschedule/report-card-entry-row-reschedule.component'
@@ -121,7 +119,6 @@ import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component
         ListTemplateComponent,
         AlertComponent,
         LabworksComponent,
-        FilterPipe,
         NgInitDirective,
         AbstractHeaderComponent,
         GroupsComponent,
@@ -189,7 +186,6 @@ import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component
         AnnotationComponent,
         StudentSearchComponent,
         StudentMetadataComponent,
-        HighlightPipe,
         ScheduleEntryHeaderComponent,
         ScheduleEntryTableComponent,
         ReportCardEntryRowRescheduleComponent,

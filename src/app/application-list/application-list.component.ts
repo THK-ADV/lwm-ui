@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../models/labwork.model'
 import {LabworkApplicationAtom} from '../models/labwork.application.model'
 import {mapUndefined, subscribe, voidF} from '../utils/functions'
@@ -17,7 +17,7 @@ import {StudentAtom} from '../models/user.model'
     templateUrl: './application-list.component.html',
     styleUrls: ['./application-list.component.scss']
 })
-export class ApplicationListComponent implements OnDestroy {
+export class ApplicationListComponent implements OnInit, OnDestroy {
 
     @Input() labworks: LabworkAtom[]
     @Input() apps: LabworkApplicationAtom[]
@@ -42,23 +42,27 @@ export class ApplicationListComponent implements OnDestroy {
         this.subs = []
     }
 
+    ngOnInit() {
+        this.labworks = this.labworks.filter(this.shouldShowApplication)
+    }
+
     ngOnDestroy(): void {
         this.subs.forEach(s => s.unsubscribe())
     }
 
-    labworkApplication = (labworkId: string): LabworkApplicationAtom | undefined =>
+    private labworkApplication = (labworkId: string): LabworkApplicationAtom | undefined =>
         this.apps.find(x => x.labwork.id === labworkId)
 
-    isApplicant = (labworkId: string) =>
-        this.apps.some(_ => _.labwork.id === labworkId)
-
-    shouldShowApplication = (labwork: LabworkAtom) => {
+    private shouldShowApplication = (labwork: LabworkAtom) => {
         if (labwork.published) {
             return false
         }
 
         return labwork.subscribable || this.isApplicant(labwork.id)
     }
+
+    isApplicant = (labworkId: string) =>
+        this.apps.some(_ => _.labwork.id === labworkId)
 
     canModifyApplication = (labwork: LabworkAtom) =>
         labwork.subscribable && !labwork.published
