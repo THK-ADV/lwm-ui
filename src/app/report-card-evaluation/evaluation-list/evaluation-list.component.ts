@@ -15,6 +15,7 @@ import {ReportCardEntryService} from '../../services/report-card-entry.service'
 import {LabworkAtom} from '../../models/labwork.model'
 import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material'
 import {ExplicitEvaluationKind} from '../../services/lwm.service'
+import {Router} from '@angular/router'
 
 interface Eval {
     firstName: string,
@@ -65,6 +66,7 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
         private readonly evalService: ReportCardEvaluationService,
         private readonly reportCardService: ReportCardEntryService,
         private readonly loadingService: LoadingService,
+        private readonly router: Router,
     ) {
         this.summary = []
         this.columns = [
@@ -96,6 +98,10 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
         if (this.hasPermission) {
             this.displayedColumns.push('action')
         }
+    }
+
+    ngOnDestroy() {
+        this.subs.forEach(_ => _.unsubscribe())
     }
 
     private updateUI = (evals: Observable<Eval[]>) => {
@@ -142,10 +148,6 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
     private courseId = () =>
         this.labwork.course.id
 
-    ngOnDestroy() {
-        this.subs.forEach(_ => _.unsubscribe())
-    }
-
     applyFilter = (filterValue: string) =>
         this.dataSource.filter = filterValue.trim().toLowerCase() // TODO override this.dataSource.filterPredicate if needed
 
@@ -180,9 +182,14 @@ export class EvaluationListComponent implements OnInit, OnDestroy {
         }
     }
 
-    onDelete = (e: Readonly<Eval>) => e
+    onDelete = (e: Readonly<Eval>) => {
+    }
 
-    onEdit = (e: Readonly<Eval>) => e
+    onEdit = (e: Readonly<Eval>) => {
+    }
+
+    onSelect = (e: Readonly<Eval>) =>
+        this.router.navigate(['students', e.studentId])
 
     private downloadGraduates = () => {
         const s = subscribe(this.evalService.download(this.courseId(), this.labworkId()), blob => {
