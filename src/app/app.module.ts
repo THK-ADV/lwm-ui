@@ -106,6 +106,7 @@ import {ReportCardEntryRowRescheduleComponent} from './report-card-table/report-
 import {DashboardCalLegendComponent} from './dashboard/dashboard-cal-legend/dashboard-cal-legend.component'
 import {PrivacyComponent} from './nav/privacy/privacy.component'
 import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component'
+import {HighlightPipe} from './pipe/highlight.pipe'
 
 @NgModule({
     declarations: [
@@ -191,7 +192,8 @@ import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component
         ReportCardEntryRowRescheduleComponent,
         DashboardCalLegendComponent,
         PrivacyComponent,
-        ReleaseNotesComponent
+        ReleaseNotesComponent,
+        HighlightPipe
     ],
     imports: [
         BrowserModule,
