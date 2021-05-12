@@ -131,35 +131,36 @@ export class StudentSearchComponent implements OnInit {
         `${labwork.label} - ${labwork.semester.abbreviation}`
 
     panelSubTitle = (labwork: LabworkContent) => {
-        if (fastForwarded(labwork.evals)) {
-            return 'Praktikum bestanden (vorzeitig anerkannt)'
-        }
-
-        if (fired(labwork.evals)) {
-            return 'Praktikum nicht bestanden (vorzeitig durchgefallen)'
-        }
-
-        let passed = true
-        let details = ''
-
-        labwork.evals.forEach(e => {
-            passed = passed && e.bool
-            details += `${e.label}: ${e.int}, `
-        })
-
-        if (labwork.evals.length === 0) {
-            return 'Keine Auswertung vorhanden'
-        }
-
-        details = details.slice(0, -2)
-
-        const oldApi = labwork.evals.every(e => e.int === 0)
-
-        if (passed) {
-            return oldApi ? 'Praktikum bestanden' : `Praktikum bestanden (${details})`
-        } else {
-            return oldApi ? 'Praktikum nicht bestanden' : `Praktikum nicht bestanden (${details})`
-        }
+        return ''
+        // if (fastForwarded(labwork.evals)) {
+        //     return 'Praktikum bestanden (vorzeitig anerkannt)'
+        // }
+        //
+        // if (fired(labwork.evals)) {
+        //     return 'Praktikum nicht bestanden (vorzeitig durchgefallen)'
+        // }
+        //
+        // let passed = true
+        // let details = ''
+        //
+        // labwork.evals.forEach(e => {
+        //     passed = passed && e.bool
+        //     details += `${e.label}: ${e.int}, `
+        // })
+        //
+        // if (labwork.evals.length === 0) {
+        //     return 'Keine Auswertung vorhanden'
+        // }
+        //
+        // details = details.slice(0, -2)
+        //
+        // const oldApi = labwork.evals.every(e => e.int === 0)
+        //
+        // if (passed) {
+        //     return oldApi ? 'Praktikum bestanden' : `Praktikum bestanden (${details})`
+        // } else {
+        //     return oldApi ? 'Praktikum nicht bestanden' : `Praktikum nicht bestanden (${details})`
+        // }
     }
 
     tableContentFor = (e: ReportCardEntryAtom, attr: string) => {
