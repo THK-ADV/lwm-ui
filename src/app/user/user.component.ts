@@ -1,16 +1,14 @@
 import {Component} from '@angular/core'
-import {Creatable, TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {Observable} from 'rxjs'
+import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
+import {Observable, Subscription} from 'rxjs'
 import {Employee, Lecturer, StudentAtom, User} from '../models/user.model'
-import {EmployeeProtocol, isStudentProtocol, StudentProtocol, UserService} from '../services/user.service'
-import {FormInputString} from '../shared-dialogs/forms/form.input.string'
-import {FormInputOption} from '../shared-dialogs/forms/form.input.option'
-import {invalidChoiceKey} from '../utils/form.validator'
-import {Degree} from '../models/degree.model'
-import {DegreeService} from '../services/degree.service'
+import {UserService} from '../services/user.service'
 import {isStudentAtom} from '../utils/type.check.utils'
-import {isUniqueEntity} from '../models/unique.entity.model'
+import {MatTableDataSource} from '@angular/material'
+import {UserSyncResult, UserSyncService} from '../services/user-sync.service'
+import {AlertService} from '../services/alert.service'
 
+type UserModel = StudentAtom | Employee | Lecturer
 
 @Component({
     selector: 'lwm-user',
@@ -19,13 +17,15 @@ import {isUniqueEntity} from '../models/unique.entity.model'
 })
 export class UserComponent {
 
+    users$: Observable<UserModel[]>
+    dataSource: MatTableDataSource<UserModel>
     columns: TableHeaderColumn[]
-    users$: Observable<StudentAtom | Employee | Lecturer[]>
-    creatable: Creatable<StudentProtocol | EmployeeProtocol, StudentAtom | Employee | Lecturer>
+    private subs: Subscription[]
 
     constructor(
         private readonly service: UserService,
-        private readonly degreeService: DegreeService,
+        private readonly userSyncService: UserSyncService,
+        private readonly alertService: AlertService
     ) {
         this.columns = [
             {attr: 'lastname', title: 'Nachname'},
@@ -34,78 +34,18 @@ export class UserComponent {
             {attr: 'email', title: 'Email'},
             {attr: 'enrollment', title: 'Studiengang'},
         ]
-
         this.users$ = service.getAllAtomic()
-
-        this.creatable = {
-            dialogTitle: 'Benutzer',
-            emptyProtocol: () => ({
-                email: '',
-                enrollment: '',
-                firstname: '',
-                lastname: '',
-                registrationId: '',
-                systemId: ''
-            }),
-            makeInput: (attr, d) => {
-                if (!isUniqueEntity(d)) {
-                    throw new Error('only updates are supported')
-                }
-
-                switch (attr) {
-                    case 'systemId':
-                        return {isDisabled: true, data: new FormInputString(d.systemId)}
-                    case 'email':
-                        return {isDisabled: true, data: new FormInputString(d.email)}
-                    case 'firstname':
-                        return {isDisabled: true, data: new FormInputString(d.firstname)}
-                    case 'lastname':
-                        return {isDisabled: false, data: new FormInputString(d.lastname)}
-                }
-
-                if (attr === 'enrollment' && isStudentAtom(d)) {
-                    return {
-                        isDisabled: false,
-                        data: new FormInputOption<Degree>(
-                            'enrollment',
-                            invalidChoiceKey,
-                            true,
-                            x => x.label,
-                            degreeService.getAll(),
-                            200,
-                            xs => xs.find(x => x.id === d.enrollment.id)
-                        )
-                    }
-                }
-
-                return undefined
-            },
-            commitProtocol: (p, d) => {
-                if (!d) {
-                    throw new Error('only updates are supported')
-                }
-
-                if (isStudentAtom(d) && isStudentProtocol(p)) {
-                    return {
-                        lastname: p.lastname,
-                        enrollment: p.enrollment,
-                        systemId: d.systemId,
-                        firstname: d.firstname,
-                        email: d.email,
-                        registrationId: d.registrationId
-                    }
-                } else {
-                    return {
-                        lastname: p.lastname,
-                        systemId: d.systemId,
-                        firstname: d.firstname,
-                        email: d.email
-                    }
-                }
-            },
-            update: service.update
-        }
+        this.subs = []
     }
+
+    onEdit = (user: UserModel) =>
+        this.subs.push(
+            this.userSyncService.sync(user.id)
+                .subscribe(this.onUpdateSuccess)
+        )
+
+    initDataSource = (ds: MatTableDataSource<UserModel>) =>
+        this.dataSource = ds
 
     tableContent = (model: Readonly<User>, attr: string): string => {
         switch (attr) {
@@ -114,5 +54,28 @@ export class UserComponent {
             default:
                 return model[attr]
         }
+    }
+
+    onUpdateSuccess = (res: UserSyncResult) => {
+        this.users$ = this.service.getAllAtomic()
+
+        const html =
+            '<p>sync successful</p>' +
+            '<p>' +
+            '<span>previous:</span>' +
+            '<span>' + JSON.stringify(res.previous) + '</span>' +
+            '</p > ' +
+            '<p>' +
+            '<span>updated:</span>' +
+            '<span>' + JSON.stringify(res.updated) + '</span>' +
+            '</p > '
+
+        this.alertService.reportAlert({
+            type: 'success',
+            body: {
+                kind: 'html',
+                value: html
+            }
+        })
     }
 }
