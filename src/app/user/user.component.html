@@ -1,8 +1,11 @@
-<lwm-abstract-crud
-        [headerTitle]="'Benutzer'"
-        [columns]="columns"
+<lwm-abstract-header [headerTitle]="'Benutzer'"></lwm-abstract-header>
+
+<lwm-abstract-table
+        [sort]="{active: 'lastname', direction: 'asc'}"
         [data$]="users$"
-        [creatable]="creatable"
         [tableContent]="tableContent"
-        [sort]="{active: 'lastname', direction: 'asc'}">
-</lwm-abstract-crud>
+        [columns]="columns"
+        [canEdit]="true"
+        (editEmitter)="onEdit($event)"
+        (dataSourceEmitter)="initDataSource($event)">
+</lwm-abstract-table>

@@ -54,7 +54,7 @@ export class UserService {
     getAll = (): Observable<User[]> =>
         this.http.getAll(this.path, nonAtomicParams)
 
-    getAllAtomic = (): Observable<StudentAtom | Employee | Lecturer[]> =>
+    getAllAtomic = (): Observable<Array<StudentAtom | Employee | Lecturer>> =>
         this.http.getAll(this.path, atomicParams)
 
     get = (id: string): Observable<User> => this.http.get(this.path, id)
