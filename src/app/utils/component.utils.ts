@@ -1,6 +1,6 @@
 import {ActivatedRoute} from '@angular/router'
 import {LabworkService} from '../services/labwork.service'
-import {Observable} from 'rxjs'
+import {Observable, zip} from 'rxjs'
 import {Labwork, LabworkAtom} from '../models/labwork.model'
 import {map, switchMap} from 'rxjs/operators'
 import {User} from '../models/user.model'
@@ -54,6 +54,22 @@ export const toLabwork = (atom: LabworkAtom): Labwork => {
     }
 }
 
+const getAllEmployees = (userService: UserService) =>
+    userService.getAllWithFilter({
+        attribute: 'status',
+        value: 'employee'
+    })
+
+const getAllLecturer = (userService: UserService) =>
+    userService.getAllWithFilter({
+        attribute: 'status',
+        value: 'lecturer'
+    })
+
+const getAllTeachingStaff = (userService: UserService) =>
+    zip(getAllEmployees(userService), getAllLecturer(userService),)
+        .pipe(map(users => users.flat()))
+
 export const partialCourseFormInputData = (
     userService: UserService
 ): (attr: string, m: Readonly<CourseProtocol | CourseAtom>) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined => {
@@ -81,10 +97,13 @@ export const partialCourseFormInputData = (
                     isDisabled: isModel,
                     data: isUniqueEntity(m) ?
                         new FormInputString(`${m.lecturer.lastname}, ${m.lecturer.firstname}`) :
-                        new FormInputOption<User>('lecturer', invalidChoiceKey, true, value => `${value.lastname}, ${value.firstname}`, userService.getAllWithFilter({
-                            attribute: 'status',
-                            value: 'employee'
-                        }))
+                        new FormInputOption<User>(
+                            'lecturer',
+                            invalidChoiceKey,
+                            true,
+                            value => `${value.lastname}, ${value.firstname}`,
+                            getAllTeachingStaff(userService)
+                        )
                 }
             case 'semesterIndex':
                 return {
