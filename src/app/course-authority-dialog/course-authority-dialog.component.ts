@@ -79,7 +79,7 @@ export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
                 invalidChoiceKey,
                 true,
                 formatUser,
-                this.userService.getAll()
+                this.userService.getAllRestricted(this.course.id)
             )
         }
     }
