@@ -7,11 +7,9 @@ import {GroupService} from '../services/group.service'
 import {map} from 'rxjs/operators'
 import {GroupAtom} from '../models/group.model'
 import {User} from '../models/user.model'
-import {LabworkApplicationService} from '../services/labwork-application.service'
 import {subscribe} from '../utils/functions'
 import {LabworkAtom} from '../models/labwork.model'
 import {MatDialog} from '@angular/material'
-import {UserService} from '../services/user.service'
 import {Card} from '../card-list/card-list.component'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 import {LWMActionType} from '../table-action-button/lwm-actions'
@@ -38,8 +36,6 @@ export class GroupsComponent implements OnInit {
         private readonly dialog: MatDialog,
         private readonly groupService: GroupService,
         private readonly labworkService: LabworkService,
-        private readonly labworkApplicationService: LabworkApplicationService,
-        private readonly userService: UserService,
         private readonly route: ActivatedRoute,
         private readonly router: Router,
     ) {

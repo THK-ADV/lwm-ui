@@ -3,6 +3,7 @@ import {Observable} from 'rxjs'
 import {Employee, Lecturer, StudentAtom, User} from '../models/user.model'
 import {atomicParams, HttpService, nonAtomicParams} from './http.service'
 import {applyFilter} from './http.filter'
+import {makePath} from '../utils/component.utils'
 
 interface UserFilter {
     attribute: 'status' | 'degree'
@@ -45,25 +46,20 @@ export class UserService {
 
     private path = 'users'
 
-    getAllWithFilter = (...filter: UserFilter[]): Observable<User[]> => this.http
-        .getAll(this.path, applyFilter(filter, nonAtomicParams))
+    getAllWithFilter = (...filter: UserFilter[]): Observable<User[]> =>
+        this.http.getAll(this.path, applyFilter(filter, nonAtomicParams))
 
-    allStudents = () =>
-        this.getAllWithFilter({attribute: 'status', value: 'student'})
+    allStudentsRestricted = (courseId: string): Observable<User[]> =>
+        this.http.getAll(makePath(this.path + '/students', courseId), nonAtomicParams)
 
-    getAll = (): Observable<User[]> =>
-        this.http.getAll(this.path, nonAtomicParams)
+    getAllRestricted = (courseId: string): Observable<User[]> =>
+        this.http.getAll(makePath(this.path, courseId), nonAtomicParams)
 
     getAllAtomic = (): Observable<Array<StudentAtom | Employee | Lecturer>> =>
         this.http.getAll(this.path, atomicParams)
 
-    get = (id: string): Observable<User> => this.http.get(this.path, id)
-
-    buddy = (labworkId: string, applicantId: string, buddySystemId: string) => this.http
-        .get_<BuddyResult>(`labworks/${labworkId}/${this.path}/${applicantId}/buddies/${buddySystemId}`)
-
-    update = (protocol: StudentProtocol | EmployeeProtocol, id: string): Observable<StudentAtom | Employee | Lecturer> =>
-        this.http.put(this.path, id, protocol, atomicParams)
+    buddy = (labworkId: string, applicantId: string, buddySystemId: string) =>
+        this.http.get_<BuddyResult>(`labworks/${labworkId}/${this.path}/${applicantId}/buddies/${buddySystemId}`)
 
     createFromToken = (): Observable<User> =>
         this.http.create(this.path, {}, nonAtomicParams)

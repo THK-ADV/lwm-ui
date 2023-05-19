@@ -36,18 +36,21 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.sub = subscribe(this.userService.allStudents(), users => {
-            users = users.sort((a, b) => a.lastname.localeCompare(b.lastname) || a.firstname.localeCompare(b.firstname))
+        const course = this.auths[0].course
+        if (course) {
+            this.sub = subscribe(this.userService.allStudentsRestricted(course.id), users => {
+                users = users.sort((a, b) => a.lastname.localeCompare(b.lastname) || a.firstname.localeCompare(b.firstname))
 
-            this.users = users
+                this.users = users
 
-            this.filteredUser = this.userControl.valueChanges.pipe(
-                debounceTime(300),
-                startWith(''),
-                map(value => typeof value === 'string' ? value : this.display(value)),
-                map(value => value ? this.filter(value) : this.users.slice())
-            )
-        })
+                this.filteredUser = this.userControl.valueChanges.pipe(
+                    debounceTime(300),
+                    startWith(''),
+                    map(value => typeof value === 'string' ? value : this.display(value)),
+                    map(value => value ? this.filter(value) : this.users.slice())
+                )
+            })
+        }
     }
 
     userSelected = (student: User) => {
