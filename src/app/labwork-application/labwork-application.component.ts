@@ -52,7 +52,7 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
     private subs: Subscription[]
 
     constructor(
-        private readonly appService: LabworkApplicationService,
+        private readonly labworkApplicationService: LabworkApplicationService,
         private readonly labworkService: LabworkService,
         private readonly userService: UserService,
         private readonly route: ActivatedRoute,
@@ -87,13 +87,13 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.subs.push(subscribe(fetchLabwork$(this.route, this.labworkService), x => {
-            this.labwork = x
-            this.headerTitle += ` für ${x.label}`
+        this.subs.push(subscribe(fetchLabwork$(this.route, this.labworkService), lab => {
+            this.labwork = lab
+            this.headerTitle += ` für ${lab.label}`
             const isCM = hasAnyRole(userAuths(this.route), UserRole.courseManager, UserRole.admin)
-            this.canCreateOrUpdate = !x.published && isCM
+            this.canCreateOrUpdate = !lab.published && isCM
             this.canDownloadApplicants = isCM
-            this.applications$ = this.appService.getAllByLabworkAtom(x.id)
+            this.applications$ = this.labworkApplicationService.getAllByLabwork(lab.course.id, lab.id)
         }))
     }
 
@@ -133,13 +133,13 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
 
     private create = () => {
         this.subs.push(subscribe(
-            this.openUpdateDialog(this.empty(), this.appService.create),
+            this.openUpdateDialog(this.empty(), p => this.labworkApplicationService.createForOther(this.courseId(), p)),
             addToDataSource(this.dataSource, this.alert)
         ))
     }
 
     private download = () => {
-        const s = subscribe(this.appService.download(this.labwork.course.id, this.labwork.id), blob => {
+        const s = subscribe(this.labworkApplicationService.download(this.courseId(), this.labwork.id), blob => {
             initiateDownloadWithDefaultFilenameSuffix('Anmeldungen', this.labwork, blob)
         })
 
@@ -148,10 +148,13 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
 
     onEdit = (app: LabworkApplicationAtom) => {
         this.subs.push(subscribe(
-            this.openUpdateDialog(app, p => this.appService.update(p, app.id)),
+            this.openUpdateDialog(app, p => this.labworkApplicationService.updateForOther(this.courseId(), p, app.id)),
             u => updateDataSource(this.dataSource, this.alert)(u, (lhs, rhs) => lhs.id === rhs.id)
         ))
     }
+
+    private courseId = () =>
+        this.courseId()
 
     private empty = (): LabworkApplicationProtocol =>
         ({applicant: '', labwork: '', friends: []})
@@ -256,7 +259,7 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
 
         const s = subscribeDeleteDialog(
             dialogRef,
-            this.appService.delete,
+            id => this.labworkApplicationService.deleteForOther(this.courseId(), id),
             updateUI,
             this.alert.reportError
         )

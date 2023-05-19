@@ -79,7 +79,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
 
         const $ = openDialog(
             StudentCreateApplicationComponent.instance(this.dialog, labwork, app.applicant.id, app),
-            p => this.labworkApplicationService.update(p, app.id)
+            p => this.labworkApplicationService.updateForSelf(p, app.id)
         )
 
         const s = subscribe($, _ => this.applicationEmitter.emit([_, 'update']))
@@ -96,7 +96,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
         const dialogData = {label: `Praktikumsanmeldung für ${labwork.label} vom ${this.applicationTimestamp(labwork)}`, id: application.id}
         const sub = subscribeDeleteDialog(
             DeleteDialogComponent.instance(this.dialog, dialogData),
-            this.labworkApplicationService.delete,
+            this.labworkApplicationService.deleteForSelf,
             app => this.applicationEmitter.emit([app, 'delete']),
             voidF
         )
@@ -107,7 +107,7 @@ export class ApplicationListComponent implements OnInit, OnDestroy {
     apply = (labwork: LabworkAtom) => {
         const $ = openDialog(
             StudentCreateApplicationComponent.instance(this.dialog, labwork, this.applicant.id, undefined),
-            this.labworkApplicationService.create
+            this.labworkApplicationService.createForSelf
         )
 
         this.subs.push(subscribe($, x => this.applicationEmitter.emit([x, 'add'])))
