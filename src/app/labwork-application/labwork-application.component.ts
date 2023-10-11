@@ -154,7 +154,7 @@ export class LabworkApplicationComponent implements OnInit, OnDestroy {
     }
 
     private courseId = () =>
-        this.courseId()
+        this.labwork.course.id
 
     private empty = (): LabworkApplicationProtocol =>
         ({applicant: '', labwork: '', friends: []})
