@@ -6,8 +6,7 @@ import {FormInput} from '../../shared-dialogs/forms/form.input'
 import {FormInputOption} from '../../shared-dialogs/forms/form.input.option'
 import {User} from '../../models/user.model'
 import {invalidChoiceKey} from '../../utils/form.validator'
-import {formatUser} from '../../utils/component.utils'
-import {BuddyResult, UserService} from '../../services/user.service'
+import {Buddy, BuddyResult, isBuddy, UserService} from '../../services/user.service'
 import {LabworkApplicationAtom, LabworkApplicationProtocol} from '../../models/labwork.application.model'
 import {isOption} from '../../utils/form-control-utils'
 import {isUser} from '../../utils/type.check.utils'
@@ -85,31 +84,26 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
         if (!this.formGroup.valid) {
             return
         }
-
-        const extractFriends = () => {
-            const users: string[] = []
-
-            this.optionControls.forEach(c => {
-                const user = this.formGroup.controls[c.input.formControlName].value
-                if (isUser(user)) {
-                    users.push(user.id)
-                }
-            })
-
-            return users
-        }
-
-        const p: LabworkApplicationProtocol = {
+        this.dialogRef.close({
             applicant: this.applicantId(),
             labwork: this.labwork().id,
-            friends: extractFriends()
-        }
-
-        this.dialogRef.close(p)
+            friends: this.extractFriends()
+        })
     }
 
     onCancel = () =>
         this.dialogRef.close()
+
+    private extractFriends = () => {
+        const users: string[] = []
+        this.optionControls.forEach(c => {
+            const user = this.formGroup.controls[c.input.formControlName].value
+            if (isBuddy(user)) {
+                users.push(user.id)
+            }
+        })
+        return users
+    }
 
     private labwork = (): LabworkAtom =>
         this.payload[0]
@@ -122,32 +116,30 @@ export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
 
     // TODO reuse instead of copy
     inputData = (): FormInput[] => {
-        const fellowStudents$ = this.userService.getAllWithFilter(
-            {attribute: 'status', value: 'student'},
-            {attribute: 'degree', value: this.labwork().degree.id}
-        )
+        const fellowStudents$ =
+            this.userService.getBuddies(this.labwork().degree.id)
 
         const friendFormInputAt = (i: 0 | 1) => {
             const controlName = i === 0 ? 'friends1' : 'friends2'
             const app = this.existingApplication()
-            const displayUser = (u: User) => u.systemId
+            const showBuddy = (b: Buddy) => b.systemId
 
             if (app && app.friends.length >= i + 1) {
-                return new FormInputOption<User>(
+                return new FormInputOption<Buddy>(
                     controlName,
                     invalidChoiceKey,
                     false,
-                    displayUser,
+                    showBuddy,
                     fellowStudents$,
                     0,
-                    opts => opts.find(_ => _.id === app.friends[i].id)
+                    opts => opts.find((systemId) => systemId.id === app.friends[i].id)
                 )
             } else {
-                return new FormInputOption<User>(
+                return new FormInputOption<Buddy>(
                     controlName,
                     invalidChoiceKey,
                     false,
-                    displayUser,
+                    showBuddy,
                     fellowStudents$,
                     0
                 )
