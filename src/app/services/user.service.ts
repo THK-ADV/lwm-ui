@@ -36,6 +36,15 @@ export const isStudentProtocol = (any: any): any is StudentProtocol => {
     return (any as StudentProtocol)?.enrollment !== undefined
 }
 
+export interface Buddy {
+    systemId: string
+    id: string
+}
+
+export const isBuddy = (any: any): any is Buddy => {
+    return (any as Buddy)?.id !== undefined && (any as Buddy)?.systemId !== undefined
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -45,6 +54,9 @@ export class UserService {
     }
 
     private path = 'users'
+
+    getBuddies = (degree: string): Observable<Buddy[]> =>
+        this.http.getAll(`${this.path}/buddies/${degree}`, nonAtomicParams)
 
     getAllWithFilter = (...filter: UserFilter[]): Observable<User[]> =>
         this.http.getAll(this.path, applyFilter(filter, nonAtomicParams))
