@@ -9,7 +9,8 @@ import {UserService} from '../services/user.service'
 @Component({
     selector: 'lwm-course',
     templateUrl: './course.component.html',
-    styleUrls: ['./course.component.scss']
+    styleUrls: ['./course.component.scss'],
+    standalone: false
 })
 export class CourseComponent {
 

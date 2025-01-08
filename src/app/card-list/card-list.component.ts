@@ -8,7 +8,8 @@ export interface Card<Value, Entry> {
 @Component({
     selector: 'lwm-card-list',
     templateUrl: './card-list.component.html',
-    styleUrls: ['./card-list.component.scss']
+    styleUrls: ['./card-list.component.scss'],
+    standalone: false
 })
 export class CardListComponent<Value, Entry> {
 

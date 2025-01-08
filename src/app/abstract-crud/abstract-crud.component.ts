@@ -1,5 +1,6 @@
 import {Component, Input, OnDestroy} from '@angular/core'
-import {MatDialog, MatTableDataSource, Sort} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
+import {MatDialog} from '@angular/material/dialog'
 import {Observable, Subscription} from 'rxjs'
 import {mapUndefined, subscribe} from '../utils/functions'
 import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
@@ -13,6 +14,7 @@ import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.comp
 import {isUniqueEntity, UniqueEntity} from '../models/unique.entity.model'
 import {addToDataSource, removeFromDataSource, updateDataSource} from '../shared-dialogs/dataSource.update'
 import {ActionType} from '../abstract-header/abstract-header.component'
+import {Sort} from '@angular/material/sort'
 
 export interface TableHeaderColumn {
     attr: string
@@ -37,7 +39,8 @@ export interface Deletable<Model extends UniqueEntity> {
 @Component({
     selector: 'lwm-abstract-crud',
     templateUrl: './abstract-crud.component.html',
-    styleUrls: ['./abstract-crud.component.scss']
+    styleUrls: ['./abstract-crud.component.scss'],
+    standalone: false
 })
 export class AbstractCrudComponent<Protocol, Model extends UniqueEntity> implements OnDestroy {
 

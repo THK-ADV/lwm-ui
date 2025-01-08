@@ -8,7 +8,8 @@ import {updateLabwork$} from '../../labworks/labwork-view-model'
 @Component({
     selector: 'lwm-abstract-closing-view',
     templateUrl: './abstract-closing-view.component.html',
-    styleUrls: ['./abstract-closing-view.component.scss']
+    styleUrls: ['./abstract-closing-view.component.scss'],
+    standalone: false
 })
 export class AbstractClosingViewComponent implements OnInit {
 

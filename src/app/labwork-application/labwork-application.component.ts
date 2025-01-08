@@ -12,7 +12,8 @@ import {hasAnyRole, isAdmin} from '../utils/role-checker'
 import {UserRole} from '../models/role.model'
 import {userAuths} from '../security/user-authority-resolver'
 import {LWMActionType} from '../table-action-button/lwm-actions'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
 import {openDialogFromPayload, subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
 import {FormOutputData, FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
@@ -34,7 +35,8 @@ import {ActionType} from '../abstract-header/abstract-header.component'
 @Component({
     selector: 'lwm-labwork-application',
     templateUrl: './labwork-application.component.html',
-    styleUrls: ['./labwork-application.component.scss']
+    styleUrls: ['./labwork-application.component.scss'],
+    standalone: false
 })
 export class LabworkApplicationComponent implements OnInit, OnDestroy {
 

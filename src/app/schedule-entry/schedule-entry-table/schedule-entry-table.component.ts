@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core'
 import {ReportCardEntryAtom, ReportCardEntryType} from '../../models/report-card-entry.model'
 import {distinctEntryTypeColumns} from '../../report-card-table/report-card-table-utils'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {compareUsers} from '../../utils/sort'
 import {fullUserName} from '../../utils/component.utils'
 import {Router} from '@angular/router'
@@ -24,7 +24,8 @@ interface TableEntry {
 @Component({
     selector: 'lwm-schedule-entry-table',
     templateUrl: './schedule-entry-table.component.html',
-    styleUrls: ['./schedule-entry-table.component.scss']
+    styleUrls: ['./schedule-entry-table.component.scss'],
+    standalone: false
 })
 export class ScheduleEntryTableComponent implements OnInit {
 

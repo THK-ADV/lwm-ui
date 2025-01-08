@@ -4,7 +4,8 @@ import {LabworkAtom} from '../../../models/labwork.model'
 @Component({
     selector: 'lwm-closing',
     templateUrl: './closing.component.html',
-    styleUrls: ['./closing.component.scss']
+    styleUrls: ['./closing.component.scss'],
+    standalone: false
 })
 export class ClosingComponent {
 

@@ -13,7 +13,8 @@ enum TernaryState {
 @Component({
     selector: 'lwm-ternary-entry-type-toggle',
     templateUrl: './ternary-entry-type-toggle.component.html',
-    styleUrls: ['./ternary-entry-type-toggle.component.scss']
+    styleUrls: ['./ternary-entry-type-toggle.component.scss'],
+    standalone: false
 })
 export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {
 

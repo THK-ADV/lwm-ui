@@ -5,7 +5,8 @@ import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 @Component({
     selector: 'lwm-group-immutable',
     templateUrl: './group-immutable.component.html',
-    styleUrls: ['./group-immutable.component.scss']
+    styleUrls: ['./group-immutable.component.scss'],
+    standalone: false
 })
 export class GroupImmutableComponent implements OnInit {
 

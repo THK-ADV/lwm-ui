@@ -1,14 +1,18 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, ViewChild} from '@angular/core'
 import {Observable, Subscription} from 'rxjs'
-import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
+import {MatSort} from '@angular/material/sort'
+import {MatPaginator} from '@angular/material/paginator'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {mapUndefined, subscribe} from '../utils/functions'
+import {Sort} from '@angular/material/sort'
 
 @Component({
     selector: 'lwm-abstract-table',
     templateUrl: './abstract-table.component.html',
-    styleUrls: ['./abstract-table.component.scss']
+    styleUrls: ['./abstract-table.component.scss'],
+    standalone: false
 })
 export class AbstractTableComponent<Model> implements OnInit, OnDestroy {
 

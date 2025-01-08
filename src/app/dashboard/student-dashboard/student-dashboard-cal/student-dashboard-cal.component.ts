@@ -19,7 +19,8 @@ type StudentDashboardCalEntry = StudentDashboardReportCardEntry | ScheduleEntryA
 @Component({
     selector: 'lwm-student-dashboard-cal',
     templateUrl: './student-dashboard-cal.component.html',
-    styleUrls: ['./student-dashboard-cal.component.scss']
+    styleUrls: ['./student-dashboard-cal.component.scss'],
+    standalone: false
 })
 export class StudentDashboardCalComponent implements OnInit {
 

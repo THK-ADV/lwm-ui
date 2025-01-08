@@ -13,7 +13,8 @@ import {resetControl} from '../utils/form-control-utils'
 @Component({
     selector: 'lwm-search',
     templateUrl: './search.component.html',
-    styleUrls: ['./search.component.scss']
+    styleUrls: ['./search.component.scss'],
+    standalone: false
 })
 export class SearchComponent implements OnInit, OnDestroy {
 

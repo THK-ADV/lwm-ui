@@ -15,7 +15,7 @@ import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {map} from 'rxjs/operators'
 import {groupBy, mapMap} from '../utils/group-by'
 import {openConfirmationDialog} from '../shared-dialogs/dialog-open-combinator'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {ConfirmDialogComponent} from '../shared-dialogs/confirm-dialog/confirm-dialog.component'
 import {AlertService} from '../services/alert.service'
 import {LabworkService} from '../services/labwork.service'
@@ -24,7 +24,8 @@ import {LabworkAtom} from '../models/labwork.model'
 @Component({
     selector: 'lwm-report-card-entry-type-batch-update',
     templateUrl: './report-card-entry-type-batch-update.component.html',
-    styleUrls: ['./report-card-entry-type-batch-update.component.scss']
+    styleUrls: ['./report-card-entry-type-batch-update.component.scss'],
+    standalone: false
 })
 export class ReportCardEntryTypeBatchUpdateComponent implements OnInit, OnDestroy {
 

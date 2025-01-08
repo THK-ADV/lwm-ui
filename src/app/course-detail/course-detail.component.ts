@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
 import {CourseAtom} from '../models/course.model'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {DialogMode, dialogSubmitTitle, dialogTitle} from '../shared-dialogs/dialog.mode'
 import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'
 import {emptyCourseProtocol, fullCourseFormInputData, getInitials} from '../utils/component.utils'
@@ -16,7 +16,8 @@ import {openDialogFromPayload} from '../shared-dialogs/dialog-open-combinator'
 @Component({
     selector: 'lwm-course-detail',
     templateUrl: './course-detail.component.html',
-    styleUrls: ['./course-detail.component.scss']
+    styleUrls: ['./course-detail.component.scss'],
+    standalone: false
 })
 export class CourseDetailComponent implements OnDestroy {
 

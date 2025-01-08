@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core'
+import {Component, Input} from '@angular/core'
 import {ReportCardEntryAtom} from '../../models/report-card-entry.model'
 import {ReportCardRescheduledAtom} from '../../models/report-card-rescheduled.model'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
@@ -9,7 +9,8 @@ export type ReportCardEntryRowRescheduleModel = [ReportCardEntryAtom, ReportCard
 @Component({
     selector: 'lwm-report-card-entry-row-reschedule',
     templateUrl: './report-card-entry-row-reschedule.component.html',
-    styleUrls: ['./report-card-entry-row-reschedule.component.scss']
+    styleUrls: ['./report-card-entry-row-reschedule.component.scss'],
+    standalone: false
 })
 export class ReportCardEntryRowRescheduleComponent {
 

@@ -4,7 +4,8 @@ import {DashboardEvaluationResult} from '../../../models/dashboard.model'
 @Component({
     selector: 'lwm-student-dashboard-evals',
     templateUrl: './student-dashboard-evals.component.html',
-    styleUrls: ['./student-dashboard-evals.component.scss']
+    styleUrls: ['./student-dashboard-evals.component.scss'],
+    standalone: false
 })
 export class StudentDashboardEvalsComponent implements OnInit {
 

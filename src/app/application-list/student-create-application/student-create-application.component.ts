@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatOptionSelectionChange} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 import {LabworkAtom} from '../../models/labwork.model'
 import {FormControl, FormGroup} from '@angular/forms'
 import {FormInput} from '../../shared-dialogs/forms/form.input'
@@ -12,11 +12,13 @@ import {isOption} from '../../utils/form-control-utils'
 import {isUser} from '../../utils/type.check.utils'
 import {Subscription} from 'rxjs'
 import {subscribe} from '../../utils/functions'
+import {MatOptionSelectionChange} from '@angular/material/core'
 
 @Component({
     selector: 'lwm-student-create-application',
     templateUrl: './student-create-application.component.html',
-    styleUrls: ['./student-create-application.component.scss']
+    styleUrls: ['./student-create-application.component.scss'],
+    standalone: false
 })
 export class StudentCreateApplicationComponent implements OnInit, OnDestroy {
 

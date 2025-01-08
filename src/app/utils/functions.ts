@@ -12,22 +12,6 @@ export const exists = <T>(array: Readonly<T[]>, p: (t: T) => boolean): boolean =
     return false
 }
 
-export function zip<A, B>(first: Array<A>, second: Array<B>): Array<A & B> {
-    if (first.length !== second.length) {
-        return []
-    }
-
-    return first.map((e, i) => {
-        return Object.assign(e, second[i])
-    })
-}
-
-export const mapJoin = <A>(
-    xs: Array<A>,
-    separator: string,
-    f: (a: A) => string
-) => xs.reduce((acc, t) => `${acc}${separator}${f(t)}`, '')
-
 export function _groupBy<T>(array: Readonly<T[]>, key: (t: T) => string): { key: string, value: T[] } {
     // @ts-ignore
     return array.reduce((acc, x) => {
@@ -92,11 +76,6 @@ export const minBy = <T>(xs: Readonly<Array<T>>, lower: (lhs: T, rhs: T) => bool
     }
 
     return xs.reduce((lhs, rhs) => lower(lhs, rhs) ? lhs : rhs)
-}
-
-export const assertNotUndefined = (...values: Array<any>) => {
-    const msg = () => values.map((v, i) => v === undefined ? i : -1).filter(v => v !== -1).join(', ')
-    console.assert(values.every(v => v !== undefined), `values at index ${msg()} are undefined`)
 }
 
 export const dateOrderingASC = (lhs: Date, rhs: Date): number => lhs.getTime() - rhs.getTime()

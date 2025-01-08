@@ -9,7 +9,8 @@ export interface ActionType {
 @Component({
     selector: 'lwm-abstract-header',
     templateUrl: './abstract-header.component.html',
-    styleUrls: ['./abstract-header.component.scss']
+    styleUrls: ['./abstract-header.component.scss'],
+    standalone: false
 })
 export class AbstractHeaderComponent implements OnInit {
     @Input() headerTitle: string

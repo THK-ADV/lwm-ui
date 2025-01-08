@@ -5,7 +5,8 @@ import {TimetableAtom} from '../../../models/timetable'
 @Component({
     selector: 'lwm-timetable-blacklist-view',
     templateUrl: './timetable-blacklist-view.component.html',
-    styleUrls: ['./timetable-blacklist-view.component.scss']
+    styleUrls: ['./timetable-blacklist-view.component.scss'],
+    standalone: false
 })
 export class TimetableBlacklistViewComponent {
     @Input() labwork: Readonly<LabworkAtom>

@@ -9,7 +9,7 @@ import {GroupAtom} from '../models/group.model'
 import {User} from '../models/user.model'
 import {subscribe} from '../utils/functions'
 import {LabworkAtom} from '../models/labwork.model'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {Card} from '../card-list/card-list.component'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 import {LWMActionType} from '../table-action-button/lwm-actions'
@@ -19,7 +19,8 @@ import {ActionType} from '../abstract-header/abstract-header.component'
 @Component({
     selector: 'lwm-groups',
     templateUrl: './groups.component.html',
-    styleUrls: ['./groups.component.scss']
+    styleUrls: ['./groups.component.scss'],
+    standalone: false
 })
 export class GroupsComponent implements OnInit {
 

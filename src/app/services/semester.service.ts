@@ -4,7 +4,7 @@ import {Observable} from 'rxjs'
 import {HttpService} from './http.service'
 import {map, take} from 'rxjs/operators'
 import {Semester, SemesterJSON, SemesterProtocol} from '../models/semester.model'
-import {HttpParams} from '@angular/common/http'
+import { HttpParams } from '@angular/common/http'
 import {convertManySemesters, mapSemesterJSON} from '../utils/http-utils'
 
 @Injectable({

@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {AssignmentEntry} from '../../../models/assignment-plan.model'
 import {of, Subscription} from 'rxjs'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {AssignmentEntriesService} from '../../../services/assignment-entries.service'
 import {DialogMode} from '../../../shared-dialogs/dialog.mode'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
@@ -23,7 +23,8 @@ import {AssignmentEntryTakeoverDialogComponent} from '../takeover-dialog/assignm
 @Component({
     selector: 'lwm-assignment-plan-edit',
     templateUrl: './assignment-plan-edit.component.html',
-    styleUrls: ['./assignment-plan-edit.component.scss']
+    styleUrls: ['./assignment-plan-edit.component.scss'],
+    standalone: false
 })
 export class AssignmentPlanEditComponent implements OnDestroy {
 

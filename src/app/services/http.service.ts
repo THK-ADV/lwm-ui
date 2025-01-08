@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http'
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import {Observable, throwError} from 'rxjs'
 import {catchError, map, tap} from 'rxjs/operators'
 import {AlertService} from './alert.service'

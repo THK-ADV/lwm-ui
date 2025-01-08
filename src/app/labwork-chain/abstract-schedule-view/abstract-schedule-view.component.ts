@@ -5,36 +5,52 @@ import {FullCalendarComponent} from '@fullcalendar/angular'
 import {CalendarView, scheduleEntryEventTitleShort, makeBlacklistEvents, ScheduleEntryEvent, ScheduleEntryProps} from '../schedule/view/schedule-view-model'
 import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
+import {CalendarOptions} from '@fullcalendar/core'
 
 @Component({
     selector: 'lwm-abstract-schedule-view',
     templateUrl: './abstract-schedule-view.component.html',
-    styleUrls: ['./abstract-schedule-view.component.scss']
+    styleUrls: ['./abstract-schedule-view.component.scss'],
+    standalone: false
 })
 export class AbstractScheduleViewComponent implements OnInit {
 
     @Input() labwork: Readonly<LabworkAtom>
     @Input() timetable: Readonly<TimetableAtom>
-
-    readonly calendarPlugins = [dayGridPlugin, listPlugin]
-
-    allDates: ScheduleEntryEvent<ScheduleEntryProps>[]
-    semesterBoundaries: { start: Date, end: Date }
-    startDate: Date
+    @Input() set dates(dates: ScheduleEntryEvent<ScheduleEntryProps>[]) {
+        this.allDates = dates.concat(makeBlacklistEvents(this.timetable.localBlacklist))
+    }
 
     @ViewChild('calendar') calendar: FullCalendarComponent
 
-    @Input() set dates(dates: ScheduleEntryEvent<ScheduleEntryProps>[]) {
-        this.allDates = dates.concat(makeBlacklistEvents(this.timetable.localBlacklist))
-        this.setSemesterBoundaries()
+    set allDates(dates: ScheduleEntryEvent<ScheduleEntryProps>[]) {
+        this.calendarOptions.events = dates
     }
 
-    constructor() {
-        this.allDates = []
+    calendarOptions: CalendarOptions = {
+        initialView: 'dayGridMonth',
+        plugins: [dayGridPlugin, listPlugin],
+        locale: 'de',
+        nowIndicator: true,
+        weekends: false,
+        firstDay: 1,
+        allDaySlot: true,
+        headerToolbar: {left: 'month, list, labworkStart', center: 'title', right: 'prev,next'},
+        buttonText:{month: 'Monat', list: 'Liste'},
+        dayHeaderFormat: { weekday: 'long' },
+        eventTimeFormat: { hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false },
+        weekNumbers: true,
     }
 
     ngOnInit() {
-        this.startDate = this.timetable.start
+        // TODO: TEST THIS COMPONENT
+        this.calendarOptions.customButtons = {
+            labworkStart: {text: 'Praktikumsbeginn', click: this.showLabworkStartDate},
+            month: {text: 'Monat', click: this.showMonthView},
+            list: {text: 'Liste', click: this.showListView}
+        }
+        this.calendarOptions.validRange = {start: this.labwork.semester.start, end: this.labwork.semester.end}
+        this.calendarOptions.initialDate = this.timetable.start
     }
 
     showLabworkStartDate = () =>
@@ -48,10 +64,6 @@ export class AbstractScheduleViewComponent implements OnInit {
     showListView = () => {
         this.allDates = this.changedTitleFor('list')
         this.calendar.getApi().changeView('listWeek')
-    }
-
-    private setSemesterBoundaries = () => {
-        this.semesterBoundaries = {start: this.labwork.semester.start, end: this.labwork.semester.end}
     }
 
     private changedTitleFor = (view: CalendarView) =>

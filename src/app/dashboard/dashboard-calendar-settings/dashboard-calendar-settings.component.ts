@@ -3,7 +3,8 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core'
 @Component({
     selector: 'lwm-dashboard-calendar-settings',
     templateUrl: './dashboard-calendar-settings.component.html',
-    styleUrls: ['./dashboard-calendar-settings.component.scss']
+    styleUrls: ['./dashboard-calendar-settings.component.scss'],
+    standalone: false
 })
 export class DashboardCalendarSettingsComponent implements OnInit {
 

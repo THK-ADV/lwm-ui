@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
 import {Observable, Subscription} from 'rxjs'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {Blacklist, BlacklistProtocol} from '../../../models/blacklist.model'
 import {BlacklistService} from '../../../services/blacklist.service'
 import {TimetableAtom} from '../../../models/timetable'
@@ -28,7 +28,8 @@ import {
 @Component({
     selector: 'lwm-timetable-blacklists-edit',
     templateUrl: './timetable-blacklists-edit.component.html',
-    styleUrls: ['./timetable-blacklists-edit.component.scss']
+    styleUrls: ['./timetable-blacklists-edit.component.scss'],
+    standalone: false
 })
 export class TimetableBlacklistsEditComponent {
 

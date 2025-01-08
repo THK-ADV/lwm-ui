@@ -7,7 +7,9 @@ import {CourseAtom} from '../models/course.model'
 import {SemesterService} from '../services/semester.service'
 import {Semester} from '../models/semester.model'
 import {LabworkApplicationService} from '../services/labwork-application.service'
-import {MatDialog, MatSort, MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
+import {MatSort} from '@angular/material/sort'
+import {MatDialog} from '@angular/material/dialog'
 import {nestedObjectSortingDataAccessor} from '../utils/sort'
 import {DeleteDialogComponent} from '../shared-dialogs/delete/delete-dialog.component'
 import {LabworkService} from '../services/labwork.service'
@@ -58,7 +60,8 @@ interface GroupedLabwork {
 @Component({
     selector: 'app-course.detail',
     templateUrl: './labworks.component.html',
-    styleUrls: ['./labworks.component.scss']
+    styleUrls: ['./labworks.component.scss'],
+    standalone: false
 })
 export class LabworksComponent implements OnInit, OnDestroy {
 

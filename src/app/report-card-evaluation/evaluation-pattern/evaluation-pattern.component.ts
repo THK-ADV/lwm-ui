@@ -12,7 +12,8 @@ import {isUniqueEntity} from '../../models/unique.entity.model'
 @Component({
     selector: 'lwm-evaluation-pattern',
     templateUrl: './evaluation-pattern.component.html',
-    styleUrls: ['./evaluation-pattern.component.scss']
+    styleUrls: ['./evaluation-pattern.component.scss'],
+    standalone: false
 })
 export class EvaluationPatternComponent implements OnInit {
 

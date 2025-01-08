@@ -9,7 +9,8 @@ import {FormInputString} from '../shared-dialogs/forms/form.input.string'
 @Component({
     selector: 'lwm-degree',
     templateUrl: './degree.component.html',
-    styleUrls: ['./degree.component.scss']
+    styleUrls: ['./degree.component.scss'],
+    standalone: false
 })
 export class DegreeComponent {
 

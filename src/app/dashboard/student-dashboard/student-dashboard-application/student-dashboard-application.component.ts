@@ -6,7 +6,8 @@ import {LabworkAtom} from '../../../models/labwork.model'
 @Component({
     selector: 'lwm-student-dashboard-application',
     templateUrl: './student-dashboard-application.component.html',
-    styleUrls: ['./student-dashboard-application.component.scss']
+    styleUrls: ['./student-dashboard-application.component.scss'],
+    standalone: false
 })
 export class StudentDashboardApplicationComponent {
 

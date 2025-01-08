@@ -1,6 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
+import {MatDialog} from '@angular/material/dialog'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'
@@ -31,7 +32,8 @@ export interface ReportCardTableModel {
 @Component({
     selector: 'lwm-report-card-table',
     templateUrl: './report-card-table.component.html',
-    styleUrls: ['./report-card-table.component.scss']
+    styleUrls: ['./report-card-table.component.scss'],
+    standalone: false
 })
 export class ReportCardTableComponent implements OnInit, OnDestroy {
 

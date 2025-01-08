@@ -1,6 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
 import {FormControl, FormGroup} from '@angular/forms'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
 import {CourseAtom} from '../models/course.model'
 import {AuthorityService} from '../services/authority.service'
 import {UserService} from '../services/user.service'
@@ -23,7 +24,8 @@ import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 @Component({
     selector: 'lwm-course-authority-dialog',
     templateUrl: './course-authority-dialog.component.html',
-    styleUrls: ['./course-authority-dialog.component.scss']
+    styleUrls: ['./course-authority-dialog.component.scss'],
+    standalone: false
 })
 export class CourseAuthorityUpdateDialogComponent implements OnInit, OnDestroy {
 

@@ -24,22 +24,21 @@ export const isCourseManager = (authorities: Readonly<AuthorityAtom[]>, courseId
         () => false) && hasRole(UserRole.courseManager, a)
     )
 
-export const fetchCurrentUserAuthorities$ = (
+export function fetchCurrentUserAuthorities$(
     authorityService: AuthorityService,
     tokenService: KeycloakTokenService
-): Observable<AuthorityAtom[]> => foldUndefined(
-    tokenService.get('systemId'),
-    authorityService.getAuthorities,
-    () => EMPTY
-)
+): Observable<AuthorityAtom[]> {
+    const id = tokenService.get('systemId')
+    return id !== undefined ? authorityService.getAuthorities(id) : EMPTY
+}
 
-export const fetchCurrentUserAuthoritiesOrCreateNewUser$ = (
+export function fetchCurrentUserAuthoritiesOrCreateNewUser$(
     authorityService: AuthorityService,
     tokenService: KeycloakTokenService,
     userService: UserService,
     alertService: AlertService
-): Observable<AuthorityAtom[]> =>
-    fetchCurrentUserAuthorities$(authorityService, tokenService).pipe(
+): Observable<AuthorityAtom[]> {
+    return fetchCurrentUserAuthorities$(authorityService, tokenService).pipe(
         catchError(err => {
             if (err.status !== 409) {
                 return EMPTY
@@ -50,3 +49,4 @@ export const fetchCurrentUserAuthoritiesOrCreateNewUser$ = (
             )
         })
     )
+}

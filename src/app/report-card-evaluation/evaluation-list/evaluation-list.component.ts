@@ -13,9 +13,12 @@ import {initiateDownloadWithDefaultFilenameSuffix} from '../../xls-download/xls-
 import {ActionType} from '../../abstract-header/abstract-header.component'
 import {ReportCardEntryService} from '../../services/report-card-entry.service'
 import {LabworkAtom} from '../../models/labwork.model'
-import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
+import {MatSort} from '@angular/material/sort'
+import {MatPaginator} from '@angular/material/paginator'
 import {ExplicitEvaluationKind} from '../../services/lwm.service'
 import {Router} from '@angular/router'
+import {Sort} from '@angular/material/sort'
 
 interface Eval {
     firstName: string,
@@ -35,7 +38,8 @@ interface Summary {
 @Component({
     selector: 'lwm-evaluation-list',
     templateUrl: './evaluation-list.component.html',
-    styleUrls: ['./evaluation-list.component.scss']
+    styleUrls: ['./evaluation-list.component.scss'],
+    standalone: false
 })
 export class EvaluationListComponent implements OnInit, OnDestroy {
 

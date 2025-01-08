@@ -11,11 +11,12 @@ import {AlertService} from './services/alert.service'
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styleUrls: ['./app.component.scss'],
+    standalone: false
 })
 export class AppComponent {
 
-    readonly auths$: Observable<AuthorityAtom[]>
+    auths$: Observable<AuthorityAtom[]>
 
     constructor(
         private readonly router: Router,

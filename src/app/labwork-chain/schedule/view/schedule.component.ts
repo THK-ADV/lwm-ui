@@ -4,7 +4,7 @@ import {ScheduleEntryAtom} from '../../../models/schedule-entry.model'
 import {makeScheduleEntryEvents, ScheduleEntryEvent, ScheduleEntryProps} from './schedule-view-model'
 import {TimetableAtom} from '../../../models/timetable'
 import {DeleteDialogComponent} from '../../../shared-dialogs/delete/delete-dialog.component'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {ReportCardEntryService} from '../../../services/report-card-entry.service'
 import {ScheduleEntryService} from '../../../services/schedule-entry.service'
 import {subscribeDeleteDialog} from '../../../shared-dialogs/dialog-open-combinator'
@@ -20,7 +20,8 @@ import {ActionType} from '../../../abstract-header/abstract-header.component'
 @Component({
     selector: 'lwm-schedule',
     templateUrl: './schedule.component.html',
-    styleUrls: ['./schedule.component.scss']
+    styleUrls: ['./schedule.component.scss'],
+    standalone: false
 })
 export class ScheduleComponent implements OnInit {
 

@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core'
-import {HttpService, nonAtomicParams} from './http.service'
+import {HttpService} from './http.service'
 import {Observable} from 'rxjs'
 import {ReportCardEvaluationPattern, ReportCardEvaluationPatternProtocol} from '../models/report-card-evaluation'
 import {makePath} from '../utils/component.utils'
-import {HttpParams} from '@angular/common/http'
 import {applyFilter} from './http.filter'
 
 @Injectable({

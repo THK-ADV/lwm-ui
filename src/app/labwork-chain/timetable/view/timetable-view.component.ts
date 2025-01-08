@@ -5,7 +5,8 @@ import {TimetableAtom} from '../../../models/timetable'
 @Component({
     selector: 'lwm-timetable-view',
     templateUrl: './timetable-view.component.html',
-    styleUrls: ['./timetable-view.component.scss']
+    styleUrls: ['./timetable-view.component.scss'],
+    standalone: false
 })
 export class TimetableViewComponent {
     @Input() labwork: Readonly<LabworkAtom>

@@ -13,7 +13,8 @@ import {isUniqueEntity} from '../models/unique.entity.model'
 @Component({
     selector: 'lwm-semester',
     templateUrl: './semester.component.html',
-    styleUrls: ['./semester.component.scss']
+    styleUrls: ['./semester.component.scss'],
+    standalone: false
 })
 export class SemesterComponent {
 

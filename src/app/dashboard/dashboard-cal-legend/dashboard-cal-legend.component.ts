@@ -11,7 +11,8 @@ interface LegendViewItem {
 @Component({
     selector: 'lwm-dashboard-cal-legend',
     templateUrl: './dashboard-cal-legend.component.html',
-    styleUrls: ['./dashboard-cal-legend.component.scss']
+    styleUrls: ['./dashboard-cal-legend.component.scss'],
+    standalone: false
 })
 export class DashboardCalLegendComponent {
 

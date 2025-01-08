@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {LabworkAtom} from '../../../models/labwork.model'
 import {Conflict, ScheduleEntryService, SchedulePreview} from '../../../services/schedule-entry.service'
 import {compose, foldUndefined, isEmpty, maxBy, minBy, nonEmpty, subscribe} from '../../../utils/functions'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {openDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {GroupPreviewModalComponent} from './group-preview-modal/group-preview-modal.component'
 import {Observable, Subscription} from 'rxjs'
@@ -20,7 +20,8 @@ interface SchedulePreviewResult {
 @Component({
     selector: 'lwm-group-preview',
     templateUrl: './group-preview.component.html',
-    styleUrls: ['./group-preview.component.scss']
+    styleUrls: ['./group-preview.component.scss'],
+    standalone: false
 })
 export class GroupPreviewComponent implements OnInit, OnDestroy {
 

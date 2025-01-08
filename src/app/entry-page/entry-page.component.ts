@@ -1,16 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core'
 
 @Component({
-  selector: 'app-entry-page',
-  templateUrl: './entry-page.component.html',
-  styleUrls: ['./entry-page.component.scss']
+    selector: 'app-entry-page',
+    templateUrl: './entry-page.component.html',
+    styleUrls: ['./entry-page.component.scss'],
+    standalone: false
 })
-export class EntryPageComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-    console.log('entry page')
-  }
-
+export class EntryPageComponent {
 }

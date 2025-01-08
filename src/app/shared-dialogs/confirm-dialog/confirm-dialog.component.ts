@@ -1,5 +1,5 @@
 import {Component, Inject} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 import {Html} from '../../html-builder/html-builder'
 
 interface Text {
@@ -21,7 +21,8 @@ export enum ConfirmationResult {
 @Component({
     selector: 'lwm-confirm-dialog',
     templateUrl: './confirm-dialog.component.html',
-    styleUrls: ['./confirm-dialog.component.scss']
+    styleUrls: ['./confirm-dialog.component.scss'],
+    standalone: false
 })
 export class ConfirmDialogComponent {
 

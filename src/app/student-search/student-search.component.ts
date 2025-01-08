@@ -7,7 +7,7 @@ import {EMPTY, Observable} from 'rxjs'
 import {SemesterJSON} from '../models/semester.model'
 import {ReportCardTableEntry, ReportCardTableModel} from '../report-card-table/report-card-table.component'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {distinctEntryTypeColumns} from '../report-card-table/report-card-table-utils'
 import {convertManyReportCardRescheduledAtomJSON, mapReportCardEntryAtomJSON} from '../utils/http-utils'
 import {LabworkAtomJSON} from '../models/labwork.model'
@@ -15,7 +15,6 @@ import {userAuths} from '../security/user-authority-resolver'
 import {AuthorityAtom} from '../models/authority.model'
 import {ReportCardEntryAtom, ReportCardEntryType} from '../models/report-card-entry.model'
 import {format, formatTime} from '../utils/lwmdate-adapter'
-import {fastForwarded, fired} from '../models/report-card-evaluation'
 
 class DataSource {
     dataSources: {
@@ -43,7 +42,8 @@ class DataSource {
 @Component({
     selector: 'lwm-student-search',
     templateUrl: './student-search.component.html',
-    styleUrls: ['./student-search.component.scss']
+    styleUrls: ['./student-search.component.scss'],
+    standalone: false
 })
 export class StudentSearchComponent implements OnInit {
 

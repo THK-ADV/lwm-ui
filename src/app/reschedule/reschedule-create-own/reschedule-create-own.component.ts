@@ -3,12 +3,13 @@ import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {RoomService} from '../../services/room.service'
 import {Observable} from 'rxjs'
 import {Room} from '../../models/room.model'
-import {resetControl, resetControls} from '../../utils/form-control-utils'
+import {resetControls} from '../../utils/form-control-utils'
 
 @Component({
     selector: 'lwm-reschedule-create-own',
     templateUrl: './reschedule-create-own.component.html',
-    styleUrls: ['./reschedule-create-own.component.scss']
+    styleUrls: ['./reschedule-create-own.component.scss'],
+    standalone: false
 })
 export class RescheduleCreateOwnComponent implements OnInit {
 

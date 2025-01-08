@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
+import {MatDialog} from '@angular/material/dialog'
 import {GroupAtom} from '../../models/group.model'
 import {EMPTY, Observable, of, Subscription, zip} from 'rxjs'
 import {User} from '../../models/user.model'
@@ -31,7 +32,8 @@ import {openDialog} from '../../shared-dialogs/dialog-open-combinator'
 @Component({
     selector: 'lwm-group-edit',
     templateUrl: './group-edit.component.html',
-    styleUrls: ['./group-edit.component.scss']
+    styleUrls: ['./group-edit.component.scss'],
+    standalone: false
 })
 export class GroupEditComponent implements OnInit, OnDestroy { // TODO apply assignment index changes
 

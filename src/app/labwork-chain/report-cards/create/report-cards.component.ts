@@ -8,7 +8,8 @@ import {LoadingService, withSpinning} from '../../../services/loading.service'
 @Component({
     selector: 'lwm-report-cards',
     templateUrl: './report-cards.component.html',
-    styleUrls: ['./report-cards.component.scss']
+    styleUrls: ['./report-cards.component.scss'],
+    standalone: false
 })
 export class ReportCardsComponent {
 

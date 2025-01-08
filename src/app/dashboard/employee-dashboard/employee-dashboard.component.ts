@@ -36,7 +36,8 @@ export const employeeDashboardScheduleEntryEvents = (scheduleEntries: ScheduleEn
 @Component({
     selector: 'app-employee-dashboard',
     templateUrl: './employee-dashboard.component.html',
-    styleUrls: ['./employee-dashboard.component.scss']
+    styleUrls: ['./employee-dashboard.component.scss'],
+    standalone: false
 })
 export class EmployeeDashboardComponent implements OnInit, OnDestroy {
 

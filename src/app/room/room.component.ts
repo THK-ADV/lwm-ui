@@ -10,7 +10,8 @@ import {FormInputNumber} from '../shared-dialogs/forms/form.input.number'
 @Component({
     selector: 'lwm-room',
     templateUrl: './room.component.html',
-    styleUrls: ['./room.component.scss']
+    styleUrls: ['./room.component.scss'],
+    standalone: false
 })
 export class RoomComponent {
 

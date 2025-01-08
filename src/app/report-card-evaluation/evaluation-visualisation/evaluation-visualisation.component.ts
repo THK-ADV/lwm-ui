@@ -15,7 +15,8 @@ import {LabworkAtom} from '../../models/labwork.model'
     selector: 'lwm-evaluation-visualisation',
     templateUrl: './evaluation-visualisation.component.html',
     styleUrls: ['./evaluation-visualisation.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class EvaluationVisualisationComponent implements OnInit, OnDestroy {
 

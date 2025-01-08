@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
 import {AssignmentEntry, AssignmentEntryType, sortedByEntryTypes} from '../../models/assignment-plan.model'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {LWMActionType} from '../../table-action-button/lwm-actions'
 import {foldUndefined} from '../../utils/functions'
 import {TableHeaderColumn} from '../../abstract-crud/abstract-crud.component'
@@ -10,7 +10,8 @@ import {ActionType} from '../../abstract-header/abstract-header.component'
 @Component({
     selector: 'lwm-abstract-assignment-plan-view',
     templateUrl: './abstract-assignment-plan-view.component.html',
-    styleUrls: ['./abstract-assignment-plan-view.component.scss']
+    styleUrls: ['./abstract-assignment-plan-view.component.scss'],
+    standalone: false
 })
 export class AbstractAssignmentPlanViewComponent implements OnInit {
 

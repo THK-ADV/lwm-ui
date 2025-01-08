@@ -5,7 +5,7 @@ import {EMPTY, of, Subscription, zip} from 'rxjs'
 import {ReportCardEntryAtom} from '../../../models/report-card-entry.model'
 import {mergeAll, switchMap, toArray} from 'rxjs/operators'
 import {TableHeaderColumn} from '../../../abstract-crud/abstract-crud.component'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {distinctEntryTypeColumns} from '../../../report-card-table/report-card-table-utils'
 import {format, formatTime} from '../../../utils/lwmdate-adapter'
 import {ReportCardTableModel} from '../../../report-card-table/report-card-table.component'
@@ -30,7 +30,8 @@ interface AnnotationView {
 @Component({
     selector: 'lwm-student-report-card',
     templateUrl: './student-report-card.component.html',
-    styleUrls: ['./student-report-card.component.scss']
+    styleUrls: ['./student-report-card.component.scss'],
+    standalone: false
 })
 export class StudentReportCardComponent implements OnInit, OnDestroy {
 

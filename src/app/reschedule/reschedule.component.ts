@@ -1,5 +1,4 @@
 import {Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
-import {MAT_DIALOG_DATA, MatCalendarCellCssClasses, MatDatepickerInputEvent, MatDialog, MatDialogRef} from '@angular/material'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {fullUserName} from '../utils/component.utils'
 import {ReportCardEntryService, RescheduleCandidate} from '../services/report-card-entry.service'
@@ -14,6 +13,8 @@ import {ReportCardRescheduledAtom, ReportCardRescheduledProtocol, RescheduleReas
 import {RescheduleService} from '../services/reschedule.service'
 import {Time} from '../models/time.model'
 import {Room} from '../models/room.model'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {MatCalendarCellCssClasses, MatDatepickerInputEvent} from '@angular/material/datepicker'
 
 type DatePicked = 'candidate-date' | 'other-date' | 'none'
 type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
@@ -33,6 +34,7 @@ const allReasons = (): RescheduleReason[] => [
     styleUrls: ['./reschedule.component.scss'],
     providers: LWMDateAdapter.defaultProviders(),
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class RescheduleComponent implements OnInit, OnDestroy {
 

@@ -16,13 +16,13 @@ import {
 import {TimetableService} from '../services/timetable.service'
 import {ScheduleEntryService, SchedulePreview} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
-import {MatHorizontalStepper} from '@angular/material'
 import {AssignmentEntriesService} from '../services/assignment-entries.service'
 import {BlacklistService} from '../services/blacklist.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {ReportCardEntryService} from '../services/report-card-entry.service'
 import {hasCourseManagerPermission} from '../security/user-authority-resolver'
 import {AssignmentEntry} from '../models/assignment-plan.model'
+import {MatStepper} from '@angular/material/stepper'
 
 enum Step {
     application,
@@ -38,7 +38,8 @@ type GroupViewMode = 'waitingForApplications' | 'waitingForPreview' | 'groupsPre
 @Component({
     selector: 'lwm-labwork-chain',
     templateUrl: './labwork-chain.component.html',
-    styleUrls: ['./labwork-chain.component.scss']
+    styleUrls: ['./labwork-chain.component.scss'],
+    standalone: false
 })
 export class LabworkChainComponent implements OnInit, OnDestroy {
 
@@ -54,7 +55,7 @@ export class LabworkChainComponent implements OnInit, OnDestroy {
 
     steps: Step[]
 
-    @ViewChild('stepper') stepper: MatHorizontalStepper
+    @ViewChild('stepper') stepper: MatStepper
 
     constructor(
         private readonly route: ActivatedRoute,

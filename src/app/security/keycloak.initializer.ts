@@ -7,15 +7,11 @@ export function keycloakInitializer(keycloak: KeycloakService): () => Promise<an
             config: {
                 url: environment.keycloak.authUrl,
                 realm: environment.keycloak.realm,
-                clientId: environment.keycloak.clientID,
-                credentials: {
-                    secret: environment.keycloak.clientSecret
-                }
+                clientId: environment.keycloak.clientID
             },
             initOptions: {
                 onLoad: 'login-required',
-                // onLoad: 'check-sso',
-                checkLoginIframe: false
+                checkLoginIframe: false,
             },
             enableBearerInterceptor: true
         })

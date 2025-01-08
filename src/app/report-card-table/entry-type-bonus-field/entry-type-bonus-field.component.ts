@@ -11,7 +11,8 @@ import {distinctUntilChanged} from 'rxjs/operators'
 @Component({
     selector: 'lwm-entry-type-bonus-field',
     templateUrl: './entry-type-bonus-field.component.html',
-    styleUrls: ['./entry-type-bonus-field.component.scss']
+    styleUrls: ['./entry-type-bonus-field.component.scss'],
+    standalone: false
 })
 export class EntryTypeBonusFieldComponent implements OnInit, OnDestroy {
 

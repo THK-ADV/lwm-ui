@@ -15,7 +15,8 @@ export interface ScheduleEntryLike {
 @Component({
     selector: 'lwm-abstract-group-view',
     templateUrl: './abstract-group-view.component.html',
-    styleUrls: ['./abstract-group-view.component.scss']
+    styleUrls: ['./abstract-group-view.component.scss'],
+    standalone: false
 })
 export class AbstractGroupViewComponent {
 

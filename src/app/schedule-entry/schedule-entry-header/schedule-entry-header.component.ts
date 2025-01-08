@@ -21,7 +21,8 @@ interface HeaderView {
 @Component({
     selector: 'lwm-schedule-entry-header',
     templateUrl: './schedule-entry-header.component.html',
-    styleUrls: ['./schedule-entry-header.component.scss']
+    styleUrls: ['./schedule-entry-header.component.scss'],
+    standalone: false
 })
 export class ScheduleEntryHeaderComponent implements OnInit {
 

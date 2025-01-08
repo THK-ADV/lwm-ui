@@ -4,7 +4,6 @@ import {Observable} from 'rxjs'
 import {makePath} from '../utils/component.utils'
 import {ReportCardEntryType} from '../models/report-card-entry.model'
 import {EntryType} from '../models/assignment-plan.model'
-import {isNumeric} from 'rxjs/internal-compatibility'
 
 export interface ReportCardEntryTypeProtocol {
     entryType: string
@@ -45,8 +44,8 @@ export class ReportCardEntryTypeService {
             users: users,
             assignmentEntry: assignmentEntry,
             entryType: entryType,
-            int: isNumeric(value) ? value : undefined,
-            bool: isNumeric(value) ? undefined : value
+            int: typeof value === 'number' ? value : undefined,
+            bool: typeof value === 'boolean' ? value : undefined
         }
         return this.http.put_(makePath(this.path, courseId, labworkId), body)
     }

@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {ActivatedRoute, ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from '@angular/router'
+import { ActivatedRoute, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import {EMPTY, Observable, of} from 'rxjs'
 
 export interface Params {
@@ -11,7 +11,7 @@ export const params = (route: ActivatedRoute): Params =>
     route.snapshot.data.params
 
 @Injectable()
-export class CourseLabworkParamResolver implements Resolve<Observable<Params>> {
+export class CourseLabworkParamResolver  {
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Params> {
         const course = route.paramMap.get('cid')

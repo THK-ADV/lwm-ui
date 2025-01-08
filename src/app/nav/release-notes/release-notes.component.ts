@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core'
 import {dateOrderingDESC} from '../../utils/functions'
 import {EMPTY, Subscription} from 'rxjs'
-import {HttpBackend, HttpClient} from '@angular/common/http'
+import { HttpBackend, HttpClient } from '@angular/common/http'
 import {format} from '../../utils/lwmdate-adapter'
 import {catchError} from 'rxjs/operators'
 
@@ -15,7 +15,8 @@ interface ReleaseNote {
 @Component({
     selector: 'lwm-release-notes',
     templateUrl: './release-notes.component.html',
-    styleUrls: ['./release-notes.component.scss']
+    styleUrls: ['./release-notes.component.scss'],
+    standalone: false
 })
 export class ReleaseNotesComponent implements OnInit, OnDestroy {
     private sub: Subscription

@@ -1,10 +1,10 @@
-import {MatDialog, MatDialogRef} from '@angular/material'
 import {EMPTY, Observable, Subscription} from 'rxjs'
 import {switchMap} from 'rxjs/operators'
 import {CreateUpdateDialogComponent, FormPayload} from './create-update/create-update-dialog.component'
 import {ConfirmationResult, ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {foldUndefined} from '../utils/functions'
 import {DeleteDialogComponent} from './delete/delete-dialog.component'
+import {MatDialog, MatDialogRef} from '@angular/material/dialog'
 
 // TODO use this abstraction everywhere
 export const openDialog = <T, R, U>(dialogRef: MatDialogRef<T, R>, andThen: (e: R) => Observable<U>) => {

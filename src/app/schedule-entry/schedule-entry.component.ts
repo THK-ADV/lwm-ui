@@ -19,7 +19,8 @@ export const isRescheduledInto = (s: ScheduleEntryAtom, rescheduled?: ReportCard
 @Component({
     selector: 'lwm-schedule-entry',
     templateUrl: './schedule-entry.component.html',
-    styleUrls: ['./schedule-entry.component.scss']
+    styleUrls: ['./schedule-entry.component.scss'],
+    standalone: false
 })
 export class ScheduleEntryComponent implements OnInit, OnDestroy {
 

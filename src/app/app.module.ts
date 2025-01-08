@@ -1,10 +1,10 @@
 import {BrowserModule} from '@angular/platform-browser'
-import {APP_INITIALIZER, NgModule} from '@angular/core'
+import { NgModule, inject, provideAppInitializer } from '@angular/core'
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap'
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations'
 
 import {AppRoutingModule} from './app-routing.module'
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http'
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 import {AppComponent} from './app.component'
 import {FormsModule, ReactiveFormsModule} from '@angular/forms'
@@ -17,16 +17,13 @@ import {EntryPageComponent} from './entry-page/entry-page.component'
 import {StudentDashboardComponent} from './dashboard/student-dashboard/student-dashboard.component'
 import {EmployeeDashboardComponent} from './dashboard/employee-dashboard/employee-dashboard.component'
 
-import {AppGuard} from './guards/app.guard'
 import {DashboardGuard} from './guards/dashboard.guard'
 import {StudentStatusGuard} from './guards/student-status.guard'
 import {EmployeeStatusGuard} from './guards/employee-status.guard'
 
 import {NavComponent} from './nav/nav.component'
-import {LWMMaterialModule} from './app.material.module'
 import {DeleteDialogComponent} from './shared-dialogs/delete/delete-dialog.component'
 import {CreateUpdateDialogComponent} from './shared-dialogs/create-update/create-update-dialog.component'
-import {ListTemplateComponent} from './list-template/list-template.component'
 import {AlertComponent} from './alert/alert.component'
 import {LabworksComponent} from './labworks/labworks.component'
 import {NgInitDirective} from './directives/ng-init.directive'
@@ -107,9 +104,37 @@ import {DashboardCalLegendComponent} from './dashboard/dashboard-cal-legend/dash
 import {PrivacyComponent} from './nav/privacy/privacy.component'
 import {ReleaseNotesComponent} from './nav/release-notes/release-notes.component'
 import {HighlightPipe} from './pipe/highlight.pipe'
+import {MatDialogModule} from '@angular/material/dialog'
+import {MatSnackBarModule} from '@angular/material/snack-bar'
+import {MatButtonModule} from '@angular/material/button'
+import {MatFormFieldModule} from '@angular/material/form-field'
+import {MatInputModule} from '@angular/material/input'
+import {MatIconModule} from '@angular/material/icon'
+import {MatToolbarModule} from '@angular/material/toolbar'
+import {MatSidenavModule} from '@angular/material/sidenav'
+import {MatListModule} from '@angular/material/list'
+import {MatExpansionModule} from '@angular/material/expansion'
+import {MatTableModule} from '@angular/material/table'
+import {MatSortModule} from '@angular/material/sort'
+import {MatDatepickerModule} from '@angular/material/datepicker'
+import {MatNativeDateModule} from '@angular/material/core'
+import {MatTooltipModule} from '@angular/material/tooltip'
+import {MatAutocompleteModule} from '@angular/material/autocomplete'
+import {MatChipsModule} from '@angular/material/chips'
+import {MatCardModule} from '@angular/material/card'
+import {MatPaginatorModule} from '@angular/material/paginator'
+import {MatSlideToggleModule} from '@angular/material/slide-toggle'
+import {MatMenuModule} from '@angular/material/menu'
+import {MatStepperModule} from '@angular/material/stepper'
+import {MatSelectModule} from '@angular/material/select'
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
+import {MatProgressBarModule} from '@angular/material/progress-bar'
+import {MatButtonToggleModule} from '@angular/material/button-toggle'
+import {MatTabsModule} from '@angular/material/tabs'
+import {MatRadioModule} from '@angular/material/radio'
+import {MatBadgeModule} from '@angular/material/badge'
 
-@NgModule({
-    declarations: [
+@NgModule({ declarations: [
         AppComponent,
         StudentDashboardComponent,
         EmployeeDashboardComponent,
@@ -117,7 +142,6 @@ import {HighlightPipe} from './pipe/highlight.pipe'
         NavComponent,
         DeleteDialogComponent,
         CreateUpdateDialogComponent,
-        ListTemplateComponent,
         AlertComponent,
         LabworksComponent,
         NgInitDirective,
@@ -162,7 +186,6 @@ import {HighlightPipe} from './pipe/highlight.pipe'
         AbstractCrudComponent,
         RoomComponent,
         UserComponent,
-        AbstractTableComponent,
         CourseComponent,
         DegreeComponent,
         BlacklistComponent,
@@ -193,52 +216,58 @@ import {HighlightPipe} from './pipe/highlight.pipe'
         DashboardCalLegendComponent,
         PrivacyComponent,
         ReleaseNotesComponent,
-        HighlightPipe
+        HighlightPipe,
+        AbstractTableComponent
     ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
+    bootstrap: [AppComponent], imports: [BrowserModule,
         BrowserAnimationsModule,
         AppRoutingModule,
         NgbModule,
-        BrowserAnimationsModule,
         ReactiveFormsModule,
         FormsModule,
-        LWMMaterialModule,
         KeycloakAngularModule,
-        FullCalendarModule
-    ],
-    providers: [
-        AppGuard,
+        FullCalendarModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatIconModule,
+        MatToolbarModule,
+        MatSidenavModule,
+        MatListModule,
+        MatExpansionModule,
+        MatTableModule,
+        MatSortModule,
+        MatDialogModule,
+        MatSnackBarModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatTooltipModule,
+        MatAutocompleteModule,
+        MatChipsModule,
+        MatCardModule,
+        MatPaginatorModule,
+        MatSlideToggleModule,
+        MatMenuModule,
+        MatStepperModule,
+        MatSelectModule,
+        MatProgressSpinnerModule,
+        MatProgressBarModule,
+        MatButtonToggleModule,
+        MatTabsModule,
+        MatRadioModule,
+        MatBadgeModule], providers: [
         DashboardGuard,
         StudentStatusGuard,
         EmployeeStatusGuard,
         UserAuthorityResolver,
         CourseLabworkParamResolver,
         CourseParamResolver,
-        {
-            provide: APP_INITIALIZER,
-            useFactory: keycloakInitializer,
-            multi: true,
-            deps: [KeycloakService]
-        },
-        {provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true}
-    ],
-    bootstrap: [AppComponent],
-    entryComponents: [
-        DeleteDialogComponent,
-        CreateUpdateDialogComponent,
-        CourseDetailComponent,
-        CourseAuthorityUpdateDialogComponent,
-        TimetableEntryComponent,
-        GroupPreviewModalComponent,
-        ConfirmDialogComponent,
-        DecisionDialogComponent,
-        AssignmentEntryTakeoverDialogComponent,
-        RescheduleComponent,
-        StudentCreateApplicationComponent,
-        AnnotationComponent
-    ]
-})
+        provideAppInitializer(() => {
+        const initializerFn = (keycloakInitializer)(inject(KeycloakService));
+        return initializerFn();
+      }),
+        { provide: HTTP_INTERCEPTORS, useClass: RouteInterceptor, multi: true },
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule {
 }

@@ -1,5 +1,5 @@
 import {AlertService} from '../services/alert.service'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {makeHtmlParagraphs} from '../html-builder/html-builder'
 
 export const removeFromDataSource = <M>(

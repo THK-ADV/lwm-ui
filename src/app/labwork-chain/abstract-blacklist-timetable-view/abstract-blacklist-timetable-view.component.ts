@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core'
 import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {Blacklist} from '../../models/blacklist.model'
 import {deleteAction, editAction, LWMAction, LWMActionType} from '../../table-action-button/lwm-actions'
 import {dateOrderingASC, foldUndefined} from '../../utils/functions'
@@ -11,7 +11,8 @@ import {formatBlacklistTableEntry, localBlacklistsColumns} from '../../blacklist
 @Component({
     selector: 'lwm-abstract-blacklist-timetable-view',
     templateUrl: './abstract-blacklist-timetable-view.component.html',
-    styleUrls: ['./abstract-blacklist-timetable-view.component.scss']
+    styleUrls: ['./abstract-blacklist-timetable-view.component.scss'],
+    standalone: false
 })
 export class AbstractBlacklistTimetableViewComponent implements OnInit {
 

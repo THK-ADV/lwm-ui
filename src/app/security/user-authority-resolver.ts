@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import {ActivatedRoute, Resolve} from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import {Observable} from 'rxjs'
 import {AuthorityAtom} from '../models/authority.model'
 import {fetchCurrentUserAuthorities$, isAdmin, isCourseManager} from '../utils/role-checker'
@@ -14,7 +14,7 @@ export const hasCourseManagerPermission = (route: ActivatedRoute, courseId: stri
 }
 
 @Injectable()
-export class UserAuthorityResolver implements Resolve<Observable<AuthorityAtom[]>> {
+export class UserAuthorityResolver  {
 
     constructor(
         private readonly authorityService: AuthorityService,

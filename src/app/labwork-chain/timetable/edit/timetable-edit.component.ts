@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {TimetableService} from '../../../services/timetable.service'
 import {subscribe} from '../../../utils/functions'
 import {EMPTY, Observable, Subscription} from 'rxjs'
@@ -29,7 +29,8 @@ import {AbstractTimetableViewComponent} from '../../abstract-timetable-view/abst
 @Component({
     selector: 'lwm-timetable-edit',
     templateUrl: './timetable-edit.component.html',
-    styleUrls: ['./timetable-edit.component.scss']
+    styleUrls: ['./timetable-edit.component.scss'],
+    standalone: false
 })
 export class TimetableEditComponent implements AfterViewInit, OnDestroy {
 
@@ -84,20 +85,20 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            this.createIfNeeded(event.id, event.start, event.end)
+            this.createIfNeeded(event.start, event.end)
         ))
     }
 
     onEventClick = (event: CalendarEvent) => {
         const dialogRef = this.timetableEntryDialog(
             DialogMode.edit,
-            this.timetable.entries[event.id].supervisor,
+            this.timetable.entries[Number(event.id)].supervisor,
             event.extendedProps.room
         )
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            this.updateIfNeeded(event.id)
+            this.updateIfNeeded(Number(event.id))
         ))
     }
 
@@ -105,7 +106,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
-            event.id,
+            Number(event.id),
             updateTime(event.start, event.end)
         ))
     }
@@ -114,7 +115,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
-            event.id,
+            Number(event.id),
             updateTime(event.start, event.end)
         ))
     }
@@ -154,7 +155,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         }
     }
 
-    private createIfNeeded = (id: number, start: Date, end: Date): (reason: TimetableEntryDialogResult) => Observable<TimetableAtom> => {
+    private createIfNeeded = (start: Date, end: Date): (reason: TimetableEntryDialogResult) => Observable<TimetableAtom> => {
         return reason => {
             switch (reason.kind) {
                 case 'update':

@@ -1,5 +1,5 @@
-import {TooltipPosition} from '@angular/material'
 import {LWMColor} from '../utils/colors'
+import {TooltipPosition} from '@angular/material/tooltip'
 
 export type LWMActionType =
     'edit' |

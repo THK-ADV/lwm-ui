@@ -5,7 +5,8 @@ import {formatUser} from '../../utils/component.utils'
 @Component({
     selector: 'lwm-student-metadata',
     templateUrl: './student-metadata.component.html',
-    styleUrls: ['./student-metadata.component.scss']
+    styleUrls: ['./student-metadata.component.scss'],
+    standalone: false
 })
 export class StudentMetadataComponent {
 

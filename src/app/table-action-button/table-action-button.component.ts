@@ -4,7 +4,8 @@ import {LWMAction, LWMActionType} from './lwm-actions'
 @Component({
     selector: 'lwm-table-action-button',
     templateUrl: './table-action-button.component.html',
-    styleUrls: ['./table-action-button.component.scss']
+    styleUrls: ['./table-action-button.component.scss'],
+    standalone: false
 })
 export class TableActionButtonComponent { // TODO apply this everywhere
 

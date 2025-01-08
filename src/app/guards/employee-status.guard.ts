@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core'
-import {CanActivate, Router} from '@angular/router'
+import { Router } from '@angular/router'
 import {KeycloakTokenService} from '../services/keycloak-token.service'
 
 @Injectable()
-export class EmployeeStatusGuard implements CanActivate {
+export class EmployeeStatusGuard  {
 
     constructor(private tokenService: KeycloakTokenService, private router: Router) {
     }

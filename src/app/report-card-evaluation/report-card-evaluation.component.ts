@@ -9,7 +9,8 @@ import {LabworkService} from '../services/labwork.service'
 @Component({
     selector: 'lwm-report-card-evaluation',
     templateUrl: './report-card-evaluation.component.html',
-    styleUrls: ['./report-card-evaluation.component.scss']
+    styleUrls: ['./report-card-evaluation.component.scss'],
+    standalone: false
 })
 export class ReportCardEvaluationComponent {
 

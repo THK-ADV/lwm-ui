@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 import {FormControl, FormGroup, ValidatorFn} from '@angular/forms'
 import {DIALOG_WIDTH} from '../dialog-constants'
 import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
@@ -25,7 +25,8 @@ export interface FormPayload<Protocol> {
     selector: 'app-create-update-dialog',
     templateUrl: './create-update-dialog.component.html',
     styleUrls: ['./create-update-dialog.component.scss'],
-    providers: LWMDateAdapter.defaultProviders()
+    providers: LWMDateAdapter.defaultProviders(),
+    standalone: false
 })
 export class CreateUpdateDialogComponent<Protocol, Model> implements OnInit, OnDestroy {
 

@@ -1,8 +1,8 @@
-import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from '@angular/material'
 import localDE from '@angular/common/locales/de'
 import {formatDate, registerLocaleData} from '@angular/common'
 import {Time} from '../models/time.model'
 import {Injectable} from '@angular/core'
+import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from '@angular/material/core'
 
 export const LWM_DATE_FORMATS = {
     display: {

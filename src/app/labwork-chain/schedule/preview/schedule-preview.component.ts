@@ -5,7 +5,7 @@ import {ScheduleEntryEvent, ScheduleEntryProps} from '../view/schedule-view-mode
 import {ScheduleEntryGen, ScheduleEntryService} from '../../../services/schedule-entry.service'
 import {LWMActionType} from '../../../table-action-button/lwm-actions'
 import {ConfirmDialogComponent} from '../../../shared-dialogs/confirm-dialog/confirm-dialog.component'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {subscribeConfirmationDialog, subscribeDeleteDialog} from '../../../shared-dialogs/dialog-open-combinator'
 import {of, Subscription} from 'rxjs'
 import {createSchedule, makeScheduleEntryEvents} from './schedule-preview-view-model'
@@ -18,7 +18,8 @@ import {ActionType} from '../../../abstract-header/abstract-header.component'
 @Component({
     selector: 'lwm-schedule-preview',
     templateUrl: './schedule-preview.component.html',
-    styleUrls: ['./schedule-preview.component.scss']
+    styleUrls: ['./schedule-preview.component.scss'],
+    standalone: false
 })
 export class SchedulePreviewComponent implements OnInit, OnDestroy {
 
