@@ -3,12 +3,13 @@ import {LWMDateAdapter} from '../../utils/lwmdate-adapter'
 import {LabworkAtom} from '../../models/labwork.model'
 import {TimetableAtom} from '../../models/timetable'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin, {EventResizeDoneArg} from '@fullcalendar/interaction'
+import interactionPlugin from '@fullcalendar/interaction'
 import {CalendarEvent, isValidTimetableEntry, makeCalendarEvents} from '../timetable/timetable-view-model'
 import {FormControl, FormGroup, Validators} from '@angular/forms'
 import {color} from '../../utils/colors'
 import {calculateWorkload, SupervisorWorkload} from './abstract-timetable-view-model'
-import {CalendarOptions} from '@fullcalendar/core'
+import {CalendarOptions, DateSelectArg, EventDropArg} from '@fullcalendar/core'
+import {EventImpl} from '@fullcalendar/core/internal'
 
 @Component({
     selector: 'lwm-abstract-timetable-view',
@@ -23,10 +24,11 @@ export class AbstractTimetableViewComponent implements OnInit {
     @Input() labwork: Readonly<LabworkAtom>
     @Input() canEdit: boolean
 
-    @Input() selectDate: (event: CalendarEvent) => void
+    @Input() selectDate: (start: Date, end: Date) => void
     @Input() clickEvent: (event: CalendarEvent) => void
     @Input() dropEvent: (event: CalendarEvent) => void
     @Input() resizeEvent: (event: CalendarEvent) => void
+    @Input() copyEvent: (event: CalendarEvent) => void
 
     @Input() set timetable(t: Readonly<TimetableAtom>) {
         this.formGroup.controls.start.setValue(t.start, {emitEvent: false})
@@ -42,9 +44,9 @@ export class AbstractTimetableViewComponent implements OnInit {
         weekends: false,
         nowIndicator: false,
         allDaySlot: false,
-        dayHeaderFormat: { weekday: 'long' },
-        slotDuration:'00:15:00',
-        slotLabelInterval:  {hours:1},
+        dayHeaderFormat: {weekday: 'long'},
+        slotDuration: '00:15:00',
+        slotLabelInterval: {hours: 1},
         slotEventOverlap: false,
         slotMinTime: '08:00:00',
         slotMaxTime: '22:00:00',
@@ -69,68 +71,54 @@ export class AbstractTimetableViewComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.headerTitle = `${this.canEdit ? 'Rahmenplanbearbeitung' : 'Rahmenplan'} für ${this.labwork.label}`
+        this.calendarOptions.editable = this.canEdit
         if (this.canEdit) {
             this.startDateControl().enable()
+            this.calendarOptions.selectAllow = (date, _) => {
+                return isValidTimetableEntry(date.start, date.end)
+            }
+            this.calendarOptions.select = (arg: DateSelectArg) => {
+                this.selectDate(arg.start, arg.end)
+            }
+            this.calendarOptions.eventClick = (arg) => {
+                this.clickEvent(this.toCalenderEvent(arg.event))
+            }
+            this.calendarOptions.eventDrop = (arg: EventDropArg) => {
+                if (arg.jsEvent.altKey) {
+                    this.copyEvent(this.toCalenderEvent(arg.event))
+                    arg.revert
+                } else {
+                    this.dropEvent(this.toCalenderEvent(arg.event))
+                }
+            }
+            this.calendarOptions.eventResize = (arg) => {
+                const start = arg.event.start
+                const end = arg.event.end
+
+                if (!(start && end)) {
+                    return
+                }
+
+                if (!isValidTimetableEntry(start, end)) {
+                    arg.revert()
+                    return
+                }
+
+                this.resizeEvent(this.toCalenderEvent(arg.event))
+            }
         } else {
             this.startDateControl().disable()
         }
-
-        // TODO: TEST THIS COMPONENT
-        this.headerTitle = `${this.canEdit ? 'Rahmenplanbearbeitung' : 'Rahmenplan'} für ${this.labwork.label}`
-        this.calendarOptions.editable = this.canEdit
-        this.calendarOptions.selectAllow = (date, _) => {
-            console.log('selectAllow', date)
-            return this.canEdit && isValidTimetableEntry(date.start, date.end)
-        }
-        this.calendarOptions.select = (a) => {
-            console.log('select', a)
-            // this.onDateSelection(a)
-        }
-        this.calendarOptions.eventClick = (a) => {
-            console.log('eventClick', a.event)
-            // this.onEventClick(a.event)
-        }
-        this.calendarOptions.eventDrop = (a) => {
-            console.log('eventDrop', a.event)
-            // this.onEventDrop(a.event)
-        }
-        this.calendarOptions.eventResize = this.onEventResize
     }
 
     startDateControl = () => this.formGroup.controls.start
 
-    onDateSelection = (event: CalendarEvent) => {
-        if (this.canEdit) {
-            this.selectDate(event)
-        }
-    }
-
-    onEventClick = (event: CalendarEvent) => {
-        if (this.canEdit) {
-            this.clickEvent(event)
-        }
-    }
-
-    onEventDrop = (event: CalendarEvent) => {
-        if (this.canEdit) {
-            this.dropEvent(event)
-        }
-    }
-
-    onEventResize = (eventResizeInfo: EventResizeDoneArg) => {
-        console.log('eventResize', eventResizeInfo.event)
-        const start = eventResizeInfo.event.start
-        const end = eventResizeInfo.event.end
-
-        if (!(start && end)) {
-            return
-        }
-
-        if (!this.canEdit || !isValidTimetableEntry(start, end)) {
-            eventResizeInfo.revert()
-            return
-        }
-        // this.resizeEvent(eventResizeInfo.event)
+    toCalenderEvent = (e: EventImpl): CalendarEvent => {
+        const event: CalendarEvent = JSON.parse(JSON.stringify(e))
+        event.start = new Date(event.start)
+        event.end = new Date(event.end)
+        return event
     }
 
     displayWorkload = ({user, workload}: SupervisorWorkload) => {

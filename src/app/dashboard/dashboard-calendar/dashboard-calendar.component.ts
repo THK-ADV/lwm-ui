@@ -18,44 +18,36 @@ export class DashboardCalendarComponent<A> implements OnInit {
     @Input() eventTitleFor: (view: CalendarView, e: Readonly<ScheduleEntryEvent<A>>) => string
     @Input() semester: Semester
     @Input() startAtToday: boolean
+    @Output() eventClickEmitter = new EventEmitter<ScheduleEntryEvent<A>>()
 
-    @Input() set scheduleEntryEvents(xs: ScheduleEntryEvent<A>[]) {
+    // erased generic type parameter to any due to compiler limitations
+    @Input() set scheduleEntryEvents(xs: ScheduleEntryEvent<any>[]) {
         this.allDates = xs
+        this.calendarOptions.events = this.allDates
         this.setStartDate()
     }
 
-    @Output() eventClickEmitter = new EventEmitter<ScheduleEntryEvent<A>>()
-
-    // TODO: erased generic type parameter to any
-    set allDates(xs: ScheduleEntryEvent<any>[]) {
-        this.calendarOptions.events = xs
-    }
-
+    allDates: ScheduleEntryEvent<any>[] = []
     startDate: Date
 
     @ViewChild('calendar') calendar: FullCalendarComponent
 
     calendarOptions: CalendarOptions = {
         initialView: 'dayGridMonth',
-        plugins:[dayGridPlugin, listPlugin],
+        plugins: [dayGridPlugin, listPlugin],
         locale: 'de',
         editable: true,
         nowIndicator: false,
         weekends: false,
         firstDay: 1,
-        allDaySlot: true,
         headerToolbar: {left: 'month, list, today', center: 'title', right: 'prev,next'},
         buttonText: {month: 'Monat', list: 'Liste'},
-        dayHeaderFormat: { weekday: 'long' },
-        eventTimeFormat: { hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false },
+        dayHeaderFormat: {weekday: 'long'},
+        eventTimeFormat: {hour: '2-digit', minute: '2-digit', omitZeroMinute: false, meridiem: false},
         weekNumbers: true,
-
     }
 
-
     ngOnInit(): void {
-        // TODO: TEST THIS COMPONENT
-        // (eventClick)="onEventClick($event.event)">
         this.calendarOptions.customButtons = {
             today: {text: 'Heute', click: this.goToToday},
             month: {text: 'Monat', click: this.showMonthView},
@@ -63,9 +55,9 @@ export class DashboardCalendarComponent<A> implements OnInit {
         }
         this.calendarOptions.validRange = {start: this.semester.start, end: this.semester.end}
         this.calendarOptions.initialDate = this.startDate
-        this.calendarOptions.eventClick = (a) => {
-            console.log('eventClick', a.event)
-            // this.onEventClick(a.event)
+        this.calendarOptions.eventClick = (arg) => {
+            const event = arg.event as ScheduleEntryEvent<any>
+            this.eventClickEmitter.emit(event)
         }
     }
 
@@ -74,17 +66,14 @@ export class DashboardCalendarComponent<A> implements OnInit {
     }
 
     showMonthView = () => {
-        this.allDates = this.changeTitle('month')
+        this.updateTitle('month')
         this.calendar.getApi().changeView('dayGridMonth')
     }
 
     showListView = () => {
-        this.allDates = this.changeTitle('list')
+        this.updateTitle('list')
         this.calendar.getApi().changeView('listWeek')
     }
-
-    onEventClick = (event: ScheduleEntryEvent<A>) =>
-        this.eventClickEmitter.emit(event)
 
     private setStartDate = () => {
         if (this.startAtToday) {
@@ -95,6 +84,8 @@ export class DashboardCalendarComponent<A> implements OnInit {
         }
     }
 
-    private changeTitle = (view: CalendarView) =>
-        this.allDates.map(d => ({...d, title: this.eventTitleFor(view, d)}))
+    private updateTitle = (view: CalendarView) => {
+        this.allDates = this.allDates.map(d => ({...d, title: this.eventTitleFor(view, d)}))
+        this.calendarOptions.events = this.allDates
+    }
 }

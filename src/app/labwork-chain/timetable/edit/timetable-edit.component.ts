@@ -80,12 +80,25 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         this.subs.push(subscribe(o, this.updateCalendar))
     }
 
-    onDateSelection = (event: CalendarEvent) => {
+    onCopyEvent = (event: CalendarEvent) => {
+        this.updateCalendar$(
+            createTimetableEntry$(
+                this.timetableService,
+                this.timetable,
+                event.extendedProps.supervisor,
+                event.extendedProps.room,
+                event.start,
+                event.end,
+            )
+        )
+    }
+
+    onDateSelection = (start: Date, end: Date) => {
         const dialogRef = this.timetableEntryDialog(DialogMode.create, [])
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            this.createIfNeeded(event.start, event.end)
+            this.createIfNeeded(start, end)
         ))
     }
 

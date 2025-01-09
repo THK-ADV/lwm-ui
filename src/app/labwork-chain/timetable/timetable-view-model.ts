@@ -6,9 +6,8 @@ import {Room} from '../../models/room.model'
 import {Observable} from 'rxjs'
 import {TimetableService} from '../../services/timetable.service'
 import {format, formatTime} from '../../utils/lwmdate-adapter'
-import {EventInput} from '@fullcalendar/core'
 
-export interface CalendarEvent extends EventInput {
+export interface CalendarEvent {
     title: string
     start: Date
     end: Date
@@ -16,6 +15,7 @@ export interface CalendarEvent extends EventInput {
     extendedProps: {
         dayIndex: number
         room: Room
+        supervisor: User[]
     }
 }
 
@@ -36,6 +36,7 @@ const makeCalendarEvent = (now: Date, e: Readonly<TimetableEntryAtom>, i: number
         extendedProps: {
             dayIndex: e.dayIndex,
             room: e.room,
+            supervisor: e.supervisor
         },
         id: i.toString()
     }

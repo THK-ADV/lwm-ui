@@ -42,7 +42,7 @@ export const makeScheduleEntryEvents = (entries: Readonly<ScheduleEntryAtom[]>):
             allDay: false,
             start: Time.withNewDate(e.date, e.start).date,
             end: Time.withNewDate(e.date, e.end).date,
-            title: scheduleEntryEventTitleLong('month', e),
+            title: scheduleEntryEventTitleShort('month', props),
             borderColor: backgroundColor,
             backgroundColor: backgroundColor,
             textColor: foregroundColor,
