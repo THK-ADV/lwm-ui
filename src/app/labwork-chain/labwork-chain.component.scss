@@ -1,6 +1,6 @@
-@use 'variables' as vars;
-@use 'sass:map';
+@use "variables" as vars;
+@use "sass:map";
 
 div.lwm-chain-actions button {
-    margin-right: map.get(vars.$spacing, 'small');
+  margin-right: map.get(vars.$spacing, "small");
 }

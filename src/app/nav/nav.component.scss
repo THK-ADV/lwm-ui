@@ -1,4 +1,4 @@
-@use 'variables' as vars;
+@use "variables" as vars;
 
 //VARS
 $menuBorderRadius: 5px;
@@ -31,13 +31,13 @@ $sidebarColor: #262429;
         margin: 0 0 20px 0 !important;
         color: #f8f8f8;
       }
-      
+
       #sidebar-nickname {
         color: lighten($sidebarColor, 20);
         font-style: italic;
         font-size: 11px;
       }
-      
+
       #sidebar-bubble h4 {
         margin: 20px 0 5px 0 !important;
         display: inline-block;
@@ -50,32 +50,30 @@ $sidebarColor: #262429;
       }
     }
 
-      
-
     mat-nav-list.navListContainer {
       width: 100%;
-        list-style-type: none;
-        padding: 0px;
-        margin: 0px;
-        max-height: 100%;
-        overflow: hidden;
-      
-        -webkit-transition: max-height 0.5s;
-        -moz-transition: max-height 0.5s;
-        -ms-transition: max-height 0.5s;
-        -o-transition: max-height 0.5s;
-        transition: max-height 0.5s;
+      list-style-type: none;
+      padding: 0px;
+      margin: 0px;
+      max-height: 100%;
+      overflow: hidden;
+
+      -webkit-transition: max-height 0.5s;
+      -moz-transition: max-height 0.5s;
+      -ms-transition: max-height 0.5s;
+      -o-transition: max-height 0.5s;
+      transition: max-height 0.5s;
 
       .sidebarHeader {
-        background: darken(#262429,1);
+        background: darken(#262429, 1);
         padding: 10px;
         display: flex;
-        width:100%;
+        width: 100%;
         cursor: pointer;
-    
+
         justify-content: flex-start;
         align-items: center;
-        color: #ABABAB;
+        color: #ababab;
         font-weight: 700;
       }
       .moduleHeader {
@@ -99,20 +97,16 @@ $sidebarColor: #262429;
       .mat-list-item {
         width: 100%;
         cursor: pointer;
-        color: #ABABAB;
+        color: #ababab;
         border-left: 4px solid #333037;
         margin-left: 25px;
         height: 40px;
-
-        
       }
       a.list-item-active {
-        color: #F8F8F8;
+        color: #f8f8f8;
         background: lighten(#262429, 20);
       }
-    
     }
-
   }
 
   .mat-toolbar {
@@ -121,7 +115,6 @@ $sidebarColor: #262429;
       margin-left: -10px;
     }
   }
-
 }
 
 .lwm-is-mobile .lwm-toolbar {
@@ -148,9 +141,13 @@ h1.lwm-app-name {
 
 .mat-toolbar {
   background-color: darken($sidebarColor, 10);
-  a.lwm-app-name, a.lwm-app-name:hover, a.lwm-app-name:active, a.lwm-app-name:visited, a.lwm-app-name:link {
-      color: #ABABAB;
-      text-decoration: none;
+  a.lwm-app-name,
+  a.lwm-app-name:hover,
+  a.lwm-app-name:active,
+  a.lwm-app-name:visited,
+  a.lwm-app-name:link {
+    color: #ababab;
+    text-decoration: none;
   }
 }
 

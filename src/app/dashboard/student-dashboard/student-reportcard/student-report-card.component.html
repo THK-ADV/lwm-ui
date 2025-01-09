@@ -1,49 +1,51 @@
 <ng-container *ngIf="labworkView">
-    <lwm-abstract-header [headerTitle]="labworkView.title"></lwm-abstract-header>
+  <lwm-abstract-header [headerTitle]="labworkView.title"></lwm-abstract-header>
 </ng-container>
 
 <h2>Notenheft</h2>
 
 <lwm-report-card-table
-        *ngIf="tableModel && tableModel.dataSource.data.length > 0; else noReportCards"
-        [allowRescheduling]="false"
-        [allowAnnotations]="false"
-        [tableModel]="tableModel"
-        [tableContentFor]="tableContentFor"
-        [auths]="[]">
+  *ngIf="
+    tableModel && tableModel.dataSource.data.length > 0;
+    else noReportCards
+  "
+  [allowRescheduling]="false"
+  [allowAnnotations]="false"
+  [tableModel]="tableModel"
+  [tableContentFor]="tableContentFor"
+  [auths]="[]">
 </lwm-report-card-table>
 
-<ng-template #noReportCards>
-    Kein Notenheft vorhanden
-</ng-template>
+<ng-template #noReportCards> Kein Notenheft vorhanden </ng-template>
 
 <h2>Annotationen</h2>
 
-<ng-container *ngIf="annotationDataSource && annotationDataSource.data.length > 0; else noAnnotations">
-    <table mat-table [dataSource]="annotationDataSource">
+<ng-container
+  *ngIf="
+    annotationDataSource && annotationDataSource.data.length > 0;
+    else noAnnotations
+  ">
+  <table mat-table [dataSource]="annotationDataSource">
+    <ng-container matColumnDef="index">
+      <th mat-header-cell *matHeaderCellDef>#</th>
+      <td mat-cell *matCellDef="let element">{{ element.index }}</td>
+    </ng-container>
 
-        <ng-container matColumnDef="index">
-            <th mat-header-cell *matHeaderCellDef>#</th>
-            <td mat-cell *matCellDef="let element">{{element.index}} </td>
-        </ng-container>
+    <ng-container matColumnDef="label">
+      <th mat-header-cell *matHeaderCellDef>Aufgabe</th>
+      <td mat-cell *matCellDef="let element">{{ element.label }}</td>
+    </ng-container>
 
-        <ng-container matColumnDef="label">
-            <th mat-header-cell *matHeaderCellDef>Aufgabe</th>
-            <td mat-cell *matCellDef="let element">{{element.label}}</td>
-        </ng-container>
+    <ng-container matColumnDef="content">
+      <th mat-header-cell *matHeaderCellDef>Annotation</th>
+      <td mat-cell *matCellDef="let element">
+        <p *ngFor="let c of element.content">{{ c }}</p>
+      </td>
+    </ng-container>
 
-        <ng-container matColumnDef="content">
-            <th mat-header-cell *matHeaderCellDef>Annotation</th>
-            <td mat-cell *matCellDef="let element">
-                <p *ngFor="let c of element.content">{{c}}</p>
-            </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
 </ng-container>
 
-<ng-template #noAnnotations>
-    Keine Annotationen vorhanden
-</ng-template>
+<ng-template #noAnnotations> Keine Annotationen vorhanden </ng-template>

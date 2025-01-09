@@ -1,28 +1,48 @@
-<h1 mat-dialog-title>{{headerTitle()}}</h1>
+<h1 mat-dialog-title>{{ headerTitle() }}</h1>
 
 <div class="modalContainer">
-    <form (submit)="onSubmit()">
-        <mat-dialog-content [formGroup]="formGroup">
-            <mat-form-field *ngFor="let input of optionControls " class="mat-form-field-modal" color="primary">
-                <ng-container *ngIf="optionControl(input.input) as option">
-                    <input type="text" [placeholder]="input.input.displayTitle" matInput
-                           [formControlName]="input.input.formControlName" [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="option.displayFn">
-                        <mat-option *ngFor="let o of option.filteredOptions | async" [value]="o"
-                                    (onSelectionChange)="onSelectionChange($event, input)">
-                            {{option.displayFn(o)}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </ng-container>
-                <mat-error *ngIf="input.input.data.hasError()">{{input.input.data.getErrorMessage()}}
-                </mat-error>
-                <mat-hint align="start" *ngIf="input.hint && !input.input.data.hasError()">{{input.hint}}</mat-hint>
-            </mat-form-field>
-        </mat-dialog-content>
+  <form (submit)="onSubmit()">
+    <mat-dialog-content [formGroup]="formGroup">
+      <mat-form-field
+        *ngFor="let input of optionControls"
+        class="mat-form-field-modal"
+        color="primary">
+        <ng-container *ngIf="optionControl(input.input) as option">
+          <input
+            type="text"
+            [placeholder]="input.input.displayTitle"
+            matInput
+            [formControlName]="input.input.formControlName"
+            [matAutocomplete]="auto" />
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="option.displayFn">
+            <mat-option
+              *ngFor="let o of option.filteredOptions | async"
+              [value]="o"
+              (onSelectionChange)="onSelectionChange($event, input)">
+              {{ option.displayFn(o) }}
+            </mat-option>
+          </mat-autocomplete>
+        </ng-container>
+        <mat-error *ngIf="input.input.data.hasError()"
+          >{{ input.input.data.getErrorMessage() }}
+        </mat-error>
+        <mat-hint
+          align="start"
+          *ngIf="input.hint && !input.input.data.hasError()"
+          >{{ input.hint }}</mat-hint
+        >
+      </mat-form-field>
+    </mat-dialog-content>
 
-        <mat-dialog-actions>
-            <button type="button" mat-flat-button (click)="onCancel()">Abbrechen</button>
-            <button mat-flat-button color="primary" cdkFocusInitial>{{buttonTitle()}}</button>
-        </mat-dialog-actions>
-    </form>
+    <mat-dialog-actions>
+      <button type="button" mat-flat-button (click)="onCancel()">
+        Abbrechen
+      </button>
+      <button mat-flat-button color="primary" cdkFocusInitial>
+        {{ buttonTitle() }}
+      </button>
+    </mat-dialog-actions>
+  </form>
 </div>

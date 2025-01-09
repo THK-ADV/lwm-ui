@@ -1,13 +1,13 @@
 <ng-container *ngIf="hasCalendarEntries; else noAppointments">
-    <lwm-dashboard-calendar
-            [startAtToday]="true"
-            [semester]="semester"
-            [scheduleEntryEvents]="scheduleEntryEvents"
-            [eventTitleFor]="eventTitleFor"
-            (eventClickEmitter)="onEventClick($event)">
-    </lwm-dashboard-calendar>
+  <lwm-dashboard-calendar
+    [startAtToday]="true"
+    [semester]="semester"
+    [scheduleEntryEvents]="scheduleEntryEvents"
+    [eventTitleFor]="eventTitleFor"
+    (eventClickEmitter)="onEventClick($event)">
+  </lwm-dashboard-calendar>
 </ng-container>
 
 <ng-template #noAppointments>
-    <p>Es gibt aktuell keine Termine!</p>
+  <p>Es gibt aktuell keine Termine!</p>
 </ng-template>

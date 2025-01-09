@@ -1,15 +1,17 @@
-<lwm-abstract-header [headerTitle]="'Globale Blacklists'"
-                     [actionTypes]="actions()"
-                     (performAction)="onAction($event.type)">
+<lwm-abstract-header
+  [headerTitle]="'Globale Blacklists'"
+  [actionTypes]="actions()"
+  (performAction)="onAction($event.type)">
 </lwm-abstract-header>
 
-<lwm-abstract-table [columns]="columns"
-                    [tableContent]="tableContent"
-                    [data$]="blacklists$"
-                    [sort]="{active: 'date', direction: 'asc'}"
-                    [canEdit]="true"
-                    [canDelete]="true"
-                    (deleteEmitter)="onDelete($event)"
-                    (editEmitter)="onEdit($event)"
-                    (dataSourceEmitter)="initDataSource($event)">
+<lwm-abstract-table
+  [columns]="columns"
+  [tableContent]="tableContent"
+  [data$]="blacklists$"
+  [sort]="{ active: 'date', direction: 'asc' }"
+  [canEdit]="true"
+  [canDelete]="true"
+  (deleteEmitter)="onDelete($event)"
+  (editEmitter)="onEdit($event)"
+  (dataSourceEmitter)="initDataSource($event)">
 </lwm-abstract-table>

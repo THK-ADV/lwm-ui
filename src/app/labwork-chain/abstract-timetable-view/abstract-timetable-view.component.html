@@ -1,22 +1,21 @@
-<lwm-abstract-header
-        [headerTitle]="headerTitle">
-</lwm-abstract-header>
+<lwm-abstract-header [headerTitle]="headerTitle"> </lwm-abstract-header>
 
 <ng-container [formGroup]="formGroup">
-    <mat-form-field>
-        <input matInput
-               readonly
-               formControlName="start"
-               placeholder="Beginn des Praktikums"
-               [matDatepicker]="dp"
-               (click)="dp.open()">
-        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp color="primary"></mat-datepicker>
-    </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      readonly
+      formControlName="start"
+      placeholder="Beginn des Praktikums"
+      [matDatepicker]="dp"
+      (click)="dp.open()" />
+    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+    <mat-datepicker #dp color="primary"></mat-datepicker>
+  </mat-form-field>
 </ng-container>
 
 <full-calendar [options]="calendarOptions"></full-calendar>
 
 <p *ngFor="let workload of workloads">
-    {{displayWorkload(workload)}}
+  {{ displayWorkload(workload) }}
 </p>

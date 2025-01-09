@@ -1,16 +1,18 @@
-<lwm-abstract-header [headerTitle]="headerTitle"
-                     [actionTypes]="canCreate()"
-                     (performAction)="onCreate()">
+<lwm-abstract-header
+  [headerTitle]="headerTitle"
+  [actionTypes]="canCreate()"
+  (performAction)="onCreate()">
 </lwm-abstract-header>
 
-<lwm-abstract-table [sort]="sort"
-                    [data$]="data$"
-                    [tableContent]="tableContent"
-                    [columns]="columns"
-                    [filterPredicate]="filterPredicate"
-                    [canEdit]="canEdit()"
-                    [canDelete]="canDelete()"
-                    (dataSourceEmitter)="initDataSource($event)"
-                    (deleteEmitter)="onDelete($event)"
-                    (editEmitter)="onEdit($event)">
+<lwm-abstract-table
+  [sort]="sort"
+  [data$]="data$"
+  [tableContent]="tableContent"
+  [columns]="columns"
+  [filterPredicate]="filterPredicate"
+  [canEdit]="canEdit()"
+  [canDelete]="canDelete()"
+  (dataSourceEmitter)="initDataSource($event)"
+  (deleteEmitter)="onDelete($event)"
+  (editEmitter)="onEdit($event)">
 </lwm-abstract-table>

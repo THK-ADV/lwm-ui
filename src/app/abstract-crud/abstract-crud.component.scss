@@ -1,5 +1,5 @@
-@use 'variables' as vars;
-@use 'sass:map';
+@use "variables" as vars;
+@use "sass:map";
 
 .abstractTableMainTitle {
   h1 {
@@ -22,5 +22,3 @@ table {
 th.mat-sort-header-sorted {
   color: black;
 }
-
-

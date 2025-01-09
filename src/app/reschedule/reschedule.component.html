@@ -1,80 +1,86 @@
-<h1 mat-dialog-title>{{title}}</h1>
+<h1 mat-dialog-title>{{ title }}</h1>
 
 <div class="modalContainer">
-    <form (submit)="onSubmit()">
-        <mat-dialog-content [formGroup]="formGroup">
+  <form (submit)="onSubmit()">
+    <mat-dialog-content [formGroup]="formGroup">
+      <mat-form-field class="mat-form-field-modal" color="primary">
+        <div class="lwmDatepicker">
+          <input
+            matInput
+            readonly
+            [matDatepicker]="dp"
+            [placeholder]="'Datum'"
+            [formControl]="dateControl"
+            (click)="dp.open()"
+            (dateChange)="onDateChange($event)" />
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        </div>
+        <mat-datepicker
+          [dateClass]="dateCSSClass"
+          #dp
+          color="primary"></mat-datepicker>
+      </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-form-field class="mat-form-field-modal" color="primary">
+      <mat-label>Grund</mat-label>
+      <mat-select [formControl]="reasonControl">
+        <mat-option *ngFor="let reason of reasons" [value]="reason">
+          {{ reason }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <ng-container [ngSwitch]="datePickedMode">
+      <ng-container *ngSwitchCase="'candidate-date'">
+        <label id="example-radio-group-label">Termin wählen</label>
+        <mat-radio-group
+          aria-labelledby="example-radio-group-label"
+          class="example-radio-group"
+          (ngModelChange)="reschedulePickerModeDidChange($event)"
+          [(ngModel)]="reschedulePickerMode"
+          [ngModelOptions]="{ standalone: true }">
+          <mat-radio-button
+            class="example-radio-button"
+            color="primary"
+            *ngFor="let m of modes"
+            [value]="m">
+            {{ modeLabel(m) }}
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <ng-container [ngSwitch]="reschedulePickerMode">
+          <ng-container *ngSwitchCase="'pick-available'">
             <mat-form-field class="mat-form-field-modal" color="primary">
-                <div class="lwmDatepicker">
-                    <input matInput readonly
-                           [matDatepicker]="dp"
-                           [placeholder]="'Datum'"
-                           [formControl]="dateControl"
-                           (click)="dp.open()"
-                           (dateChange)="onDateChange($event)">
-                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-                </div>
-                <mat-datepicker [dateClass]="dateCSSClass" #dp color="primary"></mat-datepicker>
-            </mat-form-field>
-        </mat-dialog-content>
-
-        <mat-form-field class="mat-form-field-modal" color="primary">
-            <mat-label>Grund</mat-label>
-            <mat-select [formControl]="reasonControl">
-                <mat-option *ngFor="let reason of reasons" [value]="reason">
-                    {{reason}}
+              <mat-label>Verfügbare Termine</mat-label>
+              <mat-select [formControl]="slotPickerControl">
+                <mat-option *ngFor="let slot of slots" [value]="slot">
+                  {{ slotLabel(slot) }}
                 </mat-option>
-            </mat-select>
-        </mat-form-field>
+              </mat-select>
+            </mat-form-field>
+          </ng-container>
 
-        <ng-container [ngSwitch]="datePickedMode">
-            <ng-container *ngSwitchCase="'candidate-date'">
-                <label id="example-radio-group-label">Termin wählen</label>
-                <mat-radio-group
-                        aria-labelledby="example-radio-group-label"
-                        class="example-radio-group"
-                        (ngModelChange)="reschedulePickerModeDidChange($event)"
-                        [(ngModel)]="reschedulePickerMode"
-                        [ngModelOptions]="{standalone: true}">
-                    <mat-radio-button
-                            class="example-radio-button"
-                            color="primary"
-                            *ngFor="let m of modes"
-                            [value]="m">
-                        {{modeLabel(m)}}
-                    </mat-radio-button>
-                </mat-radio-group>
-
-                <ng-container [ngSwitch]="reschedulePickerMode">
-                    <ng-container *ngSwitchCase="'pick-available'">
-                        <mat-form-field class="mat-form-field-modal" color="primary">
-                            <mat-label>Verfügbare Termine</mat-label>
-                            <mat-select [formControl]="slotPickerControl">
-                                <mat-option *ngFor="let slot of slots" [value]="slot">
-                                    {{slotLabel(slot)}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </ng-container>
-
-                    <ng-container *ngSwitchCase="'create-custom'">
-                        <lwm-reschedule-create-own [fg]="formGroup">
-                        </lwm-reschedule-create-own>
-                    </ng-container>
-                </ng-container>
-
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'other-date'">
-                <lwm-reschedule-create-own [fg]="formGroup">
-                </lwm-reschedule-create-own>
-            </ng-container>
+          <ng-container *ngSwitchCase="'create-custom'">
+            <lwm-reschedule-create-own [fg]="formGroup">
+            </lwm-reschedule-create-own>
+          </ng-container>
         </ng-container>
+      </ng-container>
 
+      <ng-container *ngSwitchCase="'other-date'">
+        <lwm-reschedule-create-own [fg]="formGroup">
+        </lwm-reschedule-create-own>
+      </ng-container>
+    </ng-container>
 
-        <mat-dialog-actions>
-            <button mat-flat-button type="button"type="button" (click)="onCancel()">Abbrechen</button>
-            <button mat-flat-button color="primary" cdkFocusInitial>Termin verschieben</button>
-        </mat-dialog-actions>
-    </form>
+    <mat-dialog-actions>
+      <button mat-flat-button type="button" type="button" (click)="onCancel()">
+        Abbrechen
+      </button>
+      <button mat-flat-button color="primary" cdkFocusInitial>
+        Termin verschieben
+      </button>
+    </mat-dialog-actions>
+  </form>
 </div>
-

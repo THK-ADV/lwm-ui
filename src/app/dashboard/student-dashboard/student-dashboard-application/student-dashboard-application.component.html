@@ -1,14 +1,14 @@
 <h2>Praktikumsanmeldungen</h2>
 
 <ng-container *ngIf="hasLabworksToApplyFor(); else noApplications">
-    <lwm-application-list
-            [labworks]="labworks"
-            [apps]="labworkApplications"
-            [applicant]="student"
-            (applicationEmitter)="onApplicationChange($event)">
-    </lwm-application-list>
+  <lwm-application-list
+    [labworks]="labworks"
+    [apps]="labworkApplications"
+    [applicant]="student"
+    (applicationEmitter)="onApplicationChange($event)">
+  </lwm-application-list>
 </ng-container>
 
 <ng-template #noApplications>
-    <p>Es stehen aktuell keine Praktika zur Anmeldung bereit!</p>
+  <p>Es stehen aktuell keine Praktika zur Anmeldung bereit!</p>
 </ng-template>

@@ -1,23 +1,23 @@
 <ng-container *ngIf="semester">
-    <div class="jumbotron">
-        <h1>{{semester.label}}</h1>
-    </div>
+  <div class="jumbotron">
+    <h1>{{ semester.label }}</h1>
+  </div>
 
-    <lwm-dashboard-calendar-settings
-            (ownEntriesOnlyChange)="ownEntriesOnlyDidChange($event)">
-    </lwm-dashboard-calendar-settings>
+  <lwm-dashboard-calendar-settings
+    (ownEntriesOnlyChange)="ownEntriesOnlyDidChange($event)">
+  </lwm-dashboard-calendar-settings>
 
-    <lwm-dashboard-cal-legend
-            [title]="'Termine'"
-            [courses]="currentCourses"
-            (legendClicked)="routeToCourse($event)">
-    </lwm-dashboard-cal-legend>
+  <lwm-dashboard-cal-legend
+    [title]="'Termine'"
+    [courses]="currentCourses"
+    (legendClicked)="routeToCourse($event)">
+  </lwm-dashboard-cal-legend>
 
-    <lwm-dashboard-calendar
-            [startAtToday]="true"
-            [scheduleEntryEvents]="entries"
-            [eventTitleFor]="eventTitleFor"
-            [semester]="semester"
-            (eventClickEmitter)="onEventClick($event)">
-    </lwm-dashboard-calendar>
+  <lwm-dashboard-calendar
+    [startAtToday]="true"
+    [scheduleEntryEvents]="entries"
+    [eventTitleFor]="eventTitleFor"
+    [semester]="semester"
+    (eventClickEmitter)="onEventClick($event)">
+  </lwm-dashboard-calendar>
 </ng-container>

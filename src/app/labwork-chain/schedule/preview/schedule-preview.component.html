@@ -1,11 +1,11 @@
 <lwm-abstract-header
-        [headerTitle]="headerTitle"
-        [actionTypes]="canDeleteAndCommit()"
-        (performAction)="performAction($event.type)">
+  [headerTitle]="headerTitle"
+  [actionTypes]="canDeleteAndCommit()"
+  (performAction)="performAction($event.type)">
 </lwm-abstract-header>
 
 <lwm-abstract-schedule-view
-        [labwork]="labwork"
-        [timetable]="timetable"
-        [dates]="dates">
+  [labwork]="labwork"
+  [timetable]="timetable"
+  [dates]="dates">
 </lwm-abstract-schedule-view>

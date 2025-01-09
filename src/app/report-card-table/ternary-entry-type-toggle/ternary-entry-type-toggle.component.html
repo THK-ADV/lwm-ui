@@ -1,18 +1,19 @@
 <ng-container *ngIf="state">
-    <mat-button-toggle-group class="toggle-group"
-                             [disabled]="!canApprove"
-                             [value]="state"
-                             (change)="onChange($event.value)">
-        <mat-button-toggle class="failed" [value]="failed">
-            <i class="material-icons">block</i>
-        </mat-button-toggle>
+  <mat-button-toggle-group
+    class="toggle-group"
+    [disabled]="!canApprove"
+    [value]="state"
+    (change)="onChange($event.value)">
+    <mat-button-toggle class="failed" [value]="failed">
+      <i class="material-icons">block</i>
+    </mat-button-toggle>
 
-        <mat-button-toggle class="neutral" [value]="neutral">
-            <i class="material-icons">remove_circle_outline</i>
-        </mat-button-toggle>
+    <mat-button-toggle class="neutral" [value]="neutral">
+      <i class="material-icons">remove_circle_outline</i>
+    </mat-button-toggle>
 
-        <mat-button-toggle class="passed" [value]="passed">
-            <i class="material-icons">check_circle_outline</i>
-        </mat-button-toggle>
-    </mat-button-toggle-group>
+    <mat-button-toggle class="passed" [value]="passed">
+      <i class="material-icons">check_circle_outline</i>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
 </ng-container>

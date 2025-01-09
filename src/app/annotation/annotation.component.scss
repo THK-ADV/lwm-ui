@@ -1,13 +1,13 @@
-@use 'variables' as vars;
-@use 'sass:map';
-@use '@angular/material' as mat;
+@use "variables" as vars;
+@use "sass:map";
+@use "@angular/material" as mat;
 
 .annotations {
   margin-bottom: map.get(vars.$spacing, "v");
   margin-left: map.get(vars.$spacing, "h");
 
   .annotationData::after {
-    content: '\A';
+    content: "\A";
     white-space: pre;
   }
 

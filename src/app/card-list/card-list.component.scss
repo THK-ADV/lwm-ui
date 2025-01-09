@@ -1,5 +1,5 @@
-@use 'variables' as vars;
-@use 'sass:map';
+@use "variables" as vars;
+@use "sass:map";
 
 .lwm-card-list {
   display: -webkit-box;
@@ -16,14 +16,14 @@
     -webkit-box-pack: start;
     -ms-flex-pack: start;
     justify-content: flex-start;
-    margin: 0 map.get(vars.$spacing, 'med') map.get(vars.$spacing, 'med') 0;
+    margin: 0 map.get(vars.$spacing, "med") map.get(vars.$spacing, "med") 0;
     width: 400px;
     border-radius: vars.$border-radius;
     border: 1px solid map.get(vars.$colors, "light-border");
 
     .lwm-card-header {
       background-color: #ddd;
-      padding: map.get(vars.$spacing, 'low');
+      padding: map.get(vars.$spacing, "low");
       border-bottom: 1px solid map.get(vars.$colors, "light-border");
       font-weight: 600;
 
@@ -41,7 +41,7 @@
     }
 
     .lwm-card-content {
-      .mat-list-item p{
+      .mat-list-item p {
         display: -webkit-box;
         display: -ms-flexbox;
         display: flex;

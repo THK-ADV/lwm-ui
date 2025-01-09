@@ -1,11 +1,11 @@
 <lwm-abstract-header [headerTitle]="'Benutzer'"></lwm-abstract-header>
 
 <lwm-abstract-table
-        [sort]="{active: 'lastname', direction: 'asc'}"
-        [data$]="users$"
-        [tableContent]="tableContent"
-        [columns]="columns"
-        [canEdit]="true"
-        (editEmitter)="onEdit($event)"
-        (dataSourceEmitter)="initDataSource($event)">
+  [sort]="{ active: 'lastname', direction: 'asc' }"
+  [data$]="users$"
+  [tableContent]="tableContent"
+  [columns]="columns"
+  [canEdit]="true"
+  (editEmitter)="onEdit($event)"
+  (dataSourceEmitter)="initDataSource($event)">
 </lwm-abstract-table>

@@ -1,24 +1,20 @@
-import {Component, Input, OnInit} from '@angular/core'
-import {DashboardEvaluationResult} from '../../../models/dashboard.model'
+import { Component, Input, OnInit } from "@angular/core"
+import { DashboardEvaluationResult } from "../../../models/dashboard.model"
 
 @Component({
-    selector: 'lwm-student-dashboard-evals',
-    templateUrl: './student-dashboard-evals.component.html',
-    styleUrls: ['./student-dashboard-evals.component.scss'],
-    standalone: false
+  selector: "lwm-student-dashboard-evals",
+  templateUrl: "./student-dashboard-evals.component.html",
+  styleUrls: ["./student-dashboard-evals.component.scss"],
+  standalone: false,
 })
 export class StudentDashboardEvalsComponent implements OnInit {
+  // TODO style
 
-    // TODO style
+  @Input() evals: DashboardEvaluationResult[]
 
-    @Input() evals: DashboardEvaluationResult[]
+  constructor() {}
 
-    constructor() {
-    }
+  ngOnInit(): void {}
 
-    ngOnInit(): void {
-    }
-
-    hasPassedLabworks = () =>
-        this.evals.length > 0
+  hasPassedLabworks = () => this.evals.length > 0
 }

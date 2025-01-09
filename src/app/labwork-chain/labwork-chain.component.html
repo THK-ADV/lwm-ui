@@ -1,155 +1,214 @@
-<mat-horizontal-stepper labelPosition="bottom" #stepper [linear]=true>
-    <mat-step *ngFor="let step of steps" [label]="label(step)" [completed]="isStepCompleted(step)">
-        <div class="lwm-chain-actions">
-            <button *ngIf="hasPrevButton(step)"
-                    mat-stroked-button
-                    matStepperPrevious
-                    color='primary'>
-                <mat-icon>keyboard_arrow_left</mat-icon>
-                Zurück
-            </button>
-            <button *ngIf="hasNextButton(step) && isStepCompleted(step)"
-                    mat-stroked-button
-                    matStepperNext
-                    color='primary'>
-                Weiter
-                <mat-icon>keyboard_arrow_right</mat-icon>
-            </button>
-        </div>
-        <ng-container [ngSwitch]="step">
-
-            <!-- assignment plan -->
-            <ng-container *ngIf="labwork && assignmentEntries">
-                <ng-container *ngSwitchCase="0">
-                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
-                    <ng-template #thenBlock>
-                        <lwm-assignment-plan [labwork]="labwork" [assignmentEntries]="assignmentEntries">
-                        </lwm-assignment-plan>
-                    </ng-template>
-                    <ng-template #elseBlock>
-                        <lwm-assignment-plan-edit [labwork]="labwork" [assignmentEntries]="assignmentEntries"
-                                                  [hasPermission]="hasPermission()"
-                                                  (assignmentEntriesUpdate)="updateAssignmentEntries($event)">
-                        </lwm-assignment-plan-edit>
-                    </ng-template>
-                </ng-container>
-            </ng-container>
-
-            <!-- timetable -->
-            <ng-container *ngIf="labwork && timetable">
-                <ng-container *ngSwitchCase="1">
-                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
-                    <ng-template #thenBlock>
-                        <lwm-timetable-view [labwork]="labwork" [timetable]="timetable">
-                        </lwm-timetable-view>
-                    </ng-template>
-                    <ng-template #elseBlock>
-                        <lwm-timetable-edit [labwork]="labwork" [timetable]="timetable"
-                                            [hasPermission]="hasPermission()"
-                                            (timetableUpdate)="updateTimetable($event)">
-                        </lwm-timetable-edit>
-                    </ng-template>
-                </ng-container>
-            </ng-container>
-
-            <!-- timetable blacklist -->
-            <ng-container *ngIf="labwork && timetable">
-                <ng-container *ngSwitchCase="2">
-                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
-                    <ng-template #thenBlock>
-                        <lwm-timetable-blacklist-view [labwork]="labwork" [timetable]="timetable">
-                        </lwm-timetable-blacklist-view>
-                    </ng-template>
-                    <ng-template #elseBlock>
-                        <lwm-timetable-blacklists-edit [labwork]="labwork" [timetable]="timetable"
-                                                       [hasPermission]="hasPermission()"
-                                                       (timetableUpdate)="updateTimetable($event)">
-                        </lwm-timetable-blacklists-edit>
-                    </ng-template>
-                </ng-container>
-            </ng-container>
-
-            <!-- group -->
-            <ng-container *ngIf="labwork && timetable && scheduleEntries">
-                <ng-container *ngSwitchCase="3">
-                    <ng-container [ngSwitch]="groupViewMode()">
-                        <lwm-abstract-header *ngSwitchCase="waitingForApplications()"
-                                             headerTitle="Keine Anmeldungen vorhanden">
-                        </lwm-abstract-header>
-
-                        <lwm-group-preview *ngSwitchCase="waitingForPreview()" [labwork]="labwork"
-                                           [applications]="applications" [preview]="schedulePreview"
-                                           [hasPermission]="hasPermission()"
-                                           (schedulePreviewEmitter)="updateSchedulePreview($event)">
-                        </lwm-group-preview>
-
-                        <lwm-group-immutable *ngSwitchCase="groupsPresent()" [labwork]="labwork"
-                                             [scheduleEntries]="scheduleEntries">
-                        </lwm-group-immutable>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-
-            <!-- schedule -->
-            <ng-container *ngIf="labwork && timetable && scheduleEntries">
-                <ng-container *ngSwitchCase="4">
-                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
-                    <ng-template #thenBlock>
-                        <lwm-schedule [labwork]="labwork" [timetable]="timetable"
-                                      [hasReportCards]="hasReportCardEntries()" [scheduleEntries]="scheduleEntries"
-                                      [hasPermission]="hasPermission()"
-                                      (deleteScheduleEmitter)="deleteScheduleEntries()"
-                                      (deleteReportCardsEmitter)="deleteReportCards()"
-                                      (updateLabworkEmitter)="updateLabwork($event)">
-                        </lwm-schedule>
-                    </ng-template>
-                    <ng-template #elseBlock>
-                        <lwm-schedule-preview *ngIf="schedulePreview" [labwork]="labwork" [timetable]="timetable"
-                                              [entries]="schedulePreview.schedule.entries"
-                                              [hasPermission]="hasPermission()"
-                                              (createScheduleEmitter)="createScheduleEntries($event)"
-                                              (deleteSchedulePreviewEmitter)="deleteSchedulePreview()">
-                        </lwm-schedule-preview>
-                    </ng-template>
-                </ng-container>
-            </ng-container>
-
-            <!-- report-cards -->
-            <ng-container *ngIf="labwork && timetable && scheduleEntries">
-                <ng-container *ngSwitchCase="5">
-                    <ng-container *ngIf="isStepLocked(step); then thenBlock else elseBlock"></ng-container>
-                    <ng-template #thenBlock>
-                        <lwm-closing [labwork]="labwork" [reportCards]="reportCards" [hasPermission]="hasPermission()"
-                                     (labworkUpdate)="updateLabwork($event)">
-                        </lwm-closing>
-                    </ng-template>
-                    <ng-template #elseBlock>
-                        <lwm-report-cards [labwork]="labwork" [reportCards]="reportCards"
-                                          [hasPermission]="hasPermission()" (labworkUpdate)="updateLabwork($event)"
-                                          (createReportCardEmitter)="createReportCards($event)">
-                        </lwm-report-cards>
-                    </ng-template>
-                </ng-container>
-            </ng-container>
-
-            <p *ngSwitchDefault>???</p>
+<mat-horizontal-stepper labelPosition="bottom" #stepper [linear]="true">
+  <mat-step
+    *ngFor="let step of steps"
+    [label]="label(step)"
+    [completed]="isStepCompleted(step)">
+    <div class="lwm-chain-actions">
+      <button
+        *ngIf="hasPrevButton(step)"
+        mat-stroked-button
+        matStepperPrevious
+        color="primary">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+        Zurück
+      </button>
+      <button
+        *ngIf="hasNextButton(step) && isStepCompleted(step)"
+        mat-stroked-button
+        matStepperNext
+        color="primary">
+        Weiter
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </div>
+    <ng-container [ngSwitch]="step">
+      <!-- assignment plan -->
+      <ng-container *ngIf="labwork && assignmentEntries">
+        <ng-container *ngSwitchCase="0">
+          <ng-container
+            *ngIf="
+              isStepLocked(step);
+              then thenBlock;
+              else elseBlock
+            "></ng-container>
+          <ng-template #thenBlock>
+            <lwm-assignment-plan
+              [labwork]="labwork"
+              [assignmentEntries]="assignmentEntries">
+            </lwm-assignment-plan>
+          </ng-template>
+          <ng-template #elseBlock>
+            <lwm-assignment-plan-edit
+              [labwork]="labwork"
+              [assignmentEntries]="assignmentEntries"
+              [hasPermission]="hasPermission()"
+              (assignmentEntriesUpdate)="updateAssignmentEntries($event)">
+            </lwm-assignment-plan-edit>
+          </ng-template>
         </ng-container>
+      </ng-container>
 
-        <div class="lwm-chain-actions">
-            <button *ngIf="hasPrevButton(step)"
-                    mat-stroked-button
-                    matStepperPrevious
-                    color='primary'>
-                <mat-icon>keyboard_arrow_left</mat-icon>
-                Zurück
-            </button>
-            <button *ngIf="hasNextButton(step) && isStepCompleted(step)"
-                    mat-stroked-button
-                    matStepperNext
-                    color='primary'>
-                Weiter
-                <mat-icon>keyboard_arrow_right</mat-icon>
-            </button>
-        </div>
-    </mat-step>
+      <!-- timetable -->
+      <ng-container *ngIf="labwork && timetable">
+        <ng-container *ngSwitchCase="1">
+          <ng-container
+            *ngIf="
+              isStepLocked(step);
+              then thenBlock;
+              else elseBlock
+            "></ng-container>
+          <ng-template #thenBlock>
+            <lwm-timetable-view [labwork]="labwork" [timetable]="timetable">
+            </lwm-timetable-view>
+          </ng-template>
+          <ng-template #elseBlock>
+            <lwm-timetable-edit
+              [labwork]="labwork"
+              [timetable]="timetable"
+              [hasPermission]="hasPermission()"
+              (timetableUpdate)="updateTimetable($event)">
+            </lwm-timetable-edit>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+
+      <!-- timetable blacklist -->
+      <ng-container *ngIf="labwork && timetable">
+        <ng-container *ngSwitchCase="2">
+          <ng-container
+            *ngIf="
+              isStepLocked(step);
+              then thenBlock;
+              else elseBlock
+            "></ng-container>
+          <ng-template #thenBlock>
+            <lwm-timetable-blacklist-view
+              [labwork]="labwork"
+              [timetable]="timetable">
+            </lwm-timetable-blacklist-view>
+          </ng-template>
+          <ng-template #elseBlock>
+            <lwm-timetable-blacklists-edit
+              [labwork]="labwork"
+              [timetable]="timetable"
+              [hasPermission]="hasPermission()"
+              (timetableUpdate)="updateTimetable($event)">
+            </lwm-timetable-blacklists-edit>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+
+      <!-- group -->
+      <ng-container *ngIf="labwork && timetable && scheduleEntries">
+        <ng-container *ngSwitchCase="3">
+          <ng-container [ngSwitch]="groupViewMode()">
+            <lwm-abstract-header
+              *ngSwitchCase="waitingForApplications()"
+              headerTitle="Keine Anmeldungen vorhanden">
+            </lwm-abstract-header>
+
+            <lwm-group-preview
+              *ngSwitchCase="waitingForPreview()"
+              [labwork]="labwork"
+              [applications]="applications"
+              [preview]="schedulePreview"
+              [hasPermission]="hasPermission()"
+              (schedulePreviewEmitter)="updateSchedulePreview($event)">
+            </lwm-group-preview>
+
+            <lwm-group-immutable
+              *ngSwitchCase="groupsPresent()"
+              [labwork]="labwork"
+              [scheduleEntries]="scheduleEntries">
+            </lwm-group-immutable>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+      <!-- schedule -->
+      <ng-container *ngIf="labwork && timetable && scheduleEntries">
+        <ng-container *ngSwitchCase="4">
+          <ng-container
+            *ngIf="
+              isStepLocked(step);
+              then thenBlock;
+              else elseBlock
+            "></ng-container>
+          <ng-template #thenBlock>
+            <lwm-schedule
+              [labwork]="labwork"
+              [timetable]="timetable"
+              [hasReportCards]="hasReportCardEntries()"
+              [scheduleEntries]="scheduleEntries"
+              [hasPermission]="hasPermission()"
+              (deleteScheduleEmitter)="deleteScheduleEntries()"
+              (deleteReportCardsEmitter)="deleteReportCards()"
+              (updateLabworkEmitter)="updateLabwork($event)">
+            </lwm-schedule>
+          </ng-template>
+          <ng-template #elseBlock>
+            <lwm-schedule-preview
+              *ngIf="schedulePreview"
+              [labwork]="labwork"
+              [timetable]="timetable"
+              [entries]="schedulePreview.schedule.entries"
+              [hasPermission]="hasPermission()"
+              (createScheduleEmitter)="createScheduleEntries($event)"
+              (deleteSchedulePreviewEmitter)="deleteSchedulePreview()">
+            </lwm-schedule-preview>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+
+      <!-- report-cards -->
+      <ng-container *ngIf="labwork && timetable && scheduleEntries">
+        <ng-container *ngSwitchCase="5">
+          <ng-container
+            *ngIf="
+              isStepLocked(step);
+              then thenBlock;
+              else elseBlock
+            "></ng-container>
+          <ng-template #thenBlock>
+            <lwm-closing
+              [labwork]="labwork"
+              [reportCards]="reportCards"
+              [hasPermission]="hasPermission()"
+              (labworkUpdate)="updateLabwork($event)">
+            </lwm-closing>
+          </ng-template>
+          <ng-template #elseBlock>
+            <lwm-report-cards
+              [labwork]="labwork"
+              [reportCards]="reportCards"
+              [hasPermission]="hasPermission()"
+              (labworkUpdate)="updateLabwork($event)"
+              (createReportCardEmitter)="createReportCards($event)">
+            </lwm-report-cards>
+          </ng-template>
+        </ng-container>
+      </ng-container>
+
+      <p *ngSwitchDefault>???</p>
+    </ng-container>
+
+    <div class="lwm-chain-actions">
+      <button
+        *ngIf="hasPrevButton(step)"
+        mat-stroked-button
+        matStepperPrevious
+        color="primary">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+        Zurück
+      </button>
+      <button
+        *ngIf="hasNextButton(step) && isStepCompleted(step)"
+        mat-stroked-button
+        matStepperNext
+        color="primary">
+        Weiter
+        <mat-icon>keyboard_arrow_right</mat-icon>
+      </button>
+    </div>
+  </mat-step>
 </mat-horizontal-stepper>

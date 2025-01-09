@@ -1,3 +1,3 @@
-import '@angular/localize/init'
-import '@angular/localize/init'
-import 'zone.js'
+import "@angular/localize/init"
+import "@angular/localize/init"
+import "zone.js"

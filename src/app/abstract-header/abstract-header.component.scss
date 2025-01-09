@@ -1,11 +1,11 @@
-@use 'variables' as vars;
-@use 'sass:map';
+@use "variables" as vars;
+@use "sass:map";
 
 .abstractTableMainTitle {
   h1 {
     display: inline;
   }
-  span button{
+  span button {
     float: right;
     margin-left: map.get(vars.$spacing, "small");
   }

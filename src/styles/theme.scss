@@ -1,108 +1,116 @@
-@use '@angular/material' as mat;
-@use 'sass:map';
-@use 'variables' as vars;
+@use "@angular/material" as mat;
+@use "sass:map";
+@use "variables" as vars;
 
 // Include the common styles for Angular Material
 @include mat.core();
 
 // Create custom palettes using the Material Design palette generator
-$lwm-primary: mat.m2-define-palette((
-        50: lighten(vars.$th-magenta, 50%),
-        100: lighten(vars.$th-magenta, 40%),
-        200: lighten(vars.$th-magenta, 30%),
-        300: lighten(vars.$th-magenta, 20%),
-        400: lighten(vars.$th-magenta, 10%),
-        500: vars.$th-magenta,
-        600: darken(vars.$th-magenta, 10%),
-        700: darken(vars.$th-magenta, 20%),
-        800: darken(vars.$th-magenta, 30%),
-        900: darken(vars.$th-magenta, 40%),
-        contrast: (
-                50: rgba(black, 0.87),
-                100: rgba(black, 0.87),
-                200: rgba(black, 0.87),
-                300: rgba(black, 0.87),
-                400: rgba(black, 0.87),
-                500: white,
-                600: white,
-                700: white,
-                800: rgba(white, 0.87),
-                900: rgba(white, 0.87),
-        )
-));
-
-$lwm-accent: mat.m2-define-palette((
-        50: lighten(vars.$th-orange, 50%),
-        100: lighten(vars.$th-orange, 40%),
-        200: lighten(vars.$th-orange, 30%),
-        300: lighten(vars.$th-orange, 20%),
-        400: lighten(vars.$th-orange, 10%),
-        500: vars.$th-orange,
-        600: darken(vars.$th-orange, 10%),
-        700: darken(vars.$th-orange, 20%),
-        800: darken(vars.$th-orange, 30%),
-        900: darken(vars.$th-orange, 40%),
-        contrast: (
-                50: rgba(black, 0.87),
-                100: rgba(black, 0.87),
-                200: rgba(black, 0.87),
-                300: rgba(black, 0.87),
-                400: rgba(black, 0.87),
-                500: white,
-                600: white,
-                700: white,
-                800: rgba(white, 0.87),
-                900: rgba(white, 0.87),
-        )
-));
-
-$lwm-warn: mat.m2-define-palette((
-        50: lighten(vars.$th-red, 50%),
-        100: lighten(vars.$th-red, 40%),
-        200: lighten(vars.$th-red, 30%),
-        300: lighten(vars.$th-red, 20%),
-        400: lighten(vars.$th-red, 10%),
-        500: vars.$th-red,
-        600: darken(vars.$th-red, 10%),
-        700: darken(vars.$th-red, 20%),
-        800: darken(vars.$th-red, 30%),
-        900: darken(vars.$th-red, 40%),
-        contrast: (
-                50: rgba(black, 0.87),
-                100: rgba(black, 0.87),
-                200: rgba(black, 0.87),
-                300: rgba(black, 0.87),
-                400: rgba(black, 0.87),
-                500: white,
-                600: white,
-                700: white,
-                800: rgba(white, 0.87),
-                900: rgba(white, 0.87),
-        )
-));
-
-$lwm-typography: mat.m2-define-typography-config(
-        $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
-        $headline-1: mat.m2-define-typography-level(112px, 112px, 300),
-        $headline-2: mat.m2-define-typography-level(56px, 56px, 400),
-        $headline-3: mat.m2-define-typography-level(45px, 48px, 400),
-        $headline-4: mat.m2-define-typography-level(34px, 40px, 400),
-        $headline-5: mat.m2-define-typography-level(24px, 32px, 400),
-        $headline-6: mat.m2-define-typography-level(20px, 32px, 500),
-        $subtitle-1: mat.m2-define-typography-level(16px, 28px, 400),
-        $subtitle-2: mat.m2-define-typography-level(15px, 24px, 400),
-        $body-1: mat.m2-define-typography-level(14px, 20px, 400),
-        $body-2: mat.m2-define-typography-level(14px, 24px, 500),
-        $caption: mat.m2-define-typography-level(12px, 20px, 400),
-        $button: mat.m2-define-typography-level(14px, 14px, 500),
+$lwm-primary: mat.m2-define-palette(
+  (
+    50: lighten(vars.$th-magenta, 50%),
+    100: lighten(vars.$th-magenta, 40%),
+    200: lighten(vars.$th-magenta, 30%),
+    300: lighten(vars.$th-magenta, 20%),
+    400: lighten(vars.$th-magenta, 10%),
+    500: vars.$th-magenta,
+    600: darken(vars.$th-magenta, 10%),
+    700: darken(vars.$th-magenta, 20%),
+    800: darken(vars.$th-magenta, 30%),
+    900: darken(vars.$th-magenta, 40%),
+    contrast: (
+      50: rgba(black, 0.87),
+      100: rgba(black, 0.87),
+      200: rgba(black, 0.87),
+      300: rgba(black, 0.87),
+      400: rgba(black, 0.87),
+      500: white,
+      600: white,
+      700: white,
+      800: rgba(white, 0.87),
+      900: rgba(white, 0.87),
+    ),
+  )
 );
 
-$lwm-light-theme: mat.m2-define-light-theme((
-        color: (
-                primary: $lwm-primary,
-                accent: $lwm-accent,
-                warn: $lwm-warn
-        ),
-        typography: $lwm-typography,
-        density: 0
-));
+$lwm-accent: mat.m2-define-palette(
+  (
+    50: lighten(vars.$th-orange, 50%),
+    100: lighten(vars.$th-orange, 40%),
+    200: lighten(vars.$th-orange, 30%),
+    300: lighten(vars.$th-orange, 20%),
+    400: lighten(vars.$th-orange, 10%),
+    500: vars.$th-orange,
+    600: darken(vars.$th-orange, 10%),
+    700: darken(vars.$th-orange, 20%),
+    800: darken(vars.$th-orange, 30%),
+    900: darken(vars.$th-orange, 40%),
+    contrast: (
+      50: rgba(black, 0.87),
+      100: rgba(black, 0.87),
+      200: rgba(black, 0.87),
+      300: rgba(black, 0.87),
+      400: rgba(black, 0.87),
+      500: white,
+      600: white,
+      700: white,
+      800: rgba(white, 0.87),
+      900: rgba(white, 0.87),
+    ),
+  )
+);
+
+$lwm-warn: mat.m2-define-palette(
+  (
+    50: lighten(vars.$th-red, 50%),
+    100: lighten(vars.$th-red, 40%),
+    200: lighten(vars.$th-red, 30%),
+    300: lighten(vars.$th-red, 20%),
+    400: lighten(vars.$th-red, 10%),
+    500: vars.$th-red,
+    600: darken(vars.$th-red, 10%),
+    700: darken(vars.$th-red, 20%),
+    800: darken(vars.$th-red, 30%),
+    900: darken(vars.$th-red, 40%),
+    contrast: (
+      50: rgba(black, 0.87),
+      100: rgba(black, 0.87),
+      200: rgba(black, 0.87),
+      300: rgba(black, 0.87),
+      400: rgba(black, 0.87),
+      500: white,
+      600: white,
+      700: white,
+      800: rgba(white, 0.87),
+      900: rgba(white, 0.87),
+    ),
+  )
+);
+
+$lwm-typography: mat.m2-define-typography-config(
+  $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
+  $headline-1: mat.m2-define-typography-level(112px, 112px, 300),
+  $headline-2: mat.m2-define-typography-level(56px, 56px, 400),
+  $headline-3: mat.m2-define-typography-level(45px, 48px, 400),
+  $headline-4: mat.m2-define-typography-level(34px, 40px, 400),
+  $headline-5: mat.m2-define-typography-level(24px, 32px, 400),
+  $headline-6: mat.m2-define-typography-level(20px, 32px, 500),
+  $subtitle-1: mat.m2-define-typography-level(16px, 28px, 400),
+  $subtitle-2: mat.m2-define-typography-level(15px, 24px, 400),
+  $body-1: mat.m2-define-typography-level(14px, 20px, 400),
+  $body-2: mat.m2-define-typography-level(14px, 24px, 500),
+  $caption: mat.m2-define-typography-level(12px, 20px, 400),
+  $button: mat.m2-define-typography-level(14px, 14px, 500),
+);
+
+$lwm-light-theme: mat.m2-define-light-theme(
+  (
+    color: (
+      primary: $lwm-primary,
+      accent: $lwm-accent,
+      warn: $lwm-warn,
+    ),
+    typography: $lwm-typography,
+    density: 0,
+  )
+);

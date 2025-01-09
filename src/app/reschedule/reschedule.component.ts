@@ -1,244 +1,290 @@
-import {Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
-import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {fullUserName} from '../utils/component.utils'
-import {ReportCardEntryService, RescheduleCandidate} from '../services/report-card-entry.service'
-import {Subscription} from 'rxjs'
-import {isInThePast, subscribe} from '../utils/functions'
-import {DIALOG_WIDTH} from '../shared-dialogs/dialog-constants'
-import {FormControl, FormGroup, Validators} from '@angular/forms'
-import {isDate} from '../utils/type.check.utils'
-import {format, formatTime, LWMDateAdapter} from '../utils/lwmdate-adapter'
-import {resetControl} from '../utils/form-control-utils'
-import {ReportCardRescheduledAtom, ReportCardRescheduledProtocol, RescheduleReason} from '../models/report-card-rescheduled.model'
-import {RescheduleService} from '../services/reschedule.service'
-import {Time} from '../models/time.model'
-import {Room} from '../models/room.model'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
-import {MatCalendarCellCssClasses, MatDatepickerInputEvent} from '@angular/material/datepicker'
+import {
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation,
+} from "@angular/core"
+import { ReportCardEntryAtom } from "../models/report-card-entry.model"
+import { fullUserName } from "../utils/component.utils"
+import {
+  ReportCardEntryService,
+  RescheduleCandidate,
+} from "../services/report-card-entry.service"
+import { Subscription } from "rxjs"
+import { isInThePast, subscribe } from "../utils/functions"
+import { DIALOG_WIDTH } from "../shared-dialogs/dialog-constants"
+import { FormControl, FormGroup, Validators } from "@angular/forms"
+import { isDate } from "../utils/type.check.utils"
+import { format, formatTime, LWMDateAdapter } from "../utils/lwmdate-adapter"
+import { resetControl } from "../utils/form-control-utils"
+import {
+  ReportCardRescheduledAtom,
+  ReportCardRescheduledProtocol,
+  RescheduleReason,
+} from "../models/report-card-rescheduled.model"
+import { RescheduleService } from "../services/reschedule.service"
+import { Time } from "../models/time.model"
+import { Room } from "../models/room.model"
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from "@angular/material/dialog"
+import {
+  MatCalendarCellCssClasses,
+  MatDatepickerInputEvent,
+} from "@angular/material/datepicker"
 
-type DatePicked = 'candidate-date' | 'other-date' | 'none'
-type ReschedulePickerMode = 'pick-available' | 'create-custom' | 'none'
+type DatePicked = "candidate-date" | "other-date" | "none"
+type ReschedulePickerMode = "pick-available" | "create-custom" | "none"
 
 const allReasons = (): RescheduleReason[] => [
-    'Krankheit',
-    'Terminkollision',
-    'Erneuter Versuch',
-    'Defizit',
-    'Privat',
-    'Sonstiges'
+  "Krankheit",
+  "Terminkollision",
+  "Erneuter Versuch",
+  "Defizit",
+  "Privat",
+  "Sonstiges",
 ]
 
 @Component({
-    selector: 'lwm-reschedule',
-    templateUrl: './reschedule.component.html',
-    styleUrls: ['./reschedule.component.scss'],
-    providers: LWMDateAdapter.defaultProviders(),
-    encapsulation: ViewEncapsulation.None,
-    standalone: false
+  selector: "lwm-reschedule",
+  templateUrl: "./reschedule.component.html",
+  styleUrls: ["./reschedule.component.scss"],
+  providers: LWMDateAdapter.defaultProviders(),
+  encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class RescheduleComponent implements OnInit, OnDestroy {
+  readonly title: String
+  readonly formGroup: FormGroup
+  readonly dateControl: FormControl
+  readonly reasonControl: FormControl
+  readonly slotPickerControl: FormControl
+  readonly modes: ReschedulePickerMode[]
+  readonly reasons: string[]
 
-    readonly title: String
-    readonly formGroup: FormGroup
-    readonly dateControl: FormControl
-    readonly reasonControl: FormControl
-    readonly slotPickerControl: FormControl
-    readonly modes: ReschedulePickerMode[]
-    readonly reasons: string[]
+  datePickedMode: DatePicked
+  reschedulePickerMode: ReschedulePickerMode
 
-    datePickedMode: DatePicked
-    reschedulePickerMode: ReschedulePickerMode
+  slots: RescheduleCandidate[]
 
-    slots: RescheduleCandidate[]
+  private subs: Subscription[]
+  private rescheduleCandidates: RescheduleCandidate[]
 
-    private subs: Subscription[]
-    private rescheduleCandidates: RescheduleCandidate[]
+  static instance(
+    dialog: MatDialog,
+    e: ReportCardEntryAtom,
+    rs: ReportCardRescheduledAtom[],
+  ): MatDialogRef<RescheduleComponent, ReportCardRescheduledAtom> {
+    return dialog.open<RescheduleComponent>(RescheduleComponent, {
+      minWidth: DIALOG_WIDTH,
+      data: [e, rs],
+      panelClass: "lwmRescheduleDialog",
+    })
+  }
 
-    static instance(
-        dialog: MatDialog,
-        e: ReportCardEntryAtom,
-        rs: ReportCardRescheduledAtom[]
-    ): MatDialogRef<RescheduleComponent, ReportCardRescheduledAtom> {
-        return dialog.open<RescheduleComponent>(RescheduleComponent, {
-            minWidth: DIALOG_WIDTH,
-            data: [e, rs],
-            panelClass: 'lwmRescheduleDialog'
-        })
+  constructor(
+    private dialogRef: MatDialogRef<
+      RescheduleComponent,
+      ReportCardRescheduledAtom
+    >,
+    private reportCardEntryService: ReportCardEntryService,
+    private rescheduleService: RescheduleService,
+    @Inject(MAT_DIALOG_DATA)
+    public payload: [ReportCardEntryAtom, ReportCardRescheduledAtom[]],
+  ) {
+    this.title = `Termin ${this.payload[0].assignmentIndex + 1} (${this.payload[0].label}) von ${fullUserName(this.payload[0].student)} verschieben`
+    this.subs = []
+    this.rescheduleCandidates = []
+    this.slots = []
+    this.datePickedMode = "none"
+    this.reschedulePickerMode = "none"
+    this.modes = ["pick-available", "create-custom"]
+    this.reasons = allReasons()
+
+    this.dateControl = new FormControl(undefined, Validators.required)
+    this.slotPickerControl = new FormControl(undefined, Validators.required)
+    this.reasonControl = new FormControl(undefined, Validators.required)
+
+    this.formGroup = new FormGroup({
+      date: this.dateControl,
+      slotPicker: this.slotPickerControl,
+      reason: this.reasonControl,
+    })
+  }
+
+  ngOnInit(): void {
+    this.fetchRescheduleCandidates()
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((_) => _.unsubscribe)
+  }
+
+  dateCSSClass = (d: Date): MatCalendarCellCssClasses =>
+    this.rescheduleCandidates.find((_) => this.isSameDate(_.date, d))
+      ? "example-custom-date-class"
+      : ""
+
+  onCancel = () => this.dialogRef.close(undefined)
+
+  onSubmit = () => {
+    const isValid = (fc: FormControl): boolean => fc.errors !== undefined
+
+    const createOwn = () => {
+      const start = this.formGroup.controls["start"]
+      const end = this.formGroup.controls["end"]
+      const room = this.formGroup.controls["room"]
+
+      if (
+        ![this.dateControl, this.reasonControl, start, end, room].every(isValid)
+      ) {
+        return
+      }
+
+      const date = this.dateControl.value as Date
+      const protocol = this.createProtocol(
+        (room.value as Room).id,
+        date,
+        Time.fromTimeString(start.value, date),
+        Time.fromTimeString(end.value, date),
+        this.reasonControl.value,
+      )
+      this.reschedule(protocol)
     }
 
-    constructor(
-        private dialogRef: MatDialogRef<RescheduleComponent, ReportCardRescheduledAtom>,
-        private reportCardEntryService: ReportCardEntryService,
-        private rescheduleService: RescheduleService,
-        @Inject(MAT_DIALOG_DATA) public payload: [ReportCardEntryAtom, ReportCardRescheduledAtom[]]
-    ) {
-        this.title = `Termin ${this.payload[0].assignmentIndex + 1} (${this.payload[0].label}) von ${fullUserName(this.payload[0].student)} verschieben`
-        this.subs = []
-        this.rescheduleCandidates = []
-        this.slots = []
-        this.datePickedMode = 'none'
-        this.reschedulePickerMode = 'none'
-        this.modes = ['pick-available', 'create-custom']
-        this.reasons = allReasons()
+    const createFromPick = () => {
+      if (
+        ![this.dateControl, this.slotPickerControl, this.reasonControl].every(
+          isValid,
+        )
+      ) {
+        return
+      }
 
-        this.dateControl = new FormControl(undefined, Validators.required)
-        this.slotPickerControl = new FormControl(undefined, Validators.required)
-        this.reasonControl = new FormControl(undefined, Validators.required)
+      const candidate = this.slotPickerControl.value as RescheduleCandidate
+      const reason = this.reasonControl.value as RescheduleReason
+      const protocol = this.createProtocol(
+        candidate.room.id,
+        candidate.date,
+        candidate.start,
+        candidate.end,
+        reason,
+      )
 
-        this.formGroup = new FormGroup({
-            'date': this.dateControl,
-            'slotPicker': this.slotPickerControl,
-            'reason': this.reasonControl
-        })
+      this.reschedule(protocol)
     }
 
-    ngOnInit(): void {
-        this.fetchRescheduleCandidates()
-    }
-
-    ngOnDestroy(): void {
-        this.subs.forEach(_ => _.unsubscribe)
-    }
-
-    dateCSSClass = (d: Date): MatCalendarCellCssClasses =>
-        this.rescheduleCandidates.find(_ => this.isSameDate(_.date, d)) ? 'example-custom-date-class' : ''
-
-    onCancel = () =>
-        this.dialogRef.close(undefined)
-
-    onSubmit = () => {
-        const isValid = (fc: FormControl): boolean =>
-            fc.errors !== undefined
-
-        const createOwn = () => {
-            const start = this.formGroup.controls['start']
-            const end = this.formGroup.controls['end']
-            const room = this.formGroup.controls['room']
-
-            if (![this.dateControl, this.reasonControl, start, end, room].every(isValid)) {
-                return
-            }
-
-            const date = this.dateControl.value as Date
-            const protocol = this.createProtocol(
-                (room.value as Room).id,
-                date,
-                Time.fromTimeString(start.value, date),
-                Time.fromTimeString(end.value, date),
-                this.reasonControl.value
-            )
-            this.reschedule(protocol)
+    switch (this.datePickedMode) {
+      case "other-date":
+        createOwn()
+        break
+      case "candidate-date":
+        switch (this.reschedulePickerMode) {
+          case "pick-available":
+            createFromPick()
+            break
+          case "create-custom":
+            createOwn()
+            break
+          case "none":
+            break
         }
+        break
+      case "none":
+        break
+    }
+  }
 
-        const createFromPick = () => {
-            if (![this.dateControl, this.slotPickerControl, this.reasonControl].every(isValid)) {
-                return
-            }
+  onDateChange = ($event: MatDatepickerInputEvent<unknown>) => {
+    const date = $event.value
 
-            const candidate = this.slotPickerControl.value as RescheduleCandidate
-            const reason = this.reasonControl.value as RescheduleReason
-            const protocol = this.createProtocol(
-                candidate.room.id,
-                candidate.date,
-                candidate.start,
-                candidate.end,
-                reason
-            )
-
-            this.reschedule(protocol)
-        }
-
-        switch (this.datePickedMode) {
-            case 'other-date':
-                createOwn()
-                break
-            case 'candidate-date':
-                switch (this.reschedulePickerMode) {
-                    case 'pick-available':
-                        createFromPick()
-                        break
-                    case 'create-custom':
-                        createOwn()
-                        break
-                    case 'none':
-                        break
-                }
-                break
-            case 'none':
-                break
-        }
+    if (!isDate(date)) {
+      return
     }
 
-    onDateChange = ($event: MatDatepickerInputEvent<unknown>) => {
-        const date = $event.value
+    this.slots = this.rescheduleCandidates.filter((d) =>
+      this.isSameDate(d.date, date),
+    )
+    this.datePickedMode =
+      this.slots.length > 0 ? "candidate-date" : "other-date"
+    this.reschedulePickerMode = "none"
 
-        if (!isDate(date)) {
-            return
-        }
+    // slot picker is not required if user chooses custom slots
+    this.resetSlotPickerControls()
+  }
 
-        this.slots = this.rescheduleCandidates.filter(d => this.isSameDate(d.date, date))
-        this.datePickedMode = this.slots.length > 0 ? 'candidate-date' : 'other-date'
-        this.reschedulePickerMode = 'none'
+  slotLabel = (slot: RescheduleCandidate): string => {
+    const start = formatTime(slot.start, "HH:mm")
+    const end = formatTime(slot.end, "HH:mm")
+    // TODO remove those who rescheduled out and add those who rescheduled in
+    return `${start} - ${end} Uhr in ${slot.room.label} (max: ${slot.members} Teilnehmer)`
+  }
 
-        // slot picker is not required if user chooses custom slots
-        this.resetSlotPickerControls()
+  modeLabel = (mode: ReschedulePickerMode): string => {
+    switch (mode) {
+      case "create-custom":
+        return "Neuen Termin erstellen"
+      case "pick-available":
+        return "Aus verfügbaren Terminen wählen"
+      default:
+        return ""
     }
+  }
 
-    slotLabel = (slot: RescheduleCandidate): string => {
-        const start = formatTime(slot.start, 'HH:mm')
-        const end = formatTime(slot.end, 'HH:mm')
-        // TODO remove those who rescheduled out and add those who rescheduled in
-        return `${start} - ${end} Uhr in ${slot.room.label} (max: ${slot.members} Teilnehmer)`
-    }
+  reschedulePickerModeDidChange = (mode: ReschedulePickerMode) =>
+    this.resetSlotPickerControls()
 
-    modeLabel = (mode: ReschedulePickerMode): string => {
-        switch (mode) {
-            case 'create-custom':
-                return 'Neuen Termin erstellen'
-            case 'pick-available':
-                return 'Aus verfügbaren Terminen wählen'
-            default:
-                return ''
-        }
-    }
+  private createProtocol = (
+    room: string,
+    date: Date,
+    start: Time,
+    end: Time,
+    reason: RescheduleReason,
+  ): ReportCardRescheduledProtocol => ({
+    reportCardEntry: this.reportCardEntry().id,
+    reason: reason,
+    room: room,
+    date: format(date, "yyyy-MM-dd"),
+    start: formatTime(start, "HH:mm:ss"),
+    end: formatTime(end, "HH:mm:ss"),
+  })
 
-    reschedulePickerModeDidChange = (mode: ReschedulePickerMode) =>
-        this.resetSlotPickerControls()
+  private reschedule = (protocol: ReportCardRescheduledProtocol) => {
+    this.subs.push(
+      subscribe(
+        this.rescheduleService.create(
+          this.reportCardEntry().labwork.course,
+          protocol,
+        ),
+        (res) => this.dialogRef.close(res),
+      ),
+    )
+  }
 
-    private createProtocol = (room: string, date: Date, start: Time, end: Time, reason: RescheduleReason): ReportCardRescheduledProtocol =>
-        ({
-            reportCardEntry: this.reportCardEntry().id,
-            reason: reason,
-            room: room,
-            date: format(date, 'yyyy-MM-dd'),
-            start: formatTime(start, 'HH:mm:ss'),
-            end: formatTime(end, 'HH:mm:ss')
-        })
+  private resetSlotPickerControls = () => resetControl(this.slotPickerControl)
 
-    private reschedule = (protocol: ReportCardRescheduledProtocol) => {
-        this.subs.push(subscribe(
-            this.rescheduleService.create(this.reportCardEntry().labwork.course, protocol),
-            res => this.dialogRef.close(res)
-        ))
-    }
+  private isSameDate = (lhs: Date, rhs: Date) =>
+    lhs.getMonth() === rhs.getMonth() && lhs.getDate() === rhs.getDate()
 
-    private resetSlotPickerControls = () =>
-        resetControl(this.slotPickerControl)
+  private reportCardEntry = () => this.payload[0]
 
-    private isSameDate = (lhs: Date, rhs: Date) =>
-        lhs.getMonth() === rhs.getMonth() && lhs.getDate() === rhs.getDate()
+  private fetchRescheduleCandidates = () => {
+    const labwork = this.reportCardEntry().labwork
 
-    private reportCardEntry = () => this.payload[0]
+    const filterPastDates = (xs: RescheduleCandidate[]) =>
+      xs.filter((x) => isInThePast(x.date))
 
-    private fetchRescheduleCandidates = () => {
-        const labwork = this.reportCardEntry().labwork
-
-        const filterPastDates = (xs: RescheduleCandidate[]) =>
-            xs.filter(x => isInThePast(x.date))
-
-        this.subs.push(subscribe(
-            this.reportCardEntryService.rescheduleCandidates(labwork.course, labwork.semester),
-            xs => this.rescheduleCandidates = filterPastDates(xs)
-        ))
-    }
+    this.subs.push(
+      subscribe(
+        this.reportCardEntryService.rescheduleCandidates(
+          labwork.course,
+          labwork.semester,
+        ),
+        (xs) => (this.rescheduleCandidates = filterPastDates(xs)),
+      ),
+    )
+  }
 }
