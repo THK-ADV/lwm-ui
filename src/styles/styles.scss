@@ -1,0 +1,101 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+@use 'theme';
+@use 'variables' as vars;
+
+// Import your existing assets
+@use "../../assets/font/font.css";
+@use "../../assets/icons/icons.css";
+
+// Apply the theme
+@include mat.all-component-themes(theme.$lwm-light-theme);
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+}
+
+// Dialog styles update
+.lwmUserAuthorityUpdateDialog,
+.lwmCreateUpdateDialog,
+.lwmDeleteDialog,
+.lwmGroupEditDialog,
+.lwmCourseAuthorityUpdateDialog,
+.lwmTimetableEntryDialog,
+.lwmGroupPreviewDialog,
+.lwmConfirmationDialog,
+.lwmDecisionDialog,
+.lwmRescheduleDialog,
+.lwmAnnotationDialog,
+.studentApplicationDialog,
+.lwmAssignmentEntryTakeoverDialog {
+  .mat-mdc-dialog-container {
+    overflow: hidden;
+  }
+}
+
+// Calendar styles update
+full-calendar {
+  button.fc-button-primary,
+  button.fc-state-default {
+    background-color: vars.$th-magenta;
+    border-color: vars.$th-magenta;
+
+    &:hover,
+    &:active,
+    &:focus {
+      background-color: darken(vars.$th-magenta, 5%);
+      border-color: darken(vars.$th-magenta, 5%);
+    }
+  }
+}
+
+.material-icons {
+  line-height: 0.8em;
+}
+
+.strikethroughText {
+  color: vars.$th-red;
+}
+
+// Component styles
+.mat-mdc-card {
+  margin: map.get(vars.$spacing, 'low') 0 map.get(vars.$spacing, 'med') 0;
+  padding: 0 !important;
+  box-shadow: none !important;
+
+  .mat-mdc-card-content {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin: 0;
+    padding: 0;
+
+    .mat-mdc-form-field:not(:first-child) {
+      margin: 0 0 0 map.get(vars.$spacing, 'low');
+    }
+  }
+}
+
+// Button styles
+.mat-mdc-stroked-button {
+  &.mat-primary {
+    border: 2px lighten(vars.$th-magenta, 40) solid;
+    margin-right: map.get(vars.$spacing, 'small');
+  }
+
+  &.mat-accent {
+    border: 2px lighten(vars.$th-orange, 40) solid;
+    margin-right: map.get(vars.$spacing, 'small');
+  }
+
+  &.mat-warn {
+    border: 2px lighten(vars.$th-red, 40) solid;
+    margin-right: map.get(vars.$spacing, 'small');
+  }
+}

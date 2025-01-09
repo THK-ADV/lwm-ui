@@ -1,4 +1,4 @@
-@import '../../lwm.theme.config.scss';
+@use 'variables' as vars;
 
 //VARS
 $menuBorderRadius: 5px;
@@ -80,19 +80,19 @@ $sidebarColor: #262429;
       }
       .moduleHeader {
         mat-icon {
-          color: $th-magenta;
+          color: vars.$th-magenta;
         }
       }
 
       .configHeader {
         mat-icon {
-          color: $th-orange;
+          color: vars.$th-orange;
         }
       }
 
       .logoutHeader {
         mat-icon {
-          color: $th-red;
+          color: vars.$th-red;
         }
       }
 

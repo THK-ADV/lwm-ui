@@ -1,4 +1,6 @@
-@import "../../lwm.vars";
+@use 'variables' as vars;
+@use 'sass:map';
+
 $card-color: #e9ecef; 
 
 .application-card-list {
@@ -16,16 +18,16 @@ $card-color: #e9ecef;
         -webkit-box-pack: start;
         -ms-flex-pack: start;
         justify-content: flex-start;
-        margin: 0 $med-spacing $med-spacing 0;
+        margin: 0 map.get(vars.$spacing, 'med') map.get(vars.$spacing, 'med') 0;
         width: 400px;
         //border-radius: $lwm-border-radius;
         //border: 1px solid $light-bordercolor;
 
         .application-card-header {
             background-color: $card-color;
-            padding: $low-spacing;
-            border-top-left-radius: $lwm-border-radius;
-            border-top-right-radius: $lwm-border-radius;
+            padding: map.get(vars.$spacing, 'low');
+            border-top-left-radius: vars.$border-radius;
+            border-top-right-radius: vars.$border-radius;
             //border-bottom: 1px solid $light-bordercolor;
             font-weight: 600;
 
@@ -67,8 +69,8 @@ $card-color: #e9ecef;
 
         .application-card-actions {
           background-color: $card-color;
-          border-bottom-left-radius: $lwm-border-radius;
-          border-bottom-right-radius: $lwm-border-radius;
+          border-bottom-left-radius: vars.$border-radius;
+          border-bottom-right-radius: vars.$border-radius;
           width: 100%;
           display: -webkit-box;
           display: -ms-flexbox;
@@ -79,10 +81,10 @@ $card-color: #e9ecef;
           -webkit-box-pack: end;
           -ms-flex-pack: end;
           justify-content: flex-end;
-          padding-right: $med-spacing;
+          padding-right: map.get(vars.$spacing, 'med');
 
           button {
-              margin: $med-spacing 0 $med-spacing $low-spacing;
+              margin: map.get(vars.$spacing, 'med') 0 map.get(vars.$spacing, 'med') map.get(vars.$spacing, 'low');
           }
       }
     }

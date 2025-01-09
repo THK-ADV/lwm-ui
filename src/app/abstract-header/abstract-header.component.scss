@@ -1,4 +1,5 @@
-@import "../../lwm.vars.scss";
+@use 'variables' as vars;
+@use 'sass:map';
 
 .abstractTableMainTitle {
   h1 {
@@ -6,7 +7,7 @@
   }
   span button{
     float: right;
-    margin-left: $small-spacing;
+    margin-left: map.get(vars.$spacing, "small");
   }
   margin: 20px 0 40px 0;
 }

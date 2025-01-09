@@ -1,5 +1,6 @@
-@import "../../lwm.vars.scss";
+@use 'variables' as vars;
+@use 'sass:map';
 
 div.lwm-chain-actions button {
-    margin-right: $low-spacing;
+    margin-right: map.get(vars.$spacing, 'small');
 }

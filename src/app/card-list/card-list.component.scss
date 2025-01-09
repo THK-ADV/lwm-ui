@@ -1,4 +1,5 @@
-@import "../../lwm.vars";
+@use 'variables' as vars;
+@use 'sass:map';
 
 .lwm-card-list {
   display: -webkit-box;
@@ -15,15 +16,15 @@
     -webkit-box-pack: start;
     -ms-flex-pack: start;
     justify-content: flex-start;
-    margin: 0 $med-spacing $med-spacing 0;
+    margin: 0 map.get(vars.$spacing, 'med') map.get(vars.$spacing, 'med') 0;
     width: 400px;
-    border-radius: $lwm-border-radius;
-    border: 1px solid $light-bordercolor;
+    border-radius: vars.$border-radius;
+    border: 1px solid map.get(vars.$colors, "light-border");
 
     .lwm-card-header {
-      background-color: $heading-background;
-      padding: $low-spacing;
-      border-bottom: 1px solid $light-bordercolor;
+      background-color: #ddd;
+      padding: map.get(vars.$spacing, 'low');
+      border-bottom: 1px solid map.get(vars.$colors, "light-border");
       font-weight: 600;
 
       .lwm-card-title {
@@ -50,7 +51,7 @@
       }
 
       .mat-list-item:hover {
-        background-color: $hover-color;
+        background-color: vars.$hover-color;
       }
     }
   }

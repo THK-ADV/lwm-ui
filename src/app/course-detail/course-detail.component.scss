@@ -1,12 +1,13 @@
-@import "../../lwm.vars.scss";
+@use 'variables' as vars;
+@use 'sass:map';
 
 .courseDetailCard {
   width: 100%;
-  margin-bottom: $med-spacing;
+  margin-bottom: map.get(vars.$spacing, 'med');
 
   .detailHeader {
     width: 100%;
-    margin-top: $med-spacing;
+    margin-top: map.get(vars.$spacing, 'med');
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -29,7 +30,7 @@
         height: 70px;
         width: 70px;
         border-radius: 50%;
-        background-color: $th-magenta;
+        background-color: vars.$th-magenta;
         text-align: center;
         line-height: 70px;
         color: #fff;
@@ -74,22 +75,22 @@
     .descFooter {
       width: 100%;
       padding: 10px;
-      background-color: $ivory;
-      border: 1px solid $ivory-border;
+      background-color: vars.$ivory;
+      border: 1px solid vars.$ivory-border;
 
       text-transform: uppercase;
-      color: $header-font;
+      color: map.get(vars.$colors, 'header-font');
       font-weight: bold;
       button {
-        margin-left: $low-spacing; 
+        margin-left: map.get(vars.$spacing, 'low');
       }
     }
 
     .descContent {
       padding: 10px;
       min-height: 100px;
-      border-left: 1px solid $ivory-border;
-      border-right: 1px solid $ivory-border;
+      border-left: 1px solid vars.$ivory-border;
+      border-right: 1px solid vars.$ivory-border;
       word-wrap: break-word;
     }
 

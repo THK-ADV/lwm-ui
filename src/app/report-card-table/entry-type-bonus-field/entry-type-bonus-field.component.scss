@@ -1,9 +1,10 @@
-@import "../../../lwm.vars.scss";
+@use 'sass:map';
+@use 'variables' as vars;
 
 .reportcard-bonus {
-    margin: auto $med-spacing;
+    margin: auto map.get(vars.$spacing, 'med');
 
     input:disabled {
-        color: $lwm-font-color;
+        color: rgb(32, 32, 32);
     }
 }
