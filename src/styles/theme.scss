@@ -1,5 +1,6 @@
 @use "@angular/material" as mat;
 @use "sass:map";
+@use "sass:color";
 @use "variables" as vars;
 
 // Include the common styles for Angular Material
@@ -8,16 +9,16 @@
 // Create custom palettes using the Material Design palette generator
 $lwm-primary: mat.m2-define-palette(
   (
-    50: lighten(vars.$th-magenta, 50%),
-    100: lighten(vars.$th-magenta, 40%),
-    200: lighten(vars.$th-magenta, 30%),
-    300: lighten(vars.$th-magenta, 20%),
-    400: lighten(vars.$th-magenta, 10%),
+    50: color.adjust(vars.$th-magenta, $lightness: 50%),
+    100: color.adjust(vars.$th-magenta, $lightness: 40%),
+    200: color.adjust(vars.$th-magenta, $lightness: 30%),
+    300: color.adjust(vars.$th-magenta, $lightness: 20%),
+    400: color.adjust(vars.$th-magenta, $lightness: 10%),
     500: vars.$th-magenta,
-    600: darken(vars.$th-magenta, 10%),
-    700: darken(vars.$th-magenta, 20%),
-    800: darken(vars.$th-magenta, 30%),
-    900: darken(vars.$th-magenta, 40%),
+    600: color.adjust(vars.$th-magenta, $lightness: -10%),
+    700: color.adjust(vars.$th-magenta, $lightness: -20%),
+    800: color.adjust(vars.$th-magenta, $lightness: -30%),
+    900: color.adjust(vars.$th-magenta, $lightness: -40%),
     contrast: (
       50: rgba(black, 0.87),
       100: rgba(black, 0.87),
@@ -35,16 +36,16 @@ $lwm-primary: mat.m2-define-palette(
 
 $lwm-accent: mat.m2-define-palette(
   (
-    50: lighten(vars.$th-orange, 50%),
-    100: lighten(vars.$th-orange, 40%),
-    200: lighten(vars.$th-orange, 30%),
-    300: lighten(vars.$th-orange, 20%),
-    400: lighten(vars.$th-orange, 10%),
+    50: color.adjust(vars.$th-orange, $lightness: 50%),
+    100: color.adjust(vars.$th-orange, $lightness: 40%),
+    200: color.adjust(vars.$th-orange, $lightness: 30%),
+    300: color.adjust(vars.$th-orange, $lightness: 20%),
+    400: color.adjust(vars.$th-orange, $lightness: 10%),
     500: vars.$th-orange,
-    600: darken(vars.$th-orange, 10%),
-    700: darken(vars.$th-orange, 20%),
-    800: darken(vars.$th-orange, 30%),
-    900: darken(vars.$th-orange, 40%),
+    600: color.adjust(vars.$th-orange, $lightness: -10%),
+    700: color.adjust(vars.$th-orange, $lightness: -20%),
+    800: color.adjust(vars.$th-orange, $lightness: -30%),
+    900: color.adjust(vars.$th-orange, $lightness: -40%),
     contrast: (
       50: rgba(black, 0.87),
       100: rgba(black, 0.87),
@@ -62,16 +63,16 @@ $lwm-accent: mat.m2-define-palette(
 
 $lwm-warn: mat.m2-define-palette(
   (
-    50: lighten(vars.$th-red, 50%),
-    100: lighten(vars.$th-red, 40%),
-    200: lighten(vars.$th-red, 30%),
-    300: lighten(vars.$th-red, 20%),
-    400: lighten(vars.$th-red, 10%),
+    50: color.adjust(vars.$th-red, $lightness: 50%),
+    100: color.adjust(vars.$th-red, $lightness: 40%),
+    200: color.adjust(vars.$th-red, $lightness: 30%),
+    300: color.adjust(vars.$th-red, $lightness: 20%),
+    400: color.adjust(vars.$th-red, $lightness: 10%),
     500: vars.$th-red,
-    600: darken(vars.$th-red, 10%),
-    700: darken(vars.$th-red, 20%),
-    800: darken(vars.$th-red, 30%),
-    900: darken(vars.$th-red, 40%),
+    600: color.adjust(vars.$th-red, $lightness: -10%),
+    700: color.adjust(vars.$th-red, $lightness: -20%),
+    800: color.adjust(vars.$th-red, $lightness: -30%),
+    900: color.adjust(vars.$th-red, $lightness: -40%),
     contrast: (
       50: rgba(black, 0.87),
       100: rgba(black, 0.87),

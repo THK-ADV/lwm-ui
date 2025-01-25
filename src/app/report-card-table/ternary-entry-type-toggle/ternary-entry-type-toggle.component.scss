@@ -1,0 +1,22 @@
+@use '@angular/material' as mat;
+@use "variables" as vars;
+
+
+
+.failed {
+  @include mat.button-toggle-overrides((
+              selected-state-background-color: vars.$failed,
+  ));
+}
+
+.neutral {
+  @include mat.button-toggle-overrides((
+          selected-state-background-color: vars.$neutral,
+  ));
+}
+
+.passed {
+  @include mat.button-toggle-overrides((
+          selected-state-background-color: vars.$passed,
+  ));
+}

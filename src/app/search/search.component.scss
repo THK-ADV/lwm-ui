@@ -1,7 +1,9 @@
+@use "sass:color";
 $ft-color: #ababab;
 $border-color: #262429;
 $bg-color: #333333;
-$boder-color: #b43092;
+$border-color: #b43092;
+$darken-ft-color: color.adjust($ft-color, $lightness: -10%);
 
 * {
   margin-left: 4px;
@@ -10,9 +12,9 @@ $boder-color: #b43092;
     background-color: #0d0c0e; //$bg-color;
     color: $ft-color;
     border: none;
-    //border-left: 4px $boder-color solid;
+    //border-left: 4px $border-color solid;
     border-bottom: 1px $ft-color solid;
-    padding-left: 0px;
+    padding-left: 0;
     caret-color: $ft-color;
     font-size: 16px; //1em;
   }
@@ -22,17 +24,17 @@ $boder-color: #b43092;
 
   ::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
-    color: darken($ft-color, 10);
+    color: $darken-ft-color;
     opacity: 1; /* Firefox */
   }
 
   :-ms-input-placeholder {
     /* Internet Explorer 10-11 */
-    color: darken($ft-color, 10);
+    color: $darken-ft-color;
   }
 
   ::-ms-input-placeholder {
     /* Microsoft Edge */
-    color: darken($ft-color, 10);
+    color: $darken-ft-color;
   }
 }

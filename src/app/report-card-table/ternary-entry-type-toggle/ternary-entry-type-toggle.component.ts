@@ -1,11 +1,11 @@
-import { Component, Input, OnDestroy, OnInit } from "@angular/core"
+import { Component, Input, OnDestroy, OnInit } from '@angular/core'
 import {
   ReportCardEntryAtom,
   ReportCardEntryType,
-} from "../../models/report-card-entry.model"
-import { ReportCardEntryTypeService } from "../../services/report-card-entry-type.service"
-import { identity, Subscription } from "rxjs"
-import { mapUndefined, subscribe } from "../../utils/functions"
+} from '../../models/report-card-entry.model'
+import { ReportCardEntryTypeService } from '../../services/report-card-entry-type.service'
+import { identity, Subscription } from 'rxjs'
+import { mapUndefined, subscribe } from '../../utils/functions'
 
 enum TernaryState {
   passed = 3201,
@@ -14,9 +14,9 @@ enum TernaryState {
 }
 
 @Component({
-  selector: "lwm-ternary-entry-type-toggle",
-  templateUrl: "./ternary-entry-type-toggle.component.html",
-  styleUrls: ["./ternary-entry-type-toggle.component.scss"],
+  selector: 'lwm-ternary-entry-type-toggle',
+  templateUrl: './ternary-entry-type-toggle.component.html',
+  styleUrls: ['./ternary-entry-type-toggle.component.scss'],
   standalone: false,
 })
 export class TernaryEntryTypeToggleComponent implements OnInit, OnDestroy {

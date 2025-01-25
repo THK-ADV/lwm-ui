@@ -1,6 +1,7 @@
 <ng-container *ngIf="state">
   <mat-button-toggle-group
     class="toggle-group"
+    hideSingleSelectionIndicator = true
     [disabled]="!canApprove"
     [value]="state"
     (change)="onChange($event.value)">

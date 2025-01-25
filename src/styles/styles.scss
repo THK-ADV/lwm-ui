@@ -1,6 +1,7 @@
 @use "sass:map";
 @use "@angular/material" as mat;
 @use "theme";
+@use "sass:color";
 @use "variables" as vars;
 
 // Import your existing assets
@@ -48,8 +49,8 @@ full-calendar {
     &:hover,
     &:active,
     &:focus {
-      background-color: darken(vars.$th-magenta, 5%);
-      border-color: darken(vars.$th-magenta, 5%);
+      background-color: color.adjust(vars.$th-magenta, $lightness: -5%);
+      border-color: color.adjust(vars.$th-magenta, $lightness: -5%);
     }
   }
 }
@@ -85,17 +86,17 @@ full-calendar {
 // Button styles
 .mat-mdc-stroked-button {
   &.mat-primary {
-    border: 2px lighten(vars.$th-magenta, 40) solid;
+    border: 2px color.adjust(vars.$th-magenta, $lightness: 40%) solid;
     margin-right: map.get(vars.$spacing, "small");
   }
 
   &.mat-accent {
-    border: 2px lighten(vars.$th-orange, 40) solid;
+    border: 2px color.adjust(vars.$th-orange, $lightness: 40%) solid;
     margin-right: map.get(vars.$spacing, "small");
   }
 
   &.mat-warn {
-    border: 2px lighten(vars.$th-red, 40) solid;
+    border: 2px color.adjust(vars.$th-red, $lightness: 40%) solid;
     margin-right: map.get(vars.$spacing, "small");
   }
 }

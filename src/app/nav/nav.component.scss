@@ -1,8 +1,20 @@
+@use "sass:color";
+@use "sass:map";
+@use '@angular/material' as mat;
 @use "variables" as vars;
+
 
 //VARS
 $menuBorderRadius: 5px;
-$sidebarColor: #262429;
+
+$decoration-highlight: color.adjust(vars.$sidebarColor, $lightness: 20%);
+$decoration-darken: color.adjust(vars.$sidebarColor, $lightness: -40%);
+
+mat-nav-list {
+  @include mat.list-overrides((
+          list-item-label-text-color: map.get(vars.$colors, "header-font"),
+  ));
+}
 
 .lwm-container {
   display: flex;
@@ -15,7 +27,7 @@ $sidebarColor: #262429;
 
   mat-sidenav {
     width: 300px;
-    background-color: $sidebarColor;
+    background-color: vars.$sidebarColor;
     border: 0;
     margin-bottom: 0;
 
@@ -33,7 +45,7 @@ $sidebarColor: #262429;
       }
 
       #sidebar-nickname {
-        color: lighten($sidebarColor, 20);
+        color: $decoration-highlight;
         font-style: italic;
         font-size: 11px;
       }
@@ -43,8 +55,8 @@ $sidebarColor: #262429;
         display: inline-block;
         width: 60px;
         height: 60px;
-        background-color: lighten($sidebarColor, 20);
-        color: $sidebarColor;
+        background-color: $decoration-highlight;
+        color: vars.$sidebarColor;
         border-radius: 30px;
         line-height: 60px !important;
       }
@@ -53,8 +65,8 @@ $sidebarColor: #262429;
     mat-nav-list.navListContainer {
       width: 100%;
       list-style-type: none;
-      padding: 0px;
-      margin: 0px;
+      padding: 0;
+      margin: 0;
       max-height: 100%;
       overflow: hidden;
 
@@ -65,7 +77,7 @@ $sidebarColor: #262429;
       transition: max-height 0.5s;
 
       .sidebarHeader {
-        background: darken(#262429, 1);
+        background: $decoration-darken;
         padding: 10px;
         display: flex;
         width: 100%;
@@ -94,17 +106,24 @@ $sidebarColor: #262429;
         }
       }
 
-      .mat-list-item {
+      .mat-mdc-list-item {
         width: 100%;
         cursor: pointer;
-        color: #ababab;
-        border-left: 4px solid #333037;
+        border-radius: 0;
+        border-left: 4px solid $decoration-highlight;
         margin-left: 25px;
         height: 40px;
+
+
       }
+
+      a:hover {
+        background: $decoration-highlight;
+      }
+
       a.list-item-active {
         color: #f8f8f8;
-        background: lighten(#262429, 20);
+        background: $decoration-highlight;
       }
     }
   }
@@ -140,7 +159,7 @@ h1.lwm-app-name {
 }
 
 .mat-toolbar {
-  background-color: darken($sidebarColor, 10);
+  background-color: $decoration-darken;
   a.lwm-app-name,
   a.lwm-app-name:hover,
   a.lwm-app-name:active,
