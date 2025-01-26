@@ -1,11 +1,10 @@
 <div class="settings">
-    <h2>Einstellungen</h2>
+  <h2>Einstellungen</h2>
 
-    <mat-slide-toggle
-            [color]="'primary'"
-            (change)="updateToggleLabel($event.checked, true)"
-            [(ngModel)]="ownEntriesOnly">
-        {{toggleLabel}}
-    </mat-slide-toggle>
-
+  <mat-slide-toggle
+    [color]="'primary'"
+    (change)="updateToggleLabel($event.checked, true)"
+    [(ngModel)]="ownEntriesOnly">
+    {{ toggleLabel }}
+  </mat-slide-toggle>
 </div>

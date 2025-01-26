@@ -1,55 +1,73 @@
 <ng-container *ngIf="labwork | async as labwork">
-    <lwm-abstract-header [headerTitle]="headerTitle(labwork)"></lwm-abstract-header>
+  <lwm-abstract-header
+    [headerTitle]="headerTitle(labwork)"></lwm-abstract-header>
 
-    <ng-container *ngIf="assignmentEntries | async as assignmentEntries">
-        <ng-container *ngIf="students | async as students">
-            <form (submit)="onSubmit(students)">
-                <mat-dialog-content [formGroup]="formGroup">
-                    <mat-form-field color="primary">
-                        <mat-label>Aufgabe</mat-label>
-                        <mat-select [formControl]="assignmentEntryFc">
-                            <mat-option *ngFor="let entry of assignmentEntries | sort: sortAssignmentEntries"
-                                        [value]="entry">
-                                {{entry.label}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+  <ng-container *ngIf="assignmentEntries | async as assignmentEntries">
+    <ng-container *ngIf="students | async as students">
+      <form (submit)="onSubmit(students)">
+        <mat-dialog-content [formGroup]="formGroup">
+          <mat-form-field color="primary">
+            <mat-label>Aufgabe</mat-label>
+            <mat-select [formControl]="assignmentEntryFc">
+              <mat-option
+                *ngFor="
+                  let entry of assignmentEntries | sort: sortAssignmentEntries
+                "
+                [value]="entry">
+                {{ entry.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-                    <mat-form-field *ngIf="assignmentEntryFc.valid" color="primary">
-                        <mat-label>Abnahmeart</mat-label>
-                        <mat-select [formControl]="entryTypeFc">
-                            <mat-option *ngFor="let entry of entryTypes()" [value]="entry">
-                                {{entry.entryType}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+          <mat-form-field *ngIf="assignmentEntryFc.valid" color="primary">
+            <mat-label>Abnahmeart</mat-label>
+            <mat-select [formControl]="entryTypeFc">
+              <mat-option *ngFor="let entry of entryTypes()" [value]="entry">
+                {{ entry.entryType }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-                    <mat-form-field *ngIf="entryTypeFc.valid && entryTypeIsBool()" color="primary">
-                        <mat-label>Wert</mat-label>
-                        <mat-select [formControl]="entryTypeValueFc">
-                            <mat-option *ngFor="let entry of entryTypeValues()" [value]="entry">
-                                {{entry}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
+          <mat-form-field
+            *ngIf="entryTypeFc.valid && entryTypeIsBool()"
+            color="primary">
+            <mat-label>Wert</mat-label>
+            <mat-select [formControl]="entryTypeValueFc">
+              <mat-option
+                *ngFor="let entry of entryTypeValues()"
+                [value]="entry">
+                {{ entry }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
-                    <!-- this has to be split up, because there is a weird bug with ngAfterInitView -->
-                    <mat-form-field *ngIf="entryTypeFc.valid && !entryTypeIsBool()" color="primary">
-                        <input matInput [placeholder]="'Punkte'" [type]="'number'" [formControl]="entryTypeValueFc">
-                    </mat-form-field>
+          <!-- this has to be split up, because there is a weird bug with ngAfterInitView -->
+          <mat-form-field
+            *ngIf="entryTypeFc.valid && !entryTypeIsBool()"
+            color="primary">
+            <input
+              matInput
+              [placeholder]="'Punkte'"
+              [type]="'number'"
+              [formControl]="entryTypeValueFc" />
+          </mat-form-field>
 
-                    <mat-form-field color="primary">
-                        <mat-label>Studierende</mat-label>
-                        <textarea matInput [formControl]="studentsFc" [placeholder]="'inf123, inf456'"></textarea>
-                        <mat-hint>GMIDs. Durch Komma getrennt</mat-hint>
-                    </mat-form-field>
-                </mat-dialog-content>
+          <mat-form-field color="primary">
+            <mat-label>Studierende</mat-label>
+            <textarea
+              matInput
+              [formControl]="studentsFc"
+              [placeholder]="'inf123, inf456'"></textarea>
+            <mat-hint>GMIDs. Durch Komma getrennt</mat-hint>
+          </mat-form-field>
+        </mat-dialog-content>
 
-                <mat-dialog-actions>
-                    <button mat-flat-button color="primary" [disabled]="!isValidForm()">Abnahmen vergeben</button>
-                </mat-dialog-actions>
-            </form>
-        </ng-container>
+        <mat-dialog-actions>
+          <button mat-flat-button color="primary" [disabled]="!isValidForm()">
+            Abnahmen vergeben
+          </button>
+        </mat-dialog-actions>
+      </form>
     </ng-container>
-
+  </ng-container>
 </ng-container>

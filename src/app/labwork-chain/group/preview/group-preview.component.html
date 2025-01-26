@@ -1,23 +1,25 @@
 <lwm-abstract-header
-        [headerTitle]="headerTitle"
-        [actionTypes]="canPreview()"
-        (performAction)="onPreview()">
+  [headerTitle]="headerTitle"
+  [actionTypes]="canPreview()"
+  (performAction)="onPreview()">
 </lwm-abstract-header>
 
 <ng-container *ngIf="previewResult">
-    <p>
-        Staffelplan wurde in {{previewResult.fitness + 1}} Durchläufen mit {{previewResult.conflicts.length}} Konflikten
-        generiert.
-    </p>
+  <p>
+    Staffelplan wurde in {{ previewResult.fitness + 1 }} Durchläufen mit
+    {{ previewResult.conflicts.length }} Konflikten generiert.
+  </p>
 
-    <ng-container *ngIf="hasConflicts()">
-        <p *ngFor="let conflict of previewResult.conflicts">{{conflict | json}}</p>
-    </ng-container>
+  <ng-container *ngIf="hasConflicts()">
+    <p *ngFor="let conflict of previewResult.conflicts">
+      {{ conflict | json }}
+    </p>
+  </ng-container>
 </ng-container>
 
 <ng-container *ngIf="hasScheduleEntries()">
-    <p>Erster Termin: {{firstDate()}}</p>
-    <p>Letzer Termin: {{lastDate()}}</p>
+  <p>Erster Termin: {{ firstDate() }}</p>
+  <p>Letzer Termin: {{ lastDate() }}</p>
 </ng-container>
 
 <lwm-abstract-group-view [entries]="scheduleEntries"></lwm-abstract-group-view>

@@ -1,33 +1,39 @@
-import {Room} from './room.model'
-import {Time} from './time.model'
+import { Room } from "./room.model"
+import { Time } from "./time.model"
 
-export type RescheduleReason = 'Krankheit' | 'Terminkollision' | 'Privat' | 'Sonstiges' | 'Erneuter Versuch' | 'Defizit'
+export type RescheduleReason =
+  | "Krankheit"
+  | "Terminkollision"
+  | "Privat"
+  | "Sonstiges"
+  | "Erneuter Versuch"
+  | "Defizit"
 
 export interface ReportCardRescheduledAtom {
-    date: Date
-    start: Time
-    end: Time
-    room: Room
-    reason?: RescheduleReason
-    lastModified: Date
-    id: string
+  date: Date
+  start: Time
+  end: Time
+  room: Room
+  reason?: RescheduleReason
+  lastModified: Date
+  id: string
 }
 
 export interface ReportCardRescheduledAtomJSON {
-    date: string
-    start: string
-    end: string
-    room: Room
-    reason?: RescheduleReason
-    lastModified: string
-    id: string
+  date: string
+  start: string
+  end: string
+  room: Room
+  reason?: RescheduleReason
+  lastModified: string
+  id: string
 }
 
 export interface ReportCardRescheduledProtocol {
-    reportCardEntry: string
-    date: string
-    start: string
-    end: string
-    room: string
-    reason?: RescheduleReason
+  reportCardEntry: string
+  date: string
+  start: string
+  end: string
+  room: string
+  reason?: RescheduleReason
 }

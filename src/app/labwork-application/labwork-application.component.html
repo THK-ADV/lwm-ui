@@ -1,18 +1,20 @@
 <ng-container *ngIf="labwork">
-    <lwm-abstract-header [headerTitle]="headerTitle"
-                         [actionTypes]="actions()"
-                         (performAction)="onAction($event.type)">
-    </lwm-abstract-header>
+  <lwm-abstract-header
+    [headerTitle]="headerTitle"
+    [actionTypes]="actions()"
+    (performAction)="onAction($event.type)">
+  </lwm-abstract-header>
 
-    <lwm-abstract-table [sort]="{active: 'lastModified', direction: 'asc'}"
-                        [data$]="applications$"
-                        [tableContent]="tableContent"
-                        [columns]="columns"
-                        [filterPredicate]="filterPredicate"
-                        [canEdit]="canCreateOrUpdate"
-                        [canDelete]="canCreateOrUpdate"
-                        (dataSourceEmitter)="initDataSource($event)"
-                        (editEmitter)="onEdit($event)"
-                        (deleteEmitter)="onDelete($event)">
-    </lwm-abstract-table>
+  <lwm-abstract-table
+    [sort]="{ active: 'lastModified', direction: 'asc' }"
+    [data$]="applications$"
+    [tableContent]="tableContent"
+    [columns]="columns"
+    [filterPredicate]="filterPredicate"
+    [canEdit]="canCreateOrUpdate"
+    [canDelete]="canCreateOrUpdate"
+    (dataSourceEmitter)="initDataSource($event)"
+    (editEmitter)="onEdit($event)"
+    (deleteEmitter)="onDelete($event)">
+  </lwm-abstract-table>
 </ng-container>

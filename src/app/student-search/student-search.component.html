@@ -1,46 +1,41 @@
 <ng-container *ngIf="dashboard$ | async as dashboard; else loading">
-    <lwm-student-metadata [student]="dashboard.user"></lwm-student-metadata>
+  <lwm-student-metadata [student]="dashboard.user"></lwm-student-metadata>
 
-    <h1>Notenhefte</h1>
+  <h1>Notenhefte</h1>
 
-    <ng-container *ngIf="dashboard.courses.length > 0; else noCards">
-        <ng-container *ngFor="let course of dashboard.courses">
-            <h2>{{course.course.abbreviation}}</h2>
+  <ng-container *ngIf="dashboard.courses.length > 0; else noCards">
+    <ng-container *ngFor="let course of dashboard.courses">
+      <h2>{{ course.course.abbreviation }}</h2>
 
-            <mat-accordion [multi]="true">
-                <mat-expansion-panel *ngFor="let labwork of course.labworks"
-                                     [expanded]="expandIfCurrentSemester(dashboard.semester, labwork)">
-                    <mat-expansion-panel-header (click)="bindDataSource(labwork)">
-                        <mat-panel-title>
-                            {{panelTitle(labwork.labwork)}}
-                        </mat-panel-title>
-                        <mat-panel-description>
-                            {{panelSubTitle(labwork)}}
-                        </mat-panel-description>
-                    </mat-expansion-panel-header>
+      <mat-accordion [multi]="true">
+        <mat-expansion-panel
+          *ngFor="let labwork of course.labworks"
+          [expanded]="expandIfCurrentSemester(dashboard.semester, labwork)">
+          <mat-expansion-panel-header (click)="bindDataSource(labwork)">
+            <mat-panel-title>
+              {{ panelTitle(labwork.labwork) }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ panelSubTitle(labwork) }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
 
-                    <ng-template matExpansionPanelContent>
-                        <ng-container>
-                            <lwm-report-card-table
-                                    [allowAnnotations]="true"
-                                    [allowRescheduling]="true"
-                                    [tableModel]="dataSources.get(labwork)"
-                                    [auths]="auths"
-                                    [tableContentFor]="tableContentFor">
-                            </lwm-report-card-table>
-                        </ng-container>
-                    </ng-template>
-                </mat-expansion-panel>
-            </mat-accordion>
-
-        </ng-container>
+          <ng-template matExpansionPanelContent>
+            <ng-container>
+              <lwm-report-card-table
+                [allowAnnotations]="true"
+                [allowRescheduling]="true"
+                [tableModel]="dataSources.get(labwork)"
+                [auths]="auths"
+                [tableContentFor]="tableContentFor">
+              </lwm-report-card-table>
+            </ng-container>
+          </ng-template>
+        </mat-expansion-panel>
+      </mat-accordion>
     </ng-container>
+  </ng-container>
 
-    <ng-template #noCards>
-        Keine Notenhefte vorhanden
-    </ng-template>
+  <ng-template #noCards> Keine Notenhefte vorhanden </ng-template>
 </ng-container>
-<ng-template #loading>
-    Notenhefte werden geladen ...
-</ng-template>
-
+<ng-template #loading> Notenhefte werden geladen ... </ng-template>

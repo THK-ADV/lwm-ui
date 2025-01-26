@@ -1,24 +1,13 @@
-<h1 mat-dialog-title>{{payload.title}}</h1>
+<h1 mat-dialog-title>{{ payload.title }}</h1>
 
 <ng-container *ngIf="payload.body as body">
-    <mat-dialog-content [ngSwitch]="body.kind">
-        <p *ngSwitchCase="'text'">{{body.value}}</p>
-        <div *ngSwitchCase="'html'" [innerHTML]="body.value | safeHtml"></div>
-    </mat-dialog-content>
+  <mat-dialog-content [ngSwitch]="body.kind">
+    <p *ngSwitchCase="'text'">{{ body.value }}</p>
+    <div *ngSwitchCase="'html'" [innerHTML]="body.value | safeHtml"></div>
+  </mat-dialog-content>
 </ng-container>
 
-
 <mat-dialog-actions>
-    <button
-            mat-flat-button
-            cdkFocusInitial
-            (click)="cancel()">
-        Abbrechen
-    </button>
-    <button mat-flat-button
-            color="primary"
-            (click)="submit()">
-        Bestätigen
-    </button>
+  <button mat-flat-button cdkFocusInitial (click)="cancel()">Abbrechen</button>
+  <button mat-flat-button color="primary" (click)="submit()">Bestätigen</button>
 </mat-dialog-actions>
-

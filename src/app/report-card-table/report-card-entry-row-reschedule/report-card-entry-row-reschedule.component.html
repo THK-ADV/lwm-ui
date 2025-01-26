@@ -1,55 +1,67 @@
 <ng-container
-        *ngIf="isRescheduled_ && isAffectedByRescheduled(column); else standardCell">
-    <ng-container *ngIf="renderMultipleReschedules; else renderSingleReschedule">
-        <ng-container *ngFor="let r of reschedules; let i = index" [ngSwitch]="column">
-            <ng-container *ngSwitchCase="rescheduleReasonAttr">
-                <p>Grund: {{rescheduledContentFor(r, column)}}</p>
-                <p *ngIf="i + 1 == reschedules.length">{{tableContentFor(reportCardEntry, column)}}</p>
-            </ng-container>
+  *ngIf="isRescheduled_ && isAffectedByRescheduled(column); else standardCell">
+  <ng-container *ngIf="renderMultipleReschedules; else renderSingleReschedule">
+    <ng-container
+      *ngFor="let r of reschedules; let i = index"
+      [ngSwitch]="column">
+      <ng-container *ngSwitchCase="rescheduleReasonAttr">
+        <p>Grund: {{ rescheduledContentFor(r, column) }}</p>
+        <p *ngIf="i + 1 == reschedules.length">
+          {{ tableContentFor(reportCardEntry, column) }}
+        </p>
+      </ng-container>
 
-            <ng-container *ngSwitchCase="indexAttr">
-                <p *ngIf="i == 0">
-                    {{tableContentFor(reportCardEntry, column)}}
-                </p>
-                <p>
-                    <mat-icon color="primary">repeat</mat-icon>
-                </p>
-            </ng-container>
+      <ng-container *ngSwitchCase="indexAttr">
+        <p *ngIf="i == 0">
+          {{ tableContentFor(reportCardEntry, column) }}
+        </p>
+        <p>
+          <mat-icon color="primary">repeat</mat-icon>
+        </p>
+      </ng-container>
 
-            <ng-container *ngSwitchDefault>
-                <p *ngIf="i == 0">
-                    <del class="strikethroughText">{{tableContentFor(reportCardEntry, column)}}</del>
-                </p>
-                <p [ngSwitch]="i">
-                    <span *ngSwitchCase="reschedules.length - 1">{{rescheduledContentFor(r, column)}}</span>
-                    <del *ngSwitchDefault class="strikethroughText">{{rescheduledContentFor(r, column)}}</del>
-                </p>
-            </ng-container>
-        </ng-container>
+      <ng-container *ngSwitchDefault>
+        <p *ngIf="i == 0">
+          <del class="strikethroughText">{{
+            tableContentFor(reportCardEntry, column)
+          }}</del>
+        </p>
+        <p [ngSwitch]="i">
+          <span *ngSwitchCase="reschedules.length - 1">{{
+            rescheduledContentFor(r, column)
+          }}</span>
+          <del *ngSwitchDefault class="strikethroughText">{{
+            rescheduledContentFor(r, column)
+          }}</del>
+        </p>
+      </ng-container>
     </ng-container>
-    <ng-template #renderSingleReschedule [ngSwitch]="column">
-        <ng-container *ngSwitchCase="rescheduleReasonAttr">
-            <p>Grund: {{rescheduledContentFor(reschedules[0], column)}}</p>
-            <p>{{tableContentFor(reportCardEntry, column)}}</p>
-        </ng-container>
+  </ng-container>
+  <ng-template #renderSingleReschedule [ngSwitch]="column">
+    <ng-container *ngSwitchCase="rescheduleReasonAttr">
+      <p>Grund: {{ rescheduledContentFor(reschedules[0], column) }}</p>
+      <p>{{ tableContentFor(reportCardEntry, column) }}</p>
+    </ng-container>
 
-        <!-- TODO: align text with icon vertically -->
-        <ng-container *ngSwitchCase="indexAttr">
-            <p>{{tableContentFor(reportCardEntry, column)}}</p>
-            <p>
-                <mat-icon color="primary">repeat</mat-icon>
-            </p>
-        </ng-container>
+    <!-- TODO: align text with icon vertically -->
+    <ng-container *ngSwitchCase="indexAttr">
+      <p>{{ tableContentFor(reportCardEntry, column) }}</p>
+      <p>
+        <mat-icon color="primary">repeat</mat-icon>
+      </p>
+    </ng-container>
 
-        <ng-container *ngSwitchDefault>
-            <p>
-                <del class="strikethroughText">{{tableContentFor(reportCardEntry, column)}}</del>
-            </p>
-            <p>{{rescheduledContentFor(reschedules[0], column)}}</p>
-        </ng-container>
-    </ng-template>
+    <ng-container *ngSwitchDefault>
+      <p>
+        <del class="strikethroughText">{{
+          tableContentFor(reportCardEntry, column)
+        }}</del>
+      </p>
+      <p>{{ rescheduledContentFor(reschedules[0], column) }}</p>
+    </ng-container>
+  </ng-template>
 </ng-container>
 
 <ng-template #standardCell>
-    {{tableContentFor(reportCardEntry, column)}}
+  {{ tableContentFor(reportCardEntry, column) }}
 </ng-template>

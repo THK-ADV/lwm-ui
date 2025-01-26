@@ -1,4 +1,5 @@
-@import "../../lwm.vars";
+@use "variables" as vars;
+@use "sass:map";
 
 .abstractTableMainTitle {
   h1 {
@@ -14,12 +15,10 @@
 
 table {
   button {
-    margin: $small-spacing;
+    margin: map.get(vars.$spacing, "small");
   }
 }
 
 th.mat-sort-header-sorted {
   color: black;
 }
-
-

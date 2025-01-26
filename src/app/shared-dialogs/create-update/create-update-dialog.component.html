@@ -1,71 +1,109 @@
-<h1 mat-dialog-title>{{payload.headerTitle}}</h1>
+<h1 mat-dialog-title>{{ payload.headerTitle }}</h1>
 
 <div class="modalContainer">
-    <form (submit)="onSubmit()">
-        <mat-dialog-content [formGroup]="formGroup">
-            <mat-form-field class="mat-form-field-modal" *ngFor="let d of payload.data" color="primary"
-                            [ngSwitch]="d.data.type">
-                <ng-container *ngSwitchCase="'date'">
-                    <div class="lwmDatepicker">
-                        <input matInput readonly [matDatepicker]="dp" [placeholder]="d.displayTitle"
-                               [formControlName]="d.formControlName" (click)="dp.open()">
-                        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-                    </div>
-                    <mat-datepicker #dp color="primary"></mat-datepicker>
-                </ng-container>
-                <mat-error *ngIf="hasFormGroupError(d.formControlName)">{{formGroupErrorMessage(d.formControlName)}}
-                </mat-error>
+  <form (submit)="onSubmit()">
+    <mat-dialog-content [formGroup]="formGroup">
+      <mat-form-field
+        class="mat-form-field-modal"
+        *ngFor="let d of payload.data"
+        color="primary"
+        [ngSwitch]="d.data.type">
+        <ng-container *ngSwitchCase="'date'">
+          <div class="lwmDatepicker">
+            <input
+              matInput
+              readonly
+              [matDatepicker]="dp"
+              [placeholder]="d.displayTitle"
+              [formControlName]="d.formControlName"
+              (click)="dp.open()" />
+            <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          </div>
+          <mat-datepicker #dp color="primary"></mat-datepicker>
+        </ng-container>
+        <mat-error *ngIf="hasFormGroupError(d.formControlName)"
+          >{{ formGroupErrorMessage(d.formControlName) }}
+        </mat-error>
 
-                <ng-container *ngSwitchCase="'time'">
-                    <input matInput [placeholder]="d.displayTitle" [type]="d.data.type"
-                           [formControlName]="d.formControlName">
-                </ng-container>
-                <mat-error *ngIf="hasLocalTimeError(d.formControlName)">{{getLocalTimeErrorMessage(d.formControlName)}}
-                </mat-error>
+        <ng-container *ngSwitchCase="'time'">
+          <input
+            matInput
+            [placeholder]="d.displayTitle"
+            [type]="d.data.type"
+            [formControlName]="d.formControlName" />
+        </ng-container>
+        <mat-error *ngIf="hasLocalTimeError(d.formControlName)"
+          >{{ getLocalTimeErrorMessage(d.formControlName) }}
+        </mat-error>
 
-                <ng-container *ngSwitchCase="'options'">
-                    <input type="text" [placeholder]="d.displayTitle" matInput
-                           [formControlName]="d.formControlName" [matAutocomplete]="auto">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="d.data.displayFn">
-                        <mat-option *ngFor="let option of d.data.filteredOptions | async" [value]="option">
-                            {{d.data.displayFn(option)}}
-                        </mat-option>
-                    </mat-autocomplete>
-                </ng-container>
-                <mat-error *ngIf="hasOptionError_(d.data)">{{getOptionErrorMessage_(d.data)}}
-                </mat-error>
+        <ng-container *ngSwitchCase="'options'">
+          <input
+            type="text"
+            [placeholder]="d.displayTitle"
+            matInput
+            [formControlName]="d.formControlName"
+            [matAutocomplete]="auto" />
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            [displayWith]="d.data.displayFn">
+            <mat-option
+              *ngFor="let option of d.data.filteredOptions | async"
+              [value]="option">
+              {{ d.data.displayFn(option) }}
+            </mat-option>
+          </mat-autocomplete>
+        </ng-container>
+        <mat-error *ngIf="hasOptionError_(d.data)"
+          >{{ getOptionErrorMessage_(d.data) }}
+        </mat-error>
 
-                <ng-container *ngSwitchCase="'textArea'">
-                <textarea matInput [placeholder]="d.displayTitle" [type]="d.data.type"
-                          [formControlName]="d.formControlName"></textarea>
-                </ng-container>
+        <ng-container *ngSwitchCase="'textArea'">
+          <textarea
+            matInput
+            [placeholder]="d.displayTitle"
+            [type]="d.data.type"
+            [formControlName]="d.formControlName"></textarea>
+        </ng-container>
 
-                <ng-container *ngSwitchCase="'select'">
-                    <mat-label>{{d.displayTitle}}</mat-label>
-                    <mat-select [formControlName]="d.formControlName" [(value)]="d.data.value">
-                        <mat-option *ngFor="let value of d.data.allValues" [value]="value">
-                            {{value}}
-                        </mat-option>
-                    </mat-select>
-                </ng-container>
+        <ng-container *ngSwitchCase="'select'">
+          <mat-label>{{ d.displayTitle }}</mat-label>
+          <mat-select
+            [formControlName]="d.formControlName"
+            [(value)]="d.data.value">
+            <mat-option *ngFor="let value of d.data.allValues" [value]="value">
+              {{ value }}
+            </mat-option>
+          </mat-select>
+        </ng-container>
 
-                <ng-container *ngSwitchCase="'boolean'">
-                    <!-- workaround to wrap slide toggle inside a valid mat form field type -->
-                    <input matInput style="display: none">
-                    <mat-slide-toggle color="primary" [formControlName]="d.formControlName"
-                                      [checked]="d.data.value">{{d.displayTitle}}</mat-slide-toggle>
-                </ng-container>
+        <ng-container *ngSwitchCase="'boolean'">
+          <!-- workaround to wrap slide toggle inside a valid mat form field type -->
+          <input matInput style="display: none" />
+          <mat-slide-toggle
+            color="primary"
+            [formControlName]="d.formControlName"
+            [checked]="d.data.value"
+            >{{ d.displayTitle }}</mat-slide-toggle
+          >
+        </ng-container>
 
-                <ng-container *ngSwitchDefault>
-                    <input matInput [placeholder]="d.displayTitle" [type]="d.data.type"
-                           [formControlName]="d.formControlName">
-                </ng-container>
-            </mat-form-field>
-        </mat-dialog-content>
+        <ng-container *ngSwitchDefault>
+          <input
+            matInput
+            [placeholder]="d.displayTitle"
+            [type]="d.data.type"
+            [formControlName]="d.formControlName" />
+        </ng-container>
+      </mat-form-field>
+    </mat-dialog-content>
 
-        <mat-dialog-actions>
-            <button type="button" mat-flat-button (click)="onCancel()">Abbrechen</button>
-            <button mat-flat-button color="primary" cdkFocusInitial>{{payload.submitTitle}}</button>
-        </mat-dialog-actions>
-    </form>
+    <mat-dialog-actions>
+      <button type="button" mat-flat-button (click)="onCancel()">
+        Abbrechen
+      </button>
+      <button mat-flat-button color="primary" cdkFocusInitial>
+        {{ payload.submitTitle }}
+      </button>
+    </mat-dialog-actions>
+  </form>
 </div>

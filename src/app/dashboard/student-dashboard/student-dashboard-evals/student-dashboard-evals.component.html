@@ -1,12 +1,12 @@
 <h2>Ausgewertete Praktika</h2>
 
 <ng-container *ngIf="hasPassedLabworks(); else noEvals">
-    <p *ngFor="let eval of evals">
-        <span>{{eval.course}} - {{eval.semester}}: </span>
-        <span>{{eval.passed ? 'bestanden' : 'nicht bestanden'}}</span>
-    </p>
+  <p *ngFor="let eval of evals">
+    <span>{{ eval.course }} - {{ eval.semester }}: </span>
+    <span>{{ eval.passed ? "bestanden" : "nicht bestanden" }}</span>
+  </p>
 </ng-container>
 
 <ng-template #noEvals>
-    <p>Es gibt noch keine ausgewertete Praktika.</p>
+  <p>Es gibt noch keine ausgewertete Praktika.</p>
 </ng-template>

@@ -1,9 +1,11 @@
-<h1 mat-dialog-title>{{data.label}}</h1>
+<h1 mat-dialog-title>{{ data.label }}</h1>
 <mat-dialog-content>
-    <p>Möchten Sie "{{data.label}}" wirklich löschen?</p>
+  <p>Möchten Sie "{{ data.label }}" wirklich löschen?</p>
 </mat-dialog-content>
 
 <mat-dialog-actions>
-    <button mat-flat-button (click)="onNoClick()">Abbrechen</button>
-    <button mat-flat-button color="warn" [mat-dialog-close]="data.id">Löschen</button>
+  <button mat-flat-button (click)="onNoClick()">Abbrechen</button>
+  <button mat-flat-button color="warn" [mat-dialog-close]="data.id">
+    Löschen
+  </button>
 </mat-dialog-actions>

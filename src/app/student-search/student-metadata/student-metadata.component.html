@@ -1,13 +1,13 @@
 <ng-container *ngIf="student">
-    <h1>{{title()}}</h1>
+  <h1>{{ title() }}</h1>
 
-    <div>
-        <mat-icon>email</mat-icon>
-        <a [href]="mailtoUrl()">{{mailAddress()}}</a>
-    </div>
+  <div>
+    <mat-icon>email</mat-icon>
+    <a [href]="mailtoUrl()">{{ mailAddress() }}</a>
+  </div>
 
-    <div>
-        <mat-icon>school</mat-icon>
-        <span>{{enrollmentLabel()}}</span>
-    </div>
+  <div>
+    <mat-icon>school</mat-icon>
+    <span>{{ enrollmentLabel() }}</span>
+  </div>
 </ng-container>

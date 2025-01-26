@@ -1,6 +1,7 @@
 <mat-form-field *ngIf="fc" class="reportcard-bonus">
-    <input matInput
-           type="number"
-           [formControl]="fc"
-           (focusout)="focusOut($event.target.value, fc)">
+  <input
+    matInput
+    type="number"
+    [formControl]="fc"
+    (focusout)="focusOut($event.target.value, fc)" />
 </mat-form-field>

@@ -1,8 +1,9 @@
-<button *ngFor="let action of actions"
-        mat-stroked-button
-        [color]="action.color"
-        (click)="performAction.emit(action.type)"
-        [matTooltip]="action.tooltipName"
-        [matTooltipPosition]="action.tooltipPosition">
-    <mat-icon>{{action.iconName}}</mat-icon>
+<button
+  *ngFor="let action of actions"
+  mat-stroked-button
+  [color]="action.color"
+  (click)="performAction.emit(action.type)"
+  [matTooltip]="action.tooltipName"
+  [matTooltipPosition]="action.tooltipPosition">
+  <mat-icon>{{ action.iconName }}</mat-icon>
 </button>

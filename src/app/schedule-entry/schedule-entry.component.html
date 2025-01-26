@@ -1,15 +1,15 @@
 <ng-container *ngIf="reportCardEntries && scheduleEntry; else loading">
-    <lwm-schedule-entry-header
-            [reportCardEntries]="reportCardEntries"
-            [scheduleEntry]="scheduleEntry">
-    </lwm-schedule-entry-header>
+  <lwm-schedule-entry-header
+    [reportCardEntries]="reportCardEntries"
+    [scheduleEntry]="scheduleEntry">
+  </lwm-schedule-entry-header>
 
-    <lwm-schedule-entry-table
-            [reportCardEntries]="reportCardEntries"
-            [scheduleEntry]="scheduleEntry">
-    </lwm-schedule-entry-table>
+  <lwm-schedule-entry-table
+    [reportCardEntries]="reportCardEntries"
+    [scheduleEntry]="scheduleEntry">
+  </lwm-schedule-entry-table>
 </ng-container>
 
 <ng-template #loading>
-    <p>Einträge werden geladen...</p>
+  <p>Einträge werden geladen...</p>
 </ng-template>

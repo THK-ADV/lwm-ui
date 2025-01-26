@@ -1,28 +1,27 @@
 <ng-container *ngIf="dashboard as dashboard">
-    <div class="jumbotron">
-        <h1>{{dashboard.semester.label}}</h1>
-    </div>
+  <div class="jumbotron">
+    <h1>{{ dashboard.semester.label }}</h1>
+  </div>
 
-    <lwm-student-dashboard-application
-            [labworks]="dashboard.labworks"
-            [labworkApplications]="dashboard.labworkApplications"
-            [student]="dashboard.user">
-    </lwm-student-dashboard-application>
+  <lwm-student-dashboard-application
+    [labworks]="dashboard.labworks"
+    [labworkApplications]="dashboard.labworkApplications"
+    [student]="dashboard.user">
+  </lwm-student-dashboard-application>
 
-    <lwm-dashboard-cal-legend
-            [title]="'Laufende Praktika'"
-            [courses]="courses"
-            (legendClicked)="routeToReportCards($event)">
-    </lwm-dashboard-cal-legend>
+  <lwm-dashboard-cal-legend
+    [title]="'Laufende Praktika'"
+    [courses]="courses"
+    (legendClicked)="routeToReportCards($event)">
+  </lwm-dashboard-cal-legend>
 
-    <lwm-student-dashboard-cal
-            [groups]="dashboard.groups"
-            [reportCardEntries]="dashboard.reportCardEntries"
-            [scheduleEntries]="dashboard.scheduleEntries"
-            [semester]="dashboard.semester">
-    </lwm-student-dashboard-cal>
+  <lwm-student-dashboard-cal
+    [groups]="dashboard.groups"
+    [reportCardEntries]="dashboard.reportCardEntries"
+    [scheduleEntries]="dashboard.scheduleEntries"
+    [semester]="dashboard.semester">
+  </lwm-student-dashboard-cal>
 
-    <lwm-student-dashboard-evals
-            [evals]="dashboard.evaluationResults">
-    </lwm-student-dashboard-evals>
+  <lwm-student-dashboard-evals [evals]="dashboard.evaluationResults">
+  </lwm-student-dashboard-evals>
 </ng-container>

@@ -1,11 +1,10 @@
 <lwm-abstract-blacklist-timetable-view
-        [labwork]="labwork"
-        [timetable]="timetable"
-        [canEdit]="hasPermission"
-        [canDelete]="hasPermission"
-        [canCreate]="canCreate()"
-        (updateEmitter)="onEdit($event)"
-        (deleteEmitter)="onDelete($event)"
-        (createEmitter)="onCreate()">
-
+  [labwork]="labwork"
+  [timetable]="timetable"
+  [canEdit]="hasPermission"
+  [canDelete]="hasPermission"
+  [canCreate]="canCreate()"
+  (updateEmitter)="onEdit($event)"
+  (deleteEmitter)="onDelete($event)"
+  (createEmitter)="onCreate()">
 </lwm-abstract-blacklist-timetable-view>
