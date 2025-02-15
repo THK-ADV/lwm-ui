@@ -14,6 +14,11 @@
 html,
 body {
   height: 100%;
+
+  a {
+    text-decoration: none;
+    color: #5e5e5e;
+  }
 }
 
 body {
@@ -41,16 +46,23 @@ body {
 
 // Calendar styles update
 full-calendar {
-  button.fc-button-primary,
-  button.fc-state-default {
-    background-color: vars.$th-magenta;
-    border-color: vars.$th-magenta;
 
-    &:hover,
-    &:active,
-    &:focus {
-      background-color: color.adjust(vars.$th-magenta, $lightness: -5%);
-      border-color: color.adjust(vars.$th-magenta, $lightness: -5%);
+  .fc-col-header-cell {
+    padding: 16px;
+  }
+
+  .fc-toolbar {
+    button.fc-button-primary,
+    button.fc-state-default {
+      background-color: vars.$th-magenta;
+      border-color: vars.$th-magenta;
+
+      &:hover,
+      &:active,
+      &:focus {
+        background-color: color.adjust(vars.$th-magenta, $lightness: -5%);
+        border-color: color.adjust(vars.$th-magenta, $lightness: -5%);
+      }
     }
   }
 }

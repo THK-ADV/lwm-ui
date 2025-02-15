@@ -1,9 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core"
+import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 
 @Component({
-  selector: "lwm-dashboard-calendar-settings",
-  templateUrl: "./dashboard-calendar-settings.component.html",
-  styleUrls: ["./dashboard-calendar-settings.component.scss"],
+  selector: 'lwm-dashboard-calendar-settings',
+  templateUrl: './dashboard-calendar-settings.component.html',
+  styleUrls: ['./dashboard-calendar-settings.component.scss'],
   standalone: false,
 })
 export class DashboardCalendarSettingsComponent implements OnInit {
@@ -22,9 +22,9 @@ export class DashboardCalendarSettingsComponent implements OnInit {
 
   updateToggleLabel = (checked: boolean, emit: boolean) => {
     if (checked) {
-      this.toggleLabel = "Nur meine Termine anzeigen"
+      this.toggleLabel = 'Nur meine Termine anzeigen'
     } else {
-      this.toggleLabel = "Alle Termine anzeigen"
+      this.toggleLabel = 'Alle Termine anzeigen'
     }
 
     if (emit) {

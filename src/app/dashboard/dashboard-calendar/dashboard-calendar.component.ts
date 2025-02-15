@@ -5,22 +5,22 @@ import {
   OnInit,
   Output,
   ViewChild,
-} from "@angular/core"
+} from '@angular/core'
 import {
   CalendarView,
   ScheduleEntryEvent,
-} from "../../labwork-chain/schedule/view/schedule-view-model"
-import dayGridPlugin from "@fullcalendar/daygrid"
-import listPlugin from "@fullcalendar/list"
-import { FullCalendarComponent } from "@fullcalendar/angular"
-import { Semester } from "../../models/semester.model"
-import { minBy } from "../../utils/functions"
-import { CalendarOptions } from "@fullcalendar/core"
+} from '../../labwork-chain/schedule/view/schedule-view-model'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import listPlugin from '@fullcalendar/list'
+import { FullCalendarComponent } from '@fullcalendar/angular'
+import { Semester } from '../../models/semester.model'
+import { minBy } from '../../utils/functions'
+import { CalendarOptions } from '@fullcalendar/core'
 
 @Component({
-  selector: "lwm-dashboard-calendar",
-  templateUrl: "./dashboard-calendar.component.html",
-  styleUrls: ["./dashboard-calendar.component.scss"],
+  selector: 'lwm-dashboard-calendar',
+  templateUrl: './dashboard-calendar.component.html',
+  styleUrls: ['./dashboard-calendar.component.scss'],
   standalone: false,
 })
 export class DashboardCalendarComponent<A> implements OnInit {
@@ -42,26 +42,25 @@ export class DashboardCalendarComponent<A> implements OnInit {
   allDates: ScheduleEntryEvent<any>[] = []
   startDate: Date
 
-  @ViewChild("calendar") calendar: FullCalendarComponent
+  @ViewChild('calendar') calendar: FullCalendarComponent
 
   calendarOptions: CalendarOptions = {
-    initialView: "dayGridMonth",
+    initialView: 'dayGridMonth',
     plugins: [dayGridPlugin, listPlugin],
-    locale: "de",
+    locale: 'de',
     editable: true,
     nowIndicator: false,
     weekends: false,
     firstDay: 1,
     headerToolbar: {
-      left: "month, list, today",
-      center: "title",
-      right: "prev,next",
+      left: 'month list today',
+      center: 'title',
+      right: 'prev next',
     },
-    buttonText: { month: "Monat", list: "Liste" },
-    dayHeaderFormat: { weekday: "long" },
+    dayHeaderFormat: { weekday: 'long' },
     eventTimeFormat: {
-      hour: "2-digit",
-      minute: "2-digit",
+      hour: '2-digit',
+      minute: '2-digit',
       omitZeroMinute: false,
       meridiem: false,
     },
@@ -70,9 +69,9 @@ export class DashboardCalendarComponent<A> implements OnInit {
 
   ngOnInit(): void {
     this.calendarOptions.customButtons = {
-      today: { text: "Heute", click: this.goToToday },
-      month: { text: "Monat", click: this.showMonthView },
-      list: { text: "Liste", click: this.showListView },
+      today: { text: 'Heute', click: this.goToToday },
+      month: { text: 'Monat', click: this.showMonthView },
+      list: { text: 'Liste', click: this.showListView },
     }
     this.calendarOptions.validRange = {
       start: this.semester.start,
@@ -90,13 +89,13 @@ export class DashboardCalendarComponent<A> implements OnInit {
   }
 
   showMonthView = () => {
-    this.updateTitle("month")
-    this.calendar.getApi().changeView("dayGridMonth")
+    this.updateTitle('month')
+    this.calendar.getApi().changeView('dayGridMonth')
   }
 
   showListView = () => {
-    this.updateTitle("list")
-    this.calendar.getApi().changeView("listWeek")
+    this.updateTitle('list')
+    this.calendar.getApi().changeView('listWeek')
   }
 
   private setStartDate = () => {
