@@ -69,7 +69,7 @@ export const updateTimetableEntry$ = (
 ): Observable<TimetableAtom> => {
     const copy = {...existing}
     copy.entries[id] = update(copy.entries[id])
-    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
+    return service.update(copy.labwork.course, copy.id, toTimetableProtocol(copy))
 }
 
 export const removeTimetableEntry$ = (
@@ -79,7 +79,7 @@ export const removeTimetableEntry$ = (
 ): Observable<TimetableAtom> => {
     const copy = {...existing}
     copy.entries.splice(id, 1)
-    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
+    return service.update(copy.labwork.course, copy.id, toTimetableProtocol(copy))
 }
 
 export const createTimetableEntry$ = (
@@ -99,7 +99,7 @@ export const createTimetableEntry$ = (
         end: Time.fromDate(end)
     })
 
-    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(copy))
+    return service.update(copy.labwork.course, copy.id, toTimetableProtocol(copy))
 }
 
 export const updateTimetable$ = (
@@ -108,7 +108,7 @@ export const updateTimetable$ = (
     update: (t: Readonly<TimetableAtom>) => Readonly<TimetableAtom>
 ): Observable<TimetableAtom> => {
     const copy = {...existing}
-    return service.update(copy.labwork.id, copy.id, toTimetableProtocol(update(copy)))
+    return service.update(copy.labwork.course, copy.id, toTimetableProtocol(update(copy)))
 }
 
 const toTimetableProtocol = (t: TimetableAtom): TimetableProtocol => {
