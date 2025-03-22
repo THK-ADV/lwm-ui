@@ -1,28 +1,28 @@
-import { MediaMatcher } from "@angular/cdk/layout"
+import { MediaMatcher } from '@angular/cdk/layout'
 import {
   ChangeDetectorRef,
   Component,
   Input,
   OnDestroy,
   OnInit,
-} from "@angular/core"
-import { from, identity, Subscription } from "rxjs"
-import { AuthorityAtom } from "../models/authority.model"
-import { Config } from "../models/config.model"
-import { User } from "../models/user.model"
-import { CourseAtom } from "../models/course.model"
-import { KeycloakService } from "keycloak-angular"
-import { getInitials } from "../utils/component.utils"
-import { isAdmin } from "../utils/role-checker"
-import { ActivatedRoute, Router } from "@angular/router"
-import { partition, subscribe } from "../utils/functions"
-import { switchMap } from "rxjs/operators"
-import { MiscLink, standardMiscLinks } from "./misc-links"
+} from '@angular/core'
+import { from, identity, Subscription } from 'rxjs'
+import { AuthorityAtom } from '../models/authority.model'
+import { Config } from '../models/config.model'
+import { User } from '../models/user.model'
+import { CourseAtom } from '../models/course.model'
+import { KeycloakService } from 'keycloak-angular'
+import { getInitials } from '../utils/component.utils'
+import { isAdmin } from '../utils/role-checker'
+import { ActivatedRoute, Router } from '@angular/router'
+import { partition, subscribe } from '../utils/functions'
+import { switchMap } from 'rxjs/operators'
+import { MiscLink, standardMiscLinks } from './misc-links'
 
 @Component({
-  selector: "app-nav",
-  templateUrl: "./nav.component.html",
-  styleUrls: ["./nav.component.scss"],
+  selector: 'app-nav',
+  templateUrl: './nav.component.html',
+  styleUrls: ['./nav.component.scss'],
   standalone: false,
 })
 export class NavComponent implements OnInit, OnDestroy {
@@ -31,6 +31,8 @@ export class NavComponent implements OnInit, OnDestroy {
   private sub: Subscription
   readonly configs: Config[]
   readonly miscLinks: MiscLink[]
+  readonly mobileQuery: MediaQueryList
+  private readonly _mobileQueryListener: () => void  // Korrigiert von '*mobileQueryListener'
 
   moduleAuthorities: AuthorityAtom[] = []
   user: User
@@ -38,6 +40,26 @@ export class NavComponent implements OnInit, OnDestroy {
   hasModuleAuthorities: boolean
   isAdmin: boolean
   initials: string
+
+  // Panels initialisieren - neue Properties für Accordion
+  modulePanelOpen = true
+  configPanelOpen = false
+  miscPanelOpen = false
+
+  // Aktualisiere die Panel-Status, wenn sie wechseln
+  togglePanelState(panel: string, isOpen: boolean): void {
+    switch (panel) {
+      case 'module':
+        this.modulePanelOpen = isOpen
+        break
+      case 'config':
+        this.configPanelOpen = isOpen
+        break
+      case 'misc':
+        this.miscPanelOpen = isOpen
+        break
+    }
+  }
 
   constructor(
     private readonly changeDetectorRef: ChangeDetectorRef,
@@ -49,21 +71,21 @@ export class NavComponent implements OnInit, OnDestroy {
     this.configs = Config.All()
     this.miscLinks = standardMiscLinks()
 
-    this.mobileQuery = media.matchMedia("(max-width: 600px)")
+    this.mobileQuery = media.matchMedia('(max-width: 600px)')
     this._mobileQueryListener = () => changeDetectorRef.detectChanges()
     this.mobileQuery.addListener(this._mobileQueryListener)
   }
 
-  readonly mobileQuery: MediaQueryList
-  private readonly _mobileQueryListener: () => void
 
   ngOnInit() {
     this.updateUI()
   }
 
   ngOnDestroy(): void {
-    this.mobileQuery.removeListener(this._mobileQueryListener)
-    this.sub.unsubscribe()
+    this.mobileQuery.removeListener(this._mobileQueryListener)  // Korrigiert von '*mobileQueryListener'
+    if (this.sub) {  // Sicherheitsprüfung hinzugefügt
+      this.sub.unsubscribe()
+    }
   }
 
   private updateUI = () => {
@@ -87,7 +109,7 @@ export class NavComponent implements OnInit, OnDestroy {
 
   logout = (): void => {
     this.sub = subscribe(
-      from(this.router.navigate(["/"])).pipe(
+      from(this.router.navigate(['/'])).pipe(
         switchMap((_) => from(this.keycloakService.logout())),
       ),
       identity,
@@ -96,11 +118,11 @@ export class NavComponent implements OnInit, OnDestroy {
 
   openLink = (link: MiscLink) => {
     switch (link.url.kind) {
-      case "internal":
+      case 'internal':
         this.router.navigate([link.url.path])
         break
-      case "external":
-        window.open(link.url.path, "_blank")
+      case 'external':
+        window.open(link.url.path, '_blank')
         break
     }
   }

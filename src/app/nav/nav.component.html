@@ -26,55 +26,81 @@
         <div id="sidebar-user">{{ user.firstname }} {{ user.lastname }}</div>
       </div>
 
-      <mat-nav-list class="navListContainer">
-        <div *ngIf="hasModuleAuthorities">
-          <h3 mat-subheader class="sidebarHeader moduleHeader">
-            <mat-icon>account_balance</mat-icon>
-            <span>Module</span>
-          </h3>
+      <mat-accordion class="navListContainer" displayMode="flat" multi="true">
+        <!-- Module Section -->
+        <mat-expansion-panel *ngIf="hasModuleAuthorities" class="nav-panel module-panel" [expanded]="modulePanelOpen" (opened)="togglePanelState('module', true)" (closed)="togglePanelState('module', false)">
+          <mat-expansion-panel-header class="sidebarHeader moduleHeader">
+            <mat-panel-title>
+              <mat-icon>account_balance</mat-icon>
+              <span>Module</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              <mat-icon>{{ modulePanelOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
 
-          <a
-            mat-list-item
-            routerLink="e/courses/{{ auth.course.id }}"
-            *ngFor="let auth of moduleAuthorities"
-            routerLinkActive="list-item-active"
-            >{{ auth.course.abbreviation }}</a
-          >
-        </div>
+          <mat-nav-list>
+            <a
+              mat-list-item
+              routerLink="e/courses/{{ auth.course.id }}"
+              *ngFor="let auth of moduleAuthorities"
+              routerLinkActive="list-item-active"
+            >{{ auth.course.abbreviation }} ({{auth.course.lecturer.lastname}})</a>
+          </mat-nav-list>
+        </mat-expansion-panel>
 
-        <div *ngIf="isAdmin">
-          <h3 mat-subheader class="sidebarHeader configHeader">
-            <mat-icon>build</mat-icon>
-            <span>Konfiguration</span>
-          </h3>
-          <a
-            mat-list-item
-            routerLink="e/{{ config.path }}"
-            *ngFor="let config of configs"
-            routerLinkActive="list-item-active"
-            >{{ config.label }}</a
-          >
-        </div>
+        <!-- Configuration Section -->
+        <mat-expansion-panel *ngIf="isAdmin" class="nav-panel config-panel" [expanded]="configPanelOpen" (opened)="togglePanelState('config', true)" (closed)="togglePanelState('config', false)">
+          <mat-expansion-panel-header class="sidebarHeader configHeader">
+            <mat-panel-title>
+              <mat-icon>build</mat-icon>
+              <span>Konfiguration</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              <mat-icon>{{ configPanelOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
 
-        <div>
-          <h3 mat-subheader class="sidebarHeader configHeader">
-            <mat-icon>miscellaneous_services</mat-icon>
-            <span>Sonstiges</span>
-          </h3>
-          <a
-            *ngFor="let link of miscLinks"
-            (click)="openLink(link)"
-            mat-list-item
-            routerLinkActive="list-item-active">
-            {{ link.label }}
-          </a>
-        </div>
+          <mat-nav-list>
+            <a
+              mat-list-item
+              routerLink="e/{{ config.path }}"
+              *ngFor="let config of configs"
+              routerLinkActive="list-item-active"
+            >{{ config.label }}</a>
+          </mat-nav-list>
+        </mat-expansion-panel>
 
+        <!-- Miscellaneous Section -->
+        <mat-expansion-panel class="nav-panel misc-panel" [expanded]="miscPanelOpen" (opened)="togglePanelState('misc', true)" (closed)="togglePanelState('misc', false)">
+          <mat-expansion-panel-header class="sidebarHeader miscHeader">
+            <mat-panel-title>
+              <mat-icon>info</mat-icon>
+              <span>Sonstiges</span>
+            </mat-panel-title>
+            <mat-panel-description>
+              <mat-icon class="material-symbols-outlined">
+                {{ miscPanelOpen ? 'expand_less' : 'expand_more' }}</mat-icon>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <mat-nav-list>
+            <a
+              *ngFor="let link of miscLinks"
+              (click)="openLink(link)"
+              mat-list-item
+              routerLinkActive="list-item-active">
+              {{ link.label }}
+            </a>
+          </mat-nav-list>
+        </mat-expansion-panel>
+
+        <!-- Logout Button in Mat-List-Style -->
         <h3 mat-subheader class="sidebarHeader logoutHeader" (click)="logout()">
           <mat-icon>power_settings_new</mat-icon>
           <span>Ausloggen</span>
         </h3>
-      </mat-nav-list>
+      </mat-accordion>
     </mat-sidenav>
     <mat-sidenav-content>
       <ng-content></ng-content>
