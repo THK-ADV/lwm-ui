@@ -1,31 +1,31 @@
-import { applyFilter } from "./http.filter"
-import { Injectable } from "@angular/core"
-import { atomicParams, HttpService, nonAtomicParams } from "./http.service"
-import { Observable } from "rxjs"
-import { map } from "rxjs/operators"
+import { applyFilter } from './http.filter'
+import { Injectable } from '@angular/core'
+import { atomicParams, HttpService, nonAtomicParams } from './http.service'
+import { Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
 import {
   ReportCardEntryAtom,
   ReportCardEntryAtomJSON,
   ReportCardEntryJSON,
-} from "../models/report-card-entry.model"
-import { makePath } from "../utils/component.utils"
-import { _groupBy } from "../utils/functions"
+} from '../models/report-card-entry.model'
+import { makePath } from '../utils/component.utils'
+import { _groupBy } from '../utils/functions'
 import {
   convertManyReportCardEntries,
   convertManyReportCardEntriesAtom,
   convertManyReportCardRescheduledAtomJSON,
   mapReportCardEntryAtomJSON,
-} from "../utils/http-utils"
-import { ReportCardEntry } from "./lwm.service"
-import { Time } from "../models/time.model"
-import { Room } from "../models/room.model"
+} from '../utils/http-utils'
+import { ReportCardEntry } from './lwm.service'
+import { Time } from '../models/time.model'
+import { Room } from '../models/room.model'
 import {
   ReportCardRescheduledAtom,
   ReportCardRescheduledAtomJSON,
-} from "../models/report-card-rescheduled.model"
+} from '../models/report-card-rescheduled.model'
 
 interface ReportCardEntryFilter {
-  attribute: "course" | "student" | "labwork" | "scheduleEntry" | "semester"
+  attribute: 'course' | 'student' | 'labwork' | 'scheduleEntry' | 'semester'
   value: string
 }
 
@@ -46,12 +46,12 @@ interface RescheduleCandidateJson {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ReportCardEntryService {
   constructor(private readonly http: HttpService) {}
 
-  private readonly path = "reportCardEntries"
+  private readonly path = 'reportCardEntries'
 
   count = (courseId: string, labworkId: string): Observable<number> =>
     this.http.get_(makePath(`${this.path}/count`, courseId, labworkId))
@@ -126,7 +126,7 @@ export class ReportCardEntryService {
 
   download = (courseId: string, labworkId: string): Observable<Blob> =>
     this.http.downloadXlsSheet(
-      makePath(this.path, courseId, labworkId) + "/sheet",
+      makePath(this.path, courseId, labworkId) + '/sheet',
     )
 
   private fromJson = (x: RescheduleCandidateJson): RescheduleCandidate => {

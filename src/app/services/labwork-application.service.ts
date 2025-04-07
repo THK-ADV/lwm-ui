@@ -1,19 +1,19 @@
-import { Injectable } from "@angular/core"
-import { atomicParams, HttpService } from "./http.service"
-import { Observable } from "rxjs"
+import { Injectable } from '@angular/core'
+import { atomicParams, HttpService } from './http.service'
+import { Observable } from 'rxjs'
 import {
   LabworkApplicationAtom,
   LabworkApplicationProtocol,
-} from "../models/labwork.application.model"
-import { makePath } from "../utils/component.utils"
+} from '../models/labwork.application.model'
+import { makePath } from '../utils/component.utils'
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class LabworkApplicationService {
   constructor(private http: HttpService) {}
 
-  private readonly path = "labworkApplications"
+  private readonly path = 'labworkApplications'
 
   count = (courseId: string, labworkId: string): Observable<number> =>
     this.http.get_(`${makePath(this.path, courseId, labworkId)}/count`)

@@ -1,13 +1,55 @@
 @use "variables" as vars;
 @use "sass:map";
+@use "sass:color";
 
 .abstractTableMainTitle {
-  h1 {
-    display: inline;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 24px;
+}
+
+.abstractTableMainTitle h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 500;
+  color: vars.$sidebarColor
+}
+
+.abstractTableMainTitle span {
+  display: flex;
+  gap: map.get(vars.$spacing, "small");
+}
+
+.abstractTableMainTitle button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: vars.$th-magenta;
+  color: vars.$ivory;
+  border: none;
+  border-radius: vars.$border-radius;
+  width: 72px;
+  height: 36px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  .mat-mdc-button-touch-target {
+    width: 100%;
   }
-  span button {
-    float: right;
-    margin-left: map.get(vars.$spacing, "small");
-  }
-  margin: 20px 0 40px 0;
+}
+
+.abstractTableMainTitle button:hover {
+  background-color: color.adjust(vars.$th-magenta, $lightness: -5%);
+}
+
+.abstractTableMainTitle mat-icon {
+  font-size: inherit;
+  display: grid;
+  align-self: center;
+  justify-self: center;
+  height: 20px;
+  width: 20px;
+  line-height: 20px;
 }

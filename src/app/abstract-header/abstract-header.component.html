@@ -3,13 +3,17 @@
   <span>
     <button
       *ngFor="let action of actions_"
-      mat-flat-button
+      mat-fab
       [color]="action.action.color"
       (click)="onClick(action)"
       [matTooltip]="action.action.tooltipName"
       matTooltipPosition="below">
       <mat-icon>{{ action.action.iconName }}</mat-icon>
-      {{ action.label }}
     </button>
   </span>
 </div>
+
+
+
+
+

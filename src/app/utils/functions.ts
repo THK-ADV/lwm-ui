@@ -1,5 +1,5 @@
-import { Observable, Subscription } from "rxjs"
-import { isNumber } from "../models/time.model"
+import { Observable, Subscription } from 'rxjs'
+import { isNumber } from '../models/time.model'
 
 export const compose =
   <A, B, C>(f: (a: A) => B, g: (b: B) => C): ((a: A) => C) =>
@@ -35,7 +35,7 @@ export const count = <T>(xs: Readonly<T[]>, p: (t: T) => boolean): number => {
   return xs.reduce((i, x) => (p(x) ? i + 1 : i), 0)
 }
 
-export function NotImplementedError(data: string = ""): never {
+export function NotImplementedError(data: string = ''): never {
   throw new Error(`not implemented yet - ${data}`)
 }
 
@@ -67,7 +67,7 @@ export const parseUnsafeBoolean = (any: any): boolean => !!any
 
 export const parseUnsafeNumber = (any: any): number => +any
 
-export const parseUnsafeString = (any: any): string => "" + any
+export const parseUnsafeString = (any: any): string => '' + any
 
 export const between = (x: number, min: number, max: number): boolean =>
   x >= min && x <= max

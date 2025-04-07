@@ -1,5 +1,35 @@
 .dialog-container {
+  margin: 24px;
 
-  margin: 20px;
+  h1 {
+    padding: 0;
+  }
+
+
+  .modalContainer {
+    min-width: 500px;
+    padding: 0;
+
+
+    mat-card {
+      padding: 0;
+      mat-card-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 10px;
+
+        mat-form-field {
+          margin: 0 5%;
+          width: 90%;
+        }
+      }
+    }
+    mat-card-actions {
+      margin: 0 5%;
+    }
+  }
 
 }
+
+

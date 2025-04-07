@@ -15,8 +15,8 @@ export const dialogTitle = (mode: DialogMode, modelName: string): string => {
 export const dialogSubmitTitle = (mode: DialogMode): string => {
   switch (mode) {
     case DialogMode.create:
-      return "Erstellen"
+      return 'Erstellen'
     case DialogMode.edit:
-      return "Aktualisieren"
+      return 'Aktualisieren'
   }
 }

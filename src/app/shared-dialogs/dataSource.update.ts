@@ -1,6 +1,6 @@
-import { AlertService } from "../services/alert.service"
-import { MatTableDataSource } from "@angular/material/table"
-import { makeHtmlParagraphs } from "../html-builder/html-builder"
+import { AlertService } from '../services/alert.service'
+import { MatTableDataSource } from '@angular/material/table'
+import { makeHtmlParagraphs } from '../html-builder/html-builder'
 
 export const removeFromDataSource =
   <M>(
@@ -21,7 +21,7 @@ export const removeFromDataSource =
     })
 
     if (alert && removed) {
-      alert.reportSuccess("deleted: " + JSON.stringify(removed))
+      alert.reportSuccess('deleted: ' + JSON.stringify(removed))
     }
   }
 
@@ -30,7 +30,7 @@ export const addToDataSource =
   (model) => {
     ds.data = ds.data.concat(model)
     if (alert) {
-      alert.reportSuccess("created: " + JSON.stringify(model))
+      alert.reportSuccess('created: ' + JSON.stringify(model))
     }
   }
 
@@ -40,7 +40,7 @@ export const addManyToDataSource =
     ds.data = ds.data.concat(xs)
     if (alert) {
       alert.reportAlert({
-        type: "success",
+        type: 'success',
         body: makeHtmlParagraphs(xs, (x) => JSON.stringify(x)),
       })
     }
@@ -57,6 +57,6 @@ export const updateDataSource =
     })
 
     if (alert) {
-      alert.reportSuccess("updated: " + JSON.stringify(m))
+      alert.reportSuccess('updated: ' + JSON.stringify(m))
     }
   }

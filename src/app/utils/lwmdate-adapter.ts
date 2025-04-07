@@ -1,39 +1,39 @@
-import localDE from "@angular/common/locales/de"
-import { formatDate, registerLocaleData } from "@angular/common"
-import { Time } from "../models/time.model"
-import { Injectable } from "@angular/core"
+import localDE from '@angular/common/locales/de'
+import { formatDate, registerLocaleData } from '@angular/common'
+import { Time } from '../models/time.model'
+import { Injectable } from '@angular/core'
 import {
   DateAdapter,
   MAT_DATE_FORMATS,
   NativeDateAdapter,
-} from "@angular/material/core"
+} from '@angular/material/core'
 
 export const LWM_DATE_FORMATS = {
   display: {
-    dateInput: "localDate",
-    monthYearLabel: "monthYearLabel",
+    dateInput: 'localDate',
+    monthYearLabel: 'monthYearLabel',
   },
 }
 
 export type DateTimePattern =
-  | "yyyy-MM-dd"
-  | "dd.MM.yyyy"
-  | "dd.MM.yyyy - HH:mm"
-  | "dd.MM"
+  | 'yyyy-MM-dd'
+  | 'dd.MM.yyyy'
+  | 'dd.MM.yyyy - HH:mm'
+  | 'dd.MM'
 
-export type TimePattern = "HH:mm:ss" | "HH:mm"
+export type TimePattern = 'HH:mm:ss' | 'HH:mm'
 
 export const format = (
   date: Date,
   pattern: DateTimePattern | TimePattern,
 ): string => {
-  registerLocaleData(localDE, "de")
-  return formatDate(date, pattern, "de")
+  registerLocaleData(localDE, 'de')
+  return formatDate(date, pattern, 'de')
 }
 
 export const formatTime = (
   time: Time,
-  pattern: TimePattern = "HH:mm:ss",
+  pattern: TimePattern = 'HH:mm:ss',
 ): string => format(time.date, pattern)
 
 @Injectable()
@@ -48,11 +48,11 @@ export class LWMDateAdapter extends NativeDateAdapter {
   format = (date: Date, displayFormat: Object): string => {
     switch (displayFormat) {
       case LWM_DATE_FORMATS.display.dateInput:
-        return format(date, "dd.MM.yyyy")
+        return format(date, 'dd.MM.yyyy')
       case LWM_DATE_FORMATS.display.monthYearLabel:
-        return date.toLocaleDateString("de-DE", {
-          month: "short",
-          year: "numeric",
+        return date.toLocaleDateString('de-DE', {
+          month: 'short',
+          year: 'numeric',
         })
       default:
         return super.format(date, displayFormat)

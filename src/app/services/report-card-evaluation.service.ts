@@ -1,11 +1,11 @@
-import { Injectable } from "@angular/core"
-import { atomicParams, HttpService, nonAtomicParams } from "./http.service"
-import { Observable } from "rxjs"
+import { Injectable } from '@angular/core'
+import { atomicParams, HttpService, nonAtomicParams } from './http.service'
+import { Observable } from 'rxjs'
 import {
   ReportCardEvaluationAtom,
   ReportCardEvaluationAtomJSON,
   ReportCardEvaluationJSON,
-} from "../models/report-card-evaluation"
+} from '../models/report-card-evaluation'
 import { makePath } from "../utils/component.utils"
 import { map, tap } from "rxjs/operators"
 import { convertManyReportCardEvaluations } from "../utils/http-utils"

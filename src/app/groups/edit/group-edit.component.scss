@@ -1,4 +1,18 @@
+@use "variables" as vars;
+@use "sass:map";
+
 table {
   -webkit-box-shadow: none;
   box-shadow: none;
+
+  .student-actions button {
+    margin-right: map.get(vars.$spacing, "small");
+  }
 }
+
+mat-card {
+  mat-form-field {
+    width: 400px;
+  }
+}
+

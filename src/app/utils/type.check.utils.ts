@@ -1,6 +1,6 @@
-import { StudentAtom, User } from "../models/user.model"
-import { Role } from "../models/role.model"
-import { Room } from "../models/room.model"
+import { StudentAtom, User } from '../models/user.model'
+import { Role } from '../models/role.model'
+import { Room } from '../models/room.model'
 
 export const isUser = (any: any): any is User => {
   return (any as User)?.lastname !== undefined

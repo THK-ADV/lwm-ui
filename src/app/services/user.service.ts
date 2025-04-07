@@ -1,12 +1,12 @@
-import { Injectable } from "@angular/core"
-import { Observable } from "rxjs"
-import { Employee, Lecturer, StudentAtom, User } from "../models/user.model"
-import { atomicParams, HttpService, nonAtomicParams } from "./http.service"
-import { applyFilter } from "./http.filter"
-import { makePath } from "../utils/component.utils"
+import { Injectable } from '@angular/core'
+import { Observable } from 'rxjs'
+import { Employee, Lecturer, StudentAtom, User } from '../models/user.model'
+import { atomicParams, HttpService, nonAtomicParams } from './http.service'
+import { applyFilter } from './http.filter'
+import { makePath } from '../utils/component.utils'
 
 interface UserFilter {
-  attribute: "status" | "degree"
+  attribute: 'status' | 'degree'
   value: string
 }
 
@@ -48,12 +48,12 @@ export const isBuddy = (any: any): any is Buddy => {
 }
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class UserService {
   constructor(private http: HttpService) {}
 
-  private path = "users"
+  private path = 'users'
 
   getBuddies = (degree: string): Observable<Buddy[]> =>
     this.http.getAll(`${this.path}/buddies/${degree}`, nonAtomicParams)
@@ -63,7 +63,7 @@ export class UserService {
 
   allStudentsRestricted = (courseId: string): Observable<User[]> =>
     this.http.getAll(
-      makePath(this.path + "/students", courseId),
+      makePath(this.path + '/students', courseId),
       nonAtomicParams,
     )
 

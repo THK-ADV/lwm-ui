@@ -1,5 +1,22 @@
+@use "variables" as vars;
+@use "sass:map";
+
 .text-with-icon {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+}
+
+mat-chip-list {
+  display: flex;
+  gap: map.get(vars.$spacing, "small");
+}
+
+mat-form-field {
+  margin-top: 24px;
+  width: 400px;
+}
+
+.action-buttons button:first-child {
+  margin-right: map.get(vars.$spacing, "small");;
 }

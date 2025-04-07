@@ -1,31 +1,31 @@
-import { Component, Input, OnDestroy } from "@angular/core"
-import { MatTableDataSource } from "@angular/material/table"
-import { MatDialog } from "@angular/material/dialog"
-import { Observable, Subscription } from "rxjs"
-import { mapUndefined, subscribe } from "../utils/functions"
-import { FormPayload } from "../shared-dialogs/create-update/create-update-dialog.component"
-import { FormInput } from "../shared-dialogs/forms/form.input"
-import { ValidatorFn } from "@angular/forms"
+import { Component, Input, OnDestroy } from '@angular/core'
+import { MatTableDataSource } from '@angular/material/table'
+import { MatDialog } from '@angular/material/dialog'
+import { Observable, Subscription } from 'rxjs'
+import { mapUndefined, subscribe } from '../utils/functions'
+import { FormPayload } from '../shared-dialogs/create-update/create-update-dialog.component'
+import { FormInput } from '../shared-dialogs/forms/form.input'
+import { ValidatorFn } from '@angular/forms'
 import {
   DialogMode,
   dialogSubmitTitle,
   dialogTitle,
-} from "../shared-dialogs/dialog.mode"
+} from '../shared-dialogs/dialog.mode'
 import {
   openDialogFromPayload,
   subscribeDeleteDialog,
-} from "../shared-dialogs/dialog-open-combinator"
-import { createProtocol } from "../models/protocol.model"
-import { AlertService } from "../services/alert.service"
-import { DeleteDialogComponent } from "../shared-dialogs/delete/delete-dialog.component"
-import { isUniqueEntity, UniqueEntity } from "../models/unique.entity.model"
+} from '../shared-dialogs/dialog-open-combinator'
+import { createProtocol } from '../models/protocol.model'
+import { AlertService } from '../services/alert.service'
+import { DeleteDialogComponent } from '../shared-dialogs/delete/delete-dialog.component'
+import { isUniqueEntity, UniqueEntity } from '../models/unique.entity.model'
 import {
   addToDataSource,
   removeFromDataSource,
   updateDataSource,
-} from "../shared-dialogs/dataSource.update"
-import { ActionType } from "../abstract-header/abstract-header.component"
-import { Sort } from "@angular/material/sort"
+} from '../shared-dialogs/dataSource.update'
+import { ActionType } from '../abstract-header/abstract-header.component'
+import { Sort } from '@angular/material/sort'
 
 export interface TableHeaderColumn {
   attr: string
@@ -38,7 +38,7 @@ export interface Creatable<Protocol, Model extends UniqueEntity> {
   makeInput: (
     attr: string,
     entity: Protocol | Model,
-  ) => Omit<FormInput, "formControlName" | "displayTitle"> | undefined
+  ) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined
   commitProtocol: (protocol: Protocol, existing?: Model) => Protocol
   compoundFromGroupValidator?: (data: FormInput[]) => ValidatorFn | undefined
   create?: (protocol: Protocol) => Observable<Model>
@@ -51,14 +51,13 @@ export interface Deletable<Model extends UniqueEntity> {
 }
 
 @Component({
-  selector: "lwm-abstract-crud",
-  templateUrl: "./abstract-crud.component.html",
-  styleUrls: ["./abstract-crud.component.scss"],
+  selector: 'lwm-abstract-crud',
+  templateUrl: './abstract-crud.component.html',
+  styleUrls: ['./abstract-crud.component.scss'],
   standalone: false,
 })
 export class AbstractCrudComponent<Protocol, Model extends UniqueEntity>
-  implements OnDestroy
-{
+  implements OnDestroy {
   @Input() headerTitle: string
   @Input() columns: TableHeaderColumn[]
   @Input() tableContent: (model: Readonly<Model>, attr: string) => string
@@ -87,7 +86,7 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity>
   initDataSource = (ds: MatTableDataSource<Model>) => (this.dataSource = ds)
 
   canCreate = (): ActionType[] =>
-    this.creatable?.create ? [{ type: "create", label: undefined }] : []
+    this.creatable?.create ? [{ type: 'create', label: undefined }] : []
 
   canEdit = () => this.creatable?.update !== undefined
 
@@ -165,7 +164,8 @@ export class AbstractCrudComponent<Protocol, Model extends UniqueEntity>
       ),
       makeProtocol: (output) =>
         this.creatable.commitProtocol(
-          // TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance to catch up with disabled updates. since they are always used together. don't they?
+          /* TODO maybe we should merge withCreateProtocol with makeProtocol and give the user the chance
+              to catch up with disabled updates. since they are always used together. don't they? */
           createProtocol(output, emptyProtocol),
           isUniqueEntity(entity) ? entity : undefined,
         ),

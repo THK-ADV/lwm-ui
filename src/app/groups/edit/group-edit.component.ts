@@ -169,7 +169,7 @@ export class GroupEditComponent implements OnInit, OnDestroy {
       )
       this.addStudentForm = {
         formControlName: addStudentFcName,
-        displayTitle: "Student hinzufügen",
+        displayTitle: "Person hinzufügen",
         isDisabled: false,
         data: this.studentOption,
       }

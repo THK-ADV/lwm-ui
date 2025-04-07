@@ -1,35 +1,35 @@
-import { Blacklist, BlacklistJSON } from "../models/blacklist.model"
-import { Time } from "../models/time.model"
-import { Semester, SemesterJSON } from "../models/semester.model"
+import { Blacklist, BlacklistJSON } from '../models/blacklist.model'
+import { Time } from '../models/time.model'
+import { Semester, SemesterJSON } from '../models/semester.model'
 import {
   TimetableAtom,
   TimetableAtomJSON,
   TimetableEntryAtom,
   TimetableEntryAtomJSON,
-} from "../models/timetable"
+} from '../models/timetable'
 import {
   ScheduleEntryAtom,
   ScheduleEntryAtomJSON,
-} from "../models/schedule-entry.model"
+} from '../models/schedule-entry.model'
 import {
   ScheduleEntryGen,
   ScheduleEntryGenJSON,
-} from "../services/schedule-entry.service"
-import { LabworkAtom, LabworkAtomJSON } from "../models/labwork.model"
+} from '../services/schedule-entry.service'
+import { LabworkAtom, LabworkAtomJSON } from '../models/labwork.model'
 import {
   ReportCardEntryAtom,
   ReportCardEntryAtomJSON,
   ReportCardEntryJSON,
-} from "../models/report-card-entry.model"
+} from '../models/report-card-entry.model'
 import {
   ReportCardEvaluationAtom,
   ReportCardEvaluationAtomJSON,
-} from "../models/report-card-evaluation"
-import { ReportCardEntry } from "../services/lwm.service"
+} from '../models/report-card-evaluation'
+import { ReportCardEntry } from '../services/lwm.service'
 import {
   ReportCardRescheduledAtom,
   ReportCardRescheduledAtomJSON,
-} from "../models/report-card-rescheduled.model"
+} from '../models/report-card-rescheduled.model'
 
 const convertMany = <A, B>(xs: A[], f: (a: A) => B): B[] => xs.map(f)
 

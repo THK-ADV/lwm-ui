@@ -25,6 +25,7 @@ body {
   margin: 0;
 }
 
+
 // Dialog styles update
 .lwmUserAuthorityUpdateDialog,
 .lwmCreateUpdateDialog,
@@ -89,9 +90,6 @@ full-calendar {
     margin: 0;
     padding: 0;
 
-    .mat-mdc-form-field:not(:first-child) {
-      margin: 0 0 0 map.get(vars.$spacing, "low");
-    }
   }
 }
 

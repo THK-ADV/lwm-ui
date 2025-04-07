@@ -1,24 +1,24 @@
-import { Injectable } from "@angular/core"
-import { atomicParams, HttpService } from "./http.service"
-import { Observable } from "rxjs"
-import { HttpParams } from "@angular/common/http"
+import { Injectable } from '@angular/core'
+import { atomicParams, HttpService } from './http.service'
+import { Observable } from 'rxjs'
+import { HttpParams } from '@angular/common/http'
 import {
   Labwork,
   LabworkAtom,
   LabworkAtomJSON,
   LabworkProtocol,
-} from "../models/labwork.model"
-import { makePath } from "../utils/component.utils"
-import { map } from "rxjs/operators"
-import { convertManyLabworks, mapLabworkJSON } from "../utils/http-utils"
+} from '../models/labwork.model'
+import { makePath } from '../utils/component.utils'
+import { map } from 'rxjs/operators'
+import { convertManyLabworks, mapLabworkJSON } from '../utils/http-utils'
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class LabworkService {
   constructor(private http: HttpService) {}
 
-  private readonly path = "labworks"
+  private readonly path = 'labworks'
 
   get = (courseId: string, id: string): Observable<LabworkAtom> =>
     this.http
@@ -60,6 +60,6 @@ export class LabworkService {
       .pipe(map(mapLabworkJSON))
 
   private withSemester = (semester?: string): HttpParams | undefined => {
-    return semester ? new HttpParams().set("semester", semester) : undefined
+    return semester ? new HttpParams().set('semester', semester) : undefined
   }
 }

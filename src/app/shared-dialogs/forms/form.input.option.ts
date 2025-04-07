@@ -1,12 +1,12 @@
-import { EMPTY, Observable, Subscription } from "rxjs"
-import { AbstractControl, FormGroup, ValidatorFn } from "@angular/forms"
-import { debounceTime, map, startWith } from "rxjs/operators"
-import { FormDataStringType, FormInputData } from "./form.input"
+import { EMPTY, Observable, Subscription } from 'rxjs'
+import { AbstractControl, FormGroup, ValidatorFn } from '@angular/forms'
+import { debounceTime, map, startWith } from 'rxjs/operators'
+import { FormDataStringType, FormInputData } from './form.input'
 import {
   mandatoryOptionsValidator,
   optionalOptionsValidator,
-} from "../../utils/form.validator"
-import { foldUndefined, isEmpty, subscribe, voidF } from "../../utils/functions"
+} from '../../utils/form.validator'
+import { foldUndefined, isEmpty, subscribe, voidF } from '../../utils/functions'
 
 export class FormInputOption<Option> implements FormInputData<string> {
   readonly type: FormDataStringType
@@ -29,8 +29,8 @@ export class FormInputOption<Option> implements FormInputData<string> {
     private readonly debounce: number = 200,
     private readonly selected?: (options: Option[]) => Option | undefined,
   ) {
-    this.value = ""
-    this.type = "options"
+    this.value = ''
+    this.type = 'options'
     this.validator = required
       ? mandatoryOptionsValidator()
       : optionalOptionsValidator()
@@ -78,8 +78,8 @@ export class FormInputOption<Option> implements FormInputData<string> {
 
     this.filteredOptions = this.control.valueChanges.pipe(
       debounceTime(this.debounce),
-      startWith(""),
-      map((value) => (typeof value === "string" ? value : this.display(value))),
+      startWith(''),
+      map((value) => (typeof value === 'string' ? value : this.display(value))),
       map((value) => (value ? this.filter(value) : this.options.slice())),
     )
   }

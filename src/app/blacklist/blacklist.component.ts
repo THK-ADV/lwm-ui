@@ -1,11 +1,11 @@
-import { Component, OnDestroy } from "@angular/core"
-import { TableHeaderColumn } from "../abstract-crud/abstract-crud.component"
-import { identity, Observable, Subscription } from "rxjs"
-import { Blacklist, BlacklistProtocol } from "../models/blacklist.model"
+import { Component, OnDestroy } from '@angular/core'
+import { TableHeaderColumn } from '../abstract-crud/abstract-crud.component'
+import { identity, Observable, Subscription } from 'rxjs'
+import { Blacklist, BlacklistProtocol } from '../models/blacklist.model'
 import {
   BlacklistRangeProtocol,
   BlacklistService,
-} from "../services/blacklist.service"
+} from '../services/blacklist.service'
 import {
   createGlobalBlacklistFromOutputData,
   createGlobalBlacklistRangeFromOutputData,
@@ -14,46 +14,46 @@ import {
   globalBlacklistColumns,
   globalBlacklistInputData,
   globalBlacklistRangeInputData,
-} from "./blacklist-view-model"
-import { LWMActionType } from "../table-action-button/lwm-actions"
-import { MatTableDataSource } from "@angular/material/table"
-import { MatDialog } from "@angular/material/dialog"
+} from './blacklist-view-model'
+import { LWMActionType } from '../table-action-button/lwm-actions'
+import { MatTableDataSource } from '@angular/material/table'
+import { MatDialog } from '@angular/material/dialog'
 import {
   Decision,
   DecisionDialogComponent,
-} from "../shared-dialogs/decision-dialog/decision-dialog.component"
+} from '../shared-dialogs/decision-dialog/decision-dialog.component'
 import {
   openConfirmationDialog,
   openDialog,
   openDialogFromPayload,
   subscribeDeleteDialog,
-} from "../shared-dialogs/dialog-open-combinator"
-import { FormPayload } from "../shared-dialogs/create-update/create-update-dialog.component"
+} from '../shared-dialogs/dialog-open-combinator'
+import { FormPayload } from '../shared-dialogs/create-update/create-update-dialog.component'
 import {
   DialogMode,
   dialogSubmitTitle,
   dialogTitle,
-} from "../shared-dialogs/dialog.mode"
-import { nonEmpty, subscribe } from "../utils/functions"
+} from '../shared-dialogs/dialog.mode'
+import { nonEmpty, subscribe } from '../utils/functions'
 import {
   addManyToDataSource,
   removeFromDataSource,
   updateDataSource,
-} from "../shared-dialogs/dataSource.update"
-import { AlertService } from "../services/alert.service"
-import { DeleteDialogComponent } from "../shared-dialogs/delete/delete-dialog.component"
-import { format } from "../utils/lwmdate-adapter"
-import { isUniqueEntity } from "../models/unique.entity.model"
-import { ConfirmDialogComponent } from "../shared-dialogs/confirm-dialog/confirm-dialog.component"
-import { switchMap } from "rxjs/operators"
-import { PartialResult } from "../services/http.service"
-import { makeHtmlParagraphs } from "../html-builder/html-builder"
-import { ActionType } from "../abstract-header/abstract-header.component"
+} from '../shared-dialogs/dataSource.update'
+import { AlertService } from '../services/alert.service'
+import { DeleteDialogComponent } from '../shared-dialogs/delete/delete-dialog.component'
+import { format } from '../utils/lwmdate-adapter'
+import { isUniqueEntity } from '../models/unique.entity.model'
+import { ConfirmDialogComponent } from '../shared-dialogs/confirm-dialog/confirm-dialog.component'
+import { switchMap } from 'rxjs/operators'
+import { PartialResult } from '../services/http.service'
+import { makeHtmlParagraphs } from '../html-builder/html-builder'
+import { ActionType } from '../abstract-header/abstract-header.component'
 
 @Component({
-  selector: "lwm-blacklist",
-  templateUrl: "./blacklist.component.html",
-  styleUrls: ["./blacklist.component.scss"],
+  selector: 'lwm-blacklist',
+  templateUrl: './blacklist.component.html',
+  styleUrls: ['./blacklist.component.scss'],
   standalone: false,
 })
 export class BlacklistComponent implements OnDestroy {
@@ -71,8 +71,8 @@ export class BlacklistComponent implements OnDestroy {
   ) {
     this.columns = globalBlacklistColumns()
     this.blacklists$ = service.getAllWithFilter({
-      attribute: "global",
-      value: "true",
+      attribute: 'global',
+      value: 'true',
     })
     this.tableContent = formatBlacklistTableEntry
     this.subs = []
@@ -83,16 +83,16 @@ export class BlacklistComponent implements OnDestroy {
   }
 
   actions = (): ActionType[] => [
-    { type: "download", label: undefined },
-    { type: "create", label: undefined },
+    { type: 'download', label: undefined },
+    { type: 'create', label: undefined },
   ]
 
   onAction = (a: LWMActionType) => {
     switch (a) {
-      case "create":
+      case 'create':
         this.onCreate()
         break
-      case "download":
+      case 'download':
         this.download()
         break
       default:
@@ -111,7 +111,7 @@ export class BlacklistComponent implements OnDestroy {
           title: `Globale Feiertage für ${year} übernehmen?`,
           body: makeHtmlParagraphs(
             xs,
-            (x) => `${format(x.date, "dd.MM.yyyy")} - ${x.label}`,
+            (x) => `${format(x.date, 'dd.MM.yyyy')} - ${x.label}`,
           ),
         })
 
@@ -124,7 +124,7 @@ export class BlacklistComponent implements OnDestroy {
     const updateUI = (r: PartialResult<Blacklist>) => {
       if (nonEmpty(r.failed)) {
         this.alert.reportAlert({
-          type: "danger",
+          type: 'danger',
           body: makeHtmlParagraphs(r.failed, identity),
         })
       }
@@ -142,14 +142,14 @@ export class BlacklistComponent implements OnDestroy {
       const mode = DialogMode.create
 
       switch (d.kind) {
-        case "first":
+        case 'first':
           return this.openUpdateDialog(
             emptyGlobalBlacklistProtocol(),
             this.service.create,
           )
-        case "second":
+        case 'second':
           const payload: FormPayload<BlacklistRangeProtocol> = {
-            headerTitle: dialogTitle(mode, "Globale Blacklists"),
+            headerTitle: dialogTitle(mode, 'Globale Blacklists'),
             submitTitle: dialogSubmitTitle(mode),
             data: globalBlacklistRangeInputData(),
             makeProtocol: createGlobalBlacklistRangeFromOutputData,
@@ -165,8 +165,8 @@ export class BlacklistComponent implements OnDestroy {
 
     const dialogRef = DecisionDialogComponent.instance(
       this.dialog,
-      "Einzelnen Tag hinzufügen",
-      "Zeitraum erstellen",
+      'Einzelnen Tag hinzufügen',
+      'Zeitraum erstellen',
     )
 
     const s = subscribe(
@@ -182,7 +182,7 @@ export class BlacklistComponent implements OnDestroy {
       removeFromDataSource(this.dataSource, this.alert)((_) => _.id === bl.id)
 
     const dialogRef = DeleteDialogComponent.instance(this.dialog, {
-      label: `${blacklist.label}: ${format(blacklist.date, "dd.MM.yyyy")}`,
+      label: `${blacklist.label}: ${format(blacklist.date, 'dd.MM.yyyy')}`,
       id: blacklist.id,
     })
 
@@ -219,7 +219,7 @@ export class BlacklistComponent implements OnDestroy {
     const isModel = isUniqueEntity(blacklist)
     const mode = isModel ? DialogMode.edit : DialogMode.create
     const payload: FormPayload<BlacklistProtocol> = {
-      headerTitle: dialogTitle(mode, "Globale Blacklist"),
+      headerTitle: dialogTitle(mode, 'Globale Blacklist'),
       submitTitle: dialogSubmitTitle(mode),
       data: globalBlacklistInputData(blacklist, isModel),
       makeProtocol: createGlobalBlacklistFromOutputData(

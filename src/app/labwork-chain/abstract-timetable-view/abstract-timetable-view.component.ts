@@ -1,31 +1,31 @@
-import { Component, Input, OnInit } from "@angular/core"
-import { LWMDateAdapter } from "../../utils/lwmdate-adapter"
-import { LabworkAtom } from "../../models/labwork.model"
-import { TimetableAtom } from "../../models/timetable"
-import timeGridPlugin from "@fullcalendar/timegrid"
-import interactionPlugin from "@fullcalendar/interaction"
+import { Component, Input, OnInit } from '@angular/core'
+import { LWMDateAdapter } from '../../utils/lwmdate-adapter'
+import { LabworkAtom } from '../../models/labwork.model'
+import { TimetableAtom } from '../../models/timetable'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction'
 import {
   CalendarEvent,
   isValidTimetableEntry,
   makeCalendarEvents,
-} from "../timetable/timetable-view-model"
-import { FormControl, FormGroup, Validators } from "@angular/forms"
-import { color } from "../../utils/colors"
+} from '../timetable/timetable-view-model'
+import { FormControl, FormGroup, Validators } from '@angular/forms'
+import { color } from '../../utils/colors'
 import {
   calculateWorkload,
   SupervisorWorkload,
-} from "./abstract-timetable-view-model"
+} from './abstract-timetable-view-model'
 import {
   CalendarOptions,
   DateSelectArg,
   EventDropArg,
-} from "@fullcalendar/core"
-import { EventImpl } from "@fullcalendar/core/internal"
+} from '@fullcalendar/core'
+import { EventImpl } from '@fullcalendar/core/internal'
 
 @Component({
-  selector: "lwm-abstract-timetable-view",
-  templateUrl: "./abstract-timetable-view.component.html",
-  styleUrls: ["./abstract-timetable-view.component.scss"],
+  selector: 'lwm-abstract-timetable-view',
+  templateUrl: './abstract-timetable-view.component.html',
+  styleUrls: ['./abstract-timetable-view.component.scss'],
   providers: LWMDateAdapter.defaultProviders(),
   standalone: false,
 })
@@ -50,25 +50,25 @@ export class AbstractTimetableViewComponent implements OnInit {
   }
 
   calendarOptions: CalendarOptions = {
-    initialView: "timeGridWeek",
+    initialView: 'timeGridWeek',
     plugins: [timeGridPlugin, interactionPlugin],
-    locale: "de",
+    locale: 'de',
     weekends: false,
     nowIndicator: false,
     allDaySlot: false,
-    dayHeaderFormat: { weekday: "long" },
-    slotDuration: "00:15:00",
+    dayHeaderFormat: { weekday: 'long' },
+    slotDuration: '00:15:00',
     slotLabelInterval: { hours: 1 },
     slotEventOverlap: false,
-    slotMinTime: "08:00:00",
-    slotMaxTime: "22:00:00",
+    slotMinTime: '08:00:00',
+    slotMaxTime: '22:00:00',
     headerToolbar: false,
     selectable: true,
     selectMirror: true,
     selectMinDistance: 10,
-    eventColor: color("primary"),
-    eventTextColor: "#ffffff",
-    unselectCancel: ".unselectable",
+    eventColor: color('primary'),
+    eventTextColor: '#ffffff',
+    unselectCancel: '.unselectable',
   }
 
   headerTitle: string
@@ -79,14 +79,14 @@ export class AbstractTimetableViewComponent implements OnInit {
     this.workloads = []
     this.formGroup = new FormGroup({
       start: new FormControl(
-        { value: "", disabled: false },
+        { value: '', disabled: false },
         Validators.required,
       ),
     })
   }
 
   ngOnInit() {
-    this.headerTitle = `${this.canEdit ? "Rahmenplanbearbeitung" : "Rahmenplan"} für ${this.labwork.label}`
+    this.headerTitle = `${this.canEdit ? 'Rahmenplanbearbeitung' : 'Rahmenplan'} für ${this.labwork.label}`
     this.calendarOptions.editable = this.canEdit
     if (this.canEdit) {
       this.startDateControl().enable()

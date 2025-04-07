@@ -1,0 +1,44 @@
+@use "sass:color";
+@use "sass:map";
+@use '@angular/material' as mat;
+@use "variables" as vars;
+
+$br: vars.$border-radius;
+
+h1[mat-dialog-title] {
+  padding: 16px 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  background-color: vars.$ivory;
+  border-radius: $br $br 0 0;
+}
+
+mat-dialog-content {
+  padding: 25px 30px;
+  max-height: 65vh;
+  overflow-y: auto;
+  margin-top: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+}
+
+mat-dialog-actions button + button {
+  margin-left: 10px;
+}
+
+button[mat-flat-button]:not([color="primary"]):hover {
+  background-color: vars.$hover-color;
+}
+
+button[mat-flat-button][color="primary"] {
+  background-color: vars.$th-magenta;
+}
+
+button[mat-flat-button][color="primary"]:hover {
+  background-color: color.adjust(vars.$th-magenta, $lightness: -5%);
+}

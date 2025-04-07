@@ -1,17 +1,17 @@
-import { ValidatorFn } from "@angular/forms"
-import { Time } from "../../models/time.model"
+import { ValidatorFn } from '@angular/forms'
+import { Time } from '../../models/time.model'
 
 export type FormDataType = string | number | Date | Time | boolean
 
 export type FormDataStringType =
-  | "text"
-  | "number"
-  | "date"
-  | "time"
-  | "options"
-  | "textArea"
-  | "boolean"
-  | "select"
+  | 'text'
+  | 'number'
+  | 'date'
+  | 'time'
+  | 'options'
+  | 'textArea'
+  | 'boolean'
+  | 'select'
 
 export interface FormInput {
   formControlName: string

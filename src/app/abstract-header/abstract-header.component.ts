@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core"
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import {
   action,
   LWMAction,
   LWMActionType,
-} from "../table-action-button/lwm-actions"
+} from '../table-action-button/lwm-actions'
 
 export interface ActionType {
   type: LWMActionType
@@ -11,9 +11,9 @@ export interface ActionType {
 }
 
 @Component({
-  selector: "lwm-abstract-header",
-  templateUrl: "./abstract-header.component.html",
-  styleUrls: ["./abstract-header.component.scss"],
+  selector: 'lwm-abstract-header',
+  templateUrl: './abstract-header.component.html',
+  styleUrls: ['./abstract-header.component.scss'],
   standalone: false,
 })
 export class AbstractHeaderComponent implements OnInit {

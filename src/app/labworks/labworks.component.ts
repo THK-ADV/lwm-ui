@@ -398,7 +398,7 @@ export class LabworksComponent implements OnInit, OnDestroy {
       },
       {
         formControlName: "published",
-        displayTitle: "Veröffentlicht",
+        displayTitle: "Notenhefte veröffentlichen",
         isDisabled: false,
         data: new FormInputBoolean(labwork.published),
       },

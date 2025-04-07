@@ -1,4 +1,4 @@
-import { Degree } from "./degree.model"
+import { Degree } from './degree.model'
 
 export interface User {
   systemId: string

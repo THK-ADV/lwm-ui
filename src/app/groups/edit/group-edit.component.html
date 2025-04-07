@@ -11,7 +11,7 @@
 
     <ng-container matColumnDef="action">
       <th mat-header-cell *matHeaderCellDef></th>
-      <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()">
+      <td mat-cell class="student-actions" *matCellDef="let element" (click)="$event.stopPropagation()">
         <button
           *ngIf="shouldAllowSwapping()"
           mat-stroked-button

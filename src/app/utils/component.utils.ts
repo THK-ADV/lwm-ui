@@ -1,22 +1,22 @@
-import { ActivatedRoute } from "@angular/router"
-import { LabworkService } from "../services/labwork.service"
-import { Observable, zip } from "rxjs"
-import { Labwork, LabworkAtom } from "../models/labwork.model"
-import { map, switchMap } from "rxjs/operators"
-import { User } from "../models/user.model"
-import { UserService } from "../services/user.service"
-import { FormInput } from "../shared-dialogs/forms/form.input"
-import { isUniqueEntity } from "../models/unique.entity.model"
+import { ActivatedRoute } from '@angular/router'
+import { LabworkService } from '../services/labwork.service'
+import { Observable, zip } from 'rxjs'
+import { Labwork, LabworkAtom } from '../models/labwork.model'
+import { map, switchMap } from 'rxjs/operators'
+import { User } from '../models/user.model'
+import { UserService } from '../services/user.service'
+import { FormInput } from '../shared-dialogs/forms/form.input'
+import { isUniqueEntity } from '../models/unique.entity.model'
 import {
   FormInputString,
   FormInputTextArea,
-} from "../shared-dialogs/forms/form.input.string"
-import { FormInputOption } from "../shared-dialogs/forms/form.input.option"
-import { invalidChoiceKey } from "./form.validator"
-import { CourseProtocol } from "../services/course.service"
-import { CourseAtom } from "../models/course.model"
-import { FormInputNumber } from "../shared-dialogs/forms/form.input.number"
-import { AuthorityProtocol } from "../models/authority.model"
+} from '../shared-dialogs/forms/form.input.string'
+import { FormInputOption } from '../shared-dialogs/forms/form.input.option'
+import { invalidChoiceKey } from './form.validator'
+import { CourseProtocol } from '../services/course.service'
+import { CourseAtom } from '../models/course.model'
+import { FormInputNumber } from '../shared-dialogs/forms/form.input.number'
+import { AuthorityProtocol } from '../models/authority.model'
 
 export const fetchLabwork$ = (
   route: ActivatedRoute,
@@ -24,8 +24,8 @@ export const fetchLabwork$ = (
 ): Observable<LabworkAtom> => {
   return route.paramMap.pipe(
     map((paramMap) => ({
-      lid: paramMap.get("lid") || "",
-      cid: paramMap.get("cid") || "",
+      lid: paramMap.get('lid') || '',
+      cid: paramMap.get('cid') || '',
     })),
     switchMap(({ lid, cid }) => labworkService.get(cid, lid)),
   )
@@ -69,14 +69,14 @@ export const toLabwork = (atom: LabworkAtom): Labwork => {
 
 const getAllEmployees = (userService: UserService) =>
   userService.getAllWithFilter({
-    attribute: "status",
-    value: "employee",
+    attribute: 'status',
+    value: 'employee',
   })
 
 const getAllLecturer = (userService: UserService) =>
   userService.getAllWithFilter({
-    attribute: "status",
-    value: "lecturer",
+    attribute: 'status',
+    value: 'lecturer',
   })
 
 const getAllTeachingStaff = (userService: UserService) =>
@@ -89,27 +89,27 @@ export const partialCourseFormInputData = (
 ): ((
   attr: string,
   m: Readonly<CourseProtocol | CourseAtom>,
-) => Omit<FormInput, "formControlName" | "displayTitle"> | undefined) => {
+) => Omit<FormInput, 'formControlName' | 'displayTitle'> | undefined) => {
   return (attr, m) => {
     const isModel = isUniqueEntity(m)
 
     switch (attr) {
-      case "label":
+      case 'label':
         return {
           isDisabled: isModel,
           data: new FormInputString(m.label),
         }
-      case "description":
+      case 'description':
         return {
           isDisabled: false,
           data: new FormInputTextArea(m.description),
         }
-      case "abbreviation":
+      case 'abbreviation':
         return {
           isDisabled: false,
           data: new FormInputString(m.abbreviation),
         }
-      case "lecturer":
+      case 'lecturer':
         return {
           isDisabled: isModel,
           data: isUniqueEntity(m)
@@ -117,14 +117,14 @@ export const partialCourseFormInputData = (
                 `${m.lecturer.lastname}, ${m.lecturer.firstname}`,
               )
             : new FormInputOption<User>(
-                "lecturer",
+                'lecturer',
                 invalidChoiceKey,
                 true,
                 (value) => `${value.lastname}, ${value.firstname}`,
                 getAllTeachingStaff(userService),
               ),
         }
-      case "semesterIndex":
+      case 'semesterIndex':
         return {
           isDisabled: false,
           data: new FormInputNumber(m.semesterIndex),
@@ -139,24 +139,24 @@ export const fullCourseFormInputData = (
   return (model, isModel) => {
     const fields = [
       {
-        formControlName: "label",
-        displayTitle: "Bezeichnung",
+        formControlName: 'label',
+        displayTitle: 'Bezeichnung',
       },
       {
-        formControlName: "description",
-        displayTitle: "Beschreibung",
+        formControlName: 'description',
+        displayTitle: 'Beschreibung',
       },
       {
-        formControlName: "abbreviation",
-        displayTitle: "Abkürzung",
+        formControlName: 'abbreviation',
+        displayTitle: 'Abkürzung',
       },
       {
-        formControlName: "lecturer",
-        displayTitle: "Dozent",
+        formControlName: 'lecturer',
+        displayTitle: 'Dozent',
       },
       {
-        formControlName: "semesterIndex",
-        displayTitle: "Fachsemester",
+        formControlName: 'semesterIndex',
+        displayTitle: 'Fachsemester',
       },
     ]
 
@@ -164,6 +164,7 @@ export const fullCourseFormInputData = (
     // tslint:disable-next-line:no-non-null-assertion
     return fields.map((x) => ({
       ...x,
+      // tslint:disable-next-line:no-non-null-assertion
       ...partialCourseFormInputData(userService)(x.formControlName, model)!!,
     }))
   }
@@ -171,10 +172,10 @@ export const fullCourseFormInputData = (
 
 export const emptyCourseProtocol = (): CourseProtocol => {
   return {
-    label: "",
-    description: "",
-    abbreviation: "",
-    lecturer: "",
+    label: '',
+    description: '',
+    abbreviation: '',
+    lecturer: '',
     semesterIndex: 0,
   }
 }
@@ -186,10 +187,10 @@ export const getInitials = (user?: User): string => {
       user.lastname.substring(0, 1).toUpperCase()
     )
   } else {
-    return "n.a"
+    return 'n.a'
   }
 }
 
 export const emptyAuthorityProtocol = (): AuthorityProtocol => {
-  return { user: "", role: "", course: "" }
+  return { user: '', role: '', course: '' }
 }

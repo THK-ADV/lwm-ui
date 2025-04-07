@@ -1,29 +1,29 @@
-import { Component, Inject, OnDestroy, OnInit } from "@angular/core"
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
 import {
   MAT_DIALOG_DATA,
   MatDialog,
   MatDialogRef,
-} from "@angular/material/dialog"
-import { FormControl, FormGroup, ValidatorFn } from "@angular/forms"
-import { DIALOG_WIDTH } from "../dialog-constants"
-import { LWMDateAdapter } from "../../utils/lwmdate-adapter"
-import { invalidLocalTimeKey } from "../../utils/form.validator"
+} from '@angular/material/dialog'
+import { FormControl, FormGroup, ValidatorFn } from '@angular/forms'
+import { DIALOG_WIDTH } from '../dialog-constants'
+import { LWMDateAdapter } from '../../utils/lwmdate-adapter'
+import { invalidLocalTimeKey } from '../../utils/form.validator'
 import {
   FormDataStringType,
   FormDataType,
   FormInput,
   FormInputData,
-} from "../forms/form.input"
+} from '../forms/form.input'
 import {
   foreachOption,
   getOptionErrorMessage,
   hasOptionError,
-} from "../../utils/form-control-utils"
+} from '../../utils/form-control-utils'
 import {
   mapUndefined,
   parseUnsafeBoolean,
   parseUnsafeNumber,
-} from "../../utils/functions"
+} from '../../utils/functions'
 
 export interface FormOutputData {
   attr: string
@@ -39,15 +39,14 @@ export interface FormPayload<Protocol> {
 }
 
 @Component({
-  selector: "app-create-update-dialog",
-  templateUrl: "./create-update-dialog.component.html",
-  styleUrls: ["./create-update-dialog.component.scss"],
+  selector: 'app-create-update-dialog',
+  templateUrl: './create-update-dialog.component.html',
+  styleUrls: ['./create-update-dialog.component.scss'],
   providers: LWMDateAdapter.defaultProviders(),
   standalone: false,
 })
 export class CreateUpdateDialogComponent<Protocol, Model>
-  implements OnInit, OnDestroy
-{
+  implements OnInit, OnDestroy {
   formGroup: FormGroup
 
   static instance<Protocol, Model>(
@@ -61,7 +60,7 @@ export class CreateUpdateDialogComponent<Protocol, Model>
     >(CreateUpdateDialogComponent, {
       width: DIALOG_WIDTH,
       data: payload,
-      panelClass: "lwmCreateUpdateDialog",
+      panelClass: 'lwmCreateUpdateDialog',
     })
   }
 
@@ -104,7 +103,9 @@ export class CreateUpdateDialogComponent<Protocol, Model>
   onSubmit() {
     if (this.formGroup.valid) {
       const updatedValues: FormOutputData[] = this.payload.data
-        .filter((d) => !d.isDisabled) // TODO why do we filter them out? as a consequence, one have to manually set all disabled properties, which is a huge source of error
+        /* TODO why do we filter them out?
+            as a consequence, one have to manually set all disabled properties, which is a huge source of error */
+        .filter((d) => !d.isDisabled)
         .map((d) => ({
           attr: d.formControlName,
           value: this.convertToType(
@@ -149,26 +150,26 @@ export class CreateUpdateDialogComponent<Protocol, Model>
 
   private convertToType(type: FormDataStringType, value: any): FormDataType {
     switch (type) {
-      case "number":
+      case 'number':
         return parseUnsafeNumber(value)
-      case "options":
-        return this.convertToType("text", value.id)
-      case "textArea":
-        return this.convertToType("text", value)
-      case "text":
-        return "" + value
-      case "date":
-        return new Date(this.convertToType("text", value) as string)
-      case "time":
-        const string = this.convertToType("text", value) as string
+      case 'options':
+        return this.convertToType('text', value.id)
+      case 'textArea':
+        return this.convertToType('text', value)
+      case 'text':
+        return '' + value
+      case 'date':
+        return new Date(this.convertToType('text', value) as string)
+      case 'time':
+        const string = this.convertToType('text', value) as string
         return string
-          .split(":")
-          .map((s) => (s.length === 1 ? s.padStart(2, "0") : s))
-          .join(":")
-      case "boolean":
+          .split(':')
+          .map((s) => (s.length === 1 ? s.padStart(2, '0') : s))
+          .join(':')
+      case 'boolean':
         return parseUnsafeBoolean(value)
-      case "select":
-        return this.convertToType("text", value)
+      case 'select':
+        return this.convertToType('text', value)
     }
   }
 

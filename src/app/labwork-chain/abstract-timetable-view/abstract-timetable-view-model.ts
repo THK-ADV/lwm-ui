@@ -1,6 +1,6 @@
-import { TimetableEntryAtom } from "../../models/timetable"
-import { isEmpty } from "../../utils/functions"
-import { User } from "../../models/user.model"
+import { TimetableEntryAtom } from '../../models/timetable'
+import { isEmpty } from '../../utils/functions'
+import { User } from '../../models/user.model'
 
 export interface SupervisorWorkload {
   user: User
@@ -36,8 +36,9 @@ export const calculateWorkload = (
   const workload = workload0(entries)
 
   return Object.keys(workload).map((id) => {
-    // tslint:disable-next-line:no-non-null-assertion
+
     return {
+      // tslint:disable-next-line:no-non-null-assertion
       user: supervisors.find((s) => s.id === id)!!,
       workload: workload[id] / 60.0,
     }

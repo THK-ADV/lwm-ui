@@ -1,6 +1,6 @@
-import { Injectable } from "@angular/core"
-import { Router } from "@angular/router"
-import { KeycloakTokenService } from "../services/keycloak-token.service"
+import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
+import { KeycloakTokenService } from '../services/keycloak-token.service'
 
 @Injectable()
 export class DashboardGuard {
@@ -17,11 +17,11 @@ export class DashboardGuard {
     }
 
     switch (status) {
-      case "student":
-        return this.router.navigate(["/s"])
-      case "employee":
-      case "lecturer":
-        return this.router.navigate(["/e"])
+      case 'student':
+        return this.router.navigate(['/s'])
+      case 'employee':
+      case 'lecturer':
+        return this.router.navigate(['/e'])
     }
   }
 }

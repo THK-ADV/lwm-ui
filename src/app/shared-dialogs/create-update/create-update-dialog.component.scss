@@ -1,3 +1,22 @@
+.modalContainer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 500px;
+
+
+  .formContainer {
+    width: 90%;
+    margin: 0 5%;
+
+    .mat-form-field-modal {
+      width: 100%;
+    }
+  }
+
+}
 .lwmDatepicker {
   display: flex;
   flex-direction: row;

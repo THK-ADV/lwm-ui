@@ -18,7 +18,7 @@
     <div class="lwm-card-content">
       <mat-list>
         <mat-list-item *ngFor="let entry of card.entries">
-          <p mat-line (click)="onEntryClick.emit(entry)">
+          <p class="lwm-card-par" mat-line (click)="onEntryClick.emit(entry)">
             <span>{{ leftEntryLabel(entry) }}</span>
             <span>{{ rightEntryLabel(entry) }}</span>
           </p>

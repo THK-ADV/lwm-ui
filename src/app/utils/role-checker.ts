@@ -1,12 +1,12 @@
-import { AuthorityAtom } from "../models/authority.model"
-import { UserRole } from "../models/role.model"
-import { exists, foldUndefined } from "./functions"
-import { KeycloakTokenService } from "../services/keycloak-token.service"
-import { AuthorityService } from "../services/authority.service"
-import { EMPTY, Observable } from "rxjs"
-import { catchError, retry, switchMap } from "rxjs/operators"
-import { UserService } from "../services/user.service"
-import { AlertService } from "../services/alert.service"
+import { AuthorityAtom } from '../models/authority.model'
+import { UserRole } from '../models/role.model'
+import { exists, foldUndefined } from './functions'
+import { KeycloakTokenService } from '../services/keycloak-token.service'
+import { AuthorityService } from '../services/authority.service'
+import { EMPTY, Observable } from 'rxjs'
+import { catchError, retry, switchMap } from 'rxjs/operators'
+import { UserService } from '../services/user.service'
+import { AlertService } from '../services/alert.service'
 
 export const hasAnyRole = (
   authorities: Readonly<AuthorityAtom[]>,
@@ -36,7 +36,7 @@ export function fetchCurrentUserAuthorities$(
   authorityService: AuthorityService,
   tokenService: KeycloakTokenService,
 ): Observable<AuthorityAtom[]> {
-  const id = tokenService.get("systemId")
+  const id = tokenService.get('systemId')
   return id !== undefined ? authorityService.getAuthorities(id) : EMPTY
 }
 

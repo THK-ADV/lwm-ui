@@ -13,12 +13,23 @@
   margin: 20px 0 40px 0;
 }
 
+mat-form-field {
+  width: 400px;
+  margin-bottom: 40px;
+}
+
 table {
   button {
     margin: map.get(vars.$spacing, "small");
+    display: flex;
+    text-align: center;
   }
 }
 
 th.mat-sort-header-sorted {
   color: black;
+}
+
+mat-paginator {
+  margin-top: 24px;
 }
