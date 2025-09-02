@@ -13,7 +13,8 @@ import {
     globalBlacklistRangeInputData
 } from './blacklist-view-model'
 import {LWMActionType} from '../table-action-button/lwm-actions'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
 import {Decision, DecisionDialogComponent} from '../shared-dialogs/decision-dialog/decision-dialog.component'
 import {openConfirmationDialog, openDialog, openDialogFromPayload, subscribeDeleteDialog} from '../shared-dialogs/dialog-open-combinator'
 import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'

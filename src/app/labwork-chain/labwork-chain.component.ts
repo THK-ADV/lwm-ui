@@ -16,7 +16,7 @@ import {
 import {TimetableService} from '../services/timetable.service'
 import {ScheduleEntryService, SchedulePreview} from '../services/schedule-entry.service'
 import {ScheduleEntryAtom} from '../models/schedule-entry.model'
-import {MatHorizontalStepper} from '@angular/material'
+import {MatHorizontalStepper} from '@angular/material/stepper'
 import {AssignmentEntriesService} from '../services/assignment-entries.service'
 import {BlacklistService} from '../services/blacklist.service'
 import {LabworkApplicationService} from '../services/labwork-application.service'

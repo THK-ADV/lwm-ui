@@ -1,4 +1,4 @@
-import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from '@angular/material'
+import {DateAdapter, MAT_DATE_FORMATS, NativeDateAdapter} from '@angular/material/core'
 import localDE from '@angular/common/locales/de'
 import {formatDate, registerLocaleData} from '@angular/common'
 import {Time} from '../models/time.model'

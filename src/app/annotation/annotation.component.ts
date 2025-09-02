@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {DIALOG_WIDTH} from '../shared-dialogs/dialog-constants'
 import {Annotation, AnnotationAtom} from '../models/annotation'

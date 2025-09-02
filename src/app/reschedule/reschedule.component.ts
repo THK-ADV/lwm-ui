@@ -1,5 +1,7 @@
 import {Component, Inject, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core'
-import {MAT_DIALOG_DATA, MatCalendarCellCssClasses, MatDatepickerInputEvent, MatDialog, MatDialogRef} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {MatCalendarCellCssClasses} from '@angular/material/datepicker'
+import {MatDatepickerInputEvent} from '@angular/material/datepicker'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
 import {fullUserName} from '../utils/component.utils'
 import {ReportCardEntryService, RescheduleCandidate} from '../services/report-card-entry.service'

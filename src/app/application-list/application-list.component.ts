@@ -8,7 +8,7 @@ import {openDialog, subscribeDeleteDialog} from '../shared-dialogs/dialog-open-c
 import {LabworkApplicationService} from '../services/labwork-application.service'
 import {AlertService} from '../services/alert.service'
 import {Subscription} from 'rxjs'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {StudentCreateApplicationComponent} from './student-create-application/student-create-application.component'
 import {StudentAtom} from '../models/user.model'
 

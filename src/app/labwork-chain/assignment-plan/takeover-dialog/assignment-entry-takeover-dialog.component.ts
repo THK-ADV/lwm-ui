@@ -1,5 +1,5 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
 import {AssignmentEntry} from '../../../models/assignment-plan.model'
 import {AssignmentEntriesService} from '../../../services/assignment-entries.service'
 import {LabworkService} from '../../../services/labwork.service'

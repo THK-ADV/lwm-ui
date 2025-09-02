@@ -1,4 +1,4 @@
-import {MatDialog, MatDialogRef} from '@angular/material'
+import {MatDialog, MatDialogRef} from '@angular/material/dialog'
 import {EMPTY, Observable, Subscription} from 'rxjs'
 import {switchMap} from 'rxjs/operators'
 import {CreateUpdateDialogComponent, FormPayload} from './create-update/create-update-dialog.component'

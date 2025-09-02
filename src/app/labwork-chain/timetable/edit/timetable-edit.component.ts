@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnDestroy, Output, ViewChild} from '@angular/core'
 import {LabworkAtom} from '../../../models/labwork.model'
-import {MatDialog} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
 import {TimetableService} from '../../../services/timetable.service'
 import {subscribe} from '../../../utils/functions'
 import {EMPTY, Observable, Subscription} from 'rxjs'
@@ -84,20 +84,20 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            this.createIfNeeded(event.id, event.start, event.end)
+            this.createIfNeeded(parseInt(event.id), event.start, event.end)
         ))
     }
 
     onEventClick = (event: CalendarEvent) => {
         const dialogRef = this.timetableEntryDialog(
             DialogMode.edit,
-            this.timetable.entries[event.id].supervisor,
+            this.timetable.entries[parseInt(event.id)].supervisor,
             event.extendedProps.room
         )
 
         this.updateCalendar$(openDialog(
             dialogRef,
-            this.updateIfNeeded(event.id)
+            this.updateIfNeeded(parseInt(event.id))
         ))
     }
 
@@ -105,7 +105,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
-            event.id,
+            parseInt(event.id),
             updateTime(event.start, event.end)
         ))
     }
@@ -114,7 +114,7 @@ export class TimetableEditComponent implements AfterViewInit, OnDestroy {
         this.updateCalendar$(updateTimetableEntry$(
             this.timetableService,
             this.timetable,
-            event.id,
+            parseInt(event.id),
             updateTime(event.start, event.end)
         ))
     }

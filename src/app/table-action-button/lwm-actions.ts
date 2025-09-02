@@ -1,4 +1,4 @@
-import {TooltipPosition} from '@angular/material'
+import {TooltipPosition} from '@angular/material/tooltip'
 import {LWMColor} from '../utils/colors'
 
 export type LWMActionType =
