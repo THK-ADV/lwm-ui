@@ -17,7 +17,6 @@ import { EntryPageComponent } from "./entry-page/entry-page.component";
 import { StudentDashboardComponent } from "./dashboard/student-dashboard/student-dashboard.component";
 import { EmployeeDashboardComponent } from "./dashboard/employee-dashboard/employee-dashboard.component";
 
-import { AppGuard } from "./guards/app.guard";
 import { DashboardGuard } from "./guards/dashboard.guard";
 import { StudentStatusGuard } from "./guards/student-status.guard";
 import { EmployeeStatusGuard } from "./guards/employee-status.guard";
@@ -221,7 +220,6 @@ FullCalendarModule.registerPlugins([
     FullCalendarModule,
   ],
   providers: [
-    AppGuard,
     DashboardGuard,
     StudentStatusGuard,
     EmployeeStatusGuard,
