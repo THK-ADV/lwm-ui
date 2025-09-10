@@ -65,7 +65,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('getAll', url))
-        )
+        ) as Observable<T[]>
 
     get = <T>(
         url: string,
@@ -76,7 +76,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('get', url))
-        )
+        ) as Observable<T>
 
     get_ = <T>(
         url: string,
@@ -86,7 +86,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('get_', url))
-        )
+        ) as Observable<T>
 
     downloadXlsSheet = (
         url: string
@@ -100,7 +100,7 @@ export class HttpService {
             .pipe(
                 catchError(this.handleError),
                 tap(this.logResp('download', url)),
-                map(data => new Blob([data], {type: 'application/vnd.ms-excel'}))
+                map((data) => new Blob([data as BlobPart], {type: 'application/vnd.ms-excel'}))
             )
     }
 
@@ -112,7 +112,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('delete', url))
-        )
+        ) as Observable<T>
 
     delete_ = (
         url: string,
@@ -121,7 +121,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('delete', url))
-        )
+        ) as Observable<unknown>
 
     create = <I, O>(
         url: string,
@@ -132,7 +132,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('create', url))
-        )
+        ) as Observable<O>
 
     put = <I, O>(
         url: string,
@@ -144,7 +144,7 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('put', url))
-        )
+        ) as Observable<O>
 
     put_ = <I, O>(
         url: string,
@@ -154,5 +154,5 @@ export class HttpService {
         .pipe(
             catchError(this.handleError),
             tap(this.logResp('put_', url))
-        )
+        ) as Observable<O>
 }

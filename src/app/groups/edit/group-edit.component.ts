@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
 import {GroupAtom} from '../../models/group.model'
 import {EMPTY, Observable, of, Subscription, zip} from 'rxjs'
 import {User} from '../../models/user.model'

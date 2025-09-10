@@ -4,7 +4,7 @@ import {Observable, Subscription} from 'rxjs'
 import {Employee, Lecturer, StudentAtom, User} from '../models/user.model'
 import {UserService} from '../services/user.service'
 import {isStudentAtom} from '../utils/type.check.utils'
-import {MatTableDataSource} from '@angular/material'
+import {MatTableDataSource} from '@angular/material/table'
 import {UserSyncResult, UserSyncService} from '../services/user-sync.service'
 import {AlertService} from '../services/alert.service'
 

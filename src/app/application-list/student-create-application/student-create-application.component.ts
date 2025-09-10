@@ -1,5 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatOptionSelectionChange} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {MatOptionSelectionChange} from '@angular/material/core'
 import {LabworkAtom} from '../../models/labwork.model'
 import {FormControl, FormGroup} from '@angular/forms'
 import {FormInput} from '../../shared-dialogs/forms/form.input'

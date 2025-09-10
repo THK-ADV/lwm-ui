@@ -1,49 +1,21 @@
-<lwm-abstract-header
-        [headerTitle]="headerTitle">
-</lwm-abstract-header>
+<lwm-abstract-header [headerTitle]="headerTitle"> </lwm-abstract-header>
 
 <ng-container [formGroup]="formGroup">
-    <mat-form-field>
-        <input matInput
-               readonly
-               formControlName="start"
-               placeholder="Beginn des Praktikums"
-               [matDatepicker]="dp"
-               (click)="dp.open()">
-        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp color="primary"></mat-datepicker>
-    </mat-form-field>
+  <mat-form-field>
+    <input
+      matInput
+      readonly
+      formControlName="start"
+      placeholder="Beginn des Praktikums"
+      [matDatepicker]="dp"
+      (click)="dp.open()" />
+    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+    <mat-datepicker #dp color="primary"></mat-datepicker>
+  </mat-form-field>
 </ng-container>
 
-<full-calendar
-        defaultView="timeGridWeek"
-        [editable]="canEdit"
-        [plugins]="calendarPlugins"
-        [events]="dates"
-        [locale]="'de'"
-        [weekends]="false"
-        [nowIndicator]="false"
-        [allDaySlot]="false"
-        [columnHeaderFormat]="{ weekday: 'long' }"
-        [slotDuration]="'00:15:00'"
-        [slotLabelInterval]="{hours:1}"
-        [slotEventOverlap]="false"
-        [minTime]="'08:00:00'"
-        [maxTime]="'22:00:00'"
-        [header]="false"
-        [selectable]="true"
-        [selectMirror]="true"
-        [selectMinDistance]="10"
-        [selectAllow]="allowSelect"
-        [eventColor]="primaryColor()"
-        [eventTextColor]="'#ffffff'"
-        (select)="onDateSelection($event)"
-        [unselectCancel]="'.unselectable'"
-        (eventClick)="onEventClick($event.event)"
-        (eventDrop)="onEventDrop($event.event)"
-        (eventResize)="onEventResize($event)">
-</full-calendar>
+<full-calendar [options]="calendarOptions"></full-calendar>
 
 <p *ngFor="let workload of workloads">
-    {{displayWorkload(workload)}}
+  {{ displayWorkload(workload) }}
 </p>

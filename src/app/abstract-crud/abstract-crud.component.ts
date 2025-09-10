@@ -1,5 +1,7 @@
 import {Component, Input, OnDestroy} from '@angular/core'
-import {MatDialog, MatTableDataSource, Sort} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
+import {Sort} from '@angular/material/sort'
 import {Observable, Subscription} from 'rxjs'
 import {mapUndefined, subscribe} from '../utils/functions'
 import {FormPayload} from '../shared-dialogs/create-update/create-update-dialog.component'

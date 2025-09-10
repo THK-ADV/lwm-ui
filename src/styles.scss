@@ -3,10 +3,6 @@
 @import "../assets/font/font.css";
 @import "../assets/icons/icons.css";
 @import "./lwm.theme.scss";
-@import "~@fullcalendar/core/main.css";
-@import "~@fullcalendar/daygrid/main.css";
-@import "~@fullcalendar/timegrid/main.css";
-@import "~@fullcalendar/list/main.css";
 @import "./lwm.vars.scss";
 
 html,
@@ -34,22 +30,35 @@ body {
   overflow: hidden;
 }
 
-full-calendar {
-  button.fc-button-primary,
-  button.fc-state-default {
-    background-color: $th-magenta;
-    border-color: $th-magenta;
-  }
+/* FullCalendar v5 Button Styling - Technique 1: Overriding Whole Properties */
+.fc .fc-button-primary {
+  background-color: $th-magenta !important;
+  border-color: $th-magenta !important;
+  color: white !important;
+}
 
-  button.fc-button-primary:hover,
-  button.fc-button-primary:active,
-  button.fc-button-primary:focus,
-  button.fc-state-default:hover,
-  button.fc-state-default:active,
-  button.fc-state-default:focus {
-    background-color: darken($th-magenta, 5%);
-    border-color: darken($th-magenta, 5%);
-  }
+/* More specific selectors for navigation buttons */
+.fc .fc-prev-button.fc-button.fc-button-primary,
+.fc .fc-next-button.fc-button.fc-button-primary,
+.fc .fc-today-button.fc-button.fc-button-primary {
+  background-color: $th-magenta !important;
+  border-color: $th-magenta !important;
+  color: white !important;
+}
+
+.fc .fc-button-primary:not(:disabled):hover,
+.fc .fc-button-primary:not(:disabled):active,
+.fc .fc-button-primary:not(:disabled):focus {
+  background-color: darken($th-magenta, 5%) !important;
+  border-color: darken($th-magenta, 5%) !important;
+  color: white !important;
+}
+
+/* Additional FullCalendar v5 button states */
+.fc .fc-button-primary:disabled {
+  background-color: lighten($th-magenta, 30%) !important;
+  border-color: lighten($th-magenta, 30%) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .material-icons {

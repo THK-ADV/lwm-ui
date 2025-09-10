@@ -1,6 +1,7 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core'
 import {ReportCardEntryAtom} from '../models/report-card-entry.model'
-import {MatDialog, MatTableDataSource} from '@angular/material'
+import {MatDialog} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
 import {TableHeaderColumn} from '../abstract-crud/abstract-crud.component'
 import {AuthorityAtom} from '../models/authority.model'
 import {hasAnyRole} from '../utils/role-checker'

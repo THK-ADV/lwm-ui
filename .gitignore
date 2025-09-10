@@ -53,6 +53,7 @@ dist/*
 !copy-dist-files.js
 
 # AngularJS files
+.angular/
 !**/*.ajs.js
 **/app/**/*.ajs.js
 

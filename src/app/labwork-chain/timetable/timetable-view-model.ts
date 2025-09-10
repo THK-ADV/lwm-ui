@@ -11,12 +11,13 @@ export interface CalendarEvent {
     title: string
     start: Date
     end: Date
-    id: number
+    id: string
     extendedProps: {
-        dayIndex: number
-        room: Room
+      dayIndex: number
+      room: Room
+      supervisor: User[]
     }
-}
+  }
 
 export const makeCalendarEvents = (t: TimetableAtom): CalendarEvent[] => {
     const now = new Date()
@@ -25,20 +26,25 @@ export const makeCalendarEvents = (t: TimetableAtom): CalendarEvent[] => {
         .map((e, i) => makeCalendarEvent(now, e, i))
 }
 
-const makeCalendarEvent = (now: Date, e: Readonly<TimetableEntryAtom>, i: number): CalendarEvent => {
+const makeCalendarEvent = (
+    now: Date,
+    e: Readonly<TimetableEntryAtom>,
+    i: number,
+  ): CalendarEvent => {
     shiftToWeekday(now, e.dayIndex)
-
+  
     return {
-        title: `${e.room.label}\n\n${supervisorLabel(e.supervisor)}`,
-        start: Time.withNewDate(now, e.start).date,
-        end: Time.withNewDate(now, e.end).date,
-        extendedProps: {
-            dayIndex: e.dayIndex,
-            room: e.room,
-        },
-        id: i
+      title: `${e.room.label}\n\n${supervisorLabel(e.supervisor)}`,
+      start: Time.withNewDate(now, e.start).date,
+      end: Time.withNewDate(now, e.end).date,
+      extendedProps: {
+        dayIndex: e.dayIndex,
+        room: e.room,
+        supervisor: e.supervisor,
+      },
+      id: i.toString(),
     }
-}
+  }
 
 const supervisorLabel = (supervisors: User[]): string => {
     return supervisors

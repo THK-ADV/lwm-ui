@@ -13,7 +13,10 @@ import {initiateDownloadWithDefaultFilenameSuffix} from '../../xls-download/xls-
 import {ActionType} from '../../abstract-header/abstract-header.component'
 import {ReportCardEntryService} from '../../services/report-card-entry.service'
 import {LabworkAtom} from '../../models/labwork.model'
-import {MatPaginator, MatSort, MatTableDataSource, Sort} from '@angular/material'
+import {MatPaginator} from '@angular/material/paginator'
+import {MatSort} from '@angular/material/sort'
+import {Sort} from '@angular/material/sort'
+import {MatTableDataSource} from '@angular/material/table'
 import {ExplicitEvaluationKind} from '../../services/lwm.service'
 import {Router} from '@angular/router'
 

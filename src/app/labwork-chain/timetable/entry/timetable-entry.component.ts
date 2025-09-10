@@ -1,5 +1,6 @@
 import {Component, Inject, OnDestroy, OnInit} from '@angular/core'
-import {MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatTableDataSource} from '@angular/material'
+import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog'
+import {MatTableDataSource} from '@angular/material/table'
 import {Observable} from 'rxjs'
 import {AbstractControl, FormControl, FormGroup} from '@angular/forms'
 import {FormInput} from '../../../shared-dialogs/forms/form.input'

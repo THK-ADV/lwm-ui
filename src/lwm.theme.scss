@@ -1,29 +1,61 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
-@import "~@angular/material/theming";
+@import "@angular/material/theming";
 @import "lwm.theme.config";
 
+// Include mat-core globally once (typography will be handled in the theme mixin)
 @include mat-core();
 
-@mixin lwm-core-theme($theme) {
-  @include mat-core-theme(map-get($theme, main));
+// Removed individual component theme mixins - now using angular-material-theme() to avoid duplicates
+
+@function lwm-light-theme($primary, $accent, $warn, $foreground: (), $background: ()) {
+  @return (
+          primary: mat-palette(palette-from($primary)),
+          accent: mat-palette(palette-from($accent)),
+          warn: mat-palette(palette-from($warn)),
+          is-dark: false,
+          foreground: map-merge($mat-light-theme-foreground, $foreground),
+          background: map-merge($mat-light-theme-background, $background)
+  );
 }
 
-@mixin lwm-autocomplete-theme($theme) {
-  @include mat-autocomplete-theme(map-get($theme, main));
+@function lwm-typography-config(
+  $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
+  $display-4: mat-typography-level(112px, 112px, 300),
+  $display-3: mat-typography-level(56px, 56px, 400),
+  $display-2: mat-typography-level(45px, 48px, 400),
+  $display-1: mat-typography-level(34px, 40px, 400),
+  $headline: mat-typography-level(24px, 32px, 400),
+  $title: mat-typography-level(20px, 32px, 500),
+  $subheading-2: mat-typography-level(16px, 28px, 400),
+  $subheading-1: mat-typography-level(15px, 24px, 400),
+  $body-2: mat-typography-level(14px, 24px, 500),
+  $body-1: mat-typography-level(14px, 20px, 400),
+  $caption: mat-typography-level(12px, 20px, 400),
+  $button: mat-typography-level(14px, 14px, 500),
+  $input: mat-typography-level(inherit, 1.125, 400)
+) {
+  @return mat-typography-config(
+                  $font-family,
+                  $display-4,
+                  $display-3,
+                  $display-2,
+                  $display-1,
+                  $headline,
+                  $title,
+                  $subheading-2,
+                  $subheading-1,
+                  $body-2,
+                  $body-1,
+                  $caption,
+                  $button,
+                  $input
+  );
 }
 
-@mixin lwm-badge-theme($theme) {
-  @include mat-badge-theme(map-get($theme, main));
-}
-
-@mixin lwm-bottom-sheet-theme($theme) {
-  @include mat-bottom-sheet-theme(map-get($theme, main));
-}
-
-@mixin lwm-button-theme($theme) {
-  @include mat-button-theme(map-get($theme, main));
-
+// Custom styles mixin that contains all LWM-specific customizations
+@mixin lwm-custom-styles($theme) {
+  // Button customizations
   button.mat-stroked-button.mat-primary {
     border: 2px lighten($th-magenta, 40) solid;
     margin-right: $small-spacing;
@@ -38,10 +70,8 @@
     border: 2px lighten($th-red, 40) solid;
     margin-right: $small-spacing;
   }
-}
 
-@mixin lwm-button-toggle-theme($theme) {
-  @include mat-button-toggle-theme(map-get($theme, main));
+  // Button toggle customizations
   $failed-col: #ff4500;
   $neutral-col: #888;
   $passed-col: #32cd32;
@@ -91,17 +121,13 @@
       background-color: $passed-col;
     }
   }
-}
 
-@mixin lwm-card-theme($theme) {
-  @include mat-card-theme(map-get($theme, main));
+  // Card customizations
   .mat-card {
     margin: $low-spacing 0 $med-spacing 0;
     padding: 0 !important;
     -webkit-box-shadow: none !important;
     box-shadow: none !important;
-
-    //background-color: red;
 
     mat-card-content {
       display: -webkit-box;
@@ -135,14 +161,8 @@
       }
     }
   }
-}
 
-@mixin lwm-checkbox-theme($theme) {
-  @include mat-checkbox-theme(map-get($theme, main));
-}
-
-@mixin lwm-chips-theme($theme) {
-  @include mat-chips-theme(map-get($theme, main));
+  // Chips customizations
   $height: 32px;
   $fontSize: 14px;
 
@@ -165,15 +185,8 @@
     background-color: $th-orange;
     color: white;
   }
-}
 
-@mixin lwm-datepicker-theme($theme) {
-  @include mat-datepicker-theme(map-get($theme, main));
-}
-
-@mixin lwm-dialog-theme($theme) {
-  @include mat-dialog-theme(map-get($theme, main));
-
+  // Dialog customizations
   h1.mat-dialog-title {
     font-size: 2em;
   }
@@ -190,7 +203,6 @@
   .mat-form-field-infix {
     margin-top: 20px;
   }
-
 
   mat-dialog-container {
     .mat-form-field-ripple {
@@ -229,26 +241,13 @@
       }
     }
   }
-}
 
-@mixin lwm-expansion-panel-theme($theme) {
-  @include mat-expansion-panel-theme(map-get($theme, main));
-}
-
-@mixin lwm-form-field-theme($theme) {
-  @include mat-form-field-theme(map-get($theme, main));
-
+  // Form field customizations
   .reportcard-bonus {
     max-width: 100px !important;
   }
-}
 
-@mixin lwm-grid-list-theme($theme) {
-  @include mat-grid-list-theme(map-get($theme, main));
-}
-
-@mixin lwm-icon-theme($theme) {
-  @include mat-icon-theme(map-get($theme, main));
+  // Icon customizations
   .material-icons.mat-14 {
     font-size: 14px;
   }
@@ -268,74 +267,23 @@
   .material-icons.mat-48 {
     font-size: 48px;
   }
-}
 
-@mixin lwm-input-theme($theme) {
-  @include mat-input-theme(map-get($theme, main));
-}
-
-@mixin lwm-list-theme($theme) {
-  @include mat-list-theme(map-get($theme, main));
-}
-
-@mixin lwm-menu-theme($theme) {
-  @include mat-menu-theme(map-get($theme, main));
-}
-
-@mixin lwm-paginator-theme($theme) {
-  @include mat-paginator-theme(map-get($theme, main));
+  // Paginator customizations
   .mat-paginator {
     margin-bottom: $high-spacing;
   }
-}
 
-@mixin lwm-progress-bar-theme($theme) {
-  @include mat-progress-bar-theme(map-get($theme, main));
-}
-
-@mixin lwm-progress-spinner-theme($theme) {
-  @include mat-progress-spinner-theme(map-get($theme, main));
-}
-
-@mixin lwm-radio-theme($theme) {
-  @include mat-radio-theme(map-get($theme, main));
-}
-
-@mixin lwm-select-theme($theme) {
-  @include mat-select-theme(map-get($theme, main));
-}
-
-@mixin lwm-sidenav-theme($theme) {
-  @include mat-sidenav-theme(map-get($theme, main));
+  // Sidenav customizations
   .mat-drawer-container {
     background-color: transparent !important;
   }
   .mat-drawer {
     background-color: mat-color(map-get(map-get($theme, overlay), background), dialog);
     color: mat-color(map-get(map-get($theme, overlay), foreground), text);
-    @include angular-material-theme(map-get($theme, overlay));
+    @include all-component-colors(map-get($theme, overlay));
   }
-}
 
-@mixin lwm-slide-toggle-theme($theme) {
-  @include mat-slide-toggle-theme(map-get($theme, main));
-}
-
-@mixin lwm-slider-theme($theme) {
-  @include mat-slider-theme(map-get($theme, main));
-}
-
-@mixin lwm-stepper-theme($theme) {
-  @include mat-stepper-theme(map-get($theme, main));
-}
-
-@mixin lwm-sort-theme($theme) {
-  @include mat-sort-theme(map-get($theme, main));
-}
-
-@mixin lwm-table-theme($theme) {
-  @include mat-table-theme(map-get($theme, main));
-
+  // Table customizations
   table {
     width: 100%;
     margin-bottom: $high-spacing;
@@ -365,71 +313,6 @@
   }
 }
 
-@mixin lwm-tabs-theme($theme) {
-  @include mat-tabs-theme(map-get($theme, main));
-}
-
-@mixin lwm-toolbar-theme($theme) {
-  @include mat-toolbar-theme(map-get($theme, main));
-}
-
-@mixin lwm-tooltip-theme($theme) {
-  @include mat-tooltip-theme(map-get($theme, main));
-}
-
-@mixin lwm-tree-theme($theme) {
-  @include mat-tree-theme(map-get($theme, main));
-}
-
-@mixin lwm-snack-bar-theme($theme) {
-  @include mat-snack-bar-theme(map-get($theme, main));
-}
-
-@function lwm-light-theme($primary, $accent, $warn, $foreground: (), $background: ()) {
-  @return (
-          primary: mat-palette(palette-from($primary)),
-          accent: mat-palette(palette-from($accent)),
-          warn: mat-palette(palette-from($warn)),
-          is-dark: false,
-          foreground: map-merge($mat-light-theme-foreground, $foreground),
-          background: map-merge($mat-light-theme-background, $background)
-  );
-}
-
-@function lwm-typography-config(
-  $font-family: '"Helvetica Neue", "Ostrich Sans", sans-serif',
-  $display-4: mat-typography-level(112px, 112px, 300),
-  $display-3: mat-typography-level(56px, 56px, 400),
-  $display-2: mat-typography-level(45px, 48px, 400),
-  $display-1: mat-typography-level(34px, 40px, 400),
-  $headline: mat-typography-level(24px, 32px, 400),
-  $title: mat-typography-level(20px, 32px, 500),
-  $subheading-2: mat-typography-level(16px, 28px, 400),
-  $subheading-1: mat-typography-level(15px, 24px, 400),
-  $body-2: mat-typography-level(14px, 24px, 500),
-  $body-1: mat-typography-level(14px, 20px, 400),
-  $caption: mat-typography-level(12px, 20px, 400),
-  $button: mat-typography-level(14px, 14px, 500),
-  $input: mat-typography-level(inherit, 1.125, 400)
-) {
-  @return mat-typography-config(
-                  $font-family,
-                  $display-4,
-                  $display-3,
-                  $display-2,
-                  $display-1,
-                  $headline,
-                  $title,
-                  $subheading-2,
-                  $subheading-1,
-                  $body-2,
-                  $body-1,
-                  $caption,
-                  $button,
-                  $input
-  );
-}
-
 @mixin lwm-theme(
   $main-theme,
   $overlay-theme,
@@ -443,42 +326,15 @@
           app-bg-1: $app-bg-1,
           app-bg-2: $app-bg-2,
   );
-  @include mat-core($typography);
 
-  @include lwm-core-theme($theme);
-  @include lwm-autocomplete-theme($theme);
-  @include lwm-badge-theme($theme);
-  @include lwm-bottom-sheet-theme($theme);
-  @include lwm-button-theme($theme);
-  @include lwm-button-toggle-theme($theme);
-  @include lwm-card-theme($theme);
-  @include lwm-checkbox-theme($theme);
-  @include lwm-chips-theme($theme);
-  @include lwm-table-theme($theme);
-  @include lwm-datepicker-theme($theme);
-  @include lwm-dialog-theme($theme);
-  @include lwm-expansion-panel-theme($theme);
-  @include lwm-form-field-theme($theme);
-  @include lwm-grid-list-theme($theme);
-  @include lwm-icon-theme($theme);
-  @include lwm-input-theme($theme);
-  @include lwm-list-theme($theme);
-  @include lwm-menu-theme($theme);
-  @include lwm-paginator-theme($theme);
-  @include lwm-progress-bar-theme($theme);
-  @include lwm-progress-spinner-theme($theme);
-  @include lwm-radio-theme($theme);
-  @include lwm-select-theme($theme);
-  @include lwm-sidenav-theme($theme);
-  @include lwm-slide-toggle-theme($theme);
-  @include lwm-slider-theme($theme);
-  @include lwm-stepper-theme($theme);
-  @include lwm-sort-theme($theme);
-  @include lwm-tabs-theme($theme);
-  @include lwm-toolbar-theme($theme);
-  @include lwm-tooltip-theme($theme);
-  @include lwm-tree-theme($theme);
-  @include lwm-snack-bar-theme($theme);
+  // Include typography configuration
+  @include angular-material-typography($typography);
+
+  // Use the modern Angular Material theming API to avoid duplicates
+  @include angular-material-theme(map-get($theme, main));
+
+  // Include custom component styles that extend Angular Material
+  @include lwm-custom-styles($theme);
 }
 
 //.lwm-base-theme {
